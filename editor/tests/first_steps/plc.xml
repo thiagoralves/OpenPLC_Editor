@@ -1,0 +1,1160 @@
+<?xml version='1.0' encoding='utf-8'?>
+<project xmlns:ns1="http://www.plcopen.org/xml/tc6_0201" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.plcopen.org/xml/tc6_0201">
+  <fileHeader companyName="Beremiz" productName="Beremiz" productVersion="1" creationDateTime="2016-10-24T18:09:22"/>
+  <contentHeader name="First Steps" modificationDateTime="2018-09-26T12:52:51">
+    <coordinateInfo>
+      <fbd>
+        <scaling x="0" y="0"/>
+      </fbd>
+      <ld>
+        <scaling x="0" y="0"/>
+      </ld>
+      <sfc>
+        <scaling x="0" y="0"/>
+      </sfc>
+    </coordinateInfo>
+  </contentHeader>
+  <types>
+    <dataTypes/>
+    <pous>
+      <pou name="AverageVal" pouType="function">
+        <interface>
+          <returnType>
+            <REAL/>
+          </returnType>
+          <inputVars>
+            <variable name="Cnt1">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+            <variable name="Cnt2">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+            <variable name="Cnt3">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+            <variable name="Cnt4">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+            <variable name="Cnt5">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+          </inputVars>
+          <localVars>
+            <variable name="InputsNumber">
+              <type>
+                <REAL/>
+              </type>
+              <initialValue>
+                <simpleValue value="5.0"/>
+              </initialValue>
+              <documentation>
+                <xhtml:p><![CDATA[Количество входных значений]]></xhtml:p>
+              </documentation>
+            </variable>
+          </localVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[AverageVal := INT_TO_REAL(Cnt1+Cnt2+Cnt3+Cnt4+Cnt5)/InputsNumber;]]></xhtml:p>
+          </ST>
+        </body>
+      </pou>
+      <pou name="plc_prg" pouType="program">
+        <interface>
+          <inputVars>
+            <variable name="Reset">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="Cnt1">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+            <variable name="Cnt2">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+            <variable name="Cnt3">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+            <variable name="Cnt4">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+            <variable name="Cnt5">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+          </outputVars>
+          <localVars>
+            <variable name="CounterST0">
+              <type>
+                <derived name="CounterST"/>
+              </type>
+            </variable>
+            <variable name="CounterFBD0">
+              <type>
+                <derived name="CounterFBD"/>
+              </type>
+            </variable>
+            <variable name="CounterSFC0">
+              <type>
+                <derived name="CounterSFC"/>
+              </type>
+            </variable>
+            <variable name="CounterIL0">
+              <type>
+                <derived name="CounterIL"/>
+              </type>
+            </variable>
+            <variable name="CounterLD0">
+              <type>
+                <derived name="CounterLD"/>
+              </type>
+            </variable>
+            <variable name="AVCnt">
+              <type>
+                <REAL/>
+              </type>
+            </variable>
+          </localVars>
+        </interface>
+        <body>
+          <FBD>
+            <block localId="1" typeName="CounterST" instanceName="CounterST0" executionOrderId="0" height="60" width="125">
+              <position x="207" y="53"/>
+              <inputVariables>
+                <variable formalParameter="Reset">
+                  <connectionPointIn>
+                    <relPosition x="0" y="40"/>
+                    <connection refLocalId="2">
+                      <position x="207" y="93"/>
+                      <position x="114" y="93"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="125" y="40"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="2" executionOrderId="0" height="30" width="79" negated="false">
+              <position x="35" y="78"/>
+              <connectionPointOut>
+                <relPosition x="79" y="15"/>
+              </connectionPointOut>
+              <expression>Reset</expression>
+            </inVariable>
+            <block localId="4" typeName="CounterFBD" instanceName="CounterFBD0" executionOrderId="0" height="54" width="121">
+              <position x="211" y="146"/>
+              <inputVariables>
+                <variable formalParameter="Reset">
+                  <connectionPointIn>
+                    <relPosition x="0" y="37"/>
+                    <connection refLocalId="13">
+                      <position x="211" y="183"/>
+                      <position x="115" y="183"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="121" y="37"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <comment localId="6" height="365" width="569">
+              <position x="620" y="130"/>
+              <content>
+                <xhtml:p><![CDATA[In this example function block with the same functionality 
+is created using all five IEC 61131-3 programing languages:
+- IL;
+- FBD;
+- LD;
+- ST;
+- SFC.
+
+
+
+
+Function block is a counter with reset control input.
+If reset is True counter value is reset to the value defined by
+global configuration constant ResetCounterValue. 
+If reset is False, counter is incremented every cycle.
+]]></xhtml:p>
+              </content>
+            </comment>
+            <block localId="7" typeName="CounterSFC" instanceName="CounterSFC0" executionOrderId="0" height="52" width="121">
+              <position x="211" y="237"/>
+              <inputVariables>
+                <variable formalParameter="Reset">
+                  <connectionPointIn>
+                    <relPosition x="0" y="36"/>
+                    <connection refLocalId="12">
+                      <position x="211" y="273"/>
+                      <position x="103" y="273"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="121" y="36"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <block localId="9" typeName="CounterIL" instanceName="CounterIL0" executionOrderId="0" height="62" width="121">
+              <position x="211" y="322"/>
+              <inputVariables>
+                <variable formalParameter="Reset">
+                  <connectionPointIn>
+                    <relPosition x="0" y="41"/>
+                    <connection refLocalId="10">
+                      <position x="211" y="363"/>
+                      <position x="101" y="363"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="121" y="41"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="10" executionOrderId="0" height="30" width="67" negated="false">
+              <position x="34" y="348"/>
+              <connectionPointOut>
+                <relPosition x="67" y="15"/>
+              </connectionPointOut>
+              <expression>Reset</expression>
+            </inVariable>
+            <inVariable localId="12" executionOrderId="0" height="30" width="67" negated="false">
+              <position x="36" y="258"/>
+              <connectionPointOut>
+                <relPosition x="67" y="15"/>
+              </connectionPointOut>
+              <expression>Reset</expression>
+            </inVariable>
+            <inVariable localId="13" executionOrderId="0" height="30" width="79" negated="false">
+              <position x="36" y="168"/>
+              <connectionPointOut>
+                <relPosition x="79" y="15"/>
+              </connectionPointOut>
+              <expression>Reset</expression>
+            </inVariable>
+            <block localId="14" typeName="CounterLD" instanceName="CounterLD0" executionOrderId="0" height="62" width="124">
+              <position x="210" y="412"/>
+              <inputVariables>
+                <variable formalParameter="Reset">
+                  <connectionPointIn>
+                    <relPosition x="0" y="41"/>
+                    <connection refLocalId="16">
+                      <position x="210" y="453"/>
+                      <position x="100" y="453"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="Out">
+                  <connectionPointOut>
+                    <relPosition x="124" y="41"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="16" executionOrderId="0" height="30" width="64" negated="false">
+              <position x="36" y="438"/>
+              <connectionPointOut>
+                <relPosition x="64" y="15"/>
+              </connectionPointOut>
+              <expression>Reset</expression>
+            </inVariable>
+            <block localId="17" typeName="AverageVal" executionOrderId="0" height="470" width="100">
+              <position x="514" y="28"/>
+              <inputVariables>
+                <variable formalParameter="Cnt1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="65"/>
+                    <connection refLocalId="3">
+                      <position x="514" y="93"/>
+                      <position x="474" y="93"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="Cnt2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="155"/>
+                    <connection refLocalId="5">
+                      <position x="514" y="183"/>
+                      <position x="473" y="183"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="Cnt3">
+                  <connectionPointIn>
+                    <relPosition x="0" y="245"/>
+                    <connection refLocalId="8">
+                      <position x="514" y="273"/>
+                      <position x="472" y="273"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="Cnt4">
+                  <connectionPointIn>
+                    <relPosition x="0" y="335"/>
+                    <connection refLocalId="11">
+                      <position x="514" y="363"/>
+                      <position x="469" y="363"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="Cnt5">
+                  <connectionPointIn>
+                    <relPosition x="0" y="425"/>
+                    <connection refLocalId="15">
+                      <position x="514" y="453"/>
+                      <position x="469" y="453"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="100" y="65"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <outVariable localId="18" executionOrderId="0" height="30" width="55" negated="false">
+              <position x="649" y="78"/>
+              <connectionPointIn>
+                <relPosition x="0" y="15"/>
+                <connection refLocalId="17" formalParameter="OUT">
+                  <position x="649" y="93"/>
+                  <position x="614" y="93"/>
+                </connection>
+              </connectionPointIn>
+              <expression>AVCnt</expression>
+            </outVariable>
+            <inOutVariable localId="3" executionOrderId="0" height="30" width="106" negatedOut="false" negatedIn="false">
+              <position x="368" y="78"/>
+              <connectionPointIn>
+                <relPosition x="0" y="15"/>
+                <connection refLocalId="1" formalParameter="OUT">
+                  <position x="368" y="93"/>
+                  <position x="332" y="93"/>
+                </connection>
+              </connectionPointIn>
+              <connectionPointOut>
+                <relPosition x="106" y="15"/>
+              </connectionPointOut>
+              <expression>Cnt1</expression>
+            </inOutVariable>
+            <inOutVariable localId="5" executionOrderId="0" height="30" width="103" negatedOut="false" negatedIn="false">
+              <position x="370" y="168"/>
+              <connectionPointIn>
+                <relPosition x="0" y="15"/>
+                <connection refLocalId="4" formalParameter="OUT">
+                  <position x="370" y="183"/>
+                  <position x="332" y="183"/>
+                </connection>
+              </connectionPointIn>
+              <connectionPointOut>
+                <relPosition x="103" y="15"/>
+              </connectionPointOut>
+              <expression>Cnt2</expression>
+            </inOutVariable>
+            <inOutVariable localId="8" executionOrderId="0" height="30" width="97" negatedOut="false" negatedIn="false">
+              <position x="375" y="258"/>
+              <connectionPointIn>
+                <relPosition x="0" y="15"/>
+                <connection refLocalId="7" formalParameter="OUT">
+                  <position x="375" y="273"/>
+                  <position x="332" y="273"/>
+                </connection>
+              </connectionPointIn>
+              <connectionPointOut>
+                <relPosition x="97" y="15"/>
+              </connectionPointOut>
+              <expression>Cnt3</expression>
+            </inOutVariable>
+            <inOutVariable localId="11" executionOrderId="0" height="30" width="91" negatedOut="false" negatedIn="false">
+              <position x="378" y="348"/>
+              <connectionPointIn>
+                <relPosition x="0" y="15"/>
+                <connection refLocalId="9" formalParameter="OUT">
+                  <position x="378" y="363"/>
+                  <position x="332" y="363"/>
+                </connection>
+              </connectionPointIn>
+              <connectionPointOut>
+                <relPosition x="91" y="15"/>
+              </connectionPointOut>
+              <expression>Cnt4</expression>
+            </inOutVariable>
+            <inOutVariable localId="15" executionOrderId="0" height="30" width="88" negatedOut="false" negatedIn="false">
+              <position x="381" y="438"/>
+              <connectionPointIn>
+                <relPosition x="0" y="15"/>
+                <connection refLocalId="14" formalParameter="Out">
+                  <position x="381" y="453"/>
+                  <position x="334" y="453"/>
+                </connection>
+              </connectionPointIn>
+              <connectionPointOut>
+                <relPosition x="88" y="15"/>
+              </connectionPointOut>
+              <expression>Cnt5</expression>
+            </inOutVariable>
+          </FBD>
+        </body>
+      </pou>
+      <pou name="CounterST" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="Reset">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+          </inputVars>
+          <localVars>
+            <variable name="Cnt">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+          </localVars>
+          <outputVars>
+            <variable name="OUT">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+          </outputVars>
+          <externalVars constant="true">
+            <variable name="ResetCounterValue">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+          </externalVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[IF Reset THEN
+  Cnt := ResetCounterValue;
+ELSE
+  Cnt := Cnt + 1;
+END_IF;
+
+Out := Cnt;]]></xhtml:p>
+          </ST>
+        </body>
+      </pou>
+      <pou name="CounterFBD" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="Reset">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="OUT">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+          </outputVars>
+          <localVars>
+            <variable name="Cnt">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+          </localVars>
+          <externalVars constant="true">
+            <variable name="ResetCounterValue">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+          </externalVars>
+        </interface>
+        <body>
+          <FBD>
+            <inVariable localId="1" executionOrderId="0" height="30" width="61" negated="false">
+              <position x="321" y="58"/>
+              <connectionPointOut>
+                <relPosition x="61" y="15"/>
+              </connectionPointOut>
+              <expression>Reset</expression>
+            </inVariable>
+            <outVariable localId="2" executionOrderId="0" height="30" width="39" negated="false">
+              <position x="675" y="137"/>
+              <connectionPointIn>
+                <relPosition x="0" y="15"/>
+                <connection refLocalId="3">
+                  <position x="675" y="152"/>
+                  <position x="589" y="152"/>
+                </connection>
+              </connectionPointIn>
+              <expression>OUT</expression>
+            </outVariable>
+            <inOutVariable localId="3" executionOrderId="0" height="30" width="37" negatedOut="false" negatedIn="false">
+              <position x="557" y="137"/>
+              <connectionPointIn>
+                <relPosition x="0" y="15"/>
+                <connection refLocalId="7" formalParameter="OUT">
+                  <position x="557" y="152"/>
+                  <position x="527" y="152"/>
+                  <position x="527" y="130"/>
+                  <position x="517" y="130"/>
+                </connection>
+              </connectionPointIn>
+              <connectionPointOut>
+                <relPosition x="37" y="15"/>
+              </connectionPointOut>
+              <expression>Cnt</expression>
+            </inOutVariable>
+            <block localId="4" typeName="ADD" executionOrderId="0" height="80" width="69">
+              <position x="328" y="115"/>
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="35"/>
+                    <connection refLocalId="6">
+                      <position x="328" y="150"/>
+                      <position x="275" y="150"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="65"/>
+                    <connection refLocalId="3">
+                      <position x="328" y="180"/>
+                      <position x="317" y="180"/>
+                      <position x="317" y="213"/>
+                      <position x="604" y="213"/>
+                      <position x="604" y="152"/>
+                      <position x="594" y="152"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="69" y="35"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="5" executionOrderId="0" height="30" width="163" negated="false">
+              <position x="222" y="256"/>
+              <connectionPointOut>
+                <relPosition x="163" y="15"/>
+              </connectionPointOut>
+              <expression>ResetCounterValue</expression>
+            </inVariable>
+            <inVariable localId="6" executionOrderId="0" height="30" width="21" negated="false">
+              <position x="254" y="135"/>
+              <connectionPointOut>
+                <relPosition x="21" y="15"/>
+              </connectionPointOut>
+              <expression>1</expression>
+            </inVariable>
+            <block localId="7" typeName="SEL" executionOrderId="0" height="80" width="69">
+              <position x="448" y="100"/>
+              <inputVariables>
+                <variable formalParameter="G">
+                  <connectionPointIn>
+                    <relPosition x="0" y="30"/>
+                    <connection refLocalId="1">
+                      <position x="448" y="130"/>
+                      <position x="415" y="130"/>
+                      <position x="415" y="73"/>
+                      <position x="382" y="73"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN0">
+                  <connectionPointIn>
+                    <relPosition x="0" y="50"/>
+                    <connection refLocalId="4" formalParameter="OUT">
+                      <position x="448" y="150"/>
+                      <position x="397" y="150"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="70"/>
+                    <connection refLocalId="5">
+                      <position x="448" y="170"/>
+                      <position x="414" y="170"/>
+                      <position x="414" y="271"/>
+                      <position x="385" y="271"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="69" y="30"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+          </FBD>
+        </body>
+      </pou>
+      <pou name="CounterSFC" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="Reset">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="OUT">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+          </outputVars>
+          <localVars>
+            <variable name="Cnt">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+          </localVars>
+          <externalVars constant="true">
+            <variable name="ResetCounterValue">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+          </externalVars>
+        </interface>
+        <actions/>
+        <body>
+          <SFC>
+            <step localId="1" name="Start" initialStep="true" height="34" width="90">
+              <position x="241" y="14"/>
+              <connectionPointOut formalParameter="">
+                <relPosition x="45" y="34"/>
+              </connectionPointOut>
+            </step>
+            <selectionDivergence localId="2" height="1" width="431">
+              <position x="70" y="86"/>
+              <connectionPointIn>
+                <relPosition x="216" y="0"/>
+                <connection refLocalId="1">
+                  <position x="286" y="86"/>
+                  <position x="286" y="42"/>
+                </connection>
+              </connectionPointIn>
+              <connectionPointOut formalParameter="">
+                <relPosition x="0" y="1"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="431" y="1"/>
+              </connectionPointOut>
+            </selectionDivergence>
+            <transition localId="3" height="2" width="20">
+              <position x="491" y="132"/>
+              <connectionPointIn>
+                <relPosition x="10" y="0"/>
+                <connection refLocalId="2">
+                  <position x="501" y="132"/>
+                  <position x="501" y="87"/>
+                </connection>
+              </connectionPointIn>
+              <connectionPointOut>
+                <relPosition x="10" y="2"/>
+              </connectionPointOut>
+              <condition>
+                <inline name="">
+                  <ST>
+                    <xhtml:p><![CDATA[Reset]]></xhtml:p>
+                  </ST>
+                </inline>
+              </condition>
+            </transition>
+            <transition localId="4" height="2" width="20" executionOrderId="0">
+              <position x="60" y="135"/>
+              <connectionPointIn>
+                <relPosition x="10" y="0"/>
+                <connection refLocalId="2">
+                  <position x="70" y="135"/>
+                  <position x="70" y="87"/>
+                </connection>
+              </connectionPointIn>
+              <connectionPointOut>
+                <relPosition x="10" y="2"/>
+              </connectionPointOut>
+              <condition>
+                <inline name="">
+                  <ST>
+                    <xhtml:p><![CDATA[NOT Reset]]></xhtml:p>
+                  </ST>
+                </inline>
+              </condition>
+            </transition>
+            <step localId="5" name="ResetCounter" initialStep="false" height="30" width="134">
+              <position x="434" y="190"/>
+              <connectionPointIn>
+                <relPosition x="67" y="0"/>
+                <connection refLocalId="3">
+                  <position x="501" y="190"/>
+                  <position x="501" y="134"/>
+                </connection>
+              </connectionPointIn>
+              <connectionPointOut formalParameter="">
+                <relPosition x="67" y="30"/>
+              </connectionPointOut>
+              <connectionPointOutAction formalParameter="">
+                <relPosition x="134" y="15"/>
+              </connectionPointOutAction>
+            </step>
+            <actionBlock localId="6" height="63" width="254">
+              <position x="641" y="190"/>
+              <connectionPointIn>
+                <relPosition x="0" y="15"/>
+                <connection refLocalId="5">
+                  <position x="641" y="205"/>
+                  <position x="568" y="205"/>
+                </connection>
+              </connectionPointIn>
+              <action localId="0">
+                <relPosition x="0" y="0"/>
+                <inline>
+                  <ST>
+                    <xhtml:p><![CDATA[Cnt := ResetCounterValue;]]></xhtml:p>
+                  </ST>
+                </inline>
+              </action>
+              <action localId="0">
+                <relPosition x="0" y="0"/>
+                <inline>
+                  <ST>
+                    <xhtml:p><![CDATA[OUT := Cnt;]]></xhtml:p>
+                  </ST>
+                </inline>
+              </action>
+            </actionBlock>
+            <step localId="7" name="Count" initialStep="false" height="30" width="85" executionOrderId="0">
+              <position x="28" y="191"/>
+              <connectionPointIn>
+                <relPosition x="42" y="0"/>
+                <connection refLocalId="4">
+                  <position x="70" y="191"/>
+                  <position x="70" y="137"/>
+                </connection>
+              </connectionPointIn>
+              <connectionPointOut formalParameter="">
+                <relPosition x="42" y="30"/>
+              </connectionPointOut>
+              <connectionPointOutAction formalParameter="">
+                <relPosition x="85" y="15"/>
+              </connectionPointOutAction>
+            </step>
+            <actionBlock localId="8" height="52" width="164" executionOrderId="0">
+              <position x="154" y="191"/>
+              <connectionPointIn>
+                <relPosition x="0" y="15"/>
+                <connection refLocalId="7">
+                  <position x="154" y="206"/>
+                  <position x="113" y="206"/>
+                </connection>
+              </connectionPointIn>
+              <action localId="0">
+                <relPosition x="0" y="0"/>
+                <inline>
+                  <ST>
+                    <xhtml:p><![CDATA[Cnt := Cnt + 1;]]></xhtml:p>
+                  </ST>
+                </inline>
+              </action>
+              <action localId="0">
+                <relPosition x="0" y="0"/>
+                <inline>
+                  <ST>
+                    <xhtml:p><![CDATA[OUT := Cnt;]]></xhtml:p>
+                  </ST>
+                </inline>
+              </action>
+            </actionBlock>
+            <selectionConvergence localId="10" height="1" width="431">
+              <position x="70" y="273"/>
+              <connectionPointIn>
+                <relPosition x="0" y="0"/>
+                <connection refLocalId="13">
+                  <position x="70" y="273"/>
+                  <position x="70" y="244"/>
+                </connection>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="431" y="0"/>
+                <connection refLocalId="14">
+                  <position x="501" y="273"/>
+                  <position x="501" y="250"/>
+                </connection>
+              </connectionPointIn>
+              <connectionPointOut>
+                <relPosition x="216" y="1"/>
+              </connectionPointOut>
+            </selectionConvergence>
+            <jumpStep localId="12" targetName="Start" height="13" width="12">
+              <position x="280" y="317"/>
+              <connectionPointIn>
+                <relPosition x="6" y="0"/>
+                <connection refLocalId="10">
+                  <position x="286" y="317"/>
+                  <position x="286" y="274"/>
+                </connection>
+              </connectionPointIn>
+            </jumpStep>
+            <transition localId="13" height="2" width="20" executionOrderId="0">
+              <position x="60" y="242"/>
+              <connectionPointIn>
+                <relPosition x="10" y="0"/>
+                <connection refLocalId="7">
+                  <position x="70" y="242"/>
+                  <position x="70" y="215"/>
+                </connection>
+              </connectionPointIn>
+              <connectionPointOut>
+                <relPosition x="10" y="2"/>
+              </connectionPointOut>
+              <condition>
+                <inline name="">
+                  <ST>
+                    <xhtml:p><![CDATA[Reset]]></xhtml:p>
+                  </ST>
+                </inline>
+              </condition>
+            </transition>
+            <transition localId="14" height="2" width="20" executionOrderId="0">
+              <position x="491" y="248"/>
+              <connectionPointIn>
+                <relPosition x="10" y="0"/>
+                <connection refLocalId="5">
+                  <position x="501" y="248"/>
+                  <position x="501" y="220"/>
+                </connection>
+              </connectionPointIn>
+              <connectionPointOut>
+                <relPosition x="10" y="2"/>
+              </connectionPointOut>
+              <condition>
+                <inline name="">
+                  <ST>
+                    <xhtml:p><![CDATA[NOT Reset]]></xhtml:p>
+                  </ST>
+                </inline>
+              </condition>
+            </transition>
+          </SFC>
+        </body>
+      </pou>
+      <pou name="CounterIL" pouType="functionBlock">
+        <interface>
+          <localVars>
+            <variable name="Cnt">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+          </localVars>
+          <inputVars>
+            <variable name="Reset">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="OUT">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+          </outputVars>
+          <externalVars constant="true">
+            <variable name="ResetCounterValue">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+          </externalVars>
+        </interface>
+        <body>
+          <IL>
+            <xhtml:p><![CDATA[LD Reset
+JMPC ResetCnt
+
+(* increment counter *)
+LD Cnt
+ADD 1
+JMP QuitFb
+
+ResetCnt:
+(* reset counter *)
+LD ResetCounterValue
+
+QuitFb:
+(* save results *)
+ST Cnt
+ST Out
+]]></xhtml:p>
+          </IL>
+        </body>
+      </pou>
+      <pou name="CounterLD" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="Reset">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="Out">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+          </outputVars>
+          <localVars>
+            <variable name="Cnt">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+          </localVars>
+          <externalVars constant="true">
+            <variable name="ResetCounterValue">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+          </externalVars>
+        </interface>
+        <body>
+          <LD>
+            <outVariable localId="2" executionOrderId="0" height="30" width="34" negated="false">
+              <position x="527" y="87"/>
+              <connectionPointIn>
+                <relPosition x="0" y="15"/>
+                <connection refLocalId="3">
+                  <position x="527" y="102"/>
+                  <position x="443" y="102"/>
+                </connection>
+              </connectionPointIn>
+              <expression>Out</expression>
+            </outVariable>
+            <inOutVariable localId="3" executionOrderId="0" height="30" width="34" negatedOut="false" negatedIn="false">
+              <position x="409" y="87"/>
+              <connectionPointIn>
+                <relPosition x="0" y="15"/>
+                <connection refLocalId="7" formalParameter="OUT">
+                  <position x="409" y="102"/>
+                  <position x="367" y="102"/>
+                </connection>
+              </connectionPointIn>
+              <connectionPointOut>
+                <relPosition x="34" y="15"/>
+              </connectionPointOut>
+              <expression>Cnt</expression>
+            </inOutVariable>
+            <block localId="4" typeName="ADD" executionOrderId="0" height="80" width="67">
+              <position x="180" y="87"/>
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="35"/>
+                    <connection refLocalId="6">
+                      <position x="180" y="122"/>
+                      <position x="127" y="122"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="65"/>
+                    <connection refLocalId="3">
+                      <position x="180" y="152"/>
+                      <position x="169" y="152"/>
+                      <position x="169" y="185"/>
+                      <position x="453" y="185"/>
+                      <position x="453" y="102"/>
+                      <position x="443" y="102"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="67" y="35"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="5" executionOrderId="0" height="30" width="158" negated="false">
+              <position x="74" y="228"/>
+              <connectionPointOut>
+                <relPosition x="158" y="15"/>
+              </connectionPointOut>
+              <expression>ResetCounterValue</expression>
+            </inVariable>
+            <inVariable localId="6" executionOrderId="0" height="30" width="21" negated="false">
+              <position x="106" y="107"/>
+              <connectionPointOut>
+                <relPosition x="21" y="15"/>
+              </connectionPointOut>
+              <expression>1</expression>
+            </inVariable>
+            <block localId="7" typeName="SEL" executionOrderId="0" height="80" width="67">
+              <position x="300" y="72"/>
+              <inputVariables>
+                <variable formalParameter="G">
+                  <connectionPointIn>
+                    <relPosition x="0" y="30"/>
+                    <connection refLocalId="9">
+                      <position x="300" y="102"/>
+                      <position x="266" y="102"/>
+                      <position x="266" y="62"/>
+                      <position x="134" y="62"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN0">
+                  <connectionPointIn>
+                    <relPosition x="0" y="50"/>
+                    <connection refLocalId="4" formalParameter="OUT">
+                      <position x="300" y="122"/>
+                      <position x="247" y="122"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="70"/>
+                    <connection refLocalId="5">
+                      <position x="300" y="142"/>
+                      <position x="266" y="142"/>
+                      <position x="266" y="243"/>
+                      <position x="232" y="243"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="67" y="30"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <leftPowerRail localId="8" height="40" width="3">
+              <position x="46" y="42"/>
+              <connectionPointOut formalParameter="">
+                <relPosition x="3" y="20"/>
+              </connectionPointOut>
+            </leftPowerRail>
+            <contact localId="9" height="15" width="21" negated="false">
+              <position x="113" y="54"/>
+              <connectionPointIn>
+                <relPosition x="0" y="8"/>
+                <connection refLocalId="8">
+                  <position x="113" y="62"/>
+                  <position x="49" y="62"/>
+                </connection>
+              </connectionPointIn>
+              <connectionPointOut>
+                <relPosition x="21" y="8"/>
+              </connectionPointOut>
+              <variable>Reset</variable>
+            </contact>
+          </LD>
+        </body>
+      </pou>
+    </pous>
+  </types>
+  <instances>
+    <configurations>
+      <configuration name="config">
+        <resource name="resource1">
+          <task name="plc_task" priority="1" interval="T#100ms">
+            <pouInstance name="plc_task_instance" typeName="plc_prg"/>
+          </task>
+        </resource>
+        <globalVars constant="true">
+          <variable name="ResetCounterValue">
+            <type>
+              <INT/>
+            </type>
+            <initialValue>
+              <simpleValue value="17"/>
+            </initialValue>
+          </variable>
+        </globalVars>
+      </configuration>
+    </configurations>
+  </instances>
+</project>

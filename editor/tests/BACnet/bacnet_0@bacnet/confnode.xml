@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='utf-8'?>
+<BACnetServerNode xmlns:xsd="http://www.w3.org/2001/XMLSchema" UDP_Port_Number="47808" BACnet_Device_ID="3" BACnet_Communication_Control_Password=" " BACnet_Device_Location="Beremiz lab" Network_Interface="virbr0"/>

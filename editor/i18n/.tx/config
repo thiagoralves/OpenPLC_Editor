@@ -1,0 +1,10 @@
+[main]
+host = https://www.transifex.com
+
+[beremiz-ide.beremiz]
+file_filter = Beremiz_<lang>.po
+minimum_perc = 0
+source_file = messages.pot
+source_lang = en
+type = PO
+

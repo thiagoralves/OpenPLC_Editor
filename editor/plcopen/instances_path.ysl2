@@ -1,0 +1,110 @@
+include yslt_noindent.yml2
+istylesheet xmlns:ppx="http://www.plcopen.org/xml/tc6_0201"
+            xmlns:xhtml="http://www.w3.org/1999/xhtml"
+            xmlns:ns="beremiz" 
+            extension-element-prefixes="ns" 
+            exclude-result-prefixes="ns" {
+    
+    param "instance_type";
+    
+    template "text()";
+    
+    variable "project", "ns:GetProject()";
+    
+    variable "stdlib", "ns:GetStdLibs()";
+
+    variable "extensions", "ns:GetExtensions()";
+
+    variable "all_types", "($project | $stdlib | $extensions)/ppx:types";
+
+    template "ppx:project" {
+        apply "ppx:instances/ppx:configurations/ppx:configuration";
+    }
+    
+    template "ppx:configuration" {
+        apply "ppx:globalVars/ppx:variable[ppx:type/ppx:derived] | ppx:resource" {
+            with "parent_path" > «@name»
+        }
+    }
+    
+    template "ppx:resource" {
+        param "parent_path";
+        variable "resource_path" > «$parent_path».«@name»
+        apply "ppx:globalVars/ppx:variable[ppx:type/ppx:derived] | ppx:pouInstance | ppx:task/ppx:pouInstance" {
+            with "parent_path" > «$resource_path»
+        }
+    }
+    
+    template "ppx:pouInstance" {
+        param "parent_path";
+        variable "pou_instance_path" > «$parent_path».«@name»
+        choose {
+            when "@typeName=$instance_type" {
+                value "ns:AddInstance($pou_instance_path)";
+            }
+            otherwise {
+                variable "type_name" > «@typeName»
+                apply """$all_types/ppx:pous/ppx:pou[@name=$type_name] | \
+                         $all_types/ppx:dataTypes/ppx:dataType[@name=$type_name]""" {
+                    with "instance_path" > «$pou_instance_path»
+                }
+            }
+        }
+    }
+    
+    template "ppx:pou" {
+        param "instance_path";
+        apply "ppx:interface/*/ppx:variable[ppx:type/ppx:derived]" {
+            with "parent_path" > «$instance_path»
+        }
+    }
+    
+    template "ppx:dataType" {
+        param "instance_path";
+        apply "ppx:baseType/*[self::ppx:derived or self::ppx:struct or self::ppx:array]" {
+            with "parent_path" > «$instance_path»
+        }
+    }
+    
+    template "ppx:variable" {
+        param "parent_path";
+        variable "variable_path" > «$parent_path».«@name»
+        apply "ppx:type/ppx:derived" {
+            with "variable_path" > «$variable_path»
+        }
+    }
+    
+    template "ppx:derived" {
+        param "variable_path";
+        choose {
+            when "@name=$instance_type" {
+                value "ns:AddInstance($variable_path)";
+            }
+            otherwise {
+                variable "type_name" > «@name»
+                apply """$all_types/ppx:pous/ppx:pou[@name=$type_name] | \
+                         $all_types/ppx:dataTypes/ppx:dataType[@name=$type_name]""" {
+                    with "instance_path" > «$variable_path»
+                }
+            }
+        }
+    }
+    
+    template "ppx:struct" {
+        param "variable_path";
+        foreach "ppx:variable[ppx:type/ppx:derived or ppx:type/ppx:struct or ppx:type/ppx:array]" {
+            variable "element_path" > «$variable_path».«@name»
+        }
+        apply "ppx:type/*[self::ppx:derived or self::ppx:struct or self::ppx:array]" {
+            with "variable_path" > «$element_path»
+        }
+    }
+    
+    template "ppx:array" {
+        param "variable_path";
+        apply "ppx:baseType/*[self::ppx:derived or self::ppx:struct or self::ppx:array]" {
+            with "variable_path" > «$variable_path»
+        }
+    }
+    
+}

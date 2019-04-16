@@ -1,0 +1,27 @@
+#Encoding of BACnet Object Types;;;
+#Code;Object Type;;
+0;Analog Input;;
+1;Analog Output;;
+2;Analog Value;;
+3;Binary Input ;;
+4;Binary Output;;
+5;Binary Value;;
+6;Calendar;;
+7;Command;;
+8;Device;;
+9;Event-Enrollment;;
+10;File;;
+11;Group;;
+12;Loop;;
+13;Multistate Input;;
+14;Multistate Output
+15;Notification Class
+16;Program
+17;Schedule
+18;Averaging
+19;Multistate Value
+20;Trend Log
+21;Life Safety Point
+22;Life Safety Zone
+23;Accumulator
+24;Pulse Converter

@@ -1,0 +1,1364 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="http://www.plcopen.org/xml/tc6.xsd" xmlns:ppx="http://www.plcopen.org/xml/tc6.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xhtml="http://www.w3.org/1999/xhtml" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xsd:element name="project">
+		<xsd:annotation>
+			<xsd:documentation>The complete project</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="fileHeader">
+					<xsd:complexType>
+						<xsd:attribute name="companyName" type="xsd:string" use="required"/>
+						<xsd:attribute name="companyURL" type="xsd:anyURI" use="optional"/>
+						<xsd:attribute name="productName" type="xsd:string" use="required"/>
+						<xsd:attribute name="productVersion" type="xsd:string" use="required"/>
+						<xsd:attribute name="productRelease" type="xsd:string" use="optional"/>
+						<xsd:attribute name="creationDateTime" type="xsd:dateTime" use="required"/>
+						<xsd:attribute name="contentDescription" type="xsd:string" use="optional"/>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="contentHeader">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="Comment" type="xsd:string" minOccurs="0"/>
+							<xsd:element name="coordinateInfo">
+								<xsd:complexType>
+									<xsd:sequence>
+										<xsd:element name="pageSize" minOccurs="0">
+											<xsd:complexType>
+												<xsd:attribute name="x" type="xsd:decimal" use="required"/>
+												<xsd:attribute name="y" type="xsd:decimal" use="required"/>
+											</xsd:complexType>
+										</xsd:element>
+										<xsd:element name="fbd">
+											<xsd:complexType>
+												<xsd:sequence>
+													<xsd:element name="scaling">
+														<xsd:complexType>
+															<xsd:attribute name="x" type="xsd:decimal" use="required"/>
+															<xsd:attribute name="y" type="xsd:decimal" use="required"/>
+														</xsd:complexType>
+													</xsd:element>
+												</xsd:sequence>
+											</xsd:complexType>
+										</xsd:element>
+										<xsd:element name="ld">
+											<xsd:complexType>
+												<xsd:sequence>
+													<xsd:element name="scaling">
+														<xsd:complexType>
+															<xsd:attribute name="x" type="xsd:decimal" use="required"/>
+															<xsd:attribute name="y" type="xsd:decimal" use="required"/>
+														</xsd:complexType>
+													</xsd:element>
+												</xsd:sequence>
+											</xsd:complexType>
+										</xsd:element>
+										<xsd:element name="sfc">
+											<xsd:complexType>
+												<xsd:sequence>
+													<xsd:element name="scaling">
+														<xsd:complexType>
+															<xsd:attribute name="x" type="xsd:decimal" use="required"/>
+															<xsd:attribute name="y" type="xsd:decimal" use="required"/>
+														</xsd:complexType>
+													</xsd:element>
+												</xsd:sequence>
+											</xsd:complexType>
+										</xsd:element>
+									</xsd:sequence>
+								</xsd:complexType>
+							</xsd:element>
+						</xsd:sequence>
+						<xsd:attribute name="name" type="xsd:string" use="required"/>
+						<xsd:attribute name="version" type="xsd:string" use="optional"/>
+						<xsd:attribute name="modificationDateTime" type="xsd:dateTime" use="optional"/>
+						<xsd:attribute name="organization" type="xsd:string" use="optional"/>
+						<xsd:attribute name="author" type="xsd:string" use="optional"/>
+						<xsd:attribute name="language" type="xsd:language" use="optional">
+							<xsd:annotation>
+								<xsd:documentation>Documentation language of the project e.g. "en-US"</xsd:documentation>
+							</xsd:annotation>
+						</xsd:attribute>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="types">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="dataTypes">
+								<xsd:complexType>
+									<xsd:sequence>
+										<xsd:element name="dataType" minOccurs="0" maxOccurs="unbounded">
+											<xsd:complexType>
+												<xsd:sequence>
+													<xsd:element name="baseType" type="ppx:dataType"/>
+													<xsd:element name="initialValue" type="ppx:value" minOccurs="0"/>
+													<xsd:element name="documentation" type="ppx:formattedText" minOccurs="0">
+														<xsd:annotation>
+															<xsd:documentation>Additional userspecific information to the element</xsd:documentation>
+														</xsd:annotation>
+													</xsd:element>
+												</xsd:sequence>
+												<xsd:attribute name="name" type="xsd:string" use="required"/>
+											</xsd:complexType>
+										</xsd:element>
+									</xsd:sequence>
+								</xsd:complexType>
+							</xsd:element>
+							<xsd:element name="pous">
+								<xsd:complexType>
+									<xsd:sequence>
+										<xsd:element name="pou" minOccurs="0" maxOccurs="unbounded">
+											<xsd:complexType>
+												<xsd:sequence>
+													<xsd:element name="interface" minOccurs="0">
+														<xsd:complexType>
+															<xsd:sequence>
+																<xsd:element name="returnType" type="ppx:dataType" minOccurs="0"/>
+																<xsd:choice minOccurs="0" maxOccurs="unbounded">
+																	<xsd:element name="localVars">
+																		<xsd:complexType>
+																			<xsd:complexContent>
+																				<xsd:extension base="ppx:varList"/>
+																			</xsd:complexContent>
+																		</xsd:complexType>
+																	</xsd:element>
+																	<xsd:element name="tempVars">
+																		<xsd:complexType>
+																			<xsd:complexContent>
+																				<xsd:extension base="ppx:varList"/>
+																			</xsd:complexContent>
+																		</xsd:complexType>
+																	</xsd:element>
+																	<xsd:element name="inputVars">
+																		<xsd:complexType>
+																			<xsd:complexContent>
+																				<xsd:extension base="ppx:varList"/>
+																			</xsd:complexContent>
+																		</xsd:complexType>
+																	</xsd:element>
+																	<xsd:element name="outputVars">
+																		<xsd:complexType>
+																			<xsd:complexContent>
+																				<xsd:extension base="ppx:varList"/>
+																			</xsd:complexContent>
+																		</xsd:complexType>
+																	</xsd:element>
+																	<xsd:element name="inOutVars">
+																		<xsd:complexType>
+																			<xsd:complexContent>
+																				<xsd:extension base="ppx:varList"/>
+																			</xsd:complexContent>
+																		</xsd:complexType>
+																	</xsd:element>
+																	<xsd:element name="externalVars">
+																		<xsd:complexType>
+																			<xsd:complexContent>
+																				<xsd:extension base="ppx:varList"/>
+																			</xsd:complexContent>
+																		</xsd:complexType>
+																	</xsd:element>
+																	<xsd:element name="globalVars">
+																		<xsd:complexType>
+																			<xsd:complexContent>
+																				<xsd:extension base="ppx:varList"/>
+																			</xsd:complexContent>
+																		</xsd:complexType>
+																	</xsd:element>
+																	<xsd:element name="accessVars" type="ppx:varList"/>
+																</xsd:choice>
+																<xsd:element name="documentation" type="ppx:formattedText" minOccurs="0">
+																	<xsd:annotation>
+																		<xsd:documentation>Additional userspecific information to the element</xsd:documentation>
+																	</xsd:annotation>
+																</xsd:element>
+															</xsd:sequence>
+														</xsd:complexType>
+													</xsd:element>
+													<xsd:element name="actions" minOccurs="0">
+														<xsd:complexType>
+															<xsd:sequence>
+																<xsd:element name="action" minOccurs="0" maxOccurs="unbounded">
+																	<xsd:complexType>
+																		<xsd:sequence>
+																			<xsd:element name="body" type="ppx:body"/>
+																			<xsd:element name="documentation" type="ppx:formattedText" minOccurs="0">
+																				<xsd:annotation>
+																					<xsd:documentation>Additional userspecific information to the element</xsd:documentation>
+																				</xsd:annotation>
+																			</xsd:element>
+																		</xsd:sequence>
+																		<xsd:attribute name="name" type="xsd:string" use="required"/>
+																	</xsd:complexType>
+																</xsd:element>
+															</xsd:sequence>
+														</xsd:complexType>
+													</xsd:element>
+													<xsd:element name="transitions" minOccurs="0">
+														<xsd:complexType>
+															<xsd:sequence>
+																<xsd:element name="transition" minOccurs="0" maxOccurs="unbounded">
+																	<xsd:complexType>
+																		<xsd:sequence>
+																			<xsd:element name="body" type="ppx:body"/>
+																			<xsd:element name="documentation" type="ppx:formattedText" minOccurs="0">
+																				<xsd:annotation>
+																					<xsd:documentation>Additional userspecific information to the element</xsd:documentation>
+																				</xsd:annotation>
+																			</xsd:element>
+																		</xsd:sequence>
+																		<xsd:attribute name="name" type="xsd:string" use="required"/>
+																	</xsd:complexType>
+																</xsd:element>
+															</xsd:sequence>
+														</xsd:complexType>
+													</xsd:element>
+													<xsd:element name="body" type="ppx:body" minOccurs="0"/>
+													<xsd:element name="documentation" type="ppx:formattedText" minOccurs="0">
+														<xsd:annotation>
+															<xsd:documentation>Additional userspecific information to the element</xsd:documentation>
+														</xsd:annotation>
+													</xsd:element>
+												</xsd:sequence>
+												<xsd:attribute name="name" type="xsd:string" use="required"/>
+												<xsd:attribute name="pouType" type="ppx:pouType" use="required"/>
+											</xsd:complexType>
+										</xsd:element>
+									</xsd:sequence>
+								</xsd:complexType>
+							</xsd:element>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="instances">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="configurations">
+								<xsd:complexType>
+									<xsd:sequence>
+										<xsd:element name="configuration" minOccurs="0" maxOccurs="unbounded">
+											<xsd:complexType>
+												<xsd:annotation>
+													<xsd:documentation>Represents a group of resources and global variables</xsd:documentation>
+												</xsd:annotation>
+												<xsd:sequence>
+													<xsd:element name="resource" minOccurs="0" maxOccurs="unbounded">
+														<xsd:complexType>
+															<xsd:annotation>
+																<xsd:documentation>Represents a group of programs and tasks and global variables</xsd:documentation>
+															</xsd:annotation>
+															<xsd:sequence>
+																<xsd:element name="task" minOccurs="0" maxOccurs="unbounded">
+																	<xsd:complexType>
+																		<xsd:annotation>
+																			<xsd:documentation>Represents a periodic or triggered task</xsd:documentation>
+																		</xsd:annotation>
+																		<xsd:sequence>
+																			<xsd:element name="pouInstance" type="ppx:pouInstance" minOccurs="0" maxOccurs="unbounded"/>
+																			<xsd:element name="documentation" type="ppx:formattedText" minOccurs="0">
+																				<xsd:annotation>
+																					<xsd:documentation>Additional userspecific information to the element</xsd:documentation>
+																				</xsd:annotation>
+																			</xsd:element>
+																		</xsd:sequence>
+																		<xsd:attribute name="name" type="xsd:string" use="required"/>
+																		<xsd:attribute name="single" type="xsd:string" use="optional"/>
+																		<xsd:attribute name="interval" type="xsd:time" use="optional"/>
+																		<xsd:attribute name="priority" use="required">
+																			<xsd:simpleType>
+																				<xsd:restriction base="xsd:integer">
+																					<xsd:minInclusive value="0"/>
+																					<xsd:maxInclusive value="65535"/>
+																				</xsd:restriction>
+																			</xsd:simpleType>
+																		</xsd:attribute>
+																	</xsd:complexType>
+																</xsd:element>
+																<xsd:element name="globalVars" type="ppx:varList" minOccurs="0" maxOccurs="unbounded"/>
+																<xsd:element name="pouInstance" type="ppx:pouInstance" minOccurs="0" maxOccurs="unbounded"/>
+																<xsd:element name="documentation" type="ppx:formattedText" minOccurs="0">
+																	<xsd:annotation>
+																		<xsd:documentation>Additional userspecific information to the element</xsd:documentation>
+																	</xsd:annotation>
+																</xsd:element>
+															</xsd:sequence>
+															<xsd:attribute name="name" type="xsd:string" use="required"/>
+														</xsd:complexType>
+													</xsd:element>
+													<xsd:element name="globalVars" type="ppx:varList" minOccurs="0" maxOccurs="unbounded"/>
+													<xsd:element name="documentation" type="ppx:formattedText" minOccurs="0">
+														<xsd:annotation>
+															<xsd:documentation>Additional userspecific information to the element</xsd:documentation>
+														</xsd:annotation>
+													</xsd:element>
+												</xsd:sequence>
+												<xsd:attribute name="name" type="xsd:string" use="required"/>
+											</xsd:complexType>
+										</xsd:element>
+									</xsd:sequence>
+								</xsd:complexType>
+							</xsd:element>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:complexType name="dataType">
+		<xsd:annotation>
+			<xsd:documentation>A generic data type</xsd:documentation>
+		</xsd:annotation>
+		<xsd:choice>
+			<xsd:group ref="ppx:elementaryTypes"/>
+			<xsd:group ref="ppx:derivedTypes"/>
+			<xsd:group ref="ppx:extended"/>
+		</xsd:choice>
+	</xsd:complexType>
+	<xsd:complexType name="rangeSigned">
+		<xsd:annotation>
+			<xsd:documentation>Defines a range with signed bounds</xsd:documentation>
+		</xsd:annotation>
+		<xsd:attribute name="lower" type="xsd:long" use="required"/>
+		<xsd:attribute name="upper" type="xsd:long" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="rangeUnsigned">
+		<xsd:annotation>
+			<xsd:documentation>Defines a range with unsigned bounds</xsd:documentation>
+		</xsd:annotation>
+		<xsd:attribute name="lower" type="xsd:unsignedLong" use="required"/>
+		<xsd:attribute name="upper" type="xsd:unsignedLong" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="value">
+		<xsd:annotation>
+			<xsd:documentation>A generic value</xsd:documentation>
+		</xsd:annotation>
+		<xsd:choice>
+			<xsd:element name="simpleValue">
+				<xsd:complexType>
+					<xsd:annotation>
+						<xsd:documentation>Value that can be represented as a single token string </xsd:documentation>
+					</xsd:annotation>
+					<xsd:attribute name="value" type="xsd:string" use="optional"/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="arrayValue">
+				<xsd:complexType>
+					<xsd:annotation>
+						<xsd:documentation>Array value consisting of a list of occurrances - value pairs</xsd:documentation>
+					</xsd:annotation>
+					<xsd:sequence minOccurs="0" maxOccurs="unbounded">
+						<xsd:element name="value">
+							<xsd:complexType>
+								<xsd:complexContent>
+									<xsd:extension base="ppx:value">
+										<xsd:attribute name="repetitionValue" type="xsd:unsignedLong" use="optional" default="1"/>
+									</xsd:extension>
+								</xsd:complexContent>
+							</xsd:complexType>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="structValue">
+				<xsd:complexType>
+					<xsd:annotation>
+						<xsd:documentation>Struct value consisting of a list of member - value pairs</xsd:documentation>
+					</xsd:annotation>
+					<xsd:sequence minOccurs="0" maxOccurs="unbounded">
+						<xsd:element name="value">
+							<xsd:complexType>
+								<xsd:complexContent>
+									<xsd:extension base="ppx:value">
+										<xsd:attribute name="member" type="xsd:string" use="required"/>
+									</xsd:extension>
+								</xsd:complexContent>
+							</xsd:complexType>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:choice>
+	</xsd:complexType>
+	<xsd:complexType name="body">
+		<xsd:annotation>
+			<xsd:documentation>Implementation part of a POU, action or transistion</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:choice>
+				<xsd:element name="IL" type="ppx:formattedText"/>
+				<xsd:element name="ST" type="ppx:formattedText"/>
+				<xsd:element name="FBD">
+					<xsd:complexType>
+						<xsd:choice minOccurs="0" maxOccurs="unbounded">
+							<xsd:group ref="ppx:commonObjects"/>
+							<xsd:group ref="ppx:fbdObjects"/>
+						</xsd:choice>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="LD">
+					<xsd:complexType>
+						<xsd:choice minOccurs="0" maxOccurs="unbounded">
+							<xsd:group ref="ppx:commonObjects"/>
+							<xsd:group ref="ppx:fbdObjects"/>
+							<xsd:group ref="ppx:ldObjects"/>
+						</xsd:choice>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="SFC">
+					<xsd:complexType>
+						<xsd:choice minOccurs="0" maxOccurs="unbounded">
+							<xsd:group ref="ppx:commonObjects"/>
+							<xsd:group ref="ppx:fbdObjects"/>
+							<xsd:group ref="ppx:ldObjects"/>
+							<xsd:group ref="ppx:sfcObjects"/>
+						</xsd:choice>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:choice>
+			<xsd:element name="documentation" type="ppx:formattedText" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Additional userspecific information to the element</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="varList">
+		<xsd:annotation>
+			<xsd:documentation>List of variable declarations that share the same memory attributes (CONSTANT, RETAIN, NON_RETAIN, PERSISTENT)</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexContent>
+			<xsd:extension base="ppx:varListPlain">
+				<xsd:attribute name="name" type="xsd:string" use="optional"/>
+				<xsd:attribute name="constant" type="xsd:boolean" use="optional" default="false"/>
+				<xsd:attribute name="retain" type="xsd:boolean" use="optional" default="false"/>
+				<xsd:attribute name="nonretain" type="xsd:boolean" use="optional" default="false"/>
+				<xsd:attribute name="persistent" type="xsd:boolean" use="optional" default="false"/>
+				<xsd:attribute name="nonpersistent" type="xsd:boolean" use="optional" default="false"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="varListPlain">
+		<xsd:annotation>
+			<xsd:documentation>List of variable declarations without attributes</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="variable" minOccurs="0" maxOccurs="unbounded">
+				<xsd:complexType>
+					<xsd:annotation>
+						<xsd:documentation>Declaration of a variable</xsd:documentation>
+					</xsd:annotation>
+					<xsd:sequence>
+						<xsd:element name="type" type="ppx:dataType"/>
+						<xsd:element name="initialValue" type="ppx:value" minOccurs="0"/>
+						<xsd:element name="documentation" type="ppx:formattedText" minOccurs="0"/>
+					</xsd:sequence>
+					<xsd:attribute name="name" type="xsd:string" use="required"/>
+					<xsd:attribute name="address" type="xsd:string" use="optional"/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="documentation" type="ppx:formattedText" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="position">
+		<xsd:annotation>
+			<xsd:documentation>Defines a graphical position in X, Y coordinates</xsd:documentation>
+		</xsd:annotation>
+		<xsd:attribute name="x" type="xsd:decimal" use="required"/>
+		<xsd:attribute name="y" type="xsd:decimal" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="connection">
+		<xsd:annotation>
+			<xsd:documentation>Describes a connection between the consumer element (eg. input variable of a function block) and the producer element (eg. output variable of a function block). It may contain a list of positions that describes the path of the connection.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="position" type="ppx:position" minOccurs="0" maxOccurs="unbounded">
+				<xsd:annotation>
+					<xsd:documentation>All positions of the directed connection path. If any positions are given, the list has to contain the first (input pin of the consumer element) as well as the last (output pin of the producer element).</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="refLocalId" type="xsd:unsignedLong" use="required">
+			<xsd:annotation>
+				<xsd:documentation>Identifies the element the connection starts from.</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="formalParameter" type="xsd:string" use="optional">
+			<xsd:annotation>
+				<xsd:documentation>If present:
+	  This attribute denotes the name of the VAR_OUTPUT / VAR_IN_OUTparameter of the pou block that is the start of the connection.
+	  If not present:
+	  If the refLocalId attribute refers to a pou block, the start of the connection is the first output of this block, which is not ENO.
+	  If the refLocalId attribute refers to any other element type, the start of the connection is the elements single native output. </xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+	</xsd:complexType>
+	<xsd:complexType name="connectionPointIn">
+		<xsd:annotation>
+			<xsd:documentation>Defines a connection point on the consumer side</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="relPosition" type="ppx:position" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Relative position of the connection pin. Origin is the anchor position of the block.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:choice minOccurs="0">
+				<xsd:element name="connection" type="ppx:connection" maxOccurs="unbounded"/>
+				<xsd:element name="expression" type="xsd:string">
+					<xsd:annotation>
+						<xsd:documentation>The operand is a valid iec variable e.g. avar[0] or an iec expression or multiple token text e.g. a + b (*sum*). An iec 61131-3 parser has to be used to extract variable information.</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:choice>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="connectionPointOut">
+		<xsd:annotation>
+			<xsd:documentation>Defines a connection point on the producer side</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="relPosition" type="ppx:position" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Relative position of the connection pin. Origin is the anchor position of the block.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="expression" type="xsd:string" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>The operand is a valid iec variable e.g. avar[0].</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="pouInstance">
+		<xsd:annotation>
+			<xsd:documentation>Represents a program or function block instance either running with or without a task</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="documentation" type="ppx:formattedText" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="name" type="xsd:string" use="required"/>
+    <xsd:attribute name="type" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="formattedText">
+		<xsd:annotation>
+			<xsd:documentation>Formatted text according to parts of XHTML 1.1</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:any namespace="http://www.w3.org/1999/xhtml" processContents="lax"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:group name="elementaryTypes">
+		<xsd:annotation>
+			<xsd:documentation>Collection of elementary IEC 61131-3 datatypes</xsd:documentation>
+		</xsd:annotation>
+		<xsd:choice>
+			<xsd:element name="BOOL"/>
+			<xsd:element name="BYTE"/>
+			<xsd:element name="WORD"/>
+			<xsd:element name="DWORD"/>
+			<xsd:element name="LWORD"/>
+			<xsd:element name="SINT"/>
+			<xsd:element name="INT"/>
+			<xsd:element name="DINT"/>
+			<xsd:element name="LINT"/>
+			<xsd:element name="USINT"/>
+			<xsd:element name="UINT"/>
+			<xsd:element name="UDINT"/>
+			<xsd:element name="ULINT"/>
+			<xsd:element name="REAL"/>
+			<xsd:element name="LREAL"/>
+			<xsd:element name="TIME"/>
+			<xsd:element name="DATE"/>
+			<xsd:element name="DT"/>
+			<xsd:element name="TOD"/>
+			<xsd:element name="string">
+				<xsd:complexType>
+					<xsd:annotation>
+						<xsd:documentation>The single byte character string type</xsd:documentation>
+					</xsd:annotation>
+					<xsd:attribute name="length" type="xsd:unsignedLong" use="optional"/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="wstring">
+				<xsd:complexType>
+					<xsd:annotation>
+						<xsd:documentation>The wide character (WORD) string type</xsd:documentation>
+					</xsd:annotation>
+					<xsd:attribute name="length" type="xsd:unsignedLong" use="optional"/>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:choice>
+	</xsd:group>
+	<xsd:group name="derivedTypes">
+		<xsd:annotation>
+			<xsd:documentation>Collection of derived IEC 61131-3 datatypes</xsd:documentation>
+		</xsd:annotation>
+		<xsd:choice>
+			<xsd:element name="array">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="dimension" type="ppx:rangeSigned" maxOccurs="unbounded"/>
+						<xsd:element name="baseType" type="ppx:dataType"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="derived">
+				<xsd:annotation>
+					<xsd:documentation>Reference to a user defined datatype or POU. Variable declarations use this type to declare e.g. function block instances.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:complexType>
+					<xsd:annotation>
+						<xsd:documentation>The user defined alias type</xsd:documentation>
+					</xsd:annotation>
+					<xsd:attribute name="name" type="xsd:string" use="required"/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="enum">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="values">
+							<xsd:complexType>
+								<xsd:sequence maxOccurs="unbounded">
+									<xsd:element name="value">
+										<xsd:complexType>
+											<xsd:annotation>
+												<xsd:documentation>An enumeration value used to build up enumeration types</xsd:documentation>
+											</xsd:annotation>
+											<xsd:attribute name="name" type="xsd:string" use="required"/>
+											<xsd:attribute name="value" type="xsd:string" use="optional"/>
+										</xsd:complexType>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="baseType" type="ppx:dataType" minOccurs="0"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="struct" type="ppx:varListPlain"/>
+			<xsd:element name="subrangeSigned">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="range" type="ppx:rangeSigned"/>
+						<xsd:element name="baseType" type="ppx:dataType"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="subrangeUnsigned">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="range" type="ppx:rangeUnsigned"/>
+						<xsd:element name="baseType" type="ppx:dataType"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:choice>
+	</xsd:group>
+	<xsd:group name="extended">
+		<xsd:annotation>
+			<xsd:documentation>Collection of datatypes not defined in IEC 61131-3</xsd:documentation>
+		</xsd:annotation>
+		<xsd:choice>
+			<xsd:element name="pointer">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="baseType" type="ppx:dataType"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:choice>
+	</xsd:group>
+	<xsd:group name="commonObjects">
+		<xsd:annotation>
+			<xsd:documentation>Collection of objects which have no direct iec scope and can be used in any graphical body.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:choice>
+			<xsd:element name="comment">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="position" type="ppx:position"/>
+						<xsd:element name="content" type="ppx:formattedText"/>
+						<xsd:element name="documentation" type="ppx:formattedText" minOccurs="0"/>
+					</xsd:sequence>
+					<xsd:attribute name="localId" type="xsd:unsignedLong" use="required"/>
+					<xsd:attribute name="height" type="xsd:decimal" use="required"/>
+					<xsd:attribute name="width" type="xsd:decimal" use="required"/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="error">
+				<xsd:complexType mixed="false">
+					<xsd:annotation>
+						<xsd:documentation>Describes a graphical object representing a conversion error. Used to keep information which can not be interpreted by the importing system</xsd:documentation>
+					</xsd:annotation>
+					<xsd:sequence>
+						<xsd:element name="position" type="ppx:position"/>
+						<xsd:element name="content" type="ppx:formattedText"/>
+						<xsd:element name="documentation" type="ppx:formattedText" minOccurs="0"/>
+					</xsd:sequence>
+					<xsd:attribute name="localId" type="xsd:unsignedLong" use="required"/>
+					<xsd:attribute name="height" type="xsd:decimal" use="required"/>
+					<xsd:attribute name="width" type="xsd:decimal" use="required"/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="connector">
+				<xsd:complexType>
+					<xsd:annotation>
+						<xsd:documentation>Describes a graphical object representing a variable, literal or expression used as r-value</xsd:documentation>
+					</xsd:annotation>
+					<xsd:sequence>
+						<xsd:element name="position" type="ppx:position"/>
+						<xsd:element name="connectionPointIn" type="ppx:connectionPointIn" minOccurs="0"/>
+						<xsd:element name="documentation" type="ppx:formattedText" minOccurs="0"/>
+					</xsd:sequence>
+					<xsd:attribute name="name" type="xsd:string" use="required">
+						<xsd:annotation>
+							<xsd:documentation>The operand is a valid iec variable e.g. avar[0]</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="localId" type="xsd:unsignedLong" use="required"/>
+					<xsd:attribute name="height" type="xsd:decimal" use="optional"/>
+					<xsd:attribute name="width" type="xsd:decimal" use="optional"/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="continuation">
+				<xsd:annotation>
+					<xsd:documentation>Counterpart of the connector element</xsd:documentation>
+				</xsd:annotation>
+				<xsd:complexType>
+					<xsd:annotation>
+						<xsd:documentation>Describes a graphical object representing a variable, literal or expression used as r-value</xsd:documentation>
+					</xsd:annotation>
+					<xsd:sequence>
+						<xsd:element name="position" type="ppx:position"/>
+						<xsd:element name="connectionPointOut" type="ppx:connectionPointOut" minOccurs="0"/>
+						<xsd:element name="documentation" type="ppx:formattedText" minOccurs="0"/>
+					</xsd:sequence>
+					<xsd:attribute name="name" type="xsd:string" use="required">
+						<xsd:annotation>
+							<xsd:documentation>The operand is a valid iec variable e.g. avar[0]</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="localId" type="xsd:unsignedLong" use="required"/>
+					<xsd:attribute name="height" type="xsd:decimal" use="optional"/>
+					<xsd:attribute name="width" type="xsd:decimal" use="optional"/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="actionBlock">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="position" type="ppx:position"/>
+						<xsd:element name="connectionPointIn" type="ppx:connectionPointIn" minOccurs="0"/>
+						<xsd:element name="connectionPointOut" type="ppx:connectionPointOut" minOccurs="0"/>
+						<xsd:element name="action" minOccurs="0" maxOccurs="unbounded">
+							<xsd:complexType>
+								<xsd:annotation>
+									<xsd:documentation>Association of an action with qualifier</xsd:documentation>
+								</xsd:annotation>
+								<xsd:sequence>
+									<xsd:element name="reference" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Name of an action or boolean variable.</xsd:documentation>
+										</xsd:annotation>
+										<xsd:complexType>
+											<xsd:attribute name="name" type="xsd:string" use="required"/>
+										</xsd:complexType>
+									</xsd:element>
+									<xsd:element name="inline" type="ppx:body" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Inline implementation of an action body.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="documentation" type="ppx:formattedText" minOccurs="0"/>
+								</xsd:sequence>
+								<xsd:attribute name="qualifier" use="optional" default="N">
+									<xsd:simpleType>
+										<xsd:restriction base="xsd:NMTOKEN">
+											<xsd:enumeration value="P1"/>
+											<xsd:enumeration value="N"/>
+											<xsd:enumeration value="P0"/>
+											<xsd:enumeration value="R"/>
+											<xsd:enumeration value="S"/>
+											<xsd:enumeration value="L"/>
+											<xsd:enumeration value="D"/>
+											<xsd:enumeration value="P"/>
+											<xsd:enumeration value="DS"/>
+											<xsd:enumeration value="DL"/>
+											<xsd:enumeration value="SD"/>
+											<xsd:enumeration value="SL"/>
+										</xsd:restriction>
+									</xsd:simpleType>
+								</xsd:attribute>
+								<xsd:attribute name="duration" type="xsd:string" use="optional"/>
+								<xsd:attribute name="indicator" type="xsd:string" use="optional"/>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="documentation" type="ppx:formattedText" minOccurs="0"/>
+					</xsd:sequence>
+					<xsd:attribute name="localId" type="xsd:unsignedLong" use="required"/>
+					<xsd:attribute name="height" type="xsd:decimal" use="optional"/>
+					<xsd:attribute name="width" type="xsd:decimal" use="optional"/>
+					<xsd:attribute name="negated" type="xsd:boolean" use="optional" default="false"/>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:choice>
+	</xsd:group>
+	<xsd:group name="fbdObjects">
+		<xsd:annotation>
+			<xsd:documentation>Collection of objects which are defined in fbd. They can be used in all graphical bodies.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:choice>
+			<xsd:element name="block">
+				<xsd:complexType>
+					<xsd:annotation>
+						<xsd:documentation>Describes a graphical object representing a call statement</xsd:documentation>
+					</xsd:annotation>
+					<xsd:sequence>
+						<xsd:element name="position" type="ppx:position">
+							<xsd:annotation>
+								<xsd:documentation>Anchor position of the box. Top left corner excluding the instance name.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="inputVariables">
+							<xsd:annotation>
+								<xsd:documentation>The list of used input variables (consumers)</xsd:documentation>
+							</xsd:annotation>
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="variable" minOccurs="0" maxOccurs="unbounded">
+										<xsd:complexType>
+											<xsd:annotation>
+												<xsd:documentation>Describes an inputVariable of a Function or a FunctionBlock</xsd:documentation>
+											</xsd:annotation>
+											<xsd:sequence>
+												<xsd:element name="connectionPointIn" type="ppx:connectionPointIn"/>
+												<xsd:element name="documentation" type="ppx:formattedText" minOccurs="0"/>
+											</xsd:sequence>
+											<xsd:attribute name="formalParameter" type="xsd:string" use="required"/>
+											<xsd:attribute name="negated" type="xsd:boolean" use="optional" default="false"/>
+											<xsd:attribute name="edge" type="ppx:edgeModifierType" use="optional" default="none"/>
+											<xsd:attribute name="storage" type="ppx:storageModifierType" use="optional" default="none"/>
+											<xsd:attribute name="hidden" type="xsd:boolean" use="optional" default="false"/>
+										</xsd:complexType>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="inOutVariables">
+							<xsd:annotation>
+								<xsd:documentation>The list of used inOut variables</xsd:documentation>
+							</xsd:annotation>
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="variable" minOccurs="0" maxOccurs="unbounded">
+										<xsd:complexType>
+											<xsd:annotation>
+												<xsd:documentation>Describes a inOutVariable of a Function or a FunctionBlock</xsd:documentation>
+											</xsd:annotation>
+											<xsd:sequence>
+												<xsd:element name="connectionPointIn" type="ppx:connectionPointIn" minOccurs="0"/>
+												<xsd:element name="connectionPointOut" type="ppx:connectionPointOut" minOccurs="0"/>
+												<xsd:element name="documentation" type="ppx:formattedText" minOccurs="0"/>
+											</xsd:sequence>
+											<xsd:attribute name="formalParameter" type="xsd:string" use="required"/>
+											<xsd:attribute name="negated" type="xsd:boolean" use="optional" default="false"/>
+											<xsd:attribute name="edge" type="ppx:edgeModifierType" use="optional" default="none"/>
+											<xsd:attribute name="storage" type="ppx:storageModifierType" use="optional" default="none"/>
+											<xsd:attribute name="hidden" type="xsd:boolean" use="optional" default="false"/>
+										</xsd:complexType>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="outputVariables">
+							<xsd:annotation>
+								<xsd:documentation>The list of used output variables (producers)</xsd:documentation>
+							</xsd:annotation>
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="variable" minOccurs="0" maxOccurs="unbounded">
+										<xsd:complexType>
+											<xsd:annotation>
+												<xsd:documentation>Describes a outputVariable of a Function or a FunctionBlock</xsd:documentation>
+											</xsd:annotation>
+											<xsd:sequence>
+												<xsd:element name="connectionPointOut" type="ppx:connectionPointOut" minOccurs="0"/>
+												<xsd:element name="documentation" type="ppx:formattedText" minOccurs="0"/>
+											</xsd:sequence>
+											<xsd:attribute name="formalParameter" type="xsd:string" use="required"/>
+											<xsd:attribute name="negated" type="xsd:boolean" use="optional" default="false"/>
+											<xsd:attribute name="edge" type="ppx:edgeModifierType" use="optional" default="none"/>
+											<xsd:attribute name="storage" type="ppx:storageModifierType" use="optional" default="none"/>
+											<xsd:attribute name="hidden" type="xsd:boolean" use="optional" default="false"/>
+										</xsd:complexType>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="documentation" type="ppx:formattedText" minOccurs="0"/>
+					</xsd:sequence>
+					<xsd:attribute name="localId" type="xsd:unsignedLong" use="required"/>
+					<xsd:attribute name="width" type="xsd:decimal" use="optional"/>
+					<xsd:attribute name="height" type="xsd:decimal" use="optional"/>
+					<xsd:attribute name="typeName" type="xsd:string" use="required"/>
+					<xsd:attribute name="instanceName" type="xsd:string" use="optional"/>
+					<xsd:attribute name="executionOrderId" type="xsd:unsignedLong" use="optional">
+						<xsd:annotation>
+							<xsd:documentation>Used to identify the order of execution. Also used to identify one special block if there are several blocks with the same name.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="inVariable">
+				<xsd:annotation>
+					<xsd:documentation>Expression used as producer</xsd:documentation>
+				</xsd:annotation>
+				<xsd:complexType>
+					<xsd:annotation>
+						<xsd:documentation>Describes a graphical object representing a variable, literal or expression used as r-value</xsd:documentation>
+					</xsd:annotation>
+					<xsd:sequence>
+						<xsd:element name="position" type="ppx:position"/>
+						<xsd:element name="connectionPointOut" type="ppx:connectionPointOut" minOccurs="0"/>
+						<xsd:element name="expression" type="xsd:string">
+							<xsd:annotation>
+								<xsd:documentation>The operand is a valid iec variable e.g. avar[0].</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="documentation" type="ppx:formattedText" minOccurs="0"/>
+					</xsd:sequence>
+					<xsd:attribute name="localId" type="xsd:unsignedLong" use="required"/>
+					<xsd:attribute name="height" type="xsd:decimal" use="optional"/>
+					<xsd:attribute name="width" type="xsd:decimal" use="optional"/>
+					<xsd:attribute name="executionOrderId" type="xsd:unsignedLong" use="optional"/>
+					<xsd:attribute name="negated" type="xsd:boolean" use="optional" default="false"/>
+					<xsd:attribute name="edge" type="ppx:edgeModifierType" use="optional" default="none"/>
+					<xsd:attribute name="storage" type="ppx:storageModifierType" use="optional" default="none"/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="outVariable">
+				<xsd:annotation>
+					<xsd:documentation>Expression used as consumer</xsd:documentation>
+				</xsd:annotation>
+				<xsd:complexType>
+					<xsd:annotation>
+						<xsd:documentation>Describes a graphical object representing a variable or expression used as l-value</xsd:documentation>
+					</xsd:annotation>
+					<xsd:sequence>
+						<xsd:element name="position" type="ppx:position"/>
+						<xsd:element name="connectionPointIn" type="ppx:connectionPointIn" minOccurs="0"/>
+						<xsd:element name="expression" type="xsd:string">
+							<xsd:annotation>
+								<xsd:documentation>The operand is a valid iec variable e.g. avar[0].</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="documentation" type="ppx:formattedText" minOccurs="0"/>
+					</xsd:sequence>
+					<xsd:attribute name="localId" type="xsd:unsignedLong" use="required"/>
+					<xsd:attribute name="height" type="xsd:decimal" use="optional"/>
+					<xsd:attribute name="width" type="xsd:decimal" use="optional"/>
+					<xsd:attribute name="executionOrderId" type="xsd:unsignedLong" use="optional"/>
+					<xsd:attribute name="negated" type="xsd:boolean" use="optional" default="false"/>
+					<xsd:attribute name="edge" type="ppx:edgeModifierType" use="optional" default="none"/>
+					<xsd:attribute name="storage" type="ppx:storageModifierType" use="optional" default="none"/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="inOutVariable">
+				<xsd:annotation>
+					<xsd:documentation>Expression used as producer and consumer</xsd:documentation>
+				</xsd:annotation>
+				<xsd:complexType>
+					<xsd:annotation>
+						<xsd:documentation>Describes a graphical object representing a variable which can be used as l-value and r-value at the same time</xsd:documentation>
+					</xsd:annotation>
+					<xsd:sequence>
+						<xsd:element name="position" type="ppx:position"/>
+						<xsd:element name="connectionPointIn" type="ppx:connectionPointIn" minOccurs="0"/>
+						<xsd:element name="connectionPointOut" type="ppx:connectionPointOut" minOccurs="0"/>
+						<xsd:element name="expression" type="xsd:string">
+							<xsd:annotation>
+								<xsd:documentation>The operand is a valid iec variable e.g. avar[0].</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="documentation" type="ppx:formattedText" minOccurs="0"/>
+					</xsd:sequence>
+					<xsd:attribute name="localId" type="xsd:unsignedLong" use="required"/>
+					<xsd:attribute name="height" type="xsd:decimal" use="optional"/>
+					<xsd:attribute name="width" type="xsd:decimal" use="optional"/>
+					<xsd:attribute name="executionOrderId" type="xsd:unsignedLong" use="optional"/>
+					<xsd:attribute name="negatedIn" type="xsd:boolean" use="optional" default="false"/>
+					<xsd:attribute name="edgeIn" type="ppx:edgeModifierType" use="optional" default="none"/>
+					<xsd:attribute name="storageIn" type="ppx:storageModifierType" use="optional" default="none"/>
+					<xsd:attribute name="negatedOut" type="xsd:boolean" use="optional" default="false"/>
+					<xsd:attribute name="edgeOut" type="ppx:edgeModifierType" use="optional" default="none"/>
+					<xsd:attribute name="storageOut" type="ppx:storageModifierType" use="optional" default="none"/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="label">
+				<xsd:complexType>
+					<xsd:annotation>
+						<xsd:documentation>Describes a graphical object representing a jump label</xsd:documentation>
+					</xsd:annotation>
+					<xsd:sequence>
+						<xsd:element name="position" type="ppx:position"/>
+						<xsd:element name="documentation" type="ppx:formattedText" minOccurs="0"/>
+					</xsd:sequence>
+					<xsd:attribute name="localId" type="xsd:unsignedLong" use="required"/>
+					<xsd:attribute name="height" type="xsd:decimal" use="optional"/>
+					<xsd:attribute name="width" type="xsd:decimal" use="optional"/>
+					<xsd:attribute name="label" type="xsd:string" use="required"/>
+					<xsd:attribute name="executionOrderId" type="xsd:unsignedLong" use="optional"/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="jump">
+				<xsd:complexType>
+					<xsd:annotation>
+						<xsd:documentation>Describes a graphical object representing a jump statement</xsd:documentation>
+					</xsd:annotation>
+					<xsd:sequence>
+						<xsd:element name="position" type="ppx:position"/>
+						<xsd:element name="connectionPointIn" type="ppx:connectionPointIn" minOccurs="0"/>
+						<xsd:element name="documentation" type="ppx:formattedText" minOccurs="0"/>
+					</xsd:sequence>
+					<xsd:attribute name="localId" type="xsd:unsignedLong" use="required"/>
+					<xsd:attribute name="height" type="xsd:decimal" use="optional"/>
+					<xsd:attribute name="width" type="xsd:decimal" use="optional"/>
+					<xsd:attribute name="label" type="xsd:string" use="required"/>
+					<xsd:attribute name="executionOrderId" type="xsd:unsignedLong" use="optional"/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="return">
+				<xsd:complexType>
+					<xsd:annotation>
+						<xsd:documentation>Describes a graphical object representing areturn statement</xsd:documentation>
+					</xsd:annotation>
+					<xsd:sequence>
+						<xsd:element name="position" type="ppx:position"/>
+						<xsd:element name="connectionPointIn" type="ppx:connectionPointIn" minOccurs="0"/>
+						<xsd:element name="documentation" type="ppx:formattedText" minOccurs="0"/>
+					</xsd:sequence>
+					<xsd:attribute name="localId" type="xsd:unsignedLong" use="required"/>
+					<xsd:attribute name="height" type="xsd:decimal" use="optional"/>
+					<xsd:attribute name="width" type="xsd:decimal" use="optional"/>
+					<xsd:attribute name="executionOrderId" type="xsd:unsignedLong" use="optional"/>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:choice>
+	</xsd:group>
+	<xsd:group name="ldObjects">
+		<xsd:annotation>
+			<xsd:documentation>Collection of objects which are defined in ld and are an extension to fbd. They can be used in ld and sfc bodies</xsd:documentation>
+		</xsd:annotation>
+		<xsd:choice>
+			<xsd:element name="leftPowerRail">
+				<xsd:complexType>
+					<xsd:annotation>
+						<xsd:documentation>Describes a graphical object representing a left powerrail</xsd:documentation>
+					</xsd:annotation>
+					<xsd:sequence>
+						<xsd:element name="position" type="ppx:position"/>
+						<xsd:element name="connectionPointOut" minOccurs="0" maxOccurs="unbounded">
+							<xsd:complexType>
+								<xsd:complexContent>
+									<xsd:extension base="ppx:connectionPointOut">
+										<xsd:attribute name="formalParameter" type="xsd:string" use="required"/>
+									</xsd:extension>
+								</xsd:complexContent>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="documentation" type="ppx:formattedText" minOccurs="0"/>
+					</xsd:sequence>
+					<xsd:attribute name="localId" type="xsd:unsignedLong" use="required"/>
+					<xsd:attribute name="height" type="xsd:decimal" use="optional"/>
+					<xsd:attribute name="width" type="xsd:decimal" use="optional"/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="rightPowerRail">
+				<xsd:complexType>
+					<xsd:annotation>
+						<xsd:documentation>Describes a graphical object representing a right powerrail</xsd:documentation>
+					</xsd:annotation>
+					<xsd:sequence>
+						<xsd:element name="position" type="ppx:position"/>
+						<xsd:element name="connectionPointIn" type="ppx:connectionPointIn" minOccurs="0" maxOccurs="unbounded"/>
+						<xsd:element name="documentation" type="ppx:formattedText" minOccurs="0"/>
+					</xsd:sequence>
+					<xsd:attribute name="localId" type="xsd:unsignedLong" use="required"/>
+					<xsd:attribute name="height" type="xsd:decimal" use="optional"/>
+					<xsd:attribute name="width" type="xsd:decimal" use="optional"/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="coil">
+				<xsd:complexType>
+					<xsd:annotation>
+						<xsd:documentation>Describes a graphical object representing a boolean variable which can be used as l-value and r-value at the same time</xsd:documentation>
+					</xsd:annotation>
+					<xsd:sequence>
+						<xsd:element name="position" type="ppx:position"/>
+						<xsd:element name="connectionPointIn" type="ppx:connectionPointIn" minOccurs="0"/>
+						<xsd:element name="connectionPointOut" type="ppx:connectionPointOut" minOccurs="0"/>
+						<xsd:element name="variable" type="xsd:string">
+							<xsd:annotation>
+								<xsd:documentation>The operand is a valid boolean  iec variable e.g. avar[0]</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="documentation" type="ppx:formattedText" minOccurs="0"/>
+					</xsd:sequence>
+					<xsd:attribute name="localId" type="xsd:unsignedLong" use="required"/>
+					<xsd:attribute name="height" type="xsd:decimal" use="optional"/>
+					<xsd:attribute name="width" type="xsd:decimal" use="optional"/>
+					<xsd:attribute name="executionOrderId" type="xsd:unsignedLong" use="optional"/>
+					<xsd:attribute name="negated" type="xsd:boolean" use="optional" default="false"/>
+					<xsd:attribute name="edge" type="ppx:edgeModifierType" use="optional" default="none"/>
+					<xsd:attribute name="storage" type="ppx:storageModifierType" use="optional" default="none"/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="contact">
+				<xsd:complexType>
+					<xsd:annotation>
+						<xsd:documentation>Describes a graphical object representing a variable which can be used as l-value and r-value at the same time</xsd:documentation>
+					</xsd:annotation>
+					<xsd:sequence>
+						<xsd:element name="position" type="ppx:position"/>
+						<xsd:element name="connectionPointIn" type="ppx:connectionPointIn" minOccurs="0"/>
+						<xsd:element name="connectionPointOut" type="ppx:connectionPointOut" minOccurs="0"/>
+						<xsd:element name="variable" type="xsd:string">
+							<xsd:annotation>
+								<xsd:documentation>The operand is a valid boolean iec variable e.g. avar[0]</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="documentation" type="ppx:formattedText" minOccurs="0"/>
+					</xsd:sequence>
+					<xsd:attribute name="localId" type="xsd:unsignedLong" use="required"/>
+					<xsd:attribute name="height" type="xsd:decimal" use="optional"/>
+					<xsd:attribute name="width" type="xsd:decimal" use="optional"/>
+					<xsd:attribute name="executionOrderId" type="xsd:unsignedLong" use="optional"/>
+					<xsd:attribute name="negated" type="xsd:boolean" use="optional" default="false"/>
+					<xsd:attribute name="edge" type="ppx:edgeModifierType" use="optional" default="none"/>
+					<xsd:attribute name="storage" type="ppx:storageModifierType" use="optional" default="none"/>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:choice>
+	</xsd:group>
+	<xsd:group name="sfcObjects">
+		<xsd:annotation>
+			<xsd:documentation>Collection of objects which are defined in sfc. They can only be used in sfc bodies</xsd:documentation>
+		</xsd:annotation>
+		<xsd:choice>
+			<xsd:element name="step">
+				<xsd:annotation>
+					<xsd:documentation>A single step in a SFC Sequence. Actions are associated with a step by using an actionBlock element with a connection to the step element</xsd:documentation>
+				</xsd:annotation>
+				<xsd:complexType>
+					<xsd:annotation>
+						<xsd:documentation>Contains actions</xsd:documentation>
+					</xsd:annotation>
+					<xsd:sequence>
+						<xsd:element name="position" type="ppx:position"/>
+						<xsd:element name="connectionPointIn" type="ppx:connectionPointIn" minOccurs="0"/>
+						<xsd:element name="connectionPointOut" minOccurs="0">
+							<xsd:complexType>
+								<xsd:complexContent>
+									<xsd:extension base="ppx:connectionPointOut">
+										<xsd:attribute name="formalParameter" type="xsd:string" use="required"/>
+									</xsd:extension>
+								</xsd:complexContent>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="connectionPointOutAction" minOccurs="0">
+							<xsd:complexType>
+								<xsd:complexContent>
+									<xsd:extension base="ppx:connectionPointOut">
+										<xsd:attribute name="formalParameter" type="xsd:string" use="required"/>
+									</xsd:extension>
+								</xsd:complexContent>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="documentation" type="ppx:formattedText" minOccurs="0"/>
+					</xsd:sequence>
+					<xsd:attribute name="localId" type="xsd:unsignedLong" use="required"/>
+					<xsd:attribute name="height" type="xsd:decimal" use="optional"/>
+					<xsd:attribute name="width" type="xsd:decimal" use="optional"/>
+					<xsd:attribute name="name" type="xsd:string" use="required"/>
+					<xsd:attribute name="initialStep" type="xsd:boolean" use="optional" default="false"/>
+					<xsd:attribute name="negated" type="xsd:boolean" use="optional" default="false"/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="macroStep">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="position" type="ppx:position"/>
+						<xsd:element name="connectionPointIn" type="ppx:connectionPointIn" minOccurs="0"/>
+						<xsd:element name="connectionPointOut" type="ppx:connectionPointOut" minOccurs="0"/>
+						<xsd:element name="body" type="ppx:body" minOccurs="0"/>
+						<xsd:element name="documentation" type="ppx:formattedText" minOccurs="0"/>
+					</xsd:sequence>
+					<xsd:attribute name="localId" type="xsd:unsignedLong" use="required"/>
+					<xsd:attribute name="height" type="xsd:decimal" use="optional"/>
+					<xsd:attribute name="width" type="xsd:decimal" use="optional"/>
+					<xsd:attribute name="name" type="xsd:string" use="optional"/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="jumpStep">
+				<xsd:annotation>
+					<xsd:documentation>Jump to a step, macro step or simultaneous divergence. Acts like a step. Predecessor should be a transition.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="position" type="ppx:position"/>
+						<xsd:element name="connectionPointIn" type="ppx:connectionPointIn" minOccurs="0"/>
+						<xsd:element name="documentation" type="ppx:formattedText" minOccurs="0"/>
+					</xsd:sequence>
+					<xsd:attribute name="localId" type="xsd:unsignedLong" use="required"/>
+					<xsd:attribute name="height" type="xsd:decimal" use="optional"/>
+					<xsd:attribute name="width" type="xsd:decimal" use="optional"/>
+					<xsd:attribute name="targetName" type="xsd:string" use="required"/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="transition">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="position" type="ppx:position"/>
+						<xsd:element name="connectionPointIn" type="ppx:connectionPointIn" minOccurs="0"/>
+						<xsd:element name="connectionPointOut" type="ppx:connectionPointOut" minOccurs="0"/>
+						<xsd:element name="condition" minOccurs="0">
+							<xsd:complexType>
+								<xsd:choice>
+									<xsd:element name="reference">
+										<xsd:complexType>
+											<xsd:attribute name="name" type="xsd:string" use="required"/>
+										</xsd:complexType>
+									</xsd:element>
+									<xsd:element name="connection" type="ppx:connection" maxOccurs="unbounded"/>
+									<xsd:element name="inline">
+										<xsd:complexType>
+											<xsd:complexContent>
+												<xsd:extension base="ppx:body">
+													<xsd:attribute name="name" type="xsd:string" use="required"/>
+												</xsd:extension>
+											</xsd:complexContent>
+										</xsd:complexType>
+									</xsd:element>
+								</xsd:choice>
+								<xsd:attribute name="negated" type="xsd:boolean" use="optional" default="false"/>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="documentation" type="ppx:formattedText" minOccurs="0"/>
+					</xsd:sequence>
+					<xsd:attribute name="localId" type="xsd:unsignedLong" use="required"/>
+					<xsd:attribute name="height" type="xsd:decimal" use="optional"/>
+					<xsd:attribute name="width" type="xsd:decimal" use="optional"/>
+					<xsd:attribute name="priority" type="xsd:unsignedLong" use="optional">
+						<xsd:annotation>
+							<xsd:documentation>The priority of a transition is evaluated, if the transition is connected to a selectionDivergence element.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="selectionDivergence">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="position" type="ppx:position"/>
+						<xsd:element name="connectionPointIn" type="ppx:connectionPointIn" minOccurs="0"/>
+						<xsd:element name="connectionPointOut" minOccurs="0" maxOccurs="unbounded">
+							<xsd:complexType>
+								<xsd:complexContent>
+									<xsd:extension base="ppx:connectionPointOut">
+										<xsd:attribute name="formalParameter" type="xsd:string" use="required"/>
+									</xsd:extension>
+								</xsd:complexContent>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="documentation" type="ppx:formattedText" minOccurs="0"/>
+					</xsd:sequence>
+					<xsd:attribute name="localId" type="xsd:unsignedLong" use="required"/>
+					<xsd:attribute name="height" type="xsd:decimal" use="optional"/>
+					<xsd:attribute name="width" type="xsd:decimal" use="optional"/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="selectionConvergence">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="position" type="ppx:position"/>
+						<xsd:element name="connectionPointIn" minOccurs="0" maxOccurs="unbounded">
+							<xsd:complexType>
+								<xsd:complexContent>
+									<xsd:extension base="ppx:connectionPointIn"/>
+								</xsd:complexContent>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="connectionPointOut" type="ppx:connectionPointOut" minOccurs="0"/>
+						<xsd:element name="documentation" type="ppx:formattedText" minOccurs="0"/>
+					</xsd:sequence>
+					<xsd:attribute name="localId" type="xsd:unsignedLong" use="required"/>
+					<xsd:attribute name="height" type="xsd:decimal" use="optional"/>
+					<xsd:attribute name="width" type="xsd:decimal" use="optional"/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="simultaneousDivergence">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="position" type="ppx:position"/>
+						<xsd:element name="connectionPointIn" type="ppx:connectionPointIn" minOccurs="0"/>
+						<xsd:element name="connectionPointOut" minOccurs="0" maxOccurs="unbounded">
+							<xsd:complexType>
+								<xsd:complexContent>
+									<xsd:extension base="ppx:connectionPointOut">
+										<xsd:attribute name="formalParameter" type="xsd:string" use="required"/>
+									</xsd:extension>
+								</xsd:complexContent>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="documentation" type="ppx:formattedText" minOccurs="0"/>
+					</xsd:sequence>
+					<xsd:attribute name="localId" type="xsd:unsignedLong" use="required"/>
+					<xsd:attribute name="height" type="xsd:decimal" use="optional"/>
+					<xsd:attribute name="width" type="xsd:decimal" use="optional"/>
+					<xsd:attribute name="name" type="xsd:string" use="optional"/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="simultaneousConvergence">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="position" type="ppx:position"/>
+						<xsd:element name="connectionPointIn" type="ppx:connectionPointIn" minOccurs="0" maxOccurs="unbounded"/>
+						<xsd:element name="connectionPointOut" type="ppx:connectionPointOut" minOccurs="0"/>
+						<xsd:element name="documentation" type="ppx:formattedText" minOccurs="0"/>
+					</xsd:sequence>
+					<xsd:attribute name="localId" type="xsd:unsignedLong" use="required"/>
+					<xsd:attribute name="height" type="xsd:decimal" use="optional"/>
+					<xsd:attribute name="width" type="xsd:decimal" use="optional"/>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:choice>
+	</xsd:group>
+	<xsd:simpleType name="edgeModifierType">
+		<xsd:annotation>
+			<xsd:documentation>Defines the edge detection behaviour of a variable</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="none"/>
+			<xsd:enumeration value="falling"/>
+			<xsd:enumeration value="rising"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="storageModifierType">
+		<xsd:annotation>
+			<xsd:documentation>Defines the storage mode (S/R) behaviour of a variable</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="none"/>
+			<xsd:enumeration value="set"/>
+			<xsd:enumeration value="reset"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="pouType">
+		<xsd:annotation>
+			<xsd:documentation>Defines the different types of a POU</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:NMTOKEN">
+			<xsd:enumeration value="function"/>
+			<xsd:enumeration value="functionBlock"/>
+			<xsd:enumeration value="program"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

@@ -1,0 +1,71 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) is 21st century inquisition
+# This file is distributed under the same license as the Beremiz package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Beremiz 1.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-09-08 01:47\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+# 175ab223adbc42749a504a6f9718fb71
+#: ../../standards.rst:2
+msgid "IEC 61131-3"
+msgstr ""
+
+# c2d98f5b3a4c4f6fa6fdab3b7d419f28
+#: ../../standards.rst:4
+msgid ""
+"IEC-61131 is a normative document provided by the standards organization IEC "
+"(International Electrotechnical Commission) and describing a standard for "
+"implementing programmable controllers."
+msgstr ""
+
+# da7a80107e094184af3a7d6504a3718b
+#: ../../standards.rst:9
+msgid ""
+"The part 3 of this document (commonly named IEC 61131-3) specifies syntax "
+"and semantics for programming language for programmable controllers. Beremiz "
+"implements all the languages described in this document."
+msgstr ""
+
+# 98082fb5f0564eb38341fd5865f3cef6
+#: ../../standards.rst:14
+msgid "http://www.iec.eu"
+msgstr ""
+
+# fb0bef609e7b43079133dc137afbdc34
+#: ../../standards.rst:17
+msgid "PLCopen TC6"
+msgstr ""
+
+# abf4b2a73aa54caba919975385b1b2af
+#: ../../standards.rst:19
+msgid ""
+"PLCopen is a vendor- and product-independent worldwide association defining "
+"international standards for various topics related to control programming. "
+"For this purpose, PLCopen has 6 technical committees."
+msgstr ""
+
+# aa4df8a9f69749cdb44143a2f6a973e2
+#: ../../standards.rst:24
+msgid ""
+"The goal of the sixth committee (TC6) is to define a standard file format, "
+"based on XML, for exchanging programmables controllers programmed using IEC "
+"61131-3 languages. Beremiz uses this file format for saving the PLC programs "
+"of projects."
+msgstr ""
+
+# 3c0fd475a8374f8d843d142081bdaf35
+#: ../../standards.rst:30
+msgid "http://www.plcopen.org"
+msgstr ""

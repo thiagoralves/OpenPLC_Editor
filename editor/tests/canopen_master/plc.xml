@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='utf-8'?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.plcopen.org/xml/tc6_0201" xmlns:xhtml="http://www.w3.org/1999/xhtml" xsi:schemaLocation="http://www.plcopen.org/xml/tc6_0201">
+  <fileHeader companyName="beremiz" productName="beremiz" productVersion="1" creationDateTime="2008-06-24T18:44:00"/>
+  <contentHeader name="canopen_master" modificationDateTime="2018-09-26T13:31:52" language="en-US">
+    <coordinateInfo>
+      <fbd>
+        <scaling x="0" y="0"/>
+      </fbd>
+      <ld>
+        <scaling x="0" y="0"/>
+      </ld>
+      <sfc>
+        <scaling x="0" y="0"/>
+      </sfc>
+    </coordinateInfo>
+  </contentHeader>
+  <types>
+    <dataTypes/>
+    <pous>
+      <pou name="test_main" pouType="program">
+        <interface>
+          <localVars>
+            <variable name="PLC_OUT" address="%QW0.0.2.8193.0">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+            <variable name="PLC_IN" address="%IW0.0.2.8192.0">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+          </localVars>
+        </interface>
+        <body>
+          <FBD>
+            <outVariable localId="1" height="29" width="80" executionOrderId="0" negated="false">
+              <position x="362" y="139"/>
+              <connectionPointIn>
+                <relPosition x="0" y="14"/>
+                <connection refLocalId="4" formalParameter="OUT">
+                  <position x="362" y="153"/>
+                  <position x="299" y="153"/>
+                </connection>
+              </connectionPointIn>
+              <expression>PLC_OUT</expression>
+            </outVariable>
+            <inVariable localId="2" height="29" width="20">
+              <position x="100" y="115"/>
+              <connectionPointOut>
+                <relPosition x="20" y="14"/>
+              </connectionPointOut>
+              <expression>1</expression>
+            </inVariable>
+            <block localId="4" width="75" height="60" typeName="ADD">
+              <position x="224" y="123"/>
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="30"/>
+                    <connection refLocalId="2">
+                      <position x="224" y="153"/>
+                      <position x="183" y="153"/>
+                      <position x="183" y="129"/>
+                      <position x="120" y="129"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="50"/>
+                    <connection refLocalId="5">
+                      <position x="224" y="173"/>
+                      <position x="199" y="173"/>
+                      <position x="199" y="201"/>
+                      <position x="174" y="201"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="75" y="30"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="5" height="29" width="70">
+              <position x="104" y="187"/>
+              <connectionPointOut>
+                <relPosition x="70" y="14"/>
+              </connectionPointOut>
+              <expression>PLC_IN</expression>
+            </inVariable>
+          </FBD>
+        </body>
+      </pou>
+    </pous>
+  </types>
+  <instances>
+    <configurations>
+      <configuration name="conf">
+        <resource name="res">
+          <task name="tache" interval="t#50ms" priority="0">
+            <pouInstance name="toto" typeName="test_main"/>
+          </task>
+        </resource>
+      </configuration>
+    </configurations>
+  </instances>
+</project>

@@ -1,0 +1,7 @@
+[TOPOLOGY]
+NetName=None
+Nodes=0x01
+Node64Present=0x01
+Node64Name=micromod
+Node64DCFName=PEAK MicroMod.eds
+EDSBaseName=eds

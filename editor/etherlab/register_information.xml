@@ -1,0 +1,7114 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RegisterInfo>
+  <!--ESC Information-->
+  <Register>
+    <Index>0000</Index>
+    <Description>ESC Rev/Type</Description>
+    <Details>
+      <Detail>
+        <Range>0-7</Range>
+        <Description>Type</Description>
+        <Enum>
+          <item>
+            <value>00000010</value>
+            <Description>ESC10/ESC20</Description>
+          </item>
+          <item>
+            <value>00000100</value>
+            <Description>IP Core</Description>
+          </item>
+          <item>
+            <value>00010001</value>
+            <Description>ET1100</Description>
+          </item>
+          <item>
+            <value>00010010</value>
+            <Description>ET1200</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>8-15</Range>
+        <Description>Revision</Description>
+      </Detail>
+    </Details>
+  </Register>
+  <Register>
+    <Index>0002</Index>
+    <Description>ESC Build</Description>
+    <Details>
+      <Detail esc="04">
+        <Range>0-3</Range>
+        <Description>Maintenance version</Description>
+      </Detail>
+      <Detail esc="04">
+        <Range>4-7</Range>
+        <Description>Minor version</Description>
+      </Detail>
+    </Details>
+  </Register>
+  <Register>
+    <Index>0004</Index>
+    <Description>SM/FMMU Cnt</Description>
+    <Details>
+      <Detail>
+        <Range>0-7</Range>
+        <Description>FMMU cnt</Description>
+      </Detail>
+      <Detail>
+        <Range>8-15</Range>
+        <Description>SM cnt</Description>
+      </Detail>
+    </Details>
+  </Register>
+  <Register>
+    <Index>0006</Index>
+    <Description>Ports/DPRAM</Description>
+    <Details>
+      <Detail>
+        <Range>0-7</Range>
+        <Description>DPRAM (Kbyte)</Description>
+      </Detail>
+      <Detail>
+        <Range>8-9</Range>
+        <Description>Port A</Description>
+        <Enum>
+          <item>
+            <value>00</value>
+            <Description>Not implemented</Description>
+          </item>
+          <item>
+            <value>01</value>
+            <Description>Not configured (EEPROM)</Description>
+          </item>
+          <item>
+            <value>10</value>
+            <Description>EBUS</Description>
+          </item>
+          <item>
+            <value>11</value>
+            <Description>MII/RMII</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>10-11</Range>
+        <Description>Port B</Description>
+        <Enum>
+          <item>
+            <value>00</value>
+            <Description>Not implemented</Description>
+          </item>
+          <item>
+            <value>01</value>
+            <Description>Not configured (EEPROM)</Description>
+          </item>
+          <item>
+            <value>10</value>
+            <Description>EBUS</Description>
+          </item>
+          <item>
+            <value>11</value>
+            <Description>MII/RMII</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>12-13</Range>
+        <Description>Port C</Description>
+        <Enum>
+          <item>
+            <value>00</value>
+            <Description>Not implemented</Description>
+          </item>
+          <item>
+            <value>01</value>
+            <Description>Not configured (EEPROM)</Description>
+          </item>
+          <item>
+            <value>10</value>
+            <Description>EBUS</Description>
+          </item>
+          <item>
+            <value>11</value>
+            <Description>MII/RMII</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>14-15</Range>
+        <Description>Port D</Description>
+        <Enum>
+          <item>
+            <value>00</value>
+            <Description>Not implemented</Description>
+          </item>
+          <item>
+            <value>01</value>
+            <Description>Not configured (EEPROM)</Description>
+          </item>
+          <item>
+            <value>10</value>
+            <Description>EBUS</Description>
+          </item>
+          <item>
+            <value>11</value>
+            <Description>MII/RMII</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <Register>
+    <Index>0008</Index>
+    <Description>Features</Description>
+    <Details>
+      <Detail>
+        <Range>0</Range>
+        <Description>FMMU Operation</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Bit oriented</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Byte oriented</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>2</Range>
+        <Description>DC support</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>3</Range>
+        <Description>DC 64 bit support</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE
+</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>4</Range>
+        <Description>E-Bus low jitter</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>5</Range>
+        <Description>E-Bus ext. link detection</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>6</Range>
+        <Description>MII ext. link detection</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>7</Range>
+        <Description>Separate Handling of FCS Errors</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>8</Range>
+        <Description>DC SYNC ext. Activation</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>9</Range>
+        <Description>EtherCAT LRW cmd. support</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>10</Range>
+        <Description>EtherCAT R/W cmd. support</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>11</Range>
+        <Description>Fixed FMMU/SM Cfg.</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <!--Station Address-->
+  <Register>
+    <Index>0010</Index>
+    <Description>Phys Addr</Description>
+  </Register>
+  <Register>
+    <Index>0012</Index>
+    <Description>Configured Station Alias</Description>
+  </Register>
+  <!--Write Protection-->
+  <Register>
+    <Index>0020</Index>
+    <Description>Register Protect</Description>
+  </Register>
+  <Register>
+    <Index>0030</Index>
+    <Description>Access Protect</Description>
+  </Register>
+  <!--Data Link Layer-->
+  <Register>
+    <Index>0040</Index>
+    <Description>ESC Reset</Description>
+    <Details>
+      <Detail>
+        <Range>0-7</Range>
+        <Description>ESC reset ECAT</Description>
+      </Detail>
+      <Detail>
+        <Range>8-15</Range>
+        <Description>ESC reset PDI</Description>
+      </Detail>
+    </Details>
+  </Register>
+  <Register>
+    <Index>0100</Index>
+    <Description>ESC Ctrl</Description>
+    <Details>
+      <Detail>
+        <Range>0</Range>
+        <Description>Kill non EtherCATframes</Description>
+      </Detail>
+      <Detail>
+        <Range>1</Range>
+        <Description>Temporary loop control</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Permanent use</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Use for about 1 sec.</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>8-9</Range>
+        <Description>Port A</Description>
+        <Enum>
+          <item>
+            <value>00</value>
+            <Description>Auto loop</Description>
+          </item>
+          <item>
+            <value>01</value>
+            <Description>Auto close</Description>
+          </item>
+          <item>
+            <value>10</value>
+            <Description>Loop open</Description>
+          </item>
+          <item>
+            <value>11</value>
+            <Description>Loop closed</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>10-11</Range>
+        <Description>Port B</Description>
+        <Enum>
+          <item>
+            <value>00</value>
+            <Description>Auto loop</Description>
+          </item>
+          <item>
+            <value>01</value>
+            <Description>Auto close</Description>
+          </item>
+          <item>
+            <value>10</value>
+            <Description>Loop open</Description>
+          </item>
+          <item>
+            <value>11</value>
+            <Description>Loop closed</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>12-13</Range>
+        <Description>Port C</Description>
+        <Enum>
+          <item>
+            <value>00</value>
+            <Description>Auto loop</Description>
+          </item>
+          <item>
+            <value>01</value>
+            <Description>Auto close</Description>
+          </item>
+          <item>
+            <value>10</value>
+            <Description>Loop open</Description>
+          </item>
+          <item>
+            <value>11</value>
+            <Description>Loop closed</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>14-15</Range>
+        <Description>Port D</Description>
+        <Enum>
+          <item>
+            <value>00</value>
+            <Description>Auto loop</Description>
+          </item>
+          <item>
+            <value>01</value>
+            <Description>Auto close</Description>
+          </item>
+          <item>
+            <value>10</value>
+            <Description>Loop open</Description>
+          </item>
+          <item>
+            <value>11</value>
+            <Description>Loop closed</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <Register>
+    <Index>0102</Index>
+    <Description>ESC Ctrl Ext</Description>
+    <Details>
+      <Detail>
+        <Range>0-2</Range>
+        <Description>RX FIFO size</Description>
+      </Detail>
+      <Detail>
+        <Range>3</Range>
+        <Description>EBUS Low jitter</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Normal jitter</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Reducedjitter</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>6</Range>
+        <Description>EBUSremote link down signaling time</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Default</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Reduced</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>9</Range>
+        <Description>Station alias</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Ignore</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Available</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <Register>
+    <Index>0108</Index>
+    <Description>Phys. RW Offset</Description>
+  </Register>
+  <Register>
+    <Index>0110</Index>
+    <Description>ESC Status</Description>
+    <Details>
+      <Detail>
+        <Range>0</Range>
+        <Description>Operation</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>1</Range>
+        <Description>PDI watchdog</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>expired</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>reloaded</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>2</Range>
+        <Description>Enh. Link Detection</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Deactive</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Active</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>4</Range>
+        <Description>Physical link Port A</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>5</Range>
+        <Description>Physical link Port B</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>6</Range>
+        <Description>Physical link Port C</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>7</Range>
+        <Description>Physical link Port D</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>8-9</Range>
+        <Description>Port A</Description>
+        <Enum>
+          <item>
+            <value>00</value>
+            <Description>Loop Open, no link</Description>
+          </item>
+          <item>
+            <value>01</value>
+            <Description>Loop closed, no link</Description>
+          </item>
+          <item>
+            <value>10</value>
+            <Description>Loop open, with link</Description>
+          </item>
+          <item>
+            <value>11</value>
+            <Description>Loop closed, with link</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>10-11</Range>
+        <Description>Port B</Description>
+        <Enum>
+          <item>
+            <value>00</value>
+            <Description>Loop Open, no link</Description>
+          </item>
+          <item>
+            <value>01</value>
+            <Description>Loop closed, no link</Description>
+          </item>
+          <item>
+            <value>10</value>
+            <Description>Loop open, with link</Description>
+          </item>
+          <item>
+            <value>11</value>
+            <Description>Loop closed, with link</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>12-13</Range>
+        <Description>Port C</Description>
+        <Enum>
+          <item>
+            <value>00</value>
+            <Description>Loop Open, no link</Description>
+          </item>
+          <item>
+            <value>01</value>
+            <Description>Loop closed, no link</Description>
+          </item>
+          <item>
+            <value>10</value>
+            <Description>Loop open, with link</Description>
+          </item>
+          <item>
+            <value>11</value>
+            <Description>Loop closed, with link</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>14-15</Range>
+        <Description>Port D</Description>
+        <Enum>
+          <item>
+            <value>00</value>
+            <Description>Loop Open, no link</Description>
+          </item>
+          <item>
+            <value>01</value>
+            <Description>Loop closed, no link</Description>
+          </item>
+          <item>
+            <value>10</value>
+            <Description>Loop open, with link</Description>
+          </item>
+          <item>
+            <value>11</value>
+            <Description>Loop closed, with link</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <!--Application Layer-->
+  <Register>
+    <Index>0120</Index>
+    <Description>AL Ctrl</Description>
+    <Details>
+      <Detail>
+        <Range>0-3</Range>
+        <Description>AL Ctrl</Description>
+        <Enum>
+          <item>
+            <value>0000</value>
+            <Description>INIT</Description>
+          </item>
+          <item>
+            <value>0011</value>
+            <Description>Bootstrap</Description>
+          </item>
+          <item>
+            <value>0010</value>
+            <Description>PREOP</Description>
+          </item>
+          <item>
+            <value>0100</value>
+            <Description>SAFEOP</Description>
+          </item>
+          <item>
+            <value>1000</value>
+            <Description>OP</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>4</Range>
+        <Description>Error Ack</Description>
+      </Detail>
+      <Detail>
+        <Range>5</Range>
+        <Description>Device Identification</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>No request</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Device Identification request</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <Register>
+    <Index>0130</Index>
+    <Description>AL Status</Description>
+    <Details>
+      <Detail>
+        <Range>0-3</Range>
+        <Description>AL Status</Description>
+        <Enum>
+          <item>
+            <value>0000</value>
+            <Description>INIT</Description>
+          </item>
+          <item>
+            <value>0011</value>
+            <Description>Bootstrap</Description>
+          </item>
+          <item>
+            <value>0010</value>
+            <Description>PREOP</Description>
+          </item>
+          <item>
+            <value>0100</value>
+            <Description>SAFEOP</Description>
+          </item>
+          <item>
+            <value>1000</value>
+            <Description>OP</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>4</Range>
+        <Description>Error</Description>
+      </Detail>
+      <Detail>
+        <Range>5</Range>
+        <Description>Device Identification</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>not valid</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>loaded</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <Register>
+    <Index>0134</Index>
+    <Description>AL Status Code</Description>
+  </Register>
+  <Register>
+    <Index>0138</Index>
+    <Description>RUN/ERR LED Override</Description>
+    <Details>
+      <Detail esc="04">
+        <Range>0-3</Range>
+        <Description>RUN LED Code</Description>
+        <Enum>
+          <item>
+            <value>0000</value>
+            <Description>Off</Description>
+          </item>
+          <item>
+            <value>0001</value>
+            <Description>Flash 1x</Description>
+          </item>
+          <item>
+            <value>0010</value>
+            <Description>Flash 2x</Description>
+          </item>
+          <item>
+            <value>0011</value>
+            <Description>Flash 3x</Description>
+          </item>
+          <item>
+            <value>0100</value>
+            <Description>Flash 4x</Description>
+          </item>
+          <item>
+            <value>0101</value>
+            <Description>Flash 5x</Description>
+          </item>
+          <item>
+            <value>0110</value>
+            <Description>Flash 6x</Description>
+          </item>
+          <item>
+            <value>0111</value>
+            <Description>Flash 7x</Description>
+          </item>
+          <item>
+            <value>1000</value>
+            <Description>Flash 8x</Description>
+          </item>
+          <item>
+            <value>1001</value>
+            <Description>Flash 9x</Description>
+          </item>
+          <item>
+            <value>1010</value>
+            <Description>Flash 10x</Description>
+          </item>
+          <item>
+            <value>1011</value>
+            <Description>Flash 11x</Description>
+          </item>
+          <item>
+            <value>1100</value>
+            <Description>Flash 12x</Description>
+          </item>
+          <item>
+            <value>1101</value>
+            <Description>Blinking</Description>
+          </item>
+          <item>
+            <value>1110</value>
+            <Description>Flickering</Description>
+          </item>
+          <item>
+            <value>1111</value>
+            <Description>On</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail esc="04">
+        <Range>4</Range>
+        <Description>Enable RUN LED Override</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Disabled</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Enabled</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail esc="04">
+        <Range>8-11</Range>
+        <Description>ERR LED Code</Description>
+        <Enum>
+          <item>
+            <value>0000</value>
+            <Description>Off</Description>
+          </item>
+          <item>
+            <value>0001</value>
+            <Description>Flash 1x</Description>
+          </item>
+          <item>
+            <value>0010</value>
+            <Description>Flash 2x</Description>
+          </item>
+          <item>
+            <value>0011</value>
+            <Description>Flash 3x</Description>
+          </item>
+          <item>
+            <value>0100</value>
+            <Description>Flash 4x</Description>
+          </item>
+          <item>
+            <value>0101</value>
+            <Description>Flash 5x</Description>
+          </item>
+          <item>
+            <value>0110</value>
+            <Description>Flash 6x</Description>
+          </item>
+          <item>
+            <value>0111</value>
+            <Description>Flash 7x</Description>
+          </item>
+          <item>
+            <value>1000</value>
+            <Description>Flash 8x</Description>
+          </item>
+          <item>
+            <value>1001</value>
+            <Description>Flash 9x</Description>
+          </item>
+          <item>
+            <value>1010</value>
+            <Description>Flash 10x</Description>
+          </item>
+          <item>
+            <value>1011</value>
+            <Description>Flash 11x</Description>
+          </item>
+          <item>
+            <value>1100</value>
+            <Description>Flash 12x</Description>
+          </item>
+          <item>
+            <value>1101</value>
+            <Description>Blinking</Description>
+          </item>
+          <item>
+            <value>1110</value>
+            <Description>Flickering</Description>
+          </item>
+          <item>
+            <value>1111</value>
+            <Description>On</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail esc="04">
+        <Range>12</Range>
+        <Description>Enable ERR LED Override</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Disabled</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Enabled</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <!--PDI/ESC Configuration-->
+  <Register>
+    <Index>0140</Index>
+    <Description>PDI Ctrl</Description>
+    <Details>
+      <Detail>
+        <Range>0-7</Range>
+        <Description>PDI</Description>
+        <Enum>
+          <item>
+            <value>00000000</value>
+            <Description>none</Description>
+          </item>
+          <item>
+            <value>00000001</value>
+            <Description>4 Digital Input</Description>
+          </item>
+          <item>
+            <value>00000010</value>
+            <Description>4 Digital Output</Description>
+          </item>
+          <item>
+            <value>00000011</value>
+            <Description>2 DI and 2 DO</Description>
+          </item>
+          <item>
+            <value>00000100</value>
+            <Description>Digital I/O</Description>
+          </item>
+          <item>
+            <value>00000101</value>
+            <Description>SPI Slave</Description>
+          </item>
+          <item>
+            <value>00000110</value>
+            <Description>Oversampling I/O</Description>
+          </item>
+          <item>
+            <value>00000111</value>
+            <Description>EtherCAT Bridge (port3)</Description>
+          </item>
+          <item>
+            <value>00001000</value>
+            <Description>uC async. 16bit</Description>
+          </item>
+          <item>
+            <value>00001001</value>
+            <Description>uC async. 8bit</Description>
+          </item>
+          <item>
+            <value>00001010</value>
+            <Description>uC sync. 16bit</Description>
+          </item>
+          <item>
+            <value>00001011</value>
+            <Description>uC sync. 8bit</Description>
+          </item>
+          <item>
+            <value>00010000</value>
+            <Description>32 Digital Input and 0 Digital Output</Description>
+          </item>
+          <item>
+            <value>00010001</value>
+            <Description>24 Digital Input and 8 Digital Output</Description>
+          </item>
+          <item>
+            <value>00010010</value>
+            <Description>16 Digital Input and 16 Digital Output</Description>
+          </item>
+          <item>
+            <value>00010011</value>
+            <Description>8 Digital Input and 24 Digital Output</Description>
+          </item>
+          <item>
+            <value>00010100</value>
+            <Description>0 Digital Input and 32 Digital Output</Description>
+          </item>
+          <item>
+            <value>11111111</value>
+            <Description>On-chip bus</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>8</Range>
+        <Description>Device emulation</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>9</Range>
+        <Description>Enhanced link detection all ports</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Disabled</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Enabled</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>10</Range>
+        <Description>DC SYNC Out Unit</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Disabled</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Enabled</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>11</Range>
+        <Description>DC Latch In Unit</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Disabled</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Enabled</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>12</Range>
+        <Description>Enhanced link port 0</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Disabled</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Enabled</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>13</Range>
+        <Description>Enhanced link port 1</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Disabled</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Enabled</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>14</Range>
+        <Description>Enhanced link port 2</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Disabled</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Enabled</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>15</Range>
+        <Description>Enhanced link port 3</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Disabled</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Enabled</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <Register>
+    <Index>014e</Index>
+    <Description>PDI Information</Description>
+    <Details>
+      <Detail esc="04">
+        <Range>0</Range>
+        <Description>PDI register function ack. by write </Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Disabled</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Enabled</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail esc="04">
+        <Range>1</Range>
+        <Description>PDI configured</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail esc="04">
+        <Range>2</Range>
+        <Description>PDI Active</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail esc="04">
+        <Range>3</Range>
+        <Description>PDI config. invalid</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <Register pdi="04">
+    <Index>0150</Index>
+    <Description>PDI Cfg</Description>
+    <Details>
+      <Detail>
+        <Range>0</Range>
+        <Description>OUTVALID polarity</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Active high</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Active low</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>1</Range>
+        <Description>OUTVALID mode</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Output event signaling</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>WD_TRIG signaling</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>2</Range>
+        <Description>mode of direction</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Unidirectional</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Bidirectional</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>3</Range>
+        <Description>Watchdog behavior</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Immediately output reset</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Wait output reset</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>4-5</Range>
+        <Description>Input data is sampled at</Description>
+        <Enum>
+          <item>
+            <value>00</value>
+            <Description>Start of Frame</Description>
+          </item>
+          <item>
+            <value>01</value>
+            <Description>Rising edge of LATCH_IN</Description>
+          </item>
+          <item>
+            <value>10</value>
+            <Description>DC SYNC0 event</Description>
+          </item>
+          <item>
+            <value>11</value>
+            <Description>DC SYNC1 event</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>6-7</Range>
+        <Description>Input data is sampled at</Description>
+        <Enum>
+          <item>
+            <value>00</value>
+            <Description>End of Frame</Description>
+          </item>
+          <item>
+            <value>01</value>
+            <Description>DC SYNC0 event</Description>
+          </item>
+          <item>
+            <value>11</value>
+            <Description>DC SYNC1 event</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <Register pdi="05">
+    <Index>0150</Index>
+    <Description>PDI Cfg</Description>
+    <Details>
+      <Detail>
+        <Range>0-1</Range>
+        <Description>SPI mode</Description>
+      </Detail>
+      <Detail>
+        <Range>2</Range>
+        <Description>SPI IRQ output driver</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Push-Pull</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Open</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>3</Range>
+        <Description>SPI IRQ polarity</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Active low</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Active high</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>4</Range>
+        <Description>SPI SEL polarity</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Active low</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Active high</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>5</Range>
+        <Description>Data output sample mode</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Normal</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Late</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>8</Range>
+        <Description>SYNC output</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Push pull</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Open</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>9</Range>
+        <Description>SYNC0 polarity</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Active low</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Active high</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>10</Range>
+        <Description>SYNC0 output</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Disabled</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Enabled</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>11</Range>
+        <Description>SYNC0 to AL event</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Disabled</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Enabled</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>12</Range>
+        <Description>SYNC1 output</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Push pull</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Open</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>13</Range>
+        <Description>SYNC1 polarity</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Active low</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Active high</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>14</Range>
+        <Description>SYNC1 output</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Disabled</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Enabled</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>15</Range>
+        <Description>SYNC1 to AL event</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Disabled</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Enabled</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <Register pdi="08">
+    <Index>0150</Index>
+    <Description>PDI Cfg</Description>
+    <Details>
+      <Detail>
+        <Range>0-1</Range>
+        <Description>BUSY output driver/polarity</Description>
+        <Enum>
+          <item>
+            <value>00</value>
+            <Description>Push-Pull active low</Description>
+          </item>
+          <item>
+            <value>01</value>
+            <Description>Open Drain (Active low)</Description>
+          </item>
+          <item>
+            <value>10</value>
+            <Description>Push-Pull active high</Description>
+          </item>
+          <item>
+            <value>11</value>
+            <Description>Open source (Active high)</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>2-3</Range>
+        <Description>IRQ output driver/polarity</Description>
+        <Enum>
+          <item>
+            <value>00</value>
+            <Description>Push-Pull active low</Description>
+          </item>
+          <item>
+            <value>01</value>
+            <Description>Open Drain (Active low)</Description>
+          </item>
+          <item>
+            <value>10</value>
+            <Description>Push-Pull active high</Description>
+          </item>
+          <item>
+            <value>11</value>
+            <Description>Open source (Active high)</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>4</Range>
+        <Description>BHE polarity</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Active low</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Active high</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>7</Range>
+        <Description>RD polarity</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Active low</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Active high</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>8</Range>
+        <Description>SYNC output</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Push pull</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Open</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>9</Range>
+        <Description>SYNC0 polarity</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Active low</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Active high</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>10</Range>
+        <Description>SYNC0 output</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Disabled</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Enabled</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>11</Range>
+        <Description>SYNC0 to AL event</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Disabled</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Enabled</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>12</Range>
+        <Description>SYNC1 output</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Push pull</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Open</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>13</Range>
+        <Description>SYNC1 polarity</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Active low</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Active high</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>14</Range>
+        <Description>SYNC1 output</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Disabled</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Enabled</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>15</Range>
+        <Description>SYNC1 to AL event</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Disabled</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Enabled</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <Register pdi="09">
+    <Index>0150</Index>
+    <Description>PDI Cfg</Description>
+    <Details>
+      <Detail>
+        <Range>0-1</Range>
+        <Description>BUSY output driver/polarity</Description>
+        <Enum>
+          <item>
+            <value>00</value>
+            <Description>Push-Pull active low</Description>
+          </item>
+          <item>
+            <value>01</value>
+            <Description>Open Drain (Active low)</Description>
+          </item>
+          <item>
+            <value>10</value>
+            <Description>Push-Pull active high</Description>
+          </item>
+          <item>
+            <value>11</value>
+            <Description>Open source (Active high)</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>2-3</Range>
+        <Description>IRQ output driver/polarity</Description>
+        <Enum>
+          <item>
+            <value>00</value>
+            <Description>Push-Pull active low</Description>
+          </item>
+          <item>
+            <value>01</value>
+            <Description>Open Drain (Active low)</Description>
+          </item>
+          <item>
+            <value>10</value>
+            <Description>Push-Pull active high</Description>
+          </item>
+          <item>
+            <value>11</value>
+            <Description>Open source (Active high)</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>4</Range>
+        <Description>BHE polarity</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Active low</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Active high</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>7</Range>
+        <Description>RD polarity</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Active low</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Active high</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>8</Range>
+        <Description>SYNC output</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Push pull</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Open</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>9</Range>
+        <Description>SYNC0 polarity</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Active low</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Active high</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>10</Range>
+        <Description>SYNC0 output</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Disabled</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Enabled</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>11</Range>
+        <Description>SYNC0 to AL event</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Disabled</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Enabled</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>12</Range>
+        <Description>SYNC1 output</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Push pull</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Open</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>13</Range>
+        <Description>SYNC1 polarity</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Active low</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Active high</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>14</Range>
+        <Description>SYNC1 output</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Disabled</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Enabled</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>15</Range>
+        <Description>SYNC1 to AL event</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Disabled</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Enabled</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <Register pdi="0a">
+    <Index>0150</Index>
+    <Description>PDI Cfg</Description>
+    <Details>
+      <Detail>
+        <Range>0-1</Range>
+        <Description>TA output driver/polarity</Description>
+        <Enum>
+          <item>
+            <value>00</value>
+            <Description>Push-pull active low</Description>
+          </item>
+          <item>
+            <value>01</value>
+            <Description>Open Drain (Active low)</Description>
+          </item>
+          <item>
+            <value>10</value>
+            <Description>Push-pull active high</Description>
+          </item>
+          <item>
+            <value>11</value>
+            <Description>Open Source (Active high)</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>2-3</Range>
+        <Description>IRQ output driver/polarity</Description>
+        <Enum>
+          <item>
+            <value>00</value>
+            <Description>Push-pull active low</Description>
+          </item>
+          <item>
+            <value>01</value>
+            <Description>Open Drain (Active low)</Description>
+          </item>
+          <item>
+            <value>10</value>
+            <Description>Push-pull active high</Description>
+          </item>
+          <item>
+            <value>11</value>
+            <Description>Open Source (Active high)</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>4</Range>
+        <Description>BHE polarity</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Active low</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Active high</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>5</Range>
+        <Description>ADR(0) polarity</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Active low</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Active high</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>6</Range>
+        <Description>Byte accessmode</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>BHE or Byte select mode</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Transfer size mode</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>7</Range>
+        <Description>TS polarity</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Active low</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Active high</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>8</Range>
+        <Description>SYNC output</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Push pull</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Open</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>9</Range>
+        <Description>SYNC0 polarity</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Active low</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Active high</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>10</Range>
+        <Description>SYNC0 output</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Disabled</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Enabled</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>11</Range>
+        <Description>SYNC0 to AL event</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Disabled</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Enabled</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>12</Range>
+        <Description>SYNC1 output</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Push pull</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Open</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>13</Range>
+        <Description>SYNC1 polarity</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Active low</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Active high</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>14</Range>
+        <Description>SYNC1 output</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Disabled</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Enabled</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>15</Range>
+        <Description>SYNC1 to AL event</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Disabled</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Enabled</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <Register pdi="0b">
+    <Index>0150</Index>
+    <Description>PDI Cfg</Description>
+    <Details>
+      <Detail>
+        <Range>0-1</Range>
+        <Description>TA output driver/polarity</Description>
+        <Enum>
+          <item>
+            <value>00</value>
+            <Description>Push-pull active low</Description>
+          </item>
+          <item>
+            <value>01</value>
+            <Description>Open Drain (Active low)</Description>
+          </item>
+          <item>
+            <value>10</value>
+            <Description>Push-pull active high</Description>
+          </item>
+          <item>
+            <value>11</value>
+            <Description>Open Source (Active high)</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>2-3</Range>
+        <Description>IRQ output driver/polarity</Description>
+        <Enum>
+          <item>
+            <value>00</value>
+            <Description>Push-pull active low</Description>
+          </item>
+          <item>
+            <value>01</value>
+            <Description>Open Drain (Active low)</Description>
+          </item>
+          <item>
+            <value>10</value>
+            <Description>Push-pull active high</Description>
+          </item>
+          <item>
+            <value>11</value>
+            <Description>Open Source (Active high)</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>4</Range>
+        <Description>BHE polarity</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Active low</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Active high</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>5</Range>
+        <Description>ADR(0) polarity</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Active low</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Active high</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>6</Range>
+        <Description>Byte accessmode</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>BHE or Byte select mode</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Transfer size mode</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>7</Range>
+        <Description>TS polarity</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Active low</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Active high</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>8</Range>
+        <Description>SYNC output</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Push pull</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Open</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>9</Range>
+        <Description>SYNC0 polarity</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Active low</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Active high</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>10</Range>
+        <Description>SYNC0 output</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Disabled</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Enabled</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>11</Range>
+        <Description>SYNC0 to AL event</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Disabled</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Enabled</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>12</Range>
+        <Description>SYNC1 output</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Push pull</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Open</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>13</Range>
+        <Description>SYNC1 polarity</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Active low</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Active high</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>14</Range>
+        <Description>SYNC1 output</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Disabled</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Enabled</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>15</Range>
+        <Description>SYNC1 to AL event</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Disabled</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Enabled</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <Register pdi="07">
+    <Index>0150</Index>
+    <Description>PDI Cfg</Description>
+    <Details>
+      <Detail>
+        <Range>0</Range>
+        <Description>Bridge port physical layer</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>EBUS</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>MII</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>8</Range>
+        <Description>SYNC output</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Push pull</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Open</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>9</Range>
+        <Description>SYNC0 polarity</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Active low</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Active high</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>10</Range>
+        <Description>SYNC0 output</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Disabled</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Enabled</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>11</Range>
+        <Description>SYNC0 to AL event</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Disabled</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Enabled</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>12</Range>
+        <Description>SYNC1 output</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Push pull</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Open</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>13</Range>
+        <Description>SYNC1 polarity</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Active low</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Active high</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>14</Range>
+        <Description>SYNC1 output</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Disabled</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Enabled</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>15</Range>
+        <Description>SYNC1 to AL event</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Disabled</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Enabled</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <Register pdi="ff">
+    <Index>0150</Index>
+    <Description>PDI Cfg</Description>
+    <Details>
+      <Detail>
+        <Range>0-6</Range>
+        <Description>Bus clock multiplication factor</Description>
+      </Detail>
+      <Detail>
+        <Range>7</Range>
+        <Description>On-chip bus</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Altera Avalon</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Xilinx OPB</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>8</Range>
+        <Description>SYNC0 output</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Push pull</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Open</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>9</Range>
+        <Description>SYNC0 polarity</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Active low</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Active high</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>10</Range>
+        <Description>SYNC0 output</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Disabled</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Enabled</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>11</Range>
+        <Description>SYNC0 to AL event</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Disabled</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Enabled</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>12</Range>
+        <Description>SYNC1 output</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Push pull</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Open</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>13</Range>
+        <Description>SYNC1 polarity</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Active low</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Active high</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>14</Range>
+        <Description>SYNC1 output</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Disabled</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Enabled</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>15</Range>
+        <Description>SYNC1 to AL event</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Disabled</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Enabled</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <Register pdi="04">
+    <Index>0152</Index>
+    <Description>PDI Cfg Ext</Description>
+    <Details>
+      <Detail>
+        <Range>0</Range>
+        <Description>Direction of I/O[1:0]</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Input</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Output</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>1</Range>
+        <Description>Direction of I/O[3:2]</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Input</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Output</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>2</Range>
+        <Description>Direction of I/O[5:4]</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Input</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Output</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>3</Range>
+        <Description>Direction of I/O[7:6]</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Input</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Output</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>4</Range>
+        <Description>Direction of I/O[9:8]</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Input</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Output</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>5</Range>
+        <Description>Direction of I/O[11:10]</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Input</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Output</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>6</Range>
+        <Description>Direction of I/O[13:12]</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Input</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Output</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>7</Range>
+        <Description>Direction of I/O[15:14]</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Input</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Output</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>8</Range>
+        <Description>Direction of I/O[17:16]</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Input</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Output</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>9</Range>
+        <Description>Direction of I/O[19:18]</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Input</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Output</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>10</Range>
+        <Description>Direction of I/O[21:20]</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Input</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Output</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>11</Range>
+        <Description>Direction of I/O[23:22]</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Input</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Output</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>12</Range>
+        <Description>Direction of I/O[25:24]</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Input</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Output</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>13</Range>
+        <Description>Direction of I/O[27:26]</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Input</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Output</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>14</Range>
+        <Description>Direction of I/O[29:28]</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Input</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Output</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>15</Range>
+        <Description>Direction of I/O[31:30]</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Input</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Output</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <Register pdi="08">
+    <Index>0152</Index>
+    <Description>PDI Cfg Ext</Description>
+    <Details>
+      <Detail>
+        <Range>0</Range>
+        <Description>Read BUSY delay</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Normal read</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Delayed read</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <Register pdi="09">
+    <Index>0152</Index>
+    <Description>PDI Cfg Ext</Description>
+    <Details>
+      <Detail>
+        <Range>0</Range>
+        <Description>Read BUSY delay</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Normal read</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Delayed read</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <Register pdi="0a">
+    <Index>0152</Index>
+    <Description>PDI Cfg Ext</Description>
+    <Details>
+      <Detail>
+        <Range>8</Range>
+        <Description>Write data valid</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Oneclock cycle after CS</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Together with CS</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>9</Range>
+        <Description>Read mode</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Use Byte Select</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Always read 16 bit</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>10</Range>
+        <Description>CS mode</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Sample with rising edge</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Sample with falling edge</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>11</Range>
+        <Description>TA/IRQ mode</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Update with rising edge</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Update with falling edge</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <Register pdi="0b">
+    <Index>0152</Index>
+    <Description>PDI Cfg Ext</Description>
+    <Details>
+      <Detail>
+        <Range>8</Range>
+        <Description>Write data valid</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Oneclock cycle after CS</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Together with CS</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>9</Range>
+        <Description>Read mode</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Use Byte Select</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Always read 16 bit</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>10</Range>
+        <Description>CS mode</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Sample with rising edge</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Sample with falling edge</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>11</Range>
+        <Description>TA/IRQ mode</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Update with rising edge</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Update with falling edge</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <Register pdi="ff">
+    <Index>0152</Index>
+    <Description>PDI Cfg Ext</Description>
+    <Details>
+      <Detail>
+        <Range>0-1</Range>
+        <Description>Data bus width</Description>
+        <Enum>
+          <item>
+            <value>00</value>
+            <Description>4Bytes</Description>
+          </item>
+          <item>
+            <value>01</value>
+            <Description>1Byte</Description>
+          </item>
+          <item>
+            <value>10</value>
+            <Description>2Bytes</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <!--Interrupts-->
+  <Register>
+    <Index>0200</Index>
+    <Description>ECAT IRQ Mask</Description>
+    <Details>
+      <Detail>
+        <Range>0</Range>
+        <Description>Latch event</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>2</Range>
+        <Description>ESC Status event</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>3</Range>
+        <Description>AL Status event</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="0">
+        <Range>4</Range>
+        <Description>SM0 IRQ</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="1">
+        <Range>5</Range>
+        <Description>SM1 IRQ</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="2">
+        <Range>6</Range>
+        <Description>SM2 IRQ</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="3">
+        <Range>7</Range>
+        <Description>SM3 IRQ</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="4">
+        <Range>8</Range>
+        <Description>SM4 IRQ</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="5">
+        <Range>9</Range>
+        <Description>SM5 IRQ</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="6">
+        <Range>10</Range>
+        <Description>SM6 IRQ</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="7">
+        <Range>11</Range>
+        <Description>SM7 IRQ</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <Register>
+    <Index>0204</Index>
+    <Description>PDI IRQ Mask L</Description>
+    <Details>
+      <Detail>
+        <Range>0</Range>
+        <Description>AL Ctrl</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>1</Range>
+        <Description>Latch input</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>2</Range>
+        <Description>SYNC 0</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>3</Range>
+        <Description>SYNC 1</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail esc="02">
+        <Range>4</Range>
+        <Description>SM Changed</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>5</Range>
+        <Description>EEPROM command pending</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="0">
+        <Range>8</Range>
+        <Description>SM0</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="1">
+        <Range>9</Range>
+        <Description>SM1</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="2">
+        <Range>10</Range>
+        <Description>SM2</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="3">
+        <Range>11</Range>
+        <Description>SM3</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="4">
+        <Range>12</Range>
+        <Description>SM4</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="5">
+        <Range>13</Range>
+        <Description>SM5</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="6">
+        <Range>14</Range>
+        <Description>SM6</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="7">
+        <Range>15</Range>
+        <Description>SM7</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <Register>
+    <Index>0206</Index>
+    <Description>PDI IRQ Mask H</Description>
+    <Details>
+      <Detail sm="8">
+        <Range>0</Range>
+        <Description>SM8</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="9">
+        <Range>1</Range>
+        <Description>SM9</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="10">
+        <Range>2</Range>
+        <Description>SM10</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="11">
+        <Range>3</Range>
+        <Description>SM11</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="12">
+        <Range>4</Range>
+        <Description>SM12</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="13">
+        <Range>5</Range>
+        <Description>SM13</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="14">
+        <Range>6</Range>
+        <Description>SM14</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="15">
+        <Range>7</Range>
+        <Description>SM15</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <Register>
+    <Index>0210</Index>
+    <Description>ECAT IRQ</Description>
+    <Details>
+      <Detail>
+        <Range>0</Range>
+        <Description>Latch event</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>2</Range>
+        <Description>ESC Status event</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>3</Range>
+        <Description>AL Status event</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="0">
+        <Range>4</Range>
+        <Description>SM0 IRQ</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="1">
+        <Range>5</Range>
+        <Description>SM1 IRQ</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="2">
+        <Range>6</Range>
+        <Description>SM2 IRQ</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="3">
+        <Range>7</Range>
+        <Description>SM3 IRQ</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="4">
+        <Range>8</Range>
+        <Description>SM4 IRQ</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="5">
+        <Range>9</Range>
+        <Description>SM5 IRQ</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="6">
+        <Range>10</Range>
+        <Description>SM6 IRQ</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="7">
+        <Range>11</Range>
+        <Description>SM7 IRQ</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <Register>
+    <Index>0220</Index>
+    <Description>PDI IRQ 1</Description>
+    <Details>
+      <Detail>
+        <Range>0</Range>
+        <Description>AL Ctrl</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>1</Range>
+        <Description>Latch input</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>2</Range>
+        <Description>DC SYNC 0</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>3</Range>
+        <Description>DC SYNC 1</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>4</Range>
+        <Description>SM activation reg. changed</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>5</Range>
+        <Description>EEPROM command pending</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>6</Range>
+        <Description>Watchdog Process Data expired</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="0">
+        <Range>8</Range>
+        <Description>SM0</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="1">
+        <Range>9</Range>
+        <Description>SM1</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="2">
+        <Range>10</Range>
+        <Description>SM2</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="3">
+        <Range>11</Range>
+        <Description>SM3</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="4">
+        <Range>12</Range>
+        <Description>SM4</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="5">
+        <Range>13</Range>
+        <Description>SM5</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="6">
+        <Range>14</Range>
+        <Description>SM6</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="7">
+        <Range>15</Range>
+        <Description>SM7</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <Register>
+    <Index>0222</Index>
+    <Description>PDI IRQ 2</Description>
+    <Details>
+      <Detail sm="8">
+        <Range>0</Range>
+        <Description>SM8</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="9">
+        <Range>1</Range>
+        <Description>SM9</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="10">
+        <Range>2</Range>
+        <Description>SM10</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="11">
+        <Range>3</Range>
+        <Description>SM11</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="12">
+        <Range>4</Range>
+        <Description>SM12</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="13">
+        <Range>5</Range>
+        <Description>SM13</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="14">
+        <Range>6</Range>
+        <Description>SM14</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail sm="15">
+        <Range>7</Range>
+        <Description>SM15</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <!--Error Counters-->
+  <Register>
+    <Index>0300</Index>
+    <Description>CRC A</Description>
+    <Details>
+      <Detail>
+        <Range>0-7</Range>
+        <Description>Invalid frame</Description>
+      </Detail>
+      <Detail>
+        <Range>8-15</Range>
+        <Description>RX error</Description>
+      </Detail>
+    </Details>
+  </Register>
+  <Register>
+    <Index>0302</Index>
+    <Description>CRC B</Description>
+    <Details>
+      <Detail>
+        <Range>0-7</Range>
+        <Description>Invalid frame</Description>
+      </Detail>
+      <Detail>
+        <Range>8-15</Range>
+        <Description>RX error</Description>
+      </Detail>
+    </Details>
+  </Register>
+  <Register>
+    <Index>0304</Index>
+    <Description>CRC C</Description>
+    <Details>
+      <Detail>
+        <Range>0-7</Range>
+        <Description>Invalid frame</Description>
+      </Detail>
+      <Detail>
+        <Range>8-15</Range>
+        <Description>RX error</Description>
+      </Detail>
+    </Details>
+  </Register>
+  <Register>
+    <Index>0306</Index>
+    <Description>CRC D</Description>
+    <Details>
+      <Detail>
+        <Range>0-7</Range>
+        <Description>Invalid frame</Description>
+      </Detail>
+      <Detail>
+        <Range>8-15</Range>
+        <Description>RX error</Description>
+      </Detail>
+    </Details>
+  </Register>
+  <Register>
+    <Index>0308</Index>
+    <Description>Forw. CRC A/B</Description>
+    <Details>
+      <Detail>
+        <Range>0-7</Range>
+        <Description>Port A</Description>
+      </Detail>
+      <Detail>
+        <Range>8-15</Range>
+        <Description>Port B</Description>
+      </Detail>
+    </Details>
+  </Register>
+  <Register>
+    <Index>030a</Index>
+    <Description>Forw. CRC C/D</Description>
+    <Details>
+      <Detail>
+        <Range>0-7</Range>
+        <Description>Port C</Description>
+      </Detail>
+      <Detail>
+        <Range>8-15</Range>
+        <Description>Port D</Description>
+      </Detail>
+    </Details>
+  </Register>
+  <Register>
+    <Index>030c</Index>
+    <Description>Proc. CRC/PDI Err</Description>
+    <Details>
+      <Detail>
+        <Range>0-7</Range>
+        <Description>Process unit error</Description>
+      </Detail>
+      <Detail>
+        <Range>8-15</Range>
+        <Description>PDI error</Description>
+      </Detail>
+    </Details>
+  </Register>
+  <Register pdi="05">
+    <Index>030e</Index>
+    <Description>PDI Error Code</Description>
+    <Details>
+      <Detail>
+        <Range>0-2</Range>
+        <Description>Number of SPI CLK cycles of whole access</Description>
+      </Detail>
+      <Detail>
+        <Range>3</Range>
+        <Description>Busy violation during read access</Description>
+      </Detail>
+      <Detail>
+        <Range>4</Range>
+        <Description>Read termination missing</Description>
+      </Detail>
+      <Detail>
+        <Range>5</Range>
+        <Description>Access continued</Description>
+      </Detail>
+      <Detail>
+        <Range>6-7</Range>
+        <Description>SPI command</Description>
+      </Detail>
+    </Details>
+  </Register>
+  <Register pdi="08" esc="04">
+    <Index>030e</Index>
+    <Description>PDI Error Code</Description>
+    <Details>
+      <Detail>
+        <Range>0</Range>
+        <Description>Busy violation during read access</Description>
+      </Detail>
+      <Detail>
+        <Range>1</Range>
+        <Description>Busy violation during write access</Description>
+      </Detail>
+      <Detail>
+        <Range>2</Range>
+        <Description>Addressing error for a read access</Description>
+      </Detail>
+      <Detail>
+        <Range>3</Range>
+        <Description>Addressing error for a write access</Description>
+      </Detail>
+    </Details>
+  </Register>
+  <Register pdi="09" esc="04">
+    <Index>030e</Index>
+    <Description>PDI Error Code</Description>
+    <Details>
+      <Detail>
+        <Range>0</Range>
+        <Description>Busy violation during read access</Description>
+      </Detail>
+      <Detail>
+        <Range>1</Range>
+        <Description>Busy violation during write access</Description>
+      </Detail>
+      <Detail>
+        <Range>2</Range>
+        <Description>Addressing error for a read access</Description>
+      </Detail>
+      <Detail>
+        <Range>3</Range>
+        <Description>Addressing error for a write access</Description>
+      </Detail>
+    </Details>
+  </Register>
+  <Register pdi="0a" esc="04">
+    <Index>030e</Index>
+    <Description>PDI Error Code</Description>
+    <Details>
+      <Detail>
+        <Range>0</Range>
+        <Description>Busy violation during read access</Description>
+      </Detail>
+      <Detail>
+        <Range>1</Range>
+        <Description>Busy violation during write access</Description>
+      </Detail>
+      <Detail>
+        <Range>2</Range>
+        <Description>Addressing error for a read access</Description>
+      </Detail>
+      <Detail>
+        <Range>3</Range>
+        <Description>Addressing error for a write access</Description>
+      </Detail>
+    </Details>
+  </Register>
+  <Register pdi="0b" esc="04">
+    <Index>030e</Index>
+    <Description>PDI Error Code</Description>
+    <Details>
+      <Detail>
+        <Range>0</Range>
+        <Description>Busy violation during read access</Description>
+      </Detail>
+      <Detail>
+        <Range>1</Range>
+        <Description>Busy violation during write access</Description>
+      </Detail>
+      <Detail>
+        <Range>2</Range>
+        <Description>Addressing error for a read access</Description>
+      </Detail>
+      <Detail>
+        <Range>3</Range>
+        <Description>Addressing error for a write access</Description>
+      </Detail>
+    </Details>
+  </Register>
+  <Register>
+    <Index>0310</Index>
+    <Description>Link Lost A/B</Description>
+    <Details>
+      <Detail>
+        <Range>0-7</Range>
+        <Description>Port A</Description>
+      </Detail>
+      <Detail>
+        <Range>8-15</Range>
+        <Description>Port B</Description>
+      </Detail>
+    </Details>
+  </Register>
+  <Register>
+    <Index>0312</Index>
+    <Description>Link Lost C/D</Description>
+    <Details>
+      <Detail>
+        <Range>0-7</Range>
+        <Description>Port C</Description>
+      </Detail>
+      <Detail>
+        <Range>8-15</Range>
+        <Description>Port D</Description>
+      </Detail>
+    </Details>
+  </Register>
+  <!--Watchdogs-->
+  <Register>
+    <Index>0400</Index>
+    <Description>WD Divisor</Description>
+  </Register>
+  <Register>
+    <Index>0410</Index>
+    <Description>WD Time PDI</Description>
+  </Register>
+  <Register>
+    <Index>0420</Index>
+    <Description>WD Time SM</Description>
+  </Register>
+  <Register>
+    <Index>0440</Index>
+    <Description>WD Status</Description>
+    <Details>
+      <Detail>
+        <Range>0</Range>
+        <Description>PD watchdog</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>expired</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>active or disabled</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <Register>
+    <Index>0442</Index>
+    <Description>WD PDI/SM Counter</Description>
+    <Details>
+      <Detail>
+        <Range>0-7</Range>
+        <Description>SM watchdog cnt</Description>
+      </Detail>
+      <Detail>
+        <Range>8-15</Range>
+        <Description>PDI watchdog cnt</Description>
+      </Detail>
+    </Details>
+  </Register>
+  <!--SII EEPROM Interface-->
+  <Register>
+    <Index>0500</Index>
+    <Description>EEPROM Assign</Description>
+    <Details>
+      <Detail>
+        <Range>0</Range>
+        <Description>EEPROM access ctrl</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>ECAT</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>PDI</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>1</Range>
+        <Description>Reset PDIaccess</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Do not change Bit 501.0</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Reset Bit 501.0 to 0</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>8</Range>
+        <Description>EEPROM access status</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>ECAT</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>PDI</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <Register>
+    <Index>0502</Index>
+    <Description>EEPROM Ctrl/Status</Description>
+    <Details>
+      <Detail>
+        <Range>0</Range>
+        <Description>Write access</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>5</Range>
+        <Description>EEPROM emulation</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Normal operation</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>PDI emulates EEPROM</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>6</Range>
+        <Description>8 byte access</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>7</Range>
+        <Description>2 byte address</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>8</Range>
+        <Description>Read access</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>9</Range>
+        <Description>Write access</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>10</Range>
+        <Description>Reload access</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>11</Range>
+        <Description>CRC error</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>12</Range>
+        <Description>Load error</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>13</Range>
+        <Description>Cmd error</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>14</Range>
+        <Description>Write error</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>15</Range>
+        <Description>Busy</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <Register>
+    <Index>0504</Index>
+    <Description>EEPROM Address L</Description>
+  </Register>
+  <Register>
+    <Index>0506</Index>
+    <Description>EEPROM Address H</Description>
+  </Register>
+  <Register>
+    <Index>0508</Index>
+    <Description>EEPROM Data 0</Description>
+  </Register>
+  <Register>
+    <Index>050a</Index>
+    <Description>EEPROM Data 1</Description>
+  </Register>
+  <Register>
+    <Index>050c</Index>
+    <Description>EEPROM Data 2</Description>
+  </Register>
+  <Register>
+    <Index>050e</Index>
+    <Description>EEPROM Data 3</Description>
+  </Register>
+  <!--MII Management Interface-->
+  <Register>
+    <Index>0510</Index>
+    <Description>Phy MIO Ctrl/Status</Description>
+    <Details>
+      <Detail>
+        <Range>0</Range>
+        <Description>Write enable</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>1</Range>
+        <Description>PDI control possible</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>2</Range>
+        <Description>Link detection active</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>3-7</Range>
+        <Description>Phy address offset</Description>
+      </Detail>
+      <Detail>
+        <Range>8</Range>
+        <Description>Read access</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>9</Range>
+        <Description>Write access</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>13</Range>
+        <Description>Read error occured</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>14</Range>
+        <Description>Write error occured</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>15</Range>
+        <Description>Busy</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <Register>
+    <Index>0512</Index>
+    <Description>Phy MIO Address</Description>
+    <Details>
+      <Detail>
+        <Range>0-4</Range>
+        <Description>Phy address</Description>
+      </Detail>
+      <Detail>
+        <Range>8-11</Range>
+        <Description>MIO address</Description>
+      </Detail>
+    </Details>
+  </Register>
+  <Register>
+    <Index>0514</Index>
+    <Description>Phy MIO Data</Description>
+  </Register>
+  <Register>
+    <Index>0516</Index>
+    <Description>MIO Access</Description>
+    <Details>
+      <Detail>
+        <Range>0</Range>
+        <Description>ECAT claims exclusive access</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>8</Range>
+        <Description>PDI hasaccess to MII management</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>9</Range>
+        <Description>Force PDI to reset 517.0</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <Register>
+    <Index>0518</Index>
+    <Description>MIO Port Status A/B</Description>
+    <Details>
+      <Detail>
+        <Range>0</Range>
+        <Description>Port A: Physical link detected</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>1</Range>
+        <Description>Port A: Link detected</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>2</Range>
+        <Description>Port A: Link status error</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>3</Range>
+        <Description>Port A: Read error</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>4</Range>
+        <Description>Port A: Link partner error</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>5</Range>
+        <Description>Port A: Phy config updated</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>8</Range>
+        <Description>Port B: Physical link detected</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>9</Range>
+        <Description>Port B: Link detected</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>10</Range>
+        <Description>Port B:  Link status error</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>11</Range>
+        <Description>Port B: Read error</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>12</Range>
+        <Description>Port B: Link partner error</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>13</Range>
+        <Description>Port B: Phy config updated</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <Register>
+    <Index>051a</Index>
+    <Description>MIO Port Status C/D</Description>
+    <Details>
+      <Detail>
+        <Range>0</Range>
+        <Description>Port C: Physical link detected</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>1</Range>
+        <Description>Port C: Link detected</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>2</Range>
+        <Description>Port C: Link status eror</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>3</Range>
+        <Description>Port C: Read error</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>4</Range>
+        <Description>Port C: Link partner error</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>5</Range>
+        <Description>Port C: Phy config updated</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>8</Range>
+        <Description>Port D: Physical link detected</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>9</Range>
+        <Description>Port D: Link detected</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>10</Range>
+        <Description>Port D: Link status error</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>11</Range>
+        <Description>Port D: Read error</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>12</Range>
+        <Description>Port D: Link partner error</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>13</Range>
+        <Description>Port D: Phy config updated</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <!--FMMU-->
+  <Register fmmu="0">
+    <Index>0600</Index>
+    <Description>F0 lStart L</Description>
+  </Register>
+  <Register fmmu="0">
+    <Index>0602</Index>
+    <Description>F0 lStart H</Description>
+  </Register>
+  <Register fmmu="0">
+    <Index>0604</Index>
+    <Description>F0 lLength</Description>
+  </Register>
+  <Register fmmu="0">
+    <Index>0606</Index>
+    <Description>F0 lStartEndBit</Description>
+  </Register>
+  <Register fmmu="0">
+    <Index>0608</Index>
+    <Description>F0 pStart</Description>
+  </Register>
+  <Register fmmu="0">
+    <Index>060a</Index>
+    <Description>F0 pStartBit/Dir</Description>
+  </Register>
+  <Register fmmu="0">
+    <Index>060c</Index>
+    <Description>F0 Enable</Description>
+  </Register>
+  <Register fmmu="1">
+    <Index>0610</Index>
+    <Description>F1 lStart L</Description>
+  </Register>
+  <Register fmmu="1">
+    <Index>0612</Index>
+    <Description>F1 lStart H</Description>
+  </Register>
+  <Register fmmu="1">
+    <Index>0614</Index>
+    <Description>F1 lLength</Description>
+  </Register>
+  <Register fmmu="1">
+    <Index>0616</Index>
+    <Description>F1 lStartEndBit</Description>
+  </Register>
+  <Register fmmu="1">
+    <Index>0618</Index>
+    <Description>F1 pStart</Description>
+  </Register>
+  <Register fmmu="1">
+    <Index>061a</Index>
+    <Description>F01 pStartBit/Dir</Description>
+  </Register>
+  <Register fmmu="1">
+    <Index>061c</Index>
+    <Description>F1 Enable</Description>
+  </Register>
+  <Register fmmu="2">
+    <Index>0620</Index>
+    <Description>F2 lStart L</Description>
+  </Register>
+  <Register fmmu="2">
+    <Index>0622</Index>
+    <Description>F2 lStart H</Description>
+  </Register>
+  <Register fmmu="2">
+    <Index>0624</Index>
+    <Description>F2 lLength</Description>
+  </Register>
+  <Register fmmu="2">
+    <Index>0626</Index>
+    <Description>F2 lStartEndBit</Description>
+  </Register>
+  <Register fmmu="2">
+    <Index>0628</Index>
+    <Description>F2 pStart</Description>
+  </Register>
+  <Register fmmu="2">
+    <Index>062a</Index>
+    <Description>F2 pStartBit/Dir</Description>
+  </Register>
+  <Register fmmu="2">
+    <Index>062c</Index>
+    <Description>F2 Enable</Description>
+  </Register>
+  <Register fmmu="3">
+    <Index>0630</Index>
+    <Description>F3 lStart L</Description>
+  </Register>
+  <Register fmmu="3">
+    <Index>0632</Index>
+    <Description>F3 lStart H</Description>
+  </Register>
+  <Register fmmu="3">
+    <Index>0634</Index>
+    <Description>F3 lLength</Description>
+  </Register>
+  <Register fmmu="3">
+    <Index>0636</Index>
+    <Description>F3 lStartEndBit</Description>
+  </Register>
+  <Register fmmu="3">
+    <Index>0638</Index>
+    <Description>F3 pStart</Description>
+  </Register>
+  <Register fmmu="3">
+    <Index>063a</Index>
+    <Description>F3 pStartBit/Dir</Description>
+  </Register>
+  <Register fmmu="3">
+    <Index>063c</Index>
+    <Description>F3 Enable</Description>
+  </Register>
+  <Register fmmu="4">
+    <Index>0640</Index>
+    <Description>F4 lStart L</Description>
+  </Register>
+  <Register fmmu="4">
+    <Index>0642</Index>
+    <Description>F4 lStart H</Description>
+  </Register>
+  <Register fmmu="4">
+    <Index>0644</Index>
+    <Description>F4 lLength</Description>
+  </Register>
+  <Register fmmu="4">
+    <Index>0646</Index>
+    <Description>F4 lStartEndBit</Description>
+  </Register>
+  <Register fmmu="4">
+    <Index>0648</Index>
+    <Description>F4 pStart</Description>
+  </Register>
+  <Register fmmu="4">
+    <Index>064a</Index>
+    <Description>F4 pStartBit/Dir</Description>
+  </Register>
+  <Register fmmu="4">
+    <Index>064c</Index>
+    <Description>F4 Enable</Description>
+  </Register>
+  <Register fmmu="5">
+    <Index>0650</Index>
+    <Description>F5 lStart L</Description>
+  </Register>
+  <Register fmmu="5">
+    <Index>0652</Index>
+    <Description>F5 lStart H</Description>
+  </Register>
+  <Register fmmu="5">
+    <Index>0654</Index>
+    <Description>F5 lLength</Description>
+  </Register>
+  <Register fmmu="5">
+    <Index>0656</Index>
+    <Description>F5 lStartEndBit</Description>
+  </Register>
+  <Register fmmu="5">
+    <Index>0658</Index>
+    <Description>F5 pStart</Description>
+  </Register>
+  <Register fmmu="5">
+    <Index>065a</Index>
+    <Description>F5 pStartBit/Dir</Description>
+  </Register>
+  <Register fmmu="5">
+    <Index>065c</Index>
+    <Description>F5 Enable</Description>
+  </Register>
+  <Register fmmu="6">
+    <Index>0660</Index>
+    <Description>F6 lStart L</Description>
+  </Register>
+  <Register fmmu="6">
+    <Index>0662</Index>
+    <Description>F6 lStart H</Description>
+  </Register>
+  <Register fmmu="6">
+    <Index>0664</Index>
+    <Description>F6 lLength</Description>
+  </Register>
+  <Register fmmu="6">
+    <Index>0666</Index>
+    <Description>F6 lStartEndBit</Description>
+  </Register>
+  <Register fmmu="6">
+    <Index>0668</Index>
+    <Description>F6 pStart</Description>
+  </Register>
+  <Register fmmu="6">
+    <Index>066a</Index>
+    <Description>F6 pStartBit/Dir</Description>
+  </Register>
+  <Register fmmu="6">
+    <Index>066c</Index>
+    <Description>F6 Enable</Description>
+  </Register>
+  <Register fmmu="7">
+    <Index>0670</Index>
+    <Description>F7 lStart L</Description>
+  </Register>
+  <Register fmmu="7">
+    <Index>0672</Index>
+    <Description>F7 lStart H</Description>
+  </Register>
+  <Register fmmu="7">
+    <Index>0674</Index>
+    <Description>F7 lLength</Description>
+  </Register>
+  <Register fmmu="7">
+    <Index>0676</Index>
+    <Description>F7 lStartEndBit</Description>
+  </Register>
+  <Register fmmu="7">
+    <Index>0678</Index>
+    <Description>F7 pStart</Description>
+  </Register>
+  <Register fmmu="7">
+    <Index>067a</Index>
+    <Description>F7 pStartBit/Dir</Description>
+  </Register>
+  <Register fmmu="7">
+    <Index>067c</Index>
+    <Description>F7 Enable</Description>
+  </Register>
+  <Register fmmu="8">
+    <Index>0680</Index>
+    <Description>F8 lStart L</Description>
+  </Register>
+  <Register fmmu="8">
+    <Index>0682</Index>
+    <Description>F8 lStart H</Description>
+  </Register>
+  <Register fmmu="8">
+    <Index>0684</Index>
+    <Description>F8 lLength</Description>
+  </Register>
+  <Register fmmu="8">
+    <Index>0686</Index>
+    <Description>F8 lStartEndBit</Description>
+  </Register>
+  <Register fmmu="8">
+    <Index>0688</Index>
+    <Description>F8 pStart</Description>
+  </Register>
+  <Register fmmu="8">
+    <Index>068a</Index>
+    <Description>F8 pStartBit/Dir</Description>
+  </Register>
+  <Register fmmu="8">
+    <Index>068c</Index>
+    <Description>F8 Enable</Description>
+  </Register>
+  <Register fmmu="9">
+    <Index>0690</Index>
+    <Description>F9 lStart L</Description>
+  </Register>
+  <Register fmmu="9">
+    <Index>0692</Index>
+    <Description>F9 lStart H</Description>
+  </Register>
+  <Register fmmu="9">
+    <Index>0694</Index>
+    <Description>F9 lLength</Description>
+  </Register>
+  <Register fmmu="9">
+    <Index>0696</Index>
+    <Description>F9 lStartEndBit</Description>
+  </Register>
+  <Register fmmu="9">
+    <Index>0698</Index>
+    <Description>F9 pStart</Description>
+  </Register>
+  <Register fmmu="9">
+    <Index>069a</Index>
+    <Description>F9 pStartBit/Dir</Description>
+  </Register>
+  <Register fmmu="9">
+    <Index>069c</Index>
+    <Description>F9 Enable</Description>
+  </Register>
+  <Register fmmu="10">
+    <Index>06a0</Index>
+    <Description>F10 lStart L</Description>
+  </Register>
+  <Register fmmu="10">
+    <Index>06a2</Index>
+    <Description>F10 lStart H</Description>
+  </Register>
+  <Register fmmu="10">
+    <Index>06a4</Index>
+    <Description>F10 lLength</Description>
+  </Register>
+  <Register fmmu="10">
+    <Index>06a6</Index>
+    <Description>F10 lStartEndBit</Description>
+  </Register>
+  <Register fmmu="10">
+    <Index>06a8</Index>
+    <Description>F10 pStart</Description>
+  </Register>
+  <Register fmmu="10">
+    <Index>06aa</Index>
+    <Description>F10 pStartBit/Dir</Description>
+  </Register>
+  <Register fmmu="10">
+    <Index>06ac</Index>
+    <Description>F10 Enable</Description>
+  </Register>
+  <Register fmmu="11">
+    <Index>06b0</Index>
+    <Description>F11 lStart L</Description>
+  </Register>
+  <Register fmmu="11">
+    <Index>06b2</Index>
+    <Description>F11 lStart H</Description>
+  </Register>
+  <Register fmmu="11">
+    <Index>06b4</Index>
+    <Description>F11 lLength</Description>
+  </Register>
+  <Register fmmu="11">
+    <Index>06b6</Index>
+    <Description>F11 lStartEndBit</Description>
+  </Register>
+  <Register fmmu="11">
+    <Index>06b8</Index>
+    <Description>F11 pStart</Description>
+  </Register>
+  <Register fmmu="11">
+    <Index>06ba</Index>
+    <Description>F11 pStartBit/Dir</Description>
+  </Register>
+  <Register fmmu="11">
+    <Index>06bc</Index>
+    <Description>F11 Enable</Description>
+  </Register>
+  <Register fmmu="12">
+    <Index>06c0</Index>
+    <Description>F12 lStart L</Description>
+  </Register>
+  <Register fmmu="12">
+    <Index>06c2</Index>
+    <Description>F12 lStart H</Description>
+  </Register>
+  <Register fmmu="12">
+    <Index>06c4</Index>
+    <Description>F12 lLength</Description>
+  </Register>
+  <Register fmmu="12">
+    <Index>06c6</Index>
+    <Description>F12 lStartEndBit</Description>
+  </Register>
+  <Register fmmu="12">
+    <Index>06c8</Index>
+    <Description>F12 pStart</Description>
+  </Register>
+  <Register fmmu="12">
+    <Index>06ca</Index>
+    <Description>F12 pStartBit/Dir</Description>
+  </Register>
+  <Register fmmu="12">
+    <Index>06cc</Index>
+    <Description>F12 Enable</Description>
+  </Register>
+  <Register fmmu="13">
+    <Index>06d0</Index>
+    <Description>F13 lStart L</Description>
+  </Register>
+  <Register fmmu="13">
+    <Index>06d2</Index>
+    <Description>F13 lStart H</Description>
+  </Register>
+  <Register fmmu="13">
+    <Index>06d4</Index>
+    <Description>F13 lLength</Description>
+  </Register>
+  <Register fmmu="13">
+    <Index>06d6</Index>
+    <Description>F13 lStartEndBit</Description>
+  </Register>
+  <Register fmmu="13">
+    <Index>06d8</Index>
+    <Description>F13 pStart</Description>
+  </Register>
+  <Register fmmu="13">
+    <Index>06da</Index>
+    <Description>F13 pStartBit/Dir</Description>
+  </Register>
+  <Register fmmu="13">
+    <Index>06dc</Index>
+    <Description>F13 Enable</Description>
+  </Register>
+  <Register fmmu="14">
+    <Index>06e0</Index>
+    <Description>F14 lStart L</Description>
+  </Register>
+  <Register fmmu="14">
+    <Index>06e2</Index>
+    <Description>F14 lStart H</Description>
+  </Register>
+  <Register fmmu="14">
+    <Index>06e4</Index>
+    <Description>F14 lLength</Description>
+  </Register>
+  <Register fmmu="14">
+    <Index>06e6</Index>
+    <Description>F14 lStartEndBit</Description>
+  </Register>
+  <Register fmmu="14">
+    <Index>06e8</Index>
+    <Description>F14 pStart</Description>
+  </Register>
+  <Register fmmu="14">
+    <Index>06ea</Index>
+    <Description>F14 pStartBit/Dir</Description>
+  </Register>
+  <Register fmmu="14">
+    <Index>06ec</Index>
+    <Description>F14 Enable</Description>
+  </Register>
+  <Register fmmu="15">
+    <Index>06f0</Index>
+    <Description>F15 lStart L</Description>
+  </Register>
+  <Register fmmu="15">
+    <Index>06f2</Index>
+    <Description>F15 lStart H</Description>
+  </Register>
+  <Register fmmu="15">
+    <Index>06f4</Index>
+    <Description>F15 lLength</Description>
+  </Register>
+  <Register fmmu="15">
+    <Index>06f6</Index>
+    <Description>F15 lStartEndBit</Description>
+  </Register>
+  <Register fmmu="15">
+    <Index>06f8</Index>
+    <Description>F15 pStart</Description>
+  </Register>
+  <Register fmmu="15">
+    <Index>06fa</Index>
+    <Description>F15 pStartBit/Dir</Description>
+  </Register>
+  <Register fmmu="15">
+    <Index>06fc</Index>
+    <Description>F15 Enable</Description>
+  </Register>
+  <!--SyncManager-->
+  <Register sm="0">
+    <Index>0800</Index>
+    <Description>SM0 Start</Description>
+  </Register>
+  <Register sm="0">
+    <Index>0802</Index>
+    <Description>SM0 Length</Description>
+  </Register>
+  <Register sm="0">
+    <Index>0804</Index>
+    <Description>SM0 Ctrl/Status</Description>
+  </Register>
+  <Register sm="0">
+    <Index>0806</Index>
+    <Description>SM0 Enable</Description>
+  </Register>
+  <Register sm="1">
+    <Index>0808</Index>
+    <Description>SM1 Start</Description>
+  </Register>
+  <Register sm="1">
+    <Index>080a</Index>
+    <Description>SM1 Length</Description>
+  </Register>
+  <Register sm="1">
+    <Index>080c</Index>
+    <Description>SM1 Ctrl/Status</Description>
+  </Register>
+  <Register sm="1">
+    <Index>080e</Index>
+    <Description>SM1 Enable</Description>
+  </Register>
+  <Register sm="2">
+    <Index>0810</Index>
+    <Description>SM2 Start</Description>
+  </Register>
+  <Register sm="2">
+    <Index>0812</Index>
+    <Description>SM2 Length</Description>
+  </Register>
+  <Register sm="2">
+    <Index>0814</Index>
+    <Description>SM2 Ctrl/Status</Description>
+  </Register>
+  <Register sm="2">
+    <Index>0816</Index>
+    <Description>SM2 Enable</Description>
+  </Register>
+  <Register sm="3">
+    <Index>0818</Index>
+    <Description>SM3 Start</Description>
+  </Register>
+  <Register sm="3">
+    <Index>081a</Index>
+    <Description>SM3 Length</Description>
+  </Register>
+  <Register sm="3">
+    <Index>081c</Index>
+    <Description>SM3 Ctrl/Status</Description>
+  </Register>
+  <Register sm="3">
+    <Index>081e</Index>
+    <Description>SM3 Enable</Description>
+  </Register>
+  <Register sm="4">
+    <Index>0820</Index>
+    <Description>SM4 Start</Description>
+  </Register>
+  <Register sm="4">
+    <Index>0822</Index>
+    <Description>SM4 Length</Description>
+  </Register>
+  <Register sm="4">
+    <Index>0824</Index>
+    <Description>SM4 Ctrl/Status</Description>
+  </Register>
+  <Register sm="4">
+    <Index>0826</Index>
+    <Description>SM4 Enable</Description>
+  </Register>
+  <Register sm="5">
+    <Index>0828</Index>
+    <Description>SM5 Start</Description>
+  </Register>
+  <Register sm="5">
+    <Index>082a</Index>
+    <Description>SM5 Length</Description>
+  </Register>
+  <Register sm="5">
+    <Index>082c</Index>
+    <Description>SM5 Ctrl/Status</Description>
+  </Register>
+  <Register sm="5">
+    <Index>082e</Index>
+    <Description>SM5 Enable</Description>
+  </Register>
+  <Register sm="6">
+    <Index>0830</Index>
+    <Description>SM6 Start</Description>
+  </Register>
+  <Register sm="6">
+    <Index>0832</Index>
+    <Description>SM6 Length</Description>
+  </Register>
+  <Register sm="6">
+    <Index>0834</Index>
+    <Description>SM6 Ctrl/Status</Description>
+  </Register>
+  <Register sm="6">
+    <Index>0836</Index>
+    <Description>SM6 Enable</Description>
+  </Register>
+  <Register sm="7">
+    <Index>0838</Index>
+    <Description>SM7 Start</Description>
+  </Register>
+  <Register sm="7">
+    <Index>083a</Index>
+    <Description>SM7 Length</Description>
+  </Register>
+  <Register sm="7">
+    <Index>083c</Index>
+    <Description>SM7 Ctrl/Status</Description>
+  </Register>
+  <Register sm="7">
+    <Index>083e</Index>
+    <Description>SM7 Enable</Description>
+  </Register>
+  <Register sm="8">
+    <Index>0840</Index>
+    <Description>SM8 Start</Description>
+  </Register>
+  <Register sm="8">
+    <Index>0842</Index>
+    <Description>SM8 Length</Description>
+  </Register>
+  <Register sm="8">
+    <Index>0844</Index>
+    <Description>SM8 Ctrl/Status</Description>
+  </Register>
+  <Register sm="8">
+    <Index>0846</Index>
+    <Description>SM8 Enable</Description>
+  </Register>
+  <Register sm="9">
+    <Index>0848</Index>
+    <Description>SM9 Start</Description>
+  </Register>
+  <Register sm="9">
+    <Index>084a</Index>
+    <Description>SM9 Length</Description>
+  </Register>
+  <Register sm="9">
+    <Index>084c</Index>
+    <Description>SM9 Ctrl/Status</Description>
+  </Register>
+  <Register sm="9">
+    <Index>084e</Index>
+    <Description>SM9 Enable</Description>
+  </Register>
+  <Register sm="10">
+    <Index>0850</Index>
+    <Description>SM10 Start</Description>
+  </Register>
+  <Register sm="10">
+    <Index>0852</Index>
+    <Description>SM10 Length</Description>
+  </Register>
+  <Register sm="10">
+    <Index>0854</Index>
+    <Description>SM10 Ctrl/Status</Description>
+  </Register>
+  <Register sm="10">
+    <Index>0856</Index>
+    <Description>SM10 Enable</Description>
+  </Register>
+  <Register sm="11">
+    <Index>0858</Index>
+    <Description>SM11 Start</Description>
+  </Register>
+  <Register sm="11">
+    <Index>085a</Index>
+    <Description>SM11 Length</Description>
+  </Register>
+  <Register sm="11">
+    <Index>085c</Index>
+    <Description>SM11 Ctrl/Status</Description>
+  </Register>
+  <Register sm="11">
+    <Index>085e</Index>
+    <Description>SM11 Enable</Description>
+  </Register>
+  <Register sm="12">
+    <Index>0860</Index>
+    <Description>SM12 Start</Description>
+  </Register>
+  <Register sm="12">
+    <Index>0862</Index>
+    <Description>SM12 Length</Description>
+  </Register>
+  <Register sm="12">
+    <Index>0864</Index>
+    <Description>SM12 Ctrl/Status</Description>
+  </Register>
+  <Register sm="12">
+    <Index>0866</Index>
+    <Description>SM12 Enable</Description>
+  </Register>
+  <Register sm="13">
+    <Index>0868</Index>
+    <Description>SM13 Start</Description>
+  </Register>
+  <Register sm="13">
+    <Index>086a</Index>
+    <Description>SM13 Length</Description>
+  </Register>
+  <Register sm="13">
+    <Index>086c</Index>
+    <Description>SM13 Ctrl/Status</Description>
+  </Register>
+  <Register sm="13">
+    <Index>086e</Index>
+    <Description>SM13 Enable</Description>
+  </Register>
+  <Register sm="14">
+    <Index>0870</Index>
+    <Description>SM14 Start</Description>
+  </Register>
+  <Register sm="14">
+    <Index>0872</Index>
+    <Description>SM14 Length</Description>
+  </Register>
+  <Register sm="14">
+    <Index>0874</Index>
+    <Description>SM14 Ctrl/Status</Description>
+  </Register>
+  <Register sm="14">
+    <Index>0876</Index>
+    <Description>SM14 Enable</Description>
+  </Register>
+  <Register sm="15">
+    <Index>0878</Index>
+    <Description>SM15 Start</Description>
+  </Register>
+  <Register sm="15">
+    <Index>087a</Index>
+    <Description>SM15 Length</Description>
+  </Register>
+  <Register sm="15">
+    <Index>087c</Index>
+    <Description>SM15 Ctrl/Status</Description>
+  </Register>
+  <Register sm="15">
+    <Index>087e</Index>
+    <Description>SM15 Enable</Description>
+  </Register>
+  <!--DC - Receive Times-->
+  <Register>
+    <Index>0900</Index>
+    <Description>DC RecvTimeL_A</Description>
+  </Register>
+  <Register>
+    <Index>0902</Index>
+    <Description>DC RecvTimeH_A</Description>
+  </Register>
+  <Register>
+    <Index>0904</Index>
+    <Description>DC RecvTimeL_B</Description>
+  </Register>
+  <Register>
+    <Index>0906</Index>
+    <Description>DC RecvTimeH_B</Description>
+  </Register>
+  <Register>
+    <Index>0908</Index>
+    <Description>DC RecvTimeL_C</Description>
+  </Register>
+  <Register>
+    <Index>090a</Index>
+    <Description>DC RecvTimeH_C</Description>
+  </Register>
+  <Register>
+    <Index>090c</Index>
+    <Description>DC RecvTimeL_D</Description>
+  </Register>
+  <Register>
+    <Index>090e</Index>
+    <Description>DC RecvTimeH_D</Description>
+  </Register>
+  <!--DC - Time Loop Control Unit-->
+  <Register>
+    <Index>0910</Index>
+    <Description>DC SysTimeLL</Description>
+  </Register>
+  <Register>
+    <Index>0912</Index>
+    <Description>DC SysTimeLH</Description>
+  </Register>
+  <Register>
+    <Index>0914</Index>
+    <Description>DC SysTimeHL</Description>
+  </Register>
+  <Register>
+    <Index>0916</Index>
+    <Description>DC SysTimeHH</Description>
+  </Register>
+  <Register>
+    <Index>0918</Index>
+    <Description>DC RecvTimeLL_A</Description>
+  </Register>
+  <Register>
+    <Index>091a</Index>
+    <Description>DC RecvTimeLH_A</Description>
+  </Register>
+  <Register>
+    <Index>091c</Index>
+    <Description>DC RecvTimeHL_A</Description>
+  </Register>
+  <Register>
+    <Index>091e</Index>
+    <Description>DC RecvTimeHH_A</Description>
+  </Register>
+  <Register>
+    <Index>0920</Index>
+    <Description>DC SysTimeOffsLL</Description>
+  </Register>
+  <Register>
+    <Index>0922</Index>
+    <Description>DC SysTimeOffsLH</Description>
+  </Register>
+  <Register>
+    <Index>0924</Index>
+    <Description>DC SysTimeOffsHL</Description>
+  </Register>
+  <Register>
+    <Index>0926</Index>
+    <Description>DC SysTimeOffsHH
+</Description>
+  </Register>
+  <Register>
+    <Index>0928</Index>
+    <Description>DC SysTimeDelayL</Description>
+  </Register>
+  <Register>
+    <Index>092a</Index>
+    <Description>DC SysTimeDelayH</Description>
+  </Register>
+  <Register>
+    <Index>092c</Index>
+    <Description>DC CtrlErrorL</Description>
+  </Register>
+  <Register>
+    <Index>092e</Index>
+    <Description>DC CtrlErrorH</Description>
+  </Register>
+  <Register>
+    <Index>0930</Index>
+    <Description>DC SpeedStart</Description>
+  </Register>
+  <Register>
+    <Index>0932</Index>
+    <Description>DC SpeedDiff</Description>
+  </Register>
+  <Register>
+    <Index>0934</Index>
+    <Description>DC FiltExp</Description>
+    <Details>
+      <Detail>
+        <Range>0-7</Range>
+        <Description>System time diff</Description>
+      </Detail>
+      <Detail>
+        <Range>8-15</Range>
+        <Description>Speed counter</Description>
+      </Detail>
+    </Details>
+  </Register>
+  <Register esc="02">
+    <Index>0936</Index>
+    <Description>Receive Time Latch Mode</Description>
+    <Details>
+      <Detail>
+        <Range>0</Range>
+        <Description>Receive Time Latch Mode</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Forwarding mode</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Reverse mode</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <Register esc="12">
+    <Index>0936</Index>
+    <Description>Receive Time Latch Mode</Description>
+    <Details>
+      <Detail>
+        <Range>0</Range>
+        <Description>Receive Time Latch Mode</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Forwarding mode</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Reverse mode</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <!--DC - Cyclic Unit Control / SYNC Out Unit-->
+  <Register>
+    <Index>0980</Index>
+    <Description>DC Assign/Active</Description>
+    <Details>
+      <Detail>
+        <Range>0</Range>
+        <Description>Write access cyclic</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>ECAT</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>PDI</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>4</Range>
+        <Description>Write access Latch 0</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>ECAT</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>PDI</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>5</Range>
+        <Description>Write access Latch 1</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>ECAT</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>PDI</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>8</Range>
+        <Description>Sync out unit activation</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Deactivated</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Activated</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>9</Range>
+        <Description>Generate SYNC 0</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>10</Range>
+        <Description>Generate SYNC 1</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>11</Range>
+        <Description>Auto activation</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>12</Range>
+        <Description>Start time extension 32-&gt;64</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>13</Range>
+        <Description>Start time check</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>14</Range>
+        <Description>Half range</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>15</Range>
+        <Description>Debuspulse</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <Register>
+    <Index>0982</Index>
+    <Description>DC CycImpulse</Description>
+  </Register>
+  <Register>
+    <Index>0984</Index>
+    <Description>DC Activation Status</Description>
+    <Details>
+      <Detail esc="04">
+        <Range>0</Range>
+        <Description>SYNC0 pending</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail esc="04">
+        <Range>1</Range>
+        <Description>SYNC1 pending</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail esc="04">
+        <Range>2</Range>
+        <Description>Start Time</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Within near future</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Out of near future</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <Register>
+    <Index>098e</Index>
+    <Description>DC CycSync State</Description>
+    <Details>
+      <Detail>
+        <Range>0</Range>
+        <Description>SYNC 0 triggered</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>8</Range>
+        <Description>SYNC 1 triggered</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <Register>
+    <Index>0990</Index>
+    <Description>DC StartTime0 LL</Description>
+  </Register>
+  <Register>
+    <Index>0992</Index>
+    <Description>DC StartTime0 LH</Description>
+  </Register>
+  <Register>
+    <Index>0994</Index>
+    <Description>DC StartTime0 HL</Description>
+  </Register>
+  <Register>
+    <Index>0996</Index>
+    <Description>DC StartTime0 HH</Description>
+  </Register>
+  <Register>
+    <Index>0998</Index>
+    <Description>DC StartTime1 LL</Description>
+  </Register>
+  <Register>
+    <Index>099a</Index>
+    <Description>DC StartTime1 LH</Description>
+  </Register>
+  <Register>
+    <Index>099c</Index>
+    <Description>DC StartTime1 HL</Description>
+  </Register>
+  <Register>
+    <Index>099e</Index>
+    <Description>DC StartTime1 HH</Description>
+  </Register>
+  <Register>
+    <Index>09a0</Index>
+    <Description>DC CycTime0 L</Description>
+  </Register>
+  <Register>
+    <Index>09a2</Index>
+    <Description>DC CycTime0 H</Description>
+  </Register>
+  <Register>
+    <Index>09a4</Index>
+    <Description>DC CycTime1 L</Description>
+  </Register>
+  <Register>
+    <Index>09a6</Index>
+    <Description>DC CycTime1 H</Description>
+  </Register>
+  <!--DC - Latch In Unit-->
+  <Register>
+    <Index>09a8</Index>
+    <Description>DC Latch Ctrl</Description>
+    <Details>
+      <Detail>
+        <Range>0</Range>
+        <Description>Latch 0 pos</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Continuous</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Single event</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>1</Range>
+        <Description>Latch 0 neg</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Continuous</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Single event</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>8</Range>
+        <Description>Latch 1 pos</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Continuous</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Single event</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>9</Range>
+        <Description>Latch 1 neg</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Continuous</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Single event</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <Register>
+    <Index>09ae</Index>
+    <Description>DC Latch Status</Description>
+    <Details>
+      <Detail>
+        <Range>0</Range>
+        <Description>Event Latch 0 pos</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>1</Range>
+        <Description>Event Latch 0 neg</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>2</Range>
+        <Description>Latch 0 pin state</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>8</Range>
+        <Description>Event Latch 1 pos</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>9</Range>
+        <Description>Event Latch 1 neg</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>10</Range>
+        <Description>Latch 1 pin state</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>FALSE</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>TRUE</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <Register>
+    <Index>09b0</Index>
+    <Description>DC Latch0 Pos LL</Description>
+  </Register>
+  <Register>
+    <Index>09b2</Index>
+    <Description>DC Latch0 Pos LH</Description>
+  </Register>
+  <Register>
+    <Index>09b4</Index>
+    <Description>DC Latch0 Pos HL</Description>
+  </Register>
+  <Register>
+    <Index>09b6</Index>
+    <Description>DC Latch0 Pos HH</Description>
+  </Register>
+  <Register>
+    <Index>09b8</Index>
+    <Description>DC Latch0 Neg LL</Description>
+  </Register>
+  <Register>
+    <Index>09ba</Index>
+    <Description>DC Latch0 Neg LH</Description>
+  </Register>
+  <Register>
+    <Index>09bc</Index>
+    <Description>DC Latch0 Neg HL</Description>
+  </Register>
+  <Register>
+    <Index>09be</Index>
+    <Description>DC Latch0 Neg HH</Description>
+  </Register>
+  <Register>
+    <Index>09c0</Index>
+    <Description>DC Latch1 Pos LL</Description>
+  </Register>
+  <Register>
+    <Index>09c2</Index>
+    <Description>DC Latch1 Pos LH</Description>
+  </Register>
+  <Register>
+    <Index>09c4</Index>
+    <Description>DC Latch1 Pos HL</Description>
+  </Register>
+  <Register>
+    <Index>09c6</Index>
+    <Description>DC Latch1 Pos HH</Description>
+  </Register>
+  <Register>
+    <Index>09c8</Index>
+    <Description>DC Latch1 Neg LL</Description>
+  </Register>
+  <Register>
+    <Index>09ca</Index>
+    <Description>DC Latch1 Neg LH</Description>
+  </Register>
+  <Register>
+    <Index>09cc</Index>
+    <Description>DC Latch1 Neg HL</Description>
+  </Register>
+  <Register>
+    <Index>09ce</Index>
+    <Description>DC Latch1 Neg HH</Description>
+  </Register>
+  <!--DC - SyncManager Event Times-->
+  <Register>
+    <Index>09f0</Index>
+    <Description>DC RecvSMChange L</Description>
+  </Register>
+  <Register>
+    <Index>09f2</Index>
+    <Description>DC RecvSMChange H</Description>
+  </Register>
+  <Register>
+    <Index>09f8</Index>
+    <Description>DC PDISMStart L</Description>
+  </Register>
+  <Register>
+    <Index>09fa</Index>
+    <Description>DC PDISMStart H</Description>
+  </Register>
+  <Register>
+    <Index>09fc</Index>
+    <Description>DC PDISMChange L</Description>
+  </Register>
+  <Register>
+    <Index>09fe</Index>
+    <Description>DC PDISMChange H</Description>
+  </Register>
+  <!--ESC specific-->
+  <Register esc="04">
+    <Index>0e00</Index>
+    <Description>Product ID</Description>
+  </Register>
+  <Register esc="04">
+    <Index>0e02</Index>
+    <Description>Product ID</Description>
+  </Register>
+  <Register esc="04">
+    <Index>0e04</Index>
+    <Description>Product ID
+</Description>
+  </Register>
+  <Register esc="04">
+    <Index>0e06</Index>
+    <Description>Product ID</Description>
+  </Register>
+  <Register esc="04">
+    <Index>0e08</Index>
+    <Description>Vendor ID
+</Description>
+  </Register>
+  <Register esc="04">
+    <Index>0e0a</Index>
+    <Description>Vendor ID</Description>
+  </Register>
+  <Register esc="04">
+    <Index>0e0c</Index>
+    <Description>Vendor ID</Description>
+  </Register>
+  <Register esc="04">
+    <Index>0e0e</Index>
+    <Description>Vendor ID</Description>
+  </Register>
+  <Register esc="11">
+    <Index>0e00</Index>
+    <Description>Power On</Description>
+    <Details>
+      <Detail>
+        <Range>0-1</Range>
+        <Description>Port mode</Description>
+        <Enum>
+          <item>
+            <value>00</value>
+            <Description>Port 0, 1</Description>
+          </item>
+          <item>
+            <value>01</value>
+            <Description>Port 0, 1, 2</Description>
+          </item>
+          <item>
+            <value>10</value>
+            <Description>Port 0, 1, 3</Description>
+          </item>
+          <item>
+            <value>11</value>
+            <Description>Port 0, 1, 2, 3</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>2</Range>
+        <Description>Logical port 0</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>EBUS</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>MII</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>3</Range>
+        <Description>Logical port 1</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>EBUS</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>MII</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>4</Range>
+        <Description>Logical port 2</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>EBUS</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>MII</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>5</Range>
+        <Description>Logical port 3</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>EBUS</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>MII</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>6-7</Range>
+        <Description>CPU clock output</Description>
+        <Enum>
+          <item>
+            <value>00</value>
+            <Description>Off - PDI[7] available as PDI port</Description>
+          </item>
+          <item>
+            <value>01</value>
+            <Description>PDI[7]=25MHz</Description>
+          </item>
+          <item>
+            <value>10</value>
+            <Description>PDI[7]=20MHz</Description>
+          </item>
+          <item>
+            <value>11</value>
+            <Description>PDI[7]=10MHz</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>8-9</Range>
+        <Description>TX signal shift</Description>
+        <Enum>
+          <item>
+            <value>00</value>
+            <Description>MII TX shifted 0</Description>
+          </item>
+          <item>
+            <value>01</value>
+            <Description>MII TX shifted 90</Description>
+          </item>
+          <item>
+            <value>10</value>
+            <Description>MII TX shifted 180</Description>
+          </item>
+          <item>
+            <value>11</value>
+            <Description>MII TX shifted 270</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>10</Range>
+        <Description>Clock 25 output</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Disabled</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Enabled</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>11</Range>
+        <Description>Transparent mode MII</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Disabled</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Enabled</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>12</Range>
+        <Description>Digital Ctrl/Status move</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>PDI[39:32]</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>the highest available PDI Byte</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>13</Range>
+        <Description>Phy offset</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>No offset</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>16 offset</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>14</Range>
+        <Description>Phy link polarity</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Active low</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Active high</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <Register esc="12">
+    <Index>0e00</Index>
+    <Description>Power On</Description>
+    <Details>
+      <Detail>
+        <Range>0-1</Range>
+        <Description>Chip mode</Description>
+        <Enum>
+          <item>
+            <value>00</value>
+            <Description>Port0:EBUS, Port1:EBUS, 18bit PDI</Description>
+          </item>
+          <item>
+            <value>10</value>
+            <Description>Port0:MII, Port1:EBUS, 8bit PDI</Description>
+          </item>
+          <item>
+            <value>11</value>
+            <Description>Port0:EBUS, Port1:MII, 8bit PDI</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>2-3</Range>
+        <Description>CPU clock output</Description>
+        <Enum>
+          <item>
+            <value>00</value>
+            <Description>Off - PDI[7] available as PDI port</Description>
+          </item>
+          <item>
+            <value>01</value>
+            <Description>PDI[7]=25MHz</Description>
+          </item>
+          <item>
+            <value>10</value>
+            <Description>PDI[7]=20MHz</Description>
+          </item>
+          <item>
+            <value>11</value>
+            <Description>PDI[7]=10MHz</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>4-5</Range>
+        <Description>TX signal shift</Description>
+        <Enum>
+          <item>
+            <value>00</value>
+            <Description>MII TX signals shifted by 0</Description>
+          </item>
+          <item>
+            <value>01</value>
+            <Description>MII TX signals shifted by 90</Description>
+          </item>
+          <item>
+            <value>10</value>
+            <Description>MII TX signals shifted by 180</Description>
+          </item>
+          <item>
+            <value>11</value>
+            <Description>MII TX signals shifted by 270</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>6</Range>
+        <Description>CLK25 Output Enable</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>Disabled</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>Enabled</Description>
+          </item>
+        </Enum>
+      </Detail>
+      <Detail>
+        <Range>7</Range>
+        <Description>Phy address offset</Description>
+        <Enum>
+          <item>
+            <value>0</value>
+            <Description>No offset</Description>
+          </item>
+          <item>
+            <value>1</value>
+            <Description>16 offset</Description>
+          </item>
+        </Enum>
+      </Detail>
+    </Details>
+  </Register>
+  <!--ESC specific I/O-->
+  <Register>
+    <Index>0f00</Index>
+    <Description>Digital Out L</Description>
+  </Register>
+  <Register>
+    <Index>0f02</Index>
+    <Description>Digital Out H</Description>
+  </Register>
+  <Register>
+    <Index>0f10</Index>
+    <Description>GPO LL</Description>
+  </Register>
+  <Register>
+    <Index>0f12</Index>
+    <Description>GPO LH</Description>
+  </Register>
+  <Register>
+    <Index>0f14</Index>
+    <Description>GPO HL</Description>
+  </Register>
+  <Register>
+    <Index>0f16</Index>
+    <Description>GPO HH</Description>
+  </Register>
+  <Register>
+    <Index>0f18</Index>
+    <Description>GPI LL</Description>
+  </Register>
+  <Register>
+    <Index>0f1a</Index>
+    <Description>GPI LH</Description>
+  </Register>
+  <Register>
+    <Index>0f1c</Index>
+    <Description>GPI HL</Description>
+  </Register>
+  <Register>
+    <Index>0f1e</Index>
+    <Description>GPI HH</Description>
+  </Register>
+  <!--User RAM-->
+  <Register>
+    <Index>0f80</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0f82</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0f84</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0f86</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0f88</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0f8a</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0f8c</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0f8e</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0f90</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0f92</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0f94</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0f96</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0f98</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0f9a</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0f9c</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0f9e</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0fa0</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0fa2</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0fa4</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0fa6</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0fa8</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0faa</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0fac</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0fae</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0fb0</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0fb2</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0fb4</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0fb6</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0fb8</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0fba</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0fbc</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0fbe</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0fc0</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0fc2</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0fc4</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0fc6</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0fc8</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0fca</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0fcc</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0fce</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0fd0</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0fd2</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0fd4</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0fd6</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0fd8</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0fda</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0fdc</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0fde</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0fe0</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0fe2</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0fe4</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0fe6</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0fe8</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0fea</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0fec</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0fee</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0ff0</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0ff2</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0ff4</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0ff6</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0ff8</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0ffa</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0ffc</Index>
+    <Description>User Ram</Description>
+  </Register>
+  <Register>
+    <Index>0ffe</Index>
+    <Description>User Ram</Description>
+  </Register>
+</RegisterInfo>

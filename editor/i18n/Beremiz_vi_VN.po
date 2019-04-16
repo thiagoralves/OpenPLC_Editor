@@ -1,0 +1,4798 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the Beremiz package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+# Translators:
+# Nhất Thìn, 2019
+# 
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Beremiz\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-10-03 14:20+0300\n"
+"PO-Revision-Date: 2017-06-13 13:14+0000\n"
+"Last-Translator: Nhất Thìn, 2019\n"
+"Language-Team: Vietnamese (Viet Nam) (https://www.transifex.com/beremiz/teams/75746/vi_VN/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: vi_VN\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: ../util/ExceptionHandler.py:58
+#, python-format
+msgid ""
+"\n"
+"An unhandled exception (bug) occured. Bug report saved at :\n"
+"(%s)\n"
+"\n"
+"Please be kind enough to send this file to:\n"
+"beremiz-devel@lists.sourceforge.net\n"
+"\n"
+"You should now restart program.\n"
+"\n"
+"Traceback:\n"
+msgstr ""
+"\n"
+"Đã có lỗi (sự cố) ngoài ý muốn. Báo cáo lỗi được lưu tại :\n"
+"(%s)\n"
+"\n"
+"Vui lòng gửi báo cáo này đến:\n"
+"beremiz-devel@lists.sourceforge.net\n"
+"\n"
+"Bạn nên khởi động lại chương trình.\n"
+"\n"
+"Nguyên nhân:\n"
+
+#: ../controls/VariablePanel.py:87
+msgid "   External"
+msgstr "Ngoại vi"
+
+#: ../controls/VariablePanel.py:86
+msgid "   InOut"
+msgstr "VàoRa"
+
+#: ../controls/VariablePanel.py:86
+msgid "   Input"
+msgstr "Vào"
+
+#: ../controls/VariablePanel.py:87
+msgid "   Local"
+msgstr "Cục bộ"
+
+#: ../controls/VariablePanel.py:86
+msgid "   Output"
+msgstr "Ra"
+
+#: ../controls/VariablePanel.py:88
+msgid "   Temp"
+msgstr "Tạm thời"
+
+#: ../etherlab/etherlab.py:301
+#, python-format
+msgid " (rev. %s)"
+msgstr " (rev. %s)"
+
+#: ../etherlab/CommonEtherCATFunction.py:1599
+msgid " Warning..."
+msgstr " Cảnh báo..."
+
+#: ../dialogs/PouTransitionDialog.py:100 ../dialogs/ProjectDialog.py:72
+#: ../dialogs/PouActionDialog.py:99 ../dialogs/PouDialog.py:157
+#, python-format
+msgid " and %s"
+msgstr " và %s"
+
+#: ../ProjectController.py:1236
+msgid " generation failed !\n"
+msgstr "Khởi tạo thất bại !\n"
+
+#: ../plcopen/plcopen.py:1029
+#, python-format
+msgid "\"%s\" Data Type doesn't exist !!!"
+msgstr "Kiểu dữ liệu \"%s\" không tồn tại !!!"
+
+#: ../plcopen/plcopen.py:1047
+#, python-format
+msgid "\"%s\" POU already exists !!!"
+msgstr "Chương trình \"%s\" đã tồn tại !!!"
+
+#: ../plcopen/plcopen.py:1068
+#, python-format
+msgid "\"%s\" POU doesn't exist !!!"
+msgstr "Chương trình \"%s\" không tồn tại !!!"
+
+#: ../editors/Viewer.py:288
+#, python-format
+msgid "\"%s\" can't use itself!"
+msgstr "\"%s\" không thể dùng chính nó!"
+
+#: ../IDEFrame.py:1705 ../IDEFrame.py:1724
+#, python-format
+msgid "\"%s\" config already exists!"
+msgstr "Cấu hình \"%s\" đã tồn tại!"
+
+#: ../plcopen/plcopen.py:531
+#, python-format
+msgid "\"%s\" configuration already exists !!!"
+msgstr "Cấu hình \"%s\" đã tồn tại !!!"
+
+#: ../plcopen/plcopen.py:540
+#, python-format
+msgid "\"%s\" configuration doesn't exist !!!"
+msgstr "Cấu hình \"%s\" không tồn tại !!!"
+
+#: ../IDEFrame.py:1655
+#, python-format
+msgid "\"%s\" data type already exists!"
+msgstr "Kiểu dữ liệu \"%s\" đã tồn tại!"
+
+#: ../dialogs/PouTransitionDialog.py:111 ../dialogs/BlockPreviewDialog.py:220
+#: ../dialogs/PouActionDialog.py:110 ../editors/Viewer.py:304
+#: ../editors/Viewer.py:374 ../editors/Viewer.py:398 ../editors/Viewer.py:418
+#: ../editors/TextViewer.py:270 ../editors/TextViewer.py:299
+#: ../controls/VariablePanel.py:424
+#, python-format
+msgid "\"%s\" element for this pou already exists!"
+msgstr "Phần tử \"%s\" cho chương trình này đã tồn tại!"
+
+#: ../BeremizIDE.py:925
+#, python-format
+msgid "\"%s\" folder is not a valid Beremiz project\n"
+msgstr "Thư mục \"%s\" không phải là dự án Beremiz hợp lệ\n"
+
+#: ../dialogs/SFCStepNameDialog.py:56 ../dialogs/PouTransitionDialog.py:107
+#: ../dialogs/BlockPreviewDialog.py:209 ../dialogs/PouNameDialog.py:54
+#: ../dialogs/PouActionDialog.py:106 ../dialogs/PouDialog.py:164
+#: ../etherlab/ConfigEditor.py:973 ../editors/ResourceEditor.py:481
+#: ../editors/ResourceEditor.py:518 ../editors/DataTypeEditor.py:571
+#: ../editors/DataTypeEditor.py:603 ../editors/CodeFileEditor.py:793
+#: ../controls/VariablePanel.py:798 ../IDEFrame.py:1646
+#, python-format
+msgid "\"%s\" is a keyword. It can't be used!"
+msgstr "\"%s\" là từ khóa chính. Không khả dụng!"
+
+#: ../plcopen/plcopen.py:2836
+#, python-format
+msgid "\"%s\" is an invalid value!"
+msgstr "Giá trị \"%s\" không hợp lệ!"
+
+#: ../PLCOpenEditor.py:323 ../PLCOpenEditor.py:365
+#, python-format
+msgid "\"%s\" is not a valid folder!"
+msgstr "Thư mục \"%s\" không hợp lệ!"
+
+#: ../dialogs/SFCStepNameDialog.py:54 ../dialogs/PouTransitionDialog.py:105
+#: ../dialogs/BlockPreviewDialog.py:205 ../dialogs/PouNameDialog.py:52
+#: ../dialogs/PouActionDialog.py:104 ../dialogs/PouDialog.py:162
+#: ../etherlab/ConfigEditor.py:971 ../editors/ResourceEditor.py:479
+#: ../editors/ResourceEditor.py:516 ../editors/DataTypeEditor.py:601
+#: ../editors/CodeFileEditor.py:791 ../controls/VariablePanel.py:796
+#: ../IDEFrame.py:1644
+#, python-format
+msgid "\"%s\" is not a valid identifier!"
+msgstr "\"%s\" không phải là tên hợp lệ!"
+
+#: ../IDEFrame.py:2454
+#, python-format
+msgid "\"%s\" is used by one or more POUs. Do you wish to continue?"
+msgstr "\"%s\" được sử dụng bởi chương trình khác. Bạn có muốn tiếp tục?"
+
+#: ../dialogs/BlockPreviewDialog.py:213 ../dialogs/PouDialog.py:166
+#: ../editors/Viewer.py:302 ../editors/Viewer.py:359 ../editors/Viewer.py:389
+#: ../editors/Viewer.py:411 ../editors/TextViewer.py:268
+#: ../editors/TextViewer.py:297 ../editors/TextViewer.py:351
+#: ../editors/TextViewer.py:374 ../controls/VariablePanel.py:363
+#: ../IDEFrame.py:1664
+#, python-format
+msgid "\"%s\" pou already exists!"
+msgstr "Chương trình \"%s\" đã tồn tại!"
+
+#: ../dialogs/SFCStepNameDialog.py:62
+#, python-format
+msgid "\"%s\" step already exists!"
+msgstr "Bước \"%s\" đã tồn tại!"
+
+#: ../editors/DataTypeEditor.py:566
+#, python-format
+msgid "\"%s\" value already defined!"
+msgstr "Giá trị \"%s\" đã định nghĩa!"
+
+#: ../dialogs/ArrayTypeDialog.py:105 ../editors/DataTypeEditor.py:759
+#, python-format
+msgid "\"%s\" value isn't a valid array dimension!"
+msgstr "Giá trị \"%s\" không là chiều mảng hợp lệ!"
+
+#: ../dialogs/ArrayTypeDialog.py:109 ../editors/DataTypeEditor.py:766
+#, python-format
+msgid ""
+"\"%s\" value isn't a valid array dimension!\n"
+"Right value must be greater than left value."
+msgstr ""
+"Giá trị \"%s\" không là chiều mảng hợp lệ!\n"
+"Giá trị bên phải phải lớn hơn giá trị bên trái."
+
+#: ../PLCGenerator.py:1182
+#, python-brace-format
+msgid "\"{a1}\" function cancelled in \"{a2}\" POU: No input connected"
+msgstr "Hàm \"{a1}\" bị hủy trong \"{a2}\" POU: Không có ngõ vào được kết nối"
+
+#: ../editors/Viewer.py:292
+#, python-brace-format
+msgid "\"{a1}\" is already used by \"{a2}\"!"
+msgstr "\"{a1}\"được sử dụng bởi \"{a2}\"!"
+
+#: ../plcopen/plcopen.py:557
+#, python-brace-format
+msgid "\"{a1}\" resource already exists in \"{a2}\" configuration !!!"
+msgstr "Tài nguyên \"{a1}\" đã tồn tại trong cấu hình \"{a2}\" !!!"
+
+#: ../plcopen/plcopen.py:577
+#, python-brace-format
+msgid "\"{a1}\" resource doesn't exist in \"{a2}\" configuration !!!"
+msgstr "Tài nguyên \"{a1}\" không tồn tại trong cấu hình \"{a2}\" !!!"
+
+#: ../controls/DebugVariablePanel/DebugVariablePanel.py:559
+#, python-format
+msgid "%03gms"
+msgstr "%03gms"
+
+#: ../controls/DebugVariablePanel/DebugVariablePanel.py:550
+#, python-format
+msgid "%dd"
+msgstr "%dd"
+
+#: ../controls/DebugVariablePanel/DebugVariablePanel.py:189
+#: ../controls/DebugVariablePanel/DebugVariablePanel.py:551
+#, python-format
+msgid "%dh"
+msgstr "%dh"
+
+#: ../controls/DebugVariablePanel/DebugVariablePanel.py:188
+#: ../controls/DebugVariablePanel/DebugVariablePanel.py:552
+#, python-format
+msgid "%dm"
+msgstr "%dm"
+
+#: ../controls/DebugVariablePanel/DebugVariablePanel.py:186
+#, python-format
+msgid "%dms"
+msgstr "%dms"
+
+#: ../controls/DebugVariablePanel/DebugVariablePanel.py:187
+#: ../controls/DebugVariablePanel/DebugVariablePanel.py:553
+#, python-format
+msgid "%ds"
+msgstr "%ds"
+
+#: ../PLCControler.py:1114
+#, python-format
+msgid "%s Data Types"
+msgstr "Kiểu dữ liệu %s"
+
+#: ../PLCControler.py:1097
+#, python-format
+msgid "%s POUs"
+msgstr "Chương trình %s"
+
+#: ../canfestival/SlaveEditor.py:73 ../canfestival/NetworkEditor.py:97
+#, python-format
+msgid "%s Profile"
+msgstr "Hồ sơ %s"
+
+#: ../plcopen/plcopen.py:1901 ../plcopen/plcopen.py:1908
+#: ../plcopen/plcopen.py:1921 ../plcopen/plcopen.py:1929
+#: ../plcopen/plcopen.py:1939 ../plcopen/plcopen.py:1950
+#, python-format
+msgid "%s body don't have instances!"
+msgstr "Thân %s không có thực thể"
+
+#: ../plcopen/plcopen.py:1957 ../plcopen/plcopen.py:1964
+#: ../plcopen/plcopen.py:1971
+#, python-format
+msgid "%s body don't have text!"
+msgstr "Thân %s không có văn bản"
+
+#: ../etherlab/ConfigEditor.py:856
+#, python-format
+msgid "%s's nodes"
+msgstr "Các nút của %s"
+
+#: ../IDEFrame.py:391
+msgid "&Add Element"
+msgstr "&Thêm phần tử"
+
+#: ../dialogs/AboutDialog.py:71 ../dialogs/AboutDialog.py:117
+#: ../dialogs/AboutDialog.py:152
+msgid "&Close"
+msgstr "&Đóng"
+
+#: ../IDEFrame.py:364
+msgid "&Configuration"
+msgstr "&Cấu hình"
+
+#: ../IDEFrame.py:353
+msgid "&Data Type"
+msgstr "&Kiểu dữ liệu"
+
+#: ../IDEFrame.py:395
+msgid "&Delete"
+msgstr "&Xóa"
+
+#: ../IDEFrame.py:345
+msgid "&Display"
+msgstr "&Hiển thị"
+
+#: ../IDEFrame.py:344
+msgid "&Edit"
+msgstr "&Sửa"
+
+#: ../IDEFrame.py:343
+msgid "&File"
+msgstr "&Tệp"
+
+#: ../IDEFrame.py:355
+msgid "&Function"
+msgstr "&Hàm"
+
+#: ../IDEFrame.py:346
+msgid "&Help"
+msgstr "&Trợ giúp"
+
+#: ../dialogs/AboutDialog.py:70
+msgid "&License"
+msgstr "&Giấy phép"
+
+#: ../IDEFrame.py:359
+msgid "&Program"
+msgstr "&Chương trình"
+
+#: ../PLCOpenEditor.py:98
+msgid "&Properties"
+msgstr "&Chi tiết"
+
+#: ../BeremizIDE.py:244
+msgid "&Recent Projects"
+msgstr "&Dự án gần đây"
+
+#: ../IDEFrame.py:361
+msgid "&Resource"
+msgstr "&Tài nguyên"
+
+#: ../etherlab/ConfigEditor.py:450
+msgid "'Read from' and 'Write to' variables types are not compatible"
+msgstr "'Đọc' và 'Ghi' không tương thích với kiểu biến"
+
+#: ../controls/SearchResultPanel.py:247
+#, python-brace-format
+msgid "'{a1}' - {a2} match in project"
+msgstr "'{a1}' - {a2} trùng khớp trong dự án"
+
+#: ../controls/SearchResultPanel.py:249
+#, python-brace-format
+msgid "'{a1}' - {a2} matches in project"
+msgstr "'{a1}' - {a2} trùng khớp trong dự án"
+
+#: ../connectors/PYRO/__init__.py:99
+#, python-brace-format
+msgid "'{a1}' is located at {a2}\n"
+msgstr "'{a1}' có địa chỉ tại {a2}\n"
+
+#: ../controls/SearchResultPanel.py:298
+#, python-format
+msgid "(%d matches)"
+msgstr "(%d trùng khớp)"
+
+#: ../dialogs/PouTransitionDialog.py:102 ../dialogs/PouActionDialog.py:101
+#: ../dialogs/PouDialog.py:159
+#, python-format
+msgid ", %s"
+msgstr ", %s"
+
+#: ../controls/UriLocationEditor.py:49
+msgid "- Select URI type -"
+msgstr "- Chọn loại URI -"
+
+#: ../controls/LogViewer.py:287
+msgid "1d"
+msgstr "1d"
+
+#: ../controls/LogViewer.py:288
+msgid "1h"
+msgstr "1h"
+
+#: ../controls/LogViewer.py:289
+msgid "1m"
+msgstr "1m"
+
+#: ../controls/LogViewer.py:290
+msgid "1s"
+msgstr "1s"
+
+#: ../dialogs/PouDialog.py:168 ../IDEFrame.py:1667 ../IDEFrame.py:1713
+#: ../IDEFrame.py:1732
+#, python-format
+msgid ""
+"A POU has an element named \"%s\". This could cause a conflict. Do you wish "
+"to continue?"
+msgstr ""
+"Một chương trình đã có phần tử tên \"%s\". Có thể gây xung đột. Bạn có muốn "
+"tiếp tục?"
+
+#: ../dialogs/SFCStepNameDialog.py:58 ../dialogs/PouTransitionDialog.py:109
+#: ../dialogs/PouNameDialog.py:56 ../dialogs/PouActionDialog.py:108
+#: ../controls/VariablePanel.py:800 ../IDEFrame.py:1681 ../IDEFrame.py:1694
+#, python-format
+msgid "A POU named \"%s\" already exists!"
+msgstr "Đã tồn tại một chương trình tên \"%s\"!"
+
+#: ../ConfigTreeNode.py:424
+#, python-brace-format
+msgid "A child named \"{a1}\" already exists -> \"{a2}\"\n"
+msgstr ""
+
+#: ../dialogs/BrowseLocationsDialog.py:228
+msgid "A location must be selected!"
+msgstr "Phải chọn một địa chỉ!"
+
+#: ../editors/ResourceEditor.py:483
+msgid "A task with the same name already exists!"
+msgstr "Trùng tên với tác vụ đã có!"
+
+#: ../dialogs/SFCStepNameDialog.py:60 ../controls/VariablePanel.py:802
+#: ../IDEFrame.py:1683 ../IDEFrame.py:1696
+#, python-format
+msgid "A variable with \"%s\" as name already exists in this pou!"
+msgstr "Đã tồn tại biến có tên \"%s\" trong chương trình này!"
+
+#: ../editors/CodeFileEditor.py:797
+#, python-format
+msgid "A variable with \"%s\" as name already exists!"
+msgstr "Đã tồn tại biến có tên \"%s\"!"
+
+#: ../BeremizIDE.py:311 ../dialogs/AboutDialog.py:46 ../PLCOpenEditor.py:142
+msgid "About"
+msgstr "Thông tin"
+
+#: ../plcopen/iec_std.csv:22
+msgid "Absolute number"
+msgstr "Giá trị tuyệt đối"
+
+#: ../etherlab/ConfigEditor.py:48
+msgid "Access"
+msgstr "Truy cập"
+
+#: ../dialogs/SFCStepDialog.py:75 ../dialogs/ActionBlockDialog.py:47
+msgid "Action"
+msgstr "Tác vụ"
+
+#: ../editors/Viewer.py:656 ../editors/Viewer.py:2429
+msgid "Action Block"
+msgstr "Khối tác vụ"
+
+#: ../dialogs/PouActionDialog.py:89
+msgid "Action Name"
+msgstr "Tên tác vụ"
+
+#: ../dialogs/PouActionDialog.py:56
+msgid "Action Name:"
+msgstr "Tên tác vụ:"
+
+#: ../plcopen/plcopen.py:1567
+#, python-format
+msgid "Action with name %s doesn't exist!"
+msgstr "Tác vụ với tên %s không tồn tại!"
+
+#: ../plcopen/types_enums.py:76
+msgid "Actions"
+msgstr "Tác vụ"
+
+#: ../dialogs/ActionBlockDialog.py:139
+msgid "Actions:"
+msgstr "Tác vụ:"
+
+#: ../editors/Viewer.py:484
+msgid "Active"
+msgstr ""
+
+#: ../canfestival/SlaveEditor.py:84 ../canfestival/NetworkEditor.py:108
+#: ../BeremizIDE.py:998 ../editors/Viewer.py:689
+msgid "Add"
+msgstr "Thêm"
+
+#: ../IDEFrame.py:1941 ../IDEFrame.py:1976
+msgid "Add Action"
+msgstr "Thêm tác vụ"
+
+#: ../features.py:22
+msgid "Add C code accessing located variables synchronously"
+msgstr ""
+
+#: ../IDEFrame.py:1924
+msgid "Add Configuration"
+msgstr "Thêm cấu hình"
+
+#: ../IDEFrame.py:1904
+msgid "Add DataType"
+msgstr "Thêm kiểu dữ liệu"
+
+#: ../editors/Viewer.py:612
+msgid "Add Divergence Branch"
+msgstr ""
+
+#: ../etherlab/EthercatMaster.py:297
+msgid "Add Ethercat Slave"
+msgstr "Thêm trạm tớ Ethercat"
+
+#: ../etherlab/EthercatMaster.py:297
+msgid "Add Ethercat Slave to Master"
+msgstr "Thêm trạm tớ Ethercat vào trạm chủ"
+
+#: ../dialogs/DiscoveryDialog.py:121
+msgid "Add IP"
+msgstr "Thêm IP"
+
+#: ../IDEFrame.py:1912
+msgid "Add POU"
+msgstr "Thêm POU"
+
+#: ../features.py:23
+msgid "Add Python code executed asynchronously"
+msgstr "Thêm code Python để thực hiện riêng biệt"
+
+#: ../IDEFrame.py:1952 ../IDEFrame.py:2002
+msgid "Add Resource"
+msgstr "Thêm tài nguyên"
+
+#: ../IDEFrame.py:1930 ../IDEFrame.py:1973
+msgid "Add Transition"
+msgstr ""
+
+#: ../editors/Viewer.py:599
+msgid "Add Wire Segment"
+msgstr ""
+
+#: ../editors/SFCViewer.py:447
+msgid "Add a new initial step"
+msgstr ""
+
+#: ../editors/Viewer.py:2790 ../editors/SFCViewer.py:784
+msgid "Add a new jump"
+msgstr "Thêm lệnh nhảy"
+
+#: ../editors/SFCViewer.py:469
+msgid "Add a new step"
+msgstr ""
+
+#: ../features.py:24
+msgid "Add a simple WxGlade based GUI."
+msgstr ""
+
+#: ../dialogs/ActionBlockDialog.py:143
+msgid "Add action"
+msgstr "Thêm tác vụ"
+
+#: ../editors/DataTypeEditor.py:364
+msgid "Add element"
+msgstr "Thêm phần tử"
+
+#: ../etherlab/ConfigEditor.py:1388
+msgid "Add file from ESI files database"
+msgstr ""
+
+#: ../etherlab/ConfigEditor.py:1360
+msgid "Add file to project"
+msgstr "Thêm tệp vào dự án"
+
+#: ../editors/ResourceEditor.py:281
+msgid "Add instance"
+msgstr "Thêm thực thể"
+
+#: ../etherlab/ConfigEditor.py:652
+msgid "Add process variable"
+msgstr ""
+
+#: ../canfestival/NetworkEditor.py:110
+msgid "Add slave"
+msgstr "Thêm thiết bị chấp hành"
+
+#: ../etherlab/ConfigEditor.py:679
+msgid "Add startup service variable"
+msgstr ""
+
+#: ../editors/ResourceEditor.py:250
+msgid "Add task"
+msgstr "Thêm tác vụ"
+
+#: ../bacnet/BacnetSlaveEditor.py:811 ../editors/CodeFileEditor.py:672
+#: ../controls/VariablePanel.py:483
+msgid "Add variable"
+msgstr "Thêm biến"
+
+#: ../etherlab/etherlab.py:186
+msgid ""
+"Adding a PDO not defined in default configuration\n"
+"for mapping needed location variables\n"
+"(1 if possible)"
+msgstr ""
+
+#: ../plcopen/iec_std.csv:33
+msgid "Addition"
+msgstr "Cộng"
+
+#: ../plcopen/definitions.py:51
+msgid "Additional function blocks"
+msgstr "Các khối chức năng bổ sung"
+
+#: ../editors/Viewer.py:672
+msgid "Adjust Block Size"
+msgstr "Sửa kích cỡ khối"
+
+#: ../editors/Viewer.py:1722
+msgid "Alignment"
+msgstr ""
+
+#: ../dialogs/BrowseLocationsDialog.py:42
+#: ../dialogs/BrowseLocationsDialog.py:50
+#: ../dialogs/BrowseLocationsDialog.py:151
+#: ../dialogs/BrowseLocationsDialog.py:154 ../etherlab/ConfigEditor.py:65
+#: ../etherlab/ConfigEditor.py:853 ../controls/LogViewer.py:307
+#: ../controls/VariablePanel.py:85
+msgid "All"
+msgstr "Tất cả"
+
+#: ../editors/FileManagementPanel.py:51
+msgid "All files (*.*)|*.*|CSV files (*.csv)|*.csv"
+msgstr "Tất cả tệp (*.*)|*.*|CSV files (*.csv)|*.csv"
+
+#: ../ProjectController.py:1752
+msgid "Already connected. Please disconnect\n"
+msgstr "Đã kết nối. Vui lòng ngắt kết nối\n"
+
+#: ../editors/DataTypeEditor.py:607
+#, python-format
+msgid "An element named \"%s\" already exists in this structure!"
+msgstr "Một phần tử tên \"%s\" đã có trong cấu trúc này!"
+
+#: ../editors/ResourceEditor.py:520
+msgid "An instance with the same name already exists!"
+msgstr "Trùng tên với thực thể đã có!"
+
+#: ../etherlab/ConfigEditor.py:975
+#, python-format
+msgid "An variable named \"%s\" already exists!"
+msgstr "Biến \"%s\" đã tồn tại!"
+
+#: ../bacnet/BacnetSlaveEditor.py:935
+msgid "Analog Input Objects"
+msgstr "Đối tượng vào Analog"
+
+#: ../bacnet/BacnetSlaveEditor.py:934
+msgid "Analog Output Objects"
+msgstr "Đối tượng ra Analog"
+
+#: ../bacnet/BacnetSlaveEditor.py:933
+msgid "Analog Value Objects"
+msgstr "Đối tượng giá trị Analog"
+
+#: ../dialogs/ConnectionDialog.py:103
+msgid "Apply name modification to all continuations with the same name"
+msgstr ""
+
+#: ../plcopen/iec_std.csv:31
+msgid "Arc cosine"
+msgstr "Cos ngược"
+
+#: ../plcopen/iec_std.csv:30
+msgid "Arc sine"
+msgstr "Sin ngược"
+
+#: ../plcopen/iec_std.csv:32
+msgid "Arc tangent"
+msgstr "Tan ngược"
+
+#: ../plcopen/iec_std.csv:33
+msgid "Arithmetic"
+msgstr "Phép toán"
+
+#: ../editors/DataTypeEditor.py:60 ../editors/DataTypeEditor.py:649
+#: ../controls/VariablePanel.py:883
+msgid "Array"
+msgstr "Mảng"
+
+#: ../plcopen/iec_std.csv:39
+msgid "Assignment"
+msgstr "Di chuyển"
+
+#: ../dialogs/FBDVariableDialog.py:227
+msgid "At least a variable or an expression must be selected!"
+msgstr ""
+
+#: ../controls/ProjectPropertiesPanel.py:113
+msgid "Author"
+msgstr "Tác giả"
+
+#: ../controls/ProjectPropertiesPanel.py:110
+msgid "Author Name (optional):"
+msgstr "Tên tác giả (không bắt buộc):"
+
+#: ../etherlab/EthercatCIA402Slave.py:125
+msgid "Axis Pos"
+msgstr ""
+
+#: ../etherlab/EthercatCIA402Slave.py:118
+msgid "Axis Ref"
+msgstr ""
+
+#: ../dialogs/FindInPouDialog.py:80
+msgid "Backward"
+msgstr ""
+
+#: ../features.py:19
+msgid "Bacnet support"
+msgstr ""
+
+#: ../canfestival/config_utils.py:365 ../canfestival/config_utils.py:672
+#, python-format
+msgid "Bad location size : %s"
+msgstr ""
+
+#: ../dialogs/ArrayTypeDialog.py:57 ../editors/DataTypeEditor.py:183
+#: ../editors/DataTypeEditor.py:213 ../editors/DataTypeEditor.py:307
+msgid "Base Type:"
+msgstr "Kiểu cơ sở:"
+
+#: ../editors/DataTypeEditor.py:639 ../controls/VariablePanel.py:841
+msgid "Base Types"
+msgstr "Kiểu cơ sở"
+
+#: ../BeremizIDE.py:479
+msgid "Beremiz"
+msgstr ""
+
+#: ../runtime/NevowServer.py:201
+msgid "Beremiz Runtime Settings"
+msgstr ""
+
+#: ../bacnet/BacnetSlaveEditor.py:938
+msgid "Binary Input Objects"
+msgstr "Đối tượng vào Binary"
+
+#: ../bacnet/BacnetSlaveEditor.py:937
+msgid "Binary Output Objects"
+msgstr ""
+
+#: ../bacnet/BacnetSlaveEditor.py:936
+msgid "Binary Value Objects"
+msgstr ""
+
+#: ../plcopen/iec_std.csv:70
+msgid "Binary selection (1 of 2)"
+msgstr "Lựa chọn (1 trong 2)"
+
+#: ../plcopen/iec_std.csv:62
+msgid "Bit-shift"
+msgstr "Dịch chuyển bit"
+
+#: ../plcopen/iec_std.csv:66
+msgid "Bitwise"
+msgstr "Phép toán logic"
+
+#: ../plcopen/iec_std.csv:66
+msgid "Bitwise AND"
+msgstr "Lệnh AND"
+
+#: ../plcopen/iec_std.csv:67
+msgid "Bitwise OR"
+msgstr "Lệnh OR"
+
+#: ../plcopen/iec_std.csv:68
+msgid "Bitwise XOR"
+msgstr "Lệnh XOR"
+
+#: ../plcopen/iec_std.csv:69
+msgid "Bitwise inverting"
+msgstr "Lấy bù"
+
+#: ../editors/Viewer.py:624 ../editors/Viewer.py:2442
+msgid "Block"
+msgstr "Khối"
+
+#: ../dialogs/FBDBlockDialog.py:63
+msgid "Block Properties"
+msgstr "Chi tiết về khối"
+
+#: ../editors/TextViewer.py:260
+msgid "Block name"
+msgstr "Tên khối"
+
+#: ../editors/Viewer.py:589
+msgid "Bottom"
+msgstr "Dưới"
+
+#: ../runtime/PlcStatus.py:11
+msgid "Broken"
+msgstr ""
+
+#: ../dialogs/BrowseValuesLibraryDialog.py:40
+#, python-format
+msgid "Browse %s values library"
+msgstr ""
+
+#: ../dialogs/BrowseLocationsDialog.py:69
+msgid "Browse Locations"
+msgstr "Duyệt các địa chỉ"
+
+#: ../ProjectController.py:1898
+msgid "Build"
+msgstr ""
+
+#: ../ProjectController.py:1397
+msgid "Build directory already clean\n"
+msgstr ""
+
+#: ../ProjectController.py:1899
+msgid "Build project into build folder"
+msgstr ""
+
+#: ../ProjectController.py:1155
+msgid "C Build crashed !\n"
+msgstr ""
+
+#: ../ProjectController.py:1152
+msgid "C Build failed.\n"
+msgstr ""
+
+#: ../c_ext/CFileEditor.py:66
+msgid "C code"
+msgstr "C code"
+
+#: ../ProjectController.py:1240
+msgid "C code generated successfully.\n"
+msgstr "C code đã được tạo.\n"
+
+#: ../targets/toolchain_makefile.py:126
+msgid "C compilation failed.\n"
+msgstr "Biên dịch C thất bại.\n"
+
+#: ../targets/toolchain_gcc.py:199
+#, python-format
+msgid "C compilation of %s failed.\n"
+msgstr "Biên dịch C của %s thất bại.\n"
+
+#: ../features.py:22
+msgid "C extension"
+msgstr ""
+
+#: ../dialogs/AboutDialog.py:69
+msgid "C&redits"
+msgstr ""
+
+#: ../canfestival/NetworkEditor.py:58
+msgid "CANOpen network"
+msgstr ""
+
+#: ../canfestival/SlaveEditor.py:48
+msgid "CANOpen slave"
+msgstr "Trạm tớ CANOpen"
+
+#: ../features.py:18
+msgid "CANopen support"
+msgstr ""
+
+#: ../etherlab/ConfigEditor.py:858
+msgid "CIA402 nodes"
+msgstr "Các nút CIA402"
+
+#: ../plcopen/plcopen.py:1839 ../plcopen/plcopen.py:1853
+#: ../plcopen/plcopen.py:1878 ../plcopen/plcopen.py:1894
+msgid "Can only generate execution order on FBD networks!"
+msgstr "Chỉ có thể tạo thứ tự thực hiện trên mạng FBD!"
+
+#: ../controls/VariablePanel.py:290
+msgid "Can only give a location to local or global variables"
+msgstr "Chỉ có thê gán địa chỉ vào biến cục bộ hay toàn cục"
+
+#: ../PLCOpenEditor.py:318
+#, python-format
+msgid "Can't generate program to file %s!"
+msgstr "Không thể tạo chương trình vào tệp %s!"
+
+#: ../controls/VariablePanel.py:288
+msgid "Can't give a location to a function block instance"
+msgstr "Không thể gán địa chỉ cho khối hàm thực thể"
+
+#: ../PLCOpenEditor.py:363
+#, python-format
+msgid "Can't save project to file %s!"
+msgstr "Không thể lưu dự án vào tệp %s!"
+
+#: ../controls/VariablePanel.py:338
+msgid "Can't set an initial value to a function block instance"
+msgstr "Không thể đặt giá trị ban đầu cho khối hàm thực thể"
+
+#: ../ConfigTreeNode.py:532
+#, python-brace-format
+msgid "Cannot create child {a1} of type {a2} "
+msgstr "Không thể tạo con {a1} của kiểu {a2}"
+
+#: ../ConfigTreeNode.py:454
+#, python-format
+msgid "Cannot find lower free IEC channel than %d\n"
+msgstr ""
+
+#: ../connectors/PYRO/__init__.py:140
+msgid "Cannot get PLC status - connection failed.\n"
+msgstr "Không thể lấy trạng thái PLC - kết nối thất bại.\n"
+
+#: ../ProjectController.py:1013
+msgid "Cannot open/parse VARIABLES.csv!\n"
+msgstr ""
+
+#: ../canfestival/config_utils.py:400
+#, python-brace-format
+msgid ""
+"Cannot set bit offset for non bool '{a1}' variable "
+"(ID:{a2},Idx:{a3},sIdx:{a4}))"
+msgstr ""
+
+#: ../ProjectController.py:1842
+msgid "Cannot transfer while PLC is running. Stop it now?"
+msgstr ""
+
+#: ../dialogs/SearchInProjectDialog.py:63 ../dialogs/FindInPouDialog.py:89
+msgid "Case sensitive"
+msgstr "Phân biệt chữ hoa chữ thường"
+
+#: ../editors/Viewer.py:584
+msgid "Center"
+msgstr ""
+
+#: ../Beremiz_service.py:289
+msgid "Change IP of interface to bind"
+msgstr ""
+
+#: ../Beremiz_service.py:288
+msgid "Change Name"
+msgstr "Đổi tên"
+
+#: ../IDEFrame.py:1994
+msgid "Change POU Type To"
+msgstr "Đổi loại POU thành"
+
+#: ../Beremiz_service.py:290
+msgid "Change Port Number"
+msgstr "Đổi số cổng"
+
+#: ../Beremiz_service.py:291
+msgid "Change working directory"
+msgstr "Thay đổi thư mục làm việc"
+
+#: ../plcopen/iec_std.csv:81
+msgid "Character string"
+msgstr "Chuỗi kí tự"
+
+#: ../svgui/svgui.py:136
+msgid "Choose a SVG file"
+msgstr "Chọn một tệp SVG"
+
+#: ../etherlab/EtherCATManagementEditor.py:911
+#: ../etherlab/EtherCATManagementEditor.py:1306
+msgid "Choose a binary file"
+msgstr "Chọn một tệp nhị phân"
+
+#: ../ProjectController.py:582
+msgid "Choose a directory to save project"
+msgstr "Chọn thư mục để lưu dự án"
+
+#: ../canfestival/canfestival.py:171 ../bacnet/bacnet.py:434
+#: ../PLCOpenEditor.py:276 ../PLCOpenEditor.py:308 ../PLCOpenEditor.py:357
+msgid "Choose a file"
+msgstr "Chọn một tệp"
+
+#: ../BeremizIDE.py:897
+msgid "Choose a project"
+msgstr "Chọn một dự án"
+
+#: ../dialogs/BrowseValuesLibraryDialog.py:43
+#, python-format
+msgid "Choose a value for %s:"
+msgstr "Chọn một giá trị cho %s:"
+
+#: ../Beremiz_service.py:346
+msgid "Choose a working directory "
+msgstr "Chọn thư mục làm việc"
+
+#: ../etherlab/ConfigEditor.py:1234
+msgid "Choose an XML file"
+msgstr "Chọn một tệp XML"
+
+#: ../BeremizIDE.py:861
+msgid "Choose an empty directory for new project"
+msgstr "Chọn một thư mục trống cho dự án mới"
+
+#: ../ProjectController.py:483
+msgid "Chosen folder doesn't contain a program. It's not a valid project!"
+msgstr "Thư mục đã chọn không có chương trình. Dự án không hợp lệ!"
+
+#: ../ProjectController.py:450
+msgid "Chosen folder isn't empty. You can't use it for a new project!"
+msgstr "Thư mục đã có dữ liệu. Không thể lưu dự án mới vào thư mục này!"
+
+#: ../controls/VariablePanel.py:60
+msgid "Class"
+msgstr "Lớp"
+
+#: ../controls/VariablePanel.py:474
+msgid "Class Filter:"
+msgstr "Lọc lớp:"
+
+#: ../dialogs/FBDVariableDialog.py:75
+msgid "Class:"
+msgstr "Lớp:"
+
+#: ../ProjectController.py:1904
+msgid "Clean"
+msgstr ""
+
+#: ../controls/LogViewer.py:327
+msgid "Clean log messages"
+msgstr "Xóa tin nhắn trong nhật kí"
+
+#: ../ProjectController.py:1905
+msgid "Clean project build folder"
+msgstr ""
+
+#: ../ProjectController.py:1394
+msgid "Cleaning the build directory\n"
+msgstr ""
+
+#: ../IDEFrame.py:439
+msgid "Clear Errors"
+msgstr "Xóa lỗi"
+
+#: ../editors/Viewer.py:683
+msgid "Clear Execution Order"
+msgstr "Xóa thứ tự thực hiện"
+
+#: ../dialogs/SearchInProjectDialog.py:107 ../dialogs/FindInPouDialog.py:112
+#: ../etherlab/ConfigEditor.py:1361
+msgid "Close"
+msgstr "Đóng"
+
+#: ../BeremizIDE.py:623 ../PLCOpenEditor.py:183
+msgid "Close Application"
+msgstr "Đóng ứng dụng"
+
+#: ../BeremizIDE.py:253 ../BeremizIDE.py:562 ../PLCOpenEditor.py:81
+#: ../IDEFrame.py:1053
+msgid "Close Project"
+msgstr "Đóng dự án"
+
+#: ../BeremizIDE.py:251 ../PLCOpenEditor.py:79
+msgid "Close Tab"
+msgstr "Đóng tab"
+
+#: ../editors/Viewer.py:641 ../editors/Viewer.py:2450
+msgid "Coil"
+msgstr ""
+
+#: ../editors/Viewer.py:662 ../editors/LDViewer.py:517
+msgid "Comment"
+msgstr "Chú thích"
+
+#: ../etherlab/ConfigEditor.py:66
+msgid "Communication Parameters"
+msgstr "Tham số giao tiếp"
+
+#: ../BeremizIDE.py:303 ../BeremizIDE.py:307 ../PLCOpenEditor.py:134
+#: ../PLCOpenEditor.py:138
+msgid "Community support"
+msgstr "Hỗ trợ từ cộng đồng"
+
+#: ../dialogs/ProjectDialog.py:63
+msgid "Company Name"
+msgstr "Tên công ty"
+
+#: ../controls/ProjectPropertiesPanel.py:108
+msgid "Company Name (required):"
+msgstr "Tên công ty (bắt buộc):"
+
+#: ../controls/ProjectPropertiesPanel.py:109
+msgid "Company URL (optional):"
+msgstr "URL của công ty (không bắt buộc):"
+
+#: ../plcopen/iec_std.csv:75
+msgid "Comparison"
+msgstr "So sánh"
+
+#: ../ProjectController.py:787
+msgid "Compiling IEC Program into C code...\n"
+msgstr "Biên dịch chương trình IEC sang C code...\n"
+
+#: ../plcopen/iec_std.csv:85
+msgid "Concatenation"
+msgstr "Nối chuỗi"
+
+#: ../editors/ConfTreeNodeEditor.py:241
+msgid "Config"
+msgstr ""
+
+#: ../editors/ProjectNodeEditor.py:39
+msgid "Config variables"
+msgstr ""
+
+#: ../dialogs/SearchInProjectDialog.py:43
+msgid "Configuration"
+msgstr "Cấu hình"
+
+#: ../plcopen/types_enums.py:77
+msgid "Configurations"
+msgstr "Cấu hình"
+
+#: ../editors/Viewer.py:351 ../editors/Viewer.py:381 ../editors/Viewer.py:403
+#: ../editors/TextViewer.py:289 ../editors/TextViewer.py:343
+#: ../editors/TextViewer.py:366 ../controls/VariablePanel.py:353
+msgid "Confirm or change variable name"
+msgstr "Xác nhận hoặc đổi tên biến"
+
+#: ../ProjectController.py:1925
+msgid "Connect"
+msgstr "Kết nối"
+
+#: ../ProjectController.py:1926
+msgid "Connect to the target PLC"
+msgstr "Kết nối với PLC đích"
+
+#: ../ProjectController.py:1469
+#, python-format
+msgid "Connected to URI: %s"
+msgstr "Đã kết nối với URI: %s"
+
+#: ../dialogs/SFCTransitionDialog.py:78 ../editors/Viewer.py:626
+#: ../editors/Viewer.py:2443
+msgid "Connection"
+msgstr "Kết nối"
+
+#: ../dialogs/ConnectionDialog.py:55
+msgid "Connection Properties"
+msgstr "Chi tiết về kết nối"
+
+#: ../ProjectController.py:1773
+msgid "Connection canceled!\n"
+msgstr "Kết nối đã bị hủy!\n"
+
+#: ../ProjectController.py:1797
+#, python-format
+msgid "Connection failed to %s!\n"
+msgstr "Không thể kết nối với %s!\n"
+
+#: ../connectors/PYRO/__init__.py:124 ../connectors/WAMP/__init__.py:121
+msgid "Connection lost!\n"
+msgstr "Mất kết nối!\n"
+
+#: ../connectors/PYRO/__init__.py:111
+#, python-format
+msgid "Connection to '%s' failed.\n"
+msgstr "Kết nối với '%s' đã thất bại.\n"
+
+#: ../dialogs/ConnectionDialog.py:67 ../editors/Viewer.py:1678
+msgid "Connector"
+msgstr ""
+
+#: ../dialogs/SFCStepDialog.py:68
+msgid "Connectors:"
+msgstr ""
+
+#: ../BeremizIDE.py:374
+msgid "Console"
+msgstr ""
+
+#: ../controls/VariablePanel.py:75
+msgid "Constant"
+msgstr ""
+
+#: ../editors/Viewer.py:637 ../editors/Viewer.py:2446
+msgid "Contact"
+msgstr "Tiếp điểm"
+
+#: ../controls/ProjectPropertiesPanel.py:219
+msgid "Content Description (optional):"
+msgstr "Mô tả nội dung (không bắt buộc):"
+
+#: ../dialogs/ConnectionDialog.py:68 ../editors/Viewer.py:1679
+msgid "Continuation"
+msgstr ""
+
+#: ../etherlab/EtherCATManagementEditor.py:37
+msgid "Control Byte"
+msgstr ""
+
+#: ../plcopen/iec_std.csv:18
+msgid "Conversion from BCD"
+msgstr "Chuyển từ BCD"
+
+#: ../plcopen/iec_std.csv:19
+msgid "Conversion to BCD"
+msgstr "Chuyển sang BCD"
+
+#: ../plcopen/iec_std.csv:21
+msgid "Conversion to date"
+msgstr "Chuyển sang ngày"
+
+#: ../plcopen/iec_std.csv:20
+msgid "Conversion to time-of-day"
+msgstr "Chuyển sang giờ trong ngày"
+
+#: ../editors/Viewer.py:698 ../controls/LogViewer.py:713 ../IDEFrame.py:375
+#: ../IDEFrame.py:428
+msgid "Copy"
+msgstr "Sao chép"
+
+#: ../IDEFrame.py:1981
+msgid "Copy POU"
+msgstr "Sao chép POU"
+
+#: ../editors/FileManagementPanel.py:67
+msgid "Copy file from left folder to right"
+msgstr "Sao chép tệp từ thư mục trái sang phải"
+
+#: ../editors/FileManagementPanel.py:66
+msgid "Copy file from right folder to left"
+msgstr "Sao chép tệp từ thư mục phải sang trái"
+
+#: ../plcopen/iec_std.csv:28
+msgid "Cosine"
+msgstr "Cos"
+
+#: ../ConfigTreeNode.py:660
+#, python-brace-format
+msgid ""
+"Could not add child \"{a1}\", type {a2} :\n"
+"{a3}\n"
+msgstr ""
+"Không thể thêm con \"{a1}\", kiểu {a2} :\n"
+"{a3}\n"
+
+#: ../py_ext/PythonFileCTNMixin.py:81
+#, python-format
+msgid "Couldn't import old %s file."
+msgstr ""
+
+#: ../etherlab/EthercatMaster.py:258
+#, python-format
+msgid "Couldn't load %s network configuration file."
+msgstr "Không thể tải tệp cấu hình mạng %s"
+
+#: ../etherlab/EthercatMaster.py:279
+#, python-format
+msgid "Couldn't load %s network process variables file."
+msgstr ""
+
+#: ../ConfigTreeNode.py:630
+#, python-brace-format
+msgid ""
+"Couldn't load confnode base parameters {a1} :\n"
+" {a2}"
+msgstr ""
+
+#: ../ConfigTreeNode.py:647 ../CodeFileTreeNode.py:127
+#, python-brace-format
+msgid ""
+"Couldn't load confnode parameters {a1} :\n"
+" {a2}"
+msgstr ""
+
+#: ../etherlab/etherlab.py:264
+#, python-brace-format
+msgid ""
+"Couldn't load {a1} XML file:\n"
+"{a2}"
+msgstr ""
+"Không thể tải {a1} tệp XML:\n"
+"{a2}"
+
+#: ../PLCControler.py:552
+msgid "Couldn't paste non-POU object."
+msgstr "Không thể dán những đối tượng khác POU."
+
+#: ../ProjectController.py:1717
+msgid "Couldn't start PLC !\n"
+msgstr "Không thể khởi động PLC!\n"
+
+#: ../ProjectController.py:1725
+msgid "Couldn't stop PLC !\n"
+msgstr "Không thể dừng PLC !\n"
+
+#: ../svgui/svgui.py:57
+msgid "Create HMI"
+msgstr "Tạo HMI"
+
+#: ../dialogs/PouDialog.py:48
+msgid "Create a new POU"
+msgstr "Tạo một đơn vị tổ chức chương trình mới"
+
+#: ../dialogs/PouActionDialog.py:42
+msgid "Create a new action"
+msgstr "Tạo tác vụ mới"
+
+#: ../IDEFrame.py:313
+msgid "Create a new action block"
+msgstr "Tạo khối tác vụ mới"
+
+#: ../IDEFrame.py:262 ../IDEFrame.py:292 ../IDEFrame.py:325
+msgid "Create a new block"
+msgstr "Tạo khối mới"
+
+#: ../IDEFrame.py:286
+msgid "Create a new branch"
+msgstr "Tạo nhánh mới"
+
+#: ../IDEFrame.py:280
+msgid "Create a new coil"
+msgstr ""
+
+#: ../IDEFrame.py:256 ../IDEFrame.py:271 ../IDEFrame.py:301
+msgid "Create a new comment"
+msgstr "Tạo chú thích "
+
+#: ../IDEFrame.py:265 ../IDEFrame.py:295 ../IDEFrame.py:328
+msgid "Create a new connection"
+msgstr "Tạo một kết nối mới"
+
+#: ../IDEFrame.py:283 ../IDEFrame.py:334
+msgid "Create a new contact"
+msgstr "Tạo tiếp điểm mới"
+
+#: ../IDEFrame.py:316
+msgid "Create a new divergence"
+msgstr ""
+
+#: ../dialogs/SFCDivergenceDialog.py:54
+msgid "Create a new divergence or convergence"
+msgstr ""
+
+#: ../IDEFrame.py:304
+msgid "Create a new initial step"
+msgstr ""
+
+#: ../IDEFrame.py:319
+msgid "Create a new jump"
+msgstr "Tạo lệnh nhảy mới"
+
+#: ../IDEFrame.py:274 ../IDEFrame.py:331
+msgid "Create a new power rail"
+msgstr "Tạo nguồn mới"
+
+#: ../IDEFrame.py:277
+msgid "Create a new rung"
+msgstr ""
+
+#: ../IDEFrame.py:307
+msgid "Create a new step"
+msgstr ""
+
+#: ../dialogs/PouTransitionDialog.py:45 ../IDEFrame.py:310
+msgid "Create a new transition"
+msgstr ""
+
+#: ../IDEFrame.py:259 ../IDEFrame.py:289 ../IDEFrame.py:322
+msgid "Create a new variable"
+msgstr "Tạo biến mới"
+
+#: ../etherlab/etherlab.py:183
+msgid "Creating new PDO"
+msgstr ""
+
+#: ../dialogs/AboutDialog.py:109
+msgid "Credits"
+msgstr ""
+
+#: ../runtime/WampClient.py:400
+msgid "Current status"
+msgstr "Trạng thái hiện tại"
+
+#: ../Beremiz_service.py:437
+msgid "Current working directory :"
+msgstr "Thư mục hiện tại :"
+
+#: ../runtime/WampClient.py:161
+msgid "Custom protocol options failed :"
+msgstr ""
+
+#: ../editors/Viewer.py:697 ../IDEFrame.py:373 ../IDEFrame.py:427
+msgid "Cut"
+msgstr "Cắt"
+
+#: ../editors/ResourceEditor.py:81
+msgid "Cyclic"
+msgstr "Chu kì"
+
+#: ../plcopen/iec_std.csv:42 ../plcopen/iec_std.csv:44
+#: ../plcopen/iec_std.csv:46 ../plcopen/iec_std.csv:50
+#: ../plcopen/iec_std.csv:52 ../plcopen/iec_std.csv:54
+#: ../plcopen/iec_std.csv:56 ../plcopen/iec_std.csv:58
+#: ../plcopen/iec_std.csv:60
+msgid "DEPRECATED"
+msgstr ""
+
+#: ../canfestival/SlaveEditor.py:80 ../canfestival/NetworkEditor.py:104
+msgid "DS-301 Profile"
+msgstr "Hồ sơ DS-301"
+
+#: ../canfestival/SlaveEditor.py:81 ../canfestival/NetworkEditor.py:105
+msgid "DS-302 Profile"
+msgstr "Hồ sơ DS-302"
+
+#: ../dialogs/SearchInProjectDialog.py:39
+msgid "Data Type"
+msgstr "Kiểu dữ liệu"
+
+#: ../plcopen/types_enums.py:76
+msgid "Data Types"
+msgstr "Kiểu dữ liệu"
+
+#: ../plcopen/iec_std.csv:16
+msgid "Data type conversion"
+msgstr "Chuyển đổi kiểu dữ liệu"
+
+#: ../plcopen/iec_std.csv:44 ../plcopen/iec_std.csv:45
+msgid "Date addition"
+msgstr "Cộng ngày"
+
+#: ../plcopen/iec_std.csv:56 ../plcopen/iec_std.csv:57
+#: ../plcopen/iec_std.csv:58 ../plcopen/iec_std.csv:59
+msgid "Date and time subtraction"
+msgstr "Trừ ngày và giờ"
+
+#: ../plcopen/iec_std.csv:50 ../plcopen/iec_std.csv:51
+msgid "Date subtraction"
+msgstr "Trừ giờ"
+
+#: ../dialogs/DurationEditorDialog.py:57
+msgid "Days:"
+msgstr "Ngày:"
+
+#: ../ProjectController.py:1809
+msgid "Debug does not match PLC - stop/transfert/start to re-enable\n"
+msgstr "Sửa lôi không trùng khớp với PLC - ngắt/chuyển/khởi động để kích hoạt\n"
+
+#: ../controls/PouInstanceVariablesPanel.py:144
+msgid "Debug instance"
+msgstr "Sửa lỗi thực thể"
+
+#: ../editors/Viewer.py:493
+#, python-format
+msgid "Debug: %s"
+msgstr "Sửa lỗi: %s"
+
+#: ../ProjectController.py:1548
+#, python-format
+msgid "Debug: Unknown variable '%s'\n"
+msgstr "Sửa lỗi: Biến không xác định '%s'\n"
+
+#: ../ProjectController.py:1545
+#, python-format
+msgid "Debug: Unsupported type to debug '%s'\n"
+msgstr "Sửa lỗi: kiểu không hỗ trợ '%s'\n"
+
+#: ../IDEFrame.py:666
+msgid "Debugger"
+msgstr "Trình sửa lỗi"
+
+#: ../ProjectController.py:1805
+msgid "Debugger ready\n"
+msgstr "Trình sửa lỗi đã sẵn sàng\n"
+
+#: ../etherlab/EtherCATManagementEditor.py:37
+msgid "Default Size"
+msgstr "Kích cỡ mặc định"
+
+#: ../etherlab/EthercatCFileGenerator.py:174
+#, python-format
+msgid "Definition conflict for location \"%s\""
+msgstr "Xung đột về định nghĩa tại địa chỉ \"%s\""
+
+#: ../BeremizIDE.py:1001 ../editors/Viewer.py:673 ../IDEFrame.py:2010
+msgid "Delete"
+msgstr "Xóa"
+
+#: ../editors/Viewer.py:613
+msgid "Delete Divergence Branch"
+msgstr ""
+
+#: ../etherlab/ConfigEditor.py:1261 ../editors/FileManagementPanel.py:156
+msgid "Delete File"
+msgstr "Xóa tệp"
+
+#: ../editors/Viewer.py:600
+msgid "Delete Wire Segment"
+msgstr ""
+
+#: ../controls/CustomEditableListBox.py:44
+msgid "Delete item"
+msgstr ""
+
+#: ../plcopen/iec_std.csv:88
+msgid "Deletion (within)"
+msgstr "Xóa (trong)"
+
+#: ../editors/DataTypeEditor.py:161
+msgid "Derivation Type:"
+msgstr "Kiểu dẫn xuất:"
+
+#: ../etherlab/ConfigEditor.py:346 ../etherlab/ConfigEditor.py:465
+#: ../editors/CodeFileEditor.py:754
+msgid "Description"
+msgstr "Mô tả"
+
+#: ../controls/VariablePanel.py:465
+msgid "Description:"
+msgstr "Mô tả:"
+
+#: ../dialogs/ArrayTypeDialog.py:63 ../editors/DataTypeEditor.py:332
+msgid "Dimensions:"
+msgstr ""
+
+#: ../dialogs/FindInPouDialog.py:69
+msgid "Direction"
+msgstr ""
+
+#: ../dialogs/BrowseLocationsDialog.py:101
+msgid "Direction:"
+msgstr ""
+
+#: ../editors/DataTypeEditor.py:60
+msgid "Directly"
+msgstr ""
+
+#: ../ProjectController.py:1938
+msgid "Disconnect"
+msgstr "Ngắt"
+
+#: ../ProjectController.py:1939
+msgid "Disconnect from PLC"
+msgstr "Ngắt khỏi PLC"
+
+#: ../runtime/PlcStatus.py:14
+msgid "Disconnected"
+msgstr "Đã ngắt kết nối"
+
+#: ../editors/Viewer.py:657 ../editors/Viewer.py:2438
+msgid "Divergence"
+msgstr ""
+
+#: ../plcopen/iec_std.csv:36
+msgid "Division"
+msgstr "Chia"
+
+#: ../etherlab/ConfigEditor.py:1260 ../editors/FileManagementPanel.py:155
+#, python-format
+msgid "Do you really want to delete the file '%s'?"
+msgstr "Bạn đã chắc chắn xóa '%s'?"
+
+#: ../controls/VariablePanel.py:65
+msgid "Documentation"
+msgstr "Thông tin"
+
+#: ../PLCOpenEditor.py:312
+msgid "Done"
+msgstr "Xong"
+
+#: ../runtime/WampClient.py:384
+msgid "Download"
+msgstr ""
+
+#: ../dialogs/ActionBlockDialog.py:42
+msgid "Duration"
+msgstr ""
+
+#: ../bacnet/bacnet.py:437
+msgid "EDE files (*_EDE.csv)|*_EDE.csv|All files|*.*"
+msgstr ""
+
+#: ../canfestival/canfestival.py:174
+msgid "EDS files (*.eds)|*.eds|All files|*.*"
+msgstr ""
+
+#: ../etherlab/ConfigEditor.py:1342
+msgid "ESI Files Database management"
+msgstr "Quản lí cơ sở dữ liệu tệp ESI"
+
+#: ../etherlab/ConfigEditor.py:1109
+msgid "ESI Files:"
+msgstr ""
+
+#: ../editors/Viewer.py:671
+msgid "Edit Block"
+msgstr "Sửa khối"
+
+#: ../dialogs/LDElementDialog.py:58
+msgid "Edit Coil Values"
+msgstr ""
+
+#: ../dialogs/LDElementDialog.py:56
+msgid "Edit Contact Values"
+msgstr "Sửa giá trị tiếp điểm"
+
+#: ../dialogs/DurationEditorDialog.py:54
+msgid "Edit Duration"
+msgstr ""
+
+#: ../dialogs/SFCStepDialog.py:53
+msgid "Edit Step"
+msgstr ""
+
+#: ../wxglade_hmi/wxglade_hmi.py:45
+msgid "Edit a WxWidgets GUI with WXGlade"
+msgstr "Chỉnh sửa một WxWidgets GUI với WXGlade"
+
+#: ../dialogs/ActionBlockDialog.py:127
+msgid "Edit action block properties"
+msgstr "Sửa chi tiết của khối tác vụ"
+
+#: ../dialogs/ArrayTypeDialog.py:47
+msgid "Edit array type properties"
+msgstr "Sửa chi tiết kiểu mảng"
+
+#: ../dialogs/CommentEditDialog.py:53
+msgid "Edit comment"
+msgstr "Sửa chú thích"
+
+#: ../editors/FileManagementPanel.py:68
+msgid "Edit file"
+msgstr "Sửa tệp"
+
+#: ../controls/CustomEditableListBox.py:42
+msgid "Edit item"
+msgstr ""
+
+#: ../editors/Viewer.py:3058
+msgid "Edit jump target"
+msgstr "Sửa nơi nhảy đến"
+
+#: ../ProjectController.py:1956
+msgid "Edit raw IEC code added to code generated by PLCGenerator"
+msgstr ""
+
+#: ../editors/SFCViewer.py:815
+msgid "Edit step name"
+msgstr ""
+
+#: ../dialogs/SFCTransitionDialog.py:53
+msgid "Edit transition"
+msgstr ""
+
+#: ../IDEFrame.py:638
+msgid "Editor ToolBar"
+msgstr ""
+
+#: ../ProjectController.py:1355
+msgid "Editor selection"
+msgstr ""
+
+#: ../editors/DataTypeEditor.py:360
+msgid "Elements :"
+msgstr "Phần tử:"
+
+#: ../runtime/PlcStatus.py:15
+msgid "Empty"
+msgstr ""
+
+#: ../dialogs/ArrayTypeDialog.py:100
+msgid "Empty dimension isn't allowed."
+msgstr ""
+
+#: ../etherlab/EtherCATManagementEditor.py:37
+msgid "Enable"
+msgstr ""
+
+#: ../runtime/WampClient.py:410
+msgid "Enable WAMP connection"
+msgstr ""
+
+#: ../Beremiz_service.py:354
+msgid "Enter a name "
+msgstr "Nhập tên"
+
+#: ../Beremiz_service.py:339
+msgid "Enter a port number "
+msgstr "Nhập số cổng"
+
+#: ../etherlab/EtherCATManagementEditor.py:627
+msgid ""
+"Enter hex or dec value (if enter dec value, it automatically conversed hex "
+"value)"
+msgstr ""
+
+#: ../etherlab/EtherCATManagementEditor.py:1964
+msgid "Enter hex(0xnnnn) or dec(n) value"
+msgstr "Nhập giá trị hex(0xnnnn) hoặc dec(n)"
+
+#: ../Beremiz_service.py:330
+msgid "Enter the IP of the interface to bind"
+msgstr ""
+
+#: ../etherlab/ConfigEditor.py:502
+msgid "Entry can't be write through SDO"
+msgstr ""
+
+#: ../etherlab/EthercatCFileGenerator.py:569
+#, python-brace-format
+msgid "Entry index 0x{a1:.4x}, subindex 0x{a2:.2x} not mapped for device {a3}"
+msgstr ""
+
+#: ../editors/DataTypeEditor.py:60
+msgid "Enumerated"
+msgstr "Liệt kê"
+
+#: ../plcopen/iec_std.csv:77
+msgid "Equal to"
+msgstr "Bằng"
+
+#: ../dialogs/ForceVariableDialog.py:213
+#: ../dialogs/SearchInProjectDialog.py:172 ../dialogs/SFCStepNameDialog.py:64
+#: ../dialogs/DurationEditorDialog.py:125
+#: ../dialogs/DurationEditorDialog.py:172
+#: ../dialogs/PouTransitionDialog.py:113 ../dialogs/BlockPreviewDialog.py:237
+#: ../dialogs/ProjectDialog.py:78 ../dialogs/ArrayTypeDialog.py:114
+#: ../dialogs/PouNameDialog.py:58 ../dialogs/BrowseLocationsDialog.py:228
+#: ../dialogs/BrowseValuesLibraryDialog.py:87
+#: ../dialogs/PouActionDialog.py:112 ../dialogs/PouDialog.py:178
+#: ../PLCOpenEditor.py:319 ../PLCOpenEditor.py:324
+#: ../etherlab/ConfigEditor.py:458 ../etherlab/ConfigEditor.py:510
+#: ../etherlab/ConfigEditor.py:981 ../etherlab/ConfigEditor.py:1047
+#: ../etherlab/ConfigEditor.py:1246 ../etherlab/ConfigEditor.py:1314
+#: ../etherlab/EthercatMaster.py:463 ../editors/ResourceEditor.py:468
+#: ../editors/Viewer.py:467 ../editors/LDViewer.py:677
+#: ../editors/LDViewer.py:893 ../editors/LDViewer.py:897
+#: ../editors/DataTypeEditor.py:566 ../editors/DataTypeEditor.py:571
+#: ../editors/DataTypeEditor.py:590 ../editors/DataTypeEditor.py:759
+#: ../editors/DataTypeEditor.py:766 ../editors/TextViewer.py:390
+#: ../editors/CodeFileEditor.py:779 ../ProjectController.py:404
+#: ../ProjectController.py:548 ../ProjectController.py:557
+#: ../controls/FolderTree.py:222 ../controls/ProjectPropertiesPanel.py:308
+#: ../controls/DebugVariablePanel/DebugVariablePanel.py:163
+#: ../controls/DebugVariablePanel/DebugVariableTextViewer.py:138
+#: ../controls/DebugVariablePanel/DebugVariableGraphicViewer.py:227
+#: ../controls/VariablePanel.py:430 ../controls/VariablePanel.py:784
+#: ../util/ExceptionHandler.py:70 ../IDEFrame.py:1049 ../IDEFrame.py:1667
+#: ../IDEFrame.py:1708 ../IDEFrame.py:1713 ../IDEFrame.py:1727
+#: ../IDEFrame.py:1732 ../Beremiz_service.py:234
+msgid "Error"
+msgstr "Lỗi"
+
+#: ../ProjectController.py:848
+msgid ""
+"Error : At least one configuration and one resource must be declared in PLC "
+"!\n"
+msgstr "Lỗi: Phải khai báo ít nhất một cấu hình và một tài nguyên trong PLC !\n"
+
+#: ../ProjectController.py:838
+#, python-format
+msgid "Error : IEC to C compiler returned %d\n"
+msgstr "Lỗi : IEC sang trình biên dịch C trả về %d\n"
+
+#: ../ProjectController.py:762
+#, python-format
+msgid ""
+"Error in ST/IL/SFC code generator :\n"
+"%s\n"
+msgstr ""
+"Lỗi khi tạo code ST/IL/SFC :\n"
+"%s\n"
+
+#: ../ConfigTreeNode.py:219
+#, python-format
+msgid "Error while saving \"%s\"\n"
+msgstr "Lỗi khi lưu \"%s\"\n"
+
+#: ../bacnet/bacnet.py:581
+#, python-brace-format
+msgid ""
+"Error: BACnet server '{a1}.x: {a2}' contains objects with duplicate object "
+"identifiers.\n"
+msgstr ""
+
+#: ../bacnet/bacnet.py:573
+#, python-brace-format
+msgid ""
+"Error: BACnet server '{a1}.x:{a2}' contains objects with duplicate object "
+"names.\n"
+msgstr ""
+
+#: ../canfestival/canfestival.py:179 ../bacnet/bacnet.py:444
+msgid "Error: Export slave failed\n"
+msgstr "Lỗi: Xuất trạm tớ thất bại\n"
+
+#: ../modbus/modbus.py:601
+#, python-brace-format
+msgid ""
+"Error: Modbus/IP Servers %{a1}.x and %{a2}.x use the same port number "
+"{a3}.\n"
+msgstr ""
+
+#: ../canfestival/canfestival.py:388
+msgid "Error: No Master generated\n"
+msgstr "Lỗi: Không có trạm chủ được tạo\n"
+
+#: ../canfestival/canfestival.py:383
+msgid "Error: No PLC built\n"
+msgstr ""
+
+#: ../etherlab/ConfigEditor.py:269
+msgid "EtherCAT Management"
+msgstr "Quản lí EtherCAT"
+
+#: ../features.py:20
+msgid "EtherCAT master"
+msgstr "Trạm chủ EtherCAT"
+
+#: ../etherlab/EthercatMaster.py:302
+msgid "Ethercat Slave Type"
+msgstr "Kiểu trạm tớ Ethercat"
+
+#: ../etherlab/ConfigEditor.py:267
+msgid "Ethercat node"
+msgstr "Nút ethercat"
+
+#: ../ProjectController.py:1791
+#, python-format
+msgid "Exception while connecting %s!\n"
+msgstr ""
+
+#: ../dialogs/FBDBlockDialog.py:123
+msgid "Execution Control:"
+msgstr "Diều khiển việc thực hiện:"
+
+#: ../dialogs/FBDVariableDialog.py:85 ../dialogs/FBDBlockDialog.py:111
+msgid "Execution Order:"
+msgstr "Thứ tự thực hiện:"
+
+#: ../features.py:25
+msgid "Experimental web based HMI"
+msgstr ""
+
+#: ../plcopen/iec_std.csv:38
+msgid "Exponent"
+msgstr "Lũy thừa"
+
+#: ../plcopen/iec_std.csv:26
+msgid "Exponentiation"
+msgstr "Lũy thừa tự nhiên"
+
+#: ../bacnet/bacnet.py:156
+msgid "Export BACnet slave to EDE file"
+msgstr "Xuất trạm tớ BACnet vào tệp EDE"
+
+#: ../canfestival/canfestival.py:186
+msgid "Export CanOpen slave to EDS file"
+msgstr "Xuất trạm tớ CanOpen vào tệp EDS"
+
+#: ../controls/DebugVariablePanel/DebugVariablePanel.py:243
+msgid "Export graph values to clipboard"
+msgstr ""
+
+#: ../canfestival/canfestival.py:185 ../bacnet/bacnet.py:155
+msgid "Export slave"
+msgstr "Xuất trạm tớ"
+
+#: ../dialogs/FBDVariableDialog.py:95
+msgid "Expression:"
+msgstr ""
+
+#: ../controls/VariablePanel.py:87
+msgid "External"
+msgstr "Ngoại vi"
+
+#: ../ProjectController.py:866
+msgid "Extracting Located Variables...\n"
+msgstr ""
+
+#: ../dialogs/PouTransitionDialog.py:40 ../dialogs/PouActionDialog.py:36
+#: ../dialogs/PouDialog.py:128 ../controls/ProjectPropertiesPanel.py:161
+msgid "FBD"
+msgstr ""
+
+#: ../ProjectController.py:1855
+msgid "Failed : Must build before transfer.\n"
+msgstr ""
+
+#: ../dialogs/LDElementDialog.py:80 ../editors/Viewer.py:559
+msgid "Falling Edge"
+msgstr "Sự quá độ âm"
+
+#: ../ProjectController.py:1145
+msgid "Fatal : cannot get builder.\n"
+msgstr ""
+
+#: ../Beremiz.py:160
+#, python-format
+msgid "Fetching %s"
+msgstr ""
+
+#: ../dialogs/DurationEditorDialog.py:169
+#, python-format
+msgid "Field %s hasn't a valid value!"
+msgstr ""
+
+#: ../dialogs/DurationEditorDialog.py:171
+#, python-format
+msgid "Fields %s haven't a valid value!"
+msgstr ""
+
+#: ../controls/FolderTree.py:221
+#, python-format
+msgid "File '%s' already exists!"
+msgstr "Tệp'%s' đã tồn tại!"
+
+#: ../runtime/WampClient.py:407
+msgid "File containing secret for that ID"
+msgstr ""
+
+#: ../dialogs/SearchInProjectDialog.py:102 ../dialogs/FindInPouDialog.py:40
+#: ../dialogs/FindInPouDialog.py:107 ../IDEFrame.py:380
+msgid "Find"
+msgstr "Tìm"
+
+#: ../IDEFrame.py:382
+msgid "Find Next"
+msgstr "Tìm kế tiếp"
+
+#: ../IDEFrame.py:384
+msgid "Find Previous"
+msgstr "Tìm phía trước"
+
+#: ../plcopen/iec_std.csv:90
+msgid "Find position"
+msgstr "Tìm vị trí"
+
+#: ../dialogs/FindInPouDialog.py:58
+msgid "Find:"
+msgstr "Tìm:"
+
+#: ../editors/Viewer.py:1635
+msgid "Force value"
+msgstr ""
+
+#: ../dialogs/ForceVariableDialog.py:176
+msgid "Forcing Variable Value"
+msgstr ""
+
+#: ../dialogs/SFCTransitionDialog.py:184 ../dialogs/PouTransitionDialog.py:103
+#: ../dialogs/ProjectDialog.py:77 ../dialogs/PouActionDialog.py:102
+#: ../dialogs/PouDialog.py:160
+#, python-format
+msgid "Form isn't complete. %s must be filled!"
+msgstr "Biểu mẫu chưa hoàn tất. Bạn phải điền %s!"
+
+#: ../dialogs/SFCStepDialog.py:150 ../dialogs/FBDBlockDialog.py:239
+#: ../dialogs/ConnectionDialog.py:166
+msgid "Form isn't complete. Name must be filled!"
+msgstr "Biểu mẫu chưa hoàn tất. Bạn phải điền tên!"
+
+#: ../dialogs/FBDBlockDialog.py:235
+msgid "Form isn't complete. Valid block type must be selected!"
+msgstr "Biểu mẫu chưa hoàn tất. Chọn một kiểu khối hợp lệ!"
+
+#: ../dialogs/FindInPouDialog.py:75
+msgid "Forward"
+msgstr ""
+
+#: ../IDEFrame.py:455
+msgid "Full screen"
+msgstr "Toàn màn hình"
+
+#: ../dialogs/SearchInProjectDialog.py:40 ../IDEFrame.py:1797
+msgid "Function"
+msgstr "Hàm"
+
+#: ../IDEFrame.py:357
+msgid "Function &Block"
+msgstr "Hàm &Khối"
+
+#: ../dialogs/SearchInProjectDialog.py:41 ../IDEFrame.py:1796
+#: ../IDEFrame.py:1989
+msgid "Function Block"
+msgstr "Khối chức năng"
+
+#: ../controls/VariablePanel.py:879
+msgid "Function Block Types"
+msgstr "Kiểu khối chức năng"
+
+#: ../plcopen/types_enums.py:75
+msgid "Function Blocks"
+msgstr "Khối chức năng"
+
+#: ../editors/Viewer.py:290
+msgid "Function Blocks can't be used in Functions!"
+msgstr "Khối chức năng không thể sử dụng trong hàm!"
+
+#: ../PLCControler.py:1907
+#, python-format
+msgid "FunctionBlock \"%s\" can't be pasted in a Function!!!"
+msgstr "Khối chức năng \"%s\" không thể dán vào hàm!!!"
+
+#: ../plcopen/types_enums.py:75
+msgid "Functions"
+msgstr "Hàm"
+
+#: ../PLCOpenEditor.py:88
+msgid "Generate Program"
+msgstr "Tạo chương trình"
+
+#: ../ProjectController.py:750
+msgid "Generating SoftPLC IEC-61131 ST/IL/SFC code...\n"
+msgstr "Đang tạo SoftPLC IEC-61131 ST/IL/SFC code...\n"
+
+#: ../controls/VariablePanel.py:88
+msgid "Global"
+msgstr "Toàn cục"
+
+#: ../controls/DebugVariablePanel/DebugVariablePanel.py:242
+msgid "Go to current value"
+msgstr "Đến giá trị hiện tại"
+
+#: ../controls/ProjectPropertiesPanel.py:192
+msgid "Graphics"
+msgstr "Đồ họa"
+
+#: ../plcopen/iec_std.csv:75
+msgid "Greater than"
+msgstr "Lớn hơn"
+
+#: ../plcopen/iec_std.csv:76
+msgid "Greater than or equal to"
+msgstr "Lớn hơn hoặc bằng"
+
+#: ../controls/ProjectPropertiesPanel.py:152
+msgid "Grid Resolution:"
+msgstr ""
+
+#: ../runtime/NevowServer.py:313
+msgid "HTTP interface port :"
+msgstr "Cổng giao tiếp HTTP:"
+
+#: ../controls/ProjectPropertiesPanel.py:138
+msgid "Height:"
+msgstr "Cao:"
+
+#: ../editors/FileManagementPanel.py:88
+msgid "Home Directory:"
+msgstr ""
+
+#: ../controls/ProjectPropertiesPanel.py:168
+msgid "Horizontal:"
+msgstr "Ngang:"
+
+#: ../dialogs/DurationEditorDialog.py:58
+msgid "Hours:"
+msgstr ""
+
+#: ../runtime/WampClient.py:404
+msgid "ID"
+msgstr "ID"
+
+#: ../dialogs/PouTransitionDialog.py:40 ../dialogs/PouActionDialog.py:36
+#: ../dialogs/PouDialog.py:128
+msgid "IL"
+msgstr "IL"
+
+#: ../dialogs/DiscoveryDialog.py:91
+msgid "IP"
+msgstr "IP"
+
+#: ../Beremiz_service.py:331 ../Beremiz_service.py:333
+msgid "IP is not valid!"
+msgstr "IP không hợp lệ!"
+
+#: ../etherlab/ConfigEditor.py:1387
+msgid "Import ESI file"
+msgstr ""
+
+#: ../svgui/svgui.py:50 ../svgui/svgui.py:51
+msgid "Import SVG"
+msgstr ""
+
+#: ../etherlab/ConfigEditor.py:1352
+msgid "Import file to ESI files database"
+msgstr ""
+
+#: ../dialogs/FBDVariableDialog.py:64 ../editors/Viewer.py:1664
+#: ../controls/VariablePanel.py:86
+msgid "InOut"
+msgstr "VàoRa"
+
+#: ../PLCGenerator.py:1089
+#, python-brace-format
+msgid "InOut variable {a1} in block {a2} in POU {a3} must be connected."
+msgstr ""
+"Biến vào ra {a1} trong khối {a2} ở chương trình {a3} phải được kết nối."
+
+#: ../editors/Viewer.py:484
+msgid "Inactive"
+msgstr ""
+
+#: ../controls/VariablePanel.py:299
+#, python-brace-format
+msgid "Incompatible data types between \"{a1}\" and \"{a2}\""
+msgstr "Kiểu dữ liệu không tương thích giữa \"{a1}\" và \"{a2}\""
+
+#: ../controls/VariablePanel.py:305
+#, python-format
+msgid "Incompatible size of data between \"%s\" and \"BOOL\""
+msgstr "Kích cỡ dữ liệu không tương thích giữa \"%s\" và \"BOOL\""
+
+#: ../controls/VariablePanel.py:309
+#, python-brace-format
+msgid "Incompatible size of data between \"{a1}\" and \"{a2}\""
+msgstr "Kích cỡ dữ liệu không tương thích giữa \"{a1}\" và \"{a2}\""
+
+#: ../etherlab/ConfigEditor.py:48 ../etherlab/ConfigEditor.py:465
+msgid "Index"
+msgstr "Chỉ mục"
+
+#: ../dialogs/ActionBlockDialog.py:42
+msgid "Indicator"
+msgstr ""
+
+#: ../editors/CodeFileEditor.py:753
+msgid "Initial"
+msgstr ""
+
+#: ../editors/Viewer.py:653
+msgid "Initial Step"
+msgstr ""
+
+#: ../editors/DataTypeEditor.py:55 ../controls/VariablePanel.py:63
+msgid "Initial Value"
+msgstr "Giá trị ban đầu"
+
+#: ../editors/DataTypeEditor.py:193 ../editors/DataTypeEditor.py:224
+#: ../editors/DataTypeEditor.py:281 ../editors/DataTypeEditor.py:320
+msgid "Initial Value:"
+msgstr "Giá trị ban đầu:"
+
+#: ../etherlab/EthercatCIA402Slave.py:119
+msgid "Initiate Drag'n drop of Axis ref located variable"
+msgstr ""
+
+#: ../etherlab/EthercatCIA402Slave.py:126
+msgid "Initiate Drag'n drop of Network position located variable"
+msgstr ""
+
+#: ../svgui/svgui.py:56
+msgid "Inkscape"
+msgstr "Inkscape"
+
+#: ../dialogs/SFCTransitionDialog.py:77 ../dialogs/ActionBlockDialog.py:47
+msgid "Inline"
+msgstr ""
+
+#: ../dialogs/SFCStepDialog.py:73 ../dialogs/FBDVariableDialog.py:63
+#: ../dialogs/BrowseLocationsDialog.py:43 ../editors/Viewer.py:333
+#: ../editors/Viewer.py:1662 ../editors/TextViewer.py:307
+#: ../controls/LocationCellEditor.py:103 ../controls/VariablePanel.py:86
+#: ../controls/VariablePanel.py:316 ../controls/VariablePanel.py:379
+msgid "Input"
+msgstr "Vào"
+
+#: ../dialogs/FBDBlockDialog.py:99
+msgid "Inputs:"
+msgstr "Vào:"
+
+#: ../plcopen/iec_std.csv:87
+msgid "Insertion (into)"
+msgstr "Thêm (vào)"
+
+#: ../plcopen/plcopen.py:1948
+#, python-format
+msgid "Instance with id %d doesn't exist!"
+msgstr "Thực thể với id %d không tồn tại!"
+
+#: ../editors/ResourceEditor.py:277
+msgid "Instances:"
+msgstr "Thực thể:"
+
+#: ../controls/VariablePanel.py:85
+msgid "Interface"
+msgstr "Giao tiếp"
+
+#: ../editors/ResourceEditor.py:81
+msgid "Interrupt"
+msgstr "Ngắt"
+
+#: ../editors/ResourceEditor.py:76
+msgid "Interval"
+msgstr "Chu kì quét"
+
+#: ../controls/ProjectPropertiesPanel.py:306
+msgid ""
+"Invalid URL!\n"
+"Please enter correct URL address."
+msgstr ""
+"URL không hợp lệ!\n"
+"Hãy nhập địa chỉ URL chính xác."
+
+#: ../PLCControler.py:1895
+msgid "Invalid plcopen element(s)!!!"
+msgstr "(Các) Phần tử plcopen không hợp lệ!!!"
+
+#: ../canfestival/config_utils.py:407
+#, python-brace-format
+msgid "Invalid type \"{a1}\"-> {a2} != {a3}  for location \"{a4}\""
+msgstr ""
+
+#: ../canfestival/config_utils.py:689
+#, python-brace-format
+msgid "Invalid type \"{a1}\"-> {a2} != {a3} for location \"{a4}\""
+msgstr ""
+
+#: ../controls/DebugVariablePanel/DebugVariablePanel.py:129
+#: ../controls/DebugVariablePanel/DebugVariableTextViewer.py:93
+#: ../controls/DebugVariablePanel/DebugVariableGraphicViewer.py:162
+#, python-format
+msgid "Invalid value \"%s\" for debug variable"
+msgstr "Giá trị không hợp lệ \"%s\" để sửa lỗi"
+
+#: ../etherlab/ConfigEditor.py:418 ../etherlab/ConfigEditor.py:421
+#: ../etherlab/ConfigEditor.py:452
+#, python-format
+msgid "Invalid value \"%s\" for process variable"
+msgstr ""
+
+#: ../etherlab/ConfigEditor.py:480 ../etherlab/ConfigEditor.py:483
+#: ../etherlab/ConfigEditor.py:504
+#, python-format
+msgid "Invalid value \"%s\" for startup command"
+msgstr ""
+
+#: ../controls/VariablePanel.py:278 ../controls/VariablePanel.py:281
+#, python-format
+msgid "Invalid value \"%s\" for variable grid element"
+msgstr ""
+
+#: ../editors/Viewer.py:276 ../editors/Viewer.py:279
+#, python-format
+msgid "Invalid value \"%s\" for viewer block"
+msgstr ""
+
+#: ../dialogs/ForceVariableDialog.py:211
+#, python-brace-format
+msgid "Invalid value \"{a1}\" for \"{a2}\" variable!"
+msgstr ""
+
+#: ../etherlab/CommonEtherCATFunction.py:31
+#, python-format
+msgid "Invalid value for HexDecValue \"%s\""
+msgstr ""
+
+#: ../dialogs/DurationEditorDialog.py:125
+msgid ""
+"Invalid value!\n"
+"You must fill a numeric value."
+msgstr ""
+"Giá trị không hợp lệ!\n"
+"Bạn phải điền giá trị số."
+
+#: ../connectors/WAMP/dialog.py:38
+msgid "Is connection secure?"
+msgstr "Kết nối có an toàn?"
+
+#: ../editors/Viewer.py:658 ../editors/Viewer.py:2427
+msgid "Jump"
+msgstr "Nhảy"
+
+#: ../dialogs/PouTransitionDialog.py:40 ../dialogs/PouActionDialog.py:36
+#: ../dialogs/PouDialog.py:128 ../controls/ProjectPropertiesPanel.py:161
+msgid "LD"
+msgstr ""
+
+#: ../editors/LDViewer.py:221 ../editors/LDViewer.py:240
+#, python-format
+msgid "Ladder element with id %d is on more than one rung."
+msgstr ""
+
+#: ../dialogs/PouTransitionDialog.py:92 ../dialogs/PouActionDialog.py:91
+#: ../dialogs/PouDialog.py:148
+msgid "Language"
+msgstr "Ngôn ngữ"
+
+#: ../controls/ProjectPropertiesPanel.py:208
+msgid "Language (optional):"
+msgstr "Ngôn ngữ (không bắt buộc):"
+
+#: ../dialogs/PouTransitionDialog.py:66 ../dialogs/PouActionDialog.py:63
+#: ../dialogs/PouDialog.py:79
+msgid "Language:"
+msgstr "Ngôn ngữ:"
+
+#: ../ProjectController.py:1861
+msgid "Latest build already matches current target. Transfering anyway...\n"
+msgstr ""
+
+#: ../Beremiz_service.py:294
+msgid "Launch WX GUI inspector"
+msgstr ""
+
+#: ../Beremiz_service.py:293
+msgid "Launch a live Python shell"
+msgstr ""
+
+#: ../editors/Viewer.py:583
+msgid "Left"
+msgstr "Trái"
+
+#: ../dialogs/LDPowerRailDialog.py:64
+msgid "Left PowerRail"
+msgstr "Nguồn trái"
+
+#: ../plcopen/iec_std.csv:81
+msgid "Length of string"
+msgstr "Độ dài của chuỗi"
+
+#: ../plcopen/iec_std.csv:78
+msgid "Less than"
+msgstr "Bé hơn"
+
+#: ../plcopen/iec_std.csv:79
+msgid "Less than or equal to"
+msgstr "Bé hơn hoặc bằng"
+
+#: ../IDEFrame.py:658
+msgid "Library"
+msgstr "Thư viện"
+
+#: ../dialogs/AboutDialog.py:145
+msgid "License"
+msgstr "Giấy phép"
+
+#: ../plcopen/iec_std.csv:73
+msgid "Limitation"
+msgstr "Giới hạn"
+
+#: ../targets/toolchain_gcc.py:209
+msgid "Linking :\n"
+msgstr ""
+
+#: ../dialogs/DiscoveryDialog.py:115 ../controls/VariablePanel.py:87
+msgid "Local"
+msgstr "Cục bộ"
+
+#: ../canfestival/canfestival.py:359
+msgid "Local entries"
+msgstr ""
+
+#: ../ProjectController.py:1767
+msgid "Local service discovery failed!\n"
+msgstr ""
+
+#: ../controls/VariablePanel.py:62
+msgid "Location"
+msgstr "Địa chỉ"
+
+#: ../dialogs/BrowseLocationsDialog.py:78
+msgid "Locations available:"
+msgstr "Địa chỉ khả dụng:"
+
+#: ../runtime/NevowServer.py:175
+msgid "Log message level"
+msgstr "Cấp độ tin nhắn trong nhật kí"
+
+#: ../plcopen/iec_std.csv:25
+msgid "Logarithm to base 10"
+msgstr "Logarit cơ số 10"
+
+#: ../connectors/PYRO/__init__.py:103
+#, python-format
+msgid "MDNS resolution failure for '%s'\n"
+msgstr ""
+
+#: ../etherlab/ConfigEditor.py:67
+msgid "Manufacturer Specific"
+msgstr ""
+
+#: ../canfestival/SlaveEditor.py:68 ../canfestival/NetworkEditor.py:92
+msgid "Map Variable"
+msgstr ""
+
+#: ../features.py:19
+msgid "Map located variables over Bacnet"
+msgstr ""
+
+#: ../features.py:18
+msgid "Map located variables over CANopen"
+msgstr ""
+
+#: ../features.py:20
+msgid "Map located variables over EtherCAT"
+msgstr ""
+
+#: ../features.py:21
+msgid "Map located variables over Modbus"
+msgstr ""
+
+#: ../canfestival/NetworkEditor.py:113
+msgid "Master"
+msgstr "Trạm chủ"
+
+#: ../etherlab/ConfigEditor.py:613
+msgid "Master State"
+msgstr "Trạng thái trạm chủ"
+
+#: ../ConfigTreeNode.py:544
+#, python-brace-format
+msgid "Max count ({a1}) reached for this confnode of type {a2} "
+msgstr ""
+
+#: ../etherlab/etherlab.py:173
+msgid "Max entries by PDO"
+msgstr ""
+
+#: ../etherlab/etherlab.py:176
+msgid ""
+"Maximal number of entries mapped in a PDO\n"
+"including empty entries used for PDO alignment"
+msgstr ""
+
+#: ../plcopen/iec_std.csv:71
+msgid "Maximum"
+msgstr "Lớn nhất"
+
+#: ../editors/DataTypeEditor.py:246
+msgid "Maximum:"
+msgstr "Lớn nhất:"
+
+#: ../dialogs/BrowseLocationsDialog.py:45 ../editors/Viewer.py:333
+#: ../editors/TextViewer.py:307 ../controls/LocationCellEditor.py:103
+#: ../controls/VariablePanel.py:316 ../controls/VariablePanel.py:379
+msgid "Memory"
+msgstr ""
+
+#: ../IDEFrame.py:623
+msgid "Menu ToolBar"
+msgstr ""
+
+#: ../runtime/NevowServer.py:176
+msgid "Message text"
+msgstr "Tin nhắn văn bản"
+
+#: ../dialogs/DurationEditorDialog.py:62
+msgid "Microseconds:"
+msgstr ""
+
+#: ../editors/Viewer.py:588
+msgid "Middle"
+msgstr "Giữa"
+
+#: ../dialogs/DurationEditorDialog.py:61
+msgid "Milliseconds:"
+msgstr ""
+
+#: ../etherlab/etherlab.py:167
+msgid "Minimal size in bits between 2 pdo entries"
+msgstr ""
+
+#: ../plcopen/iec_std.csv:72
+msgid "Minimum"
+msgstr "Nhỏ nhất"
+
+#: ../editors/DataTypeEditor.py:233
+msgid "Minimum:"
+msgstr "Nhỏ nhất"
+
+#: ../dialogs/DurationEditorDialog.py:59
+msgid "Minutes:"
+msgstr ""
+
+#: ../etherlab/etherlab.py:238 ../controls/ProjectPropertiesPanel.py:233
+msgid "Miscellaneous"
+msgstr ""
+
+#: ../features.py:21
+msgid "Modbus support"
+msgstr ""
+
+#: ../dialogs/LDElementDialog.py:65
+msgid "Modifier:"
+msgstr ""
+
+#: ../etherlab/ConfigEditor.py:1313
+#, python-format
+msgid "Module %s must be an integer!"
+msgstr "Module %s phải là một số nguyên!"
+
+#: ../etherlab/ConfigEditor.py:1376
+msgid "Modules Library"
+msgstr "Thư viện module"
+
+#: ../etherlab/ConfigEditor.py:1145
+msgid "Modules library:"
+msgstr "Thư viện module:"
+
+#: ../PLCGenerator.py:795 ../PLCGenerator.py:1318
+#, python-brace-format
+msgid ""
+"More than one connector found corresponding to \"{a1}\" continuation in "
+"\"{a2}\" POU"
+msgstr ""
+
+#: ../dialogs/ActionBlockDialog.py:146
+msgid "Move action down"
+msgstr "Chuyển tác vụ xuống"
+
+#: ../dialogs/ActionBlockDialog.py:145
+msgid "Move action up"
+msgstr "Chuyển tác vụ lên"
+
+#: ../controls/CustomEditableListBox.py:46
+msgid "Move down"
+msgstr "Chuyển xuống"
+
+#: ../editors/DataTypeEditor.py:367
+msgid "Move element down"
+msgstr "Chuyển phần tử xuống"
+
+#: ../editors/DataTypeEditor.py:366
+msgid "Move element up"
+msgstr "Chuyển phần tử lên"
+
+#: ../editors/ResourceEditor.py:284
+msgid "Move instance down"
+msgstr "Chuyển thực thể xuống"
+
+#: ../editors/ResourceEditor.py:283
+msgid "Move instance up"
+msgstr "Chuyển thực thể lên"
+
+#: ../etherlab/ConfigEditor.py:655
+msgid "Move process variable down"
+msgstr ""
+
+#: ../etherlab/ConfigEditor.py:654
+msgid "Move process variable up"
+msgstr ""
+
+#: ../editors/ResourceEditor.py:253
+msgid "Move task down"
+msgstr "Chuyển tác vụ xuống"
+
+#: ../editors/ResourceEditor.py:252
+msgid "Move task up"
+msgstr "Chuyển tác vụ lên"
+
+#: ../IDEFrame.py:253 ../IDEFrame.py:268 ../IDEFrame.py:298 ../IDEFrame.py:339
+msgid "Move the view"
+msgstr ""
+
+#: ../controls/CustomEditableListBox.py:45
+msgid "Move up"
+msgstr "Chuyển lên"
+
+#: ../bacnet/BacnetSlaveEditor.py:814 ../editors/CodeFileEditor.py:675
+#: ../controls/VariablePanel.py:486
+msgid "Move variable down"
+msgstr "Chuyển biến xuống"
+
+#: ../bacnet/BacnetSlaveEditor.py:813 ../editors/CodeFileEditor.py:674
+#: ../controls/VariablePanel.py:485
+msgid "Move variable up"
+msgstr "Chuyển biến lên"
+
+#: ../bacnet/BacnetSlaveEditor.py:941
+msgid "Multi-State Input Objects"
+msgstr "Đối tượng vào nhiều trạng thái"
+
+#: ../bacnet/BacnetSlaveEditor.py:940
+msgid "Multi-State Output Objects"
+msgstr ""
+
+#: ../bacnet/BacnetSlaveEditor.py:939
+msgid "Multi-State Value Objects"
+msgstr ""
+
+#: ../plcopen/iec_std.csv:74
+msgid "Multiplexer (select 1 of N)"
+msgstr "Mạch ghép kênh (chọn 1 trong N)"
+
+#: ../plcopen/iec_std.csv:34
+msgid "Multiplication"
+msgstr "Nhân"
+
+#: ../editors/FileManagementPanel.py:86
+msgid "My Computer:"
+msgstr ""
+
+#: ../dialogs/DiscoveryDialog.py:89
+msgid "NAME"
+msgstr ""
+
+#: ../etherlab/EtherCATManagementEditor.py:37 ../etherlab/ConfigEditor.py:48
+#: ../etherlab/ConfigEditor.py:343 ../etherlab/ConfigEditor.py:1167
+#: ../editors/ResourceEditor.py:76 ../editors/ResourceEditor.py:94
+#: ../editors/DataTypeEditor.py:55 ../editors/CodeFileEditor.py:751
+#: ../controls/VariablePanel.py:59
+msgid "Name"
+msgstr ""
+
+#: ../Beremiz_service.py:355
+msgid "Name must not be null!"
+msgstr ""
+
+#: ../dialogs/SFCStepDialog.py:59 ../dialogs/FBDBlockDialog.py:89
+#: ../dialogs/ConnectionDialog.py:78
+msgid "Name:"
+msgstr "Tên:"
+
+#: ../plcopen/iec_std.csv:24
+msgid "Natural logarithm"
+msgstr "Logarit tự nhiên"
+
+#: ../dialogs/LDElementDialog.py:78 ../editors/Viewer.py:557
+msgid "Negated"
+msgstr "Thường đóng"
+
+#: ../etherlab/ConfigEditor.py:612
+msgid "Network"
+msgstr ""
+
+#: ../Beremiz_service.py:620
+msgid "Nevow Web service failed. "
+msgstr ""
+
+#: ../Beremiz_service.py:596
+msgid "Nevow/Athena import failed :"
+msgstr ""
+
+#: ../BeremizIDE.py:241 ../BeremizIDE.py:276 ../PLCOpenEditor.py:75
+#: ../PLCOpenEditor.py:117
+msgid "New"
+msgstr "Tạo mới"
+
+#: ../controls/CustomEditableListBox.py:43
+msgid "New item"
+msgstr ""
+
+#: ../editors/Viewer.py:556
+msgid "No Modifier"
+msgstr ""
+
+#: ../ProjectController.py:1891
+msgid "No PLC to transfer (did build succeed ?)\n"
+msgstr ""
+
+#: ../etherlab/EthercatCFileGenerator.py:504
+#, python-format
+msgid "No Sync manager defined for %s!"
+msgstr ""
+
+#: ../PLCGenerator.py:1727
+#, python-format
+msgid "No body defined in \"%s\" POU"
+msgstr "Chương trình \"%s\" không có thân"
+
+#: ../etherlab/CommonEtherCATFunction.py:1581
+msgid "No connected slaves"
+msgstr "Chưa được kết nối với trạm tớ nào"
+
+#: ../PLCGenerator.py:816 ../PLCGenerator.py:1330
+#, python-brace-format
+msgid "No connector found corresponding to \"{a1}\" continuation in \"{a2}\" POU"
+msgstr ""
+
+#: ../PLCOpenEditor.py:331
+msgid ""
+"No documentation available.\n"
+"Coming soon."
+msgstr ""
+"Tạm thời chưa có.\n"
+"Sẽ sớm ra mắt."
+
+#: ../PLCGenerator.py:841
+#, python-format
+msgid "No informations found for \"%s\" block"
+msgstr "Không có thông tin về khối \"%s\""
+
+#: ../etherlab/EthercatCFileGenerator.py:224
+#, python-format
+msgid "No informations found for device %s!"
+msgstr "Không tìm thấy thông tin cho thiết bị %s!"
+
+#: ../etherlab/EthercatCFileGenerator.py:515
+#, python-format
+msgid "No more free PDO index available for %s!"
+msgstr "Không còn chỉ mục trống nào cho %s!"
+
+#: ../PLCGenerator.py:1281
+#, python-brace-format
+msgid ""
+"No output {a1} variable found in block {a2} in POU {a3}. Connection must be "
+"broken"
+msgstr ""
+
+#: ../controls/SearchResultPanel.py:175
+msgid "No search results available."
+msgstr "Không có kết quả."
+
+#: ../etherlab/ConfigEditor.py:1029
+#, python-format
+msgid "No slave defined at position %d!"
+msgstr "Chưa khai báo trạm tớ tại địa chỉ %d!"
+
+#: ../svgui/svgui.py:142
+#, python-format
+msgid "No such SVG file: %s\n"
+msgstr "Không có tệp SVG: %s\n"
+
+#: ../etherlab/ConfigEditor.py:1245
+#, python-format
+msgid "No such XML file: %s\n"
+msgstr "Không có tệp XML: %s\n"
+
+#: ../canfestival/config_utils.py:682
+#, python-brace-format
+msgid "No such index/subindex ({a1},{a2}) (variable {a3})"
+msgstr "Không có chỉ mục/chỉ mục phụ ({a1},{a2}) (biến {a3})"
+
+#: ../canfestival/config_utils.py:387
+#, python-brace-format
+msgid "No such index/subindex ({a1},{a2}) in ID : {a3} (variable {a4})"
+msgstr "Không có chỉ mục/chỉ mục phụ ({a1},{a2}) trong ID: {a3} (biến {a4})"
+
+#: ../etherlab/EthercatCFileGenerator.py:438
+#, python-format
+msgid "No sync manager available for %s pdo!"
+msgstr ""
+
+#: ../dialogs/BrowseValuesLibraryDialog.py:87
+msgid "No valid value selected!"
+msgstr "Không có giá trị hợp lệ được chọn!"
+
+#: ../PLCGenerator.py:1725
+#, python-format
+msgid "No variable defined in \"%s\" POU"
+msgstr "Không có biến nào được định nghĩa trong chương trình \"%s\""
+
+#: ../etherlab/ConfigEditor.py:606
+#, python-format
+msgid "Node Position: %d"
+msgstr "Vị trí nút: %d"
+
+#: ../etherlab/ConfigEditor.py:697
+msgid "Node filter:"
+msgstr "Lọc nút:"
+
+#: ../etherlab/ConfigEditor.py:717
+msgid "Nodes variables filter:"
+msgstr "Lọc biến nút:"
+
+#: ../canfestival/config_utils.py:379
+#, python-brace-format
+msgid "Non existing node ID : {a1} (variable {a2})"
+msgstr "Không có nút với ID : {a1} (biến {a2})"
+
+#: ../controls/VariablePanel.py:79
+msgid "Non-Retain"
+msgstr ""
+
+#: ../dialogs/LDElementDialog.py:78
+msgid "Normal"
+msgstr "Thường hở"
+
+#: ../canfestival/config_utils.py:426
+#, python-brace-format
+msgid "Not PDO mappable variable : '{a1}' (ID:{a2},Idx:{a3},sIdx:{a4}))"
+msgstr ""
+
+#: ../plcopen/iec_std.csv:80
+msgid "Not equal to"
+msgstr "Không bằng"
+
+#: ../etherlab/EtherCATManagementEditor.py:361
+msgid "Now Uploading..."
+msgstr "Đang tải lên..."
+
+#: ../dialogs/SFCDivergenceDialog.py:91
+msgid "Number of sequences:"
+msgstr ""
+
+#: ../plcopen/iec_std.csv:22
+msgid "Numerical"
+msgstr "Số"
+
+#: ../bacnet/BacnetSlaveEditor.py:808
+msgid "Object Properties:"
+msgstr "Chi tiết của đối tượng:"
+
+#: ../editors/CodeFileEditor.py:755
+msgid "OnChange"
+msgstr ""
+
+#: ../dialogs/SearchInProjectDialog.py:88
+msgid "Only Elements"
+msgstr "Chỉ phần tử"
+
+#: ../BeremizIDE.py:243 ../BeremizIDE.py:277 ../PLCOpenEditor.py:77
+#: ../PLCOpenEditor.py:118
+msgid "Open"
+msgstr "Mở"
+
+#: ../svgui/svgui.py:151
+msgid "Open Inkscape"
+msgstr "Mở Inkscape"
+
+#: ../version.py:88
+msgid ""
+"Open Source framework for automation, implemented IEC 61131 IDE with "
+"constantly growing set of extensions and flexible PLC runtime."
+msgstr ""
+"Bộ framework mã nguồn mở cho tự động hóa, tích hợp IEC 61131 IDE với những "
+"extension được phát triển liên tục và PLC runtime rất linh hoạt."
+
+#: ../ProjectController.py:1962
+msgid "Open a file explorer to manage project files"
+msgstr "Mở trình quản lí tệp để quản lí tệp của dự án"
+
+#: ../wxglade_hmi/wxglade_hmi.py:176
+msgid "Open wxGlade"
+msgstr "Mở wxGlade"
+
+#: ../controls/VariablePanel.py:64
+msgid "Option"
+msgstr "Tùy chọn"
+
+#: ../dialogs/FindInPouDialog.py:84 ../editors/CodeFileEditor.py:756
+msgid "Options"
+msgstr "Tùy chọn"
+
+#: ../controls/ProjectPropertiesPanel.py:111
+msgid "Organization (optional):"
+msgstr "Tổ chức (không bắt buộc):"
+
+#: ../canfestival/SlaveEditor.py:78 ../canfestival/NetworkEditor.py:102
+msgid "Other Profile"
+msgstr "Hồ sơ khác"
+
+#: ../dialogs/SFCStepDialog.py:74 ../dialogs/FBDVariableDialog.py:65
+#: ../dialogs/BrowseLocationsDialog.py:44 ../editors/Viewer.py:333
+#: ../editors/Viewer.py:1663 ../editors/TextViewer.py:307
+#: ../controls/LocationCellEditor.py:103 ../controls/VariablePanel.py:86
+#: ../controls/VariablePanel.py:316 ../controls/VariablePanel.py:379
+msgid "Output"
+msgstr "Ra"
+
+#: ../etherlab/EthercatCFileGenerator.py:170
+#, python-brace-format
+msgid ""
+"Output variables can't be defined with different locations ({a1} and {a2})"
+msgstr ""
+
+#: ../canfestival/SlaveEditor.py:67 ../canfestival/NetworkEditor.py:91
+msgid "PDO Receive"
+msgstr ""
+
+#: ../canfestival/SlaveEditor.py:66 ../canfestival/NetworkEditor.py:90
+msgid "PDO Transmit"
+msgstr ""
+
+#: ../etherlab/etherlab.py:164
+msgid "PDO alignment"
+msgstr ""
+
+#: ../targets/toolchain_gcc.py:174
+msgid "PLC :\n"
+msgstr "PLC :\n"
+
+#: ../BeremizIDE.py:379
+msgid "PLC Log"
+msgstr "Nhật kí PLC"
+
+#: ../ProjectController.py:1129
+msgid "PLC code generation failed !\n"
+msgstr "Không thể tạo code PLC !\n"
+
+#: ../etherlab/EtherCATManagementEditor.py:250
+msgid "PLC is Not Started"
+msgstr "PLC chưa khởi động"
+
+#: ../Beremiz_service.py:318
+msgid "PLC is empty or already started."
+msgstr "PLC trống hoặc đã khởi động."
+
+#: ../Beremiz_service.py:325
+msgid "PLC is not started."
+msgstr "PLC chưa khởi động."
+
+#: ../etherlab/EtherCATManagementEditor.py:2160
+#: ../etherlab/CommonEtherCATFunction.py:1589
+msgid "PLC not connected!"
+msgstr "PLC chưa kết nối!"
+
+#: ../PLCOpenEditor.py:180 ../PLCOpenEditor.py:293
+#, python-brace-format
+msgid ""
+"PLC syntax error at line {a1}:\n"
+"{a2}"
+msgstr ""
+"PLC bị lỗi cú pháp tại dòng {a1}:\n"
+"{a2}"
+
+#: ../PLCOpenEditor.py:276 ../PLCOpenEditor.py:357
+msgid "PLCOpen files (*.xml)|*.xml|All files|*.*"
+msgstr "Tệp PLCOpen (*.xml)|*.xml|Tất cả tệp|*.*"
+
+#: ../PLCOpenEditor.py:125 ../PLCOpenEditor.py:193
+msgid "PLCOpenEditor"
+msgstr "PLCOpenEditor"
+
+#: ../PLCOpenEditor.py:339
+msgid ""
+"PLCOpenEditor is part of Beremiz project.\n"
+"\n"
+"Beremiz is an "
+msgstr ""
+"PLCOpenEditor là một phần của dự án Beremiz.\n"
+"\n"
+"Beremiz là "
+
+#: ../dialogs/DiscoveryDialog.py:92
+msgid "PORT"
+msgstr "CỔNG"
+
+#: ../dialogs/PouDialog.py:144
+msgid "POU Name"
+msgstr "Tên POU"
+
+#: ../dialogs/PouDialog.py:64
+msgid "POU Name:"
+msgstr "Tên POU:"
+
+#: ../dialogs/PouDialog.py:146
+msgid "POU Type"
+msgstr "Kiểu POU"
+
+#: ../dialogs/PouDialog.py:71
+msgid "POU Type:"
+msgstr "Kiểu POU:"
+
+#: ../connectors/PYRO/__init__.py:53
+#, python-format
+msgid "PYRO connecting to URI : %s\n"
+msgstr "PYRO đang kết nối tới URI : %s\n"
+
+#: ../connectors/PYRO/__init__.py:69
+#, python-format
+msgid "PYRO using certificates in '%s' \n"
+msgstr "PYRO sử dụng chứng chỉ trong '%s'\n"
+
+#: ../BeremizIDE.py:256 ../PLCOpenEditor.py:91
+msgid "Page Setup"
+msgstr "Cài đặt trang giấy"
+
+#: ../controls/ProjectPropertiesPanel.py:127
+msgid "Page Size (optional):"
+msgstr "Kích cỡ trang giấy (không bắt buộc):"
+
+#: ../IDEFrame.py:2660
+#, python-format
+msgid "Page: %d"
+msgstr "Trang: %d"
+
+#: ../controls/PouInstanceVariablesPanel.py:134
+msgid "Parent instance"
+msgstr "Thực thể mẹ"
+
+#: ../editors/Viewer.py:699 ../IDEFrame.py:377 ../IDEFrame.py:429
+msgid "Paste"
+msgstr "Dán"
+
+#: ../IDEFrame.py:1916
+msgid "Paste POU"
+msgstr "Dán POU"
+
+#: ../dialogs/SearchInProjectDialog.py:60
+msgid "Pattern to search:"
+msgstr "Tìm gì:"
+
+#: ../dialogs/LDPowerRailDialog.py:75
+msgid "Pin number:"
+msgstr "Số nhánh:"
+
+#: ../runtime/NevowServer.py:163
+msgid "Platform"
+msgstr ""
+
+#: ../editors/Viewer.py:2791 ../editors/Viewer.py:3059
+#: ../editors/SFCViewer.py:785
+msgid "Please choose a target"
+msgstr "Chọn một mục tiêu"
+
+#: ../editors/TextViewer.py:260
+msgid "Please enter a block name"
+msgstr "Nhập tên khối"
+
+#: ../dialogs/CommentEditDialog.py:52
+msgid "Please enter comment text"
+msgstr "Vui lòng nhập chú thích"
+
+#: ../editors/SFCViewer.py:447 ../editors/SFCViewer.py:469
+#: ../editors/SFCViewer.py:815
+msgid "Please enter step name"
+msgstr ""
+
+#: ../dialogs/SFCStepNameDialog.py:37 ../dialogs/PouNameDialog.py:37
+#: ../Beremiz_service.py:222
+msgid "Please enter text"
+msgstr "Hãy nhập văn bản"
+
+#: ../dialogs/ForceVariableDialog.py:177
+#, python-format
+msgid "Please enter value for a \"%s\" variable:"
+msgstr "Hãy nhập giá trị cho biến \"%s\":"
+
+#: ../Beremiz_service.py:340
+msgid "Port number must be 0 <= port <= 65535!"
+msgstr "Số cổng phải trong khoảng 0 <= port <= 65535!"
+
+#: ../Beremiz_service.py:340
+msgid "Port number must be an integer!"
+msgstr "Số cổng phải là số nguyên!"
+
+#: ../etherlab/ConfigEditor.py:47 ../etherlab/ConfigEditor.py:465
+msgid "Position"
+msgstr "Vị trí"
+
+#: ../editors/Viewer.py:636 ../editors/Viewer.py:2451
+msgid "Power Rail"
+msgstr "Nguồn"
+
+#: ../dialogs/LDPowerRailDialog.py:52
+msgid "Power Rail Properties"
+msgstr "Chi tiết về nguồn"
+
+#: ../BeremizIDE.py:258 ../PLCOpenEditor.py:93
+msgid "Preview"
+msgstr "Xem trước"
+
+#: ../dialogs/BlockPreviewDialog.py:59
+msgid "Preview:"
+msgstr "Xem trước:"
+
+#: ../BeremizIDE.py:260 ../BeremizIDE.py:280 ../PLCOpenEditor.py:95
+#: ../PLCOpenEditor.py:121
+msgid "Print"
+msgstr "In"
+
+#: ../IDEFrame.py:1123
+msgid "Print preview"
+msgstr "Xem trước khi in"
+
+#: ../editors/ResourceEditor.py:76
+msgid "Priority"
+msgstr "Ưu tiên"
+
+#: ../dialogs/SFCTransitionDialog.py:91
+msgid "Priority:"
+msgstr "Ưu tiên:"
+
+#: ../runtime/PLCObject.py:523
+#, python-format
+msgid "Problem starting PLC : error %d"
+msgstr "Sự cố khởi động PLC : lỗi %d"
+
+#: ../etherlab/ConfigEditor.py:647
+msgid "Process variables mapped between nodes:"
+msgstr ""
+
+#: ../dialogs/ProjectDialog.py:61
+msgid "Product Name"
+msgstr "Tên sản phẩm"
+
+#: ../controls/ProjectPropertiesPanel.py:91
+msgid "Product Name (required):"
+msgstr "Tên sản phẩm (bắt buộc):"
+
+#: ../controls/ProjectPropertiesPanel.py:93
+msgid "Product Release (optional):"
+msgstr "Phát hành sản phẩm (không bắt buộc):"
+
+#: ../dialogs/ProjectDialog.py:62
+msgid "Product Version"
+msgstr "Phiên bản sản phẩm"
+
+#: ../controls/ProjectPropertiesPanel.py:92
+msgid "Product Version (required):"
+msgstr "Phiên bản sản phẩm (bắt buộc):"
+
+#: ../dialogs/SearchInProjectDialog.py:42 ../IDEFrame.py:1795
+#: ../IDEFrame.py:1992
+msgid "Program"
+msgstr "Chương trình"
+
+#: ../PLCOpenEditor.py:321
+msgid "Program was successfully generated!"
+msgstr "Chương trình đã được khởi tạo xong!"
+
+#: ../plcopen/types_enums.py:76
+msgid "Programs"
+msgstr "Chương trình"
+
+#: ../editors/Viewer.py:285
+msgid "Programs can't be used by other POUs!"
+msgstr "Chương trình không thể được sử dụng bởi POU khác!"
+
+#: ../controls/ProjectPropertiesPanel.py:95 ../IDEFrame.py:607
+msgid "Project"
+msgstr "Dự án"
+
+#: ../controls/SearchResultPanel.py:180
+#, python-format
+msgid "Project '%s':"
+msgstr "Dự án '%s':"
+
+#: ../ProjectController.py:1961
+msgid "Project Files"
+msgstr "Tệp của dự án"
+
+#: ../dialogs/ProjectDialog.py:60
+msgid "Project Name"
+msgstr "Tên dự án"
+
+#: ../controls/ProjectPropertiesPanel.py:89
+msgid "Project Name (required):"
+msgstr "Tên dự án (bắt buộc):"
+
+#: ../controls/ProjectPropertiesPanel.py:90
+msgid "Project Version (optional):"
+msgstr "Phiên bản của dự án (không bắt buộc):"
+
+#: ../PLCControler.py:2717
+msgid ""
+"Project file syntax error:\n"
+"\n"
+msgstr ""
+"Dự án đã có lỗi cú pháp:\n"
+"\n"
+
+#: ../dialogs/ProjectDialog.py:36 ../editors/ProjectNodeEditor.py:40
+msgid "Project properties"
+msgstr "Chi tiết của dự án"
+
+#: ../ConfigTreeNode.py:571
+#, python-brace-format
+msgid "Project tree layout do not match confnode.xml {a1}!={a2} "
+msgstr ""
+
+#: ../dialogs/ConnectionDialog.py:101
+msgid "Propagate Name"
+msgstr ""
+
+#: ../plcopen/types_enums.py:77
+msgid "Properties"
+msgstr "Chi tiết"
+
+#: ../Beremiz_service.py:440
+msgid "Publishing service on local network"
+msgstr ""
+
+#: ../connectors/PYRO/__init__.py:127
+#, python-format
+msgid "Pyro exception: %s\n"
+msgstr "Pyro ngoại lệ: %s\n"
+
+#: ../Beremiz_service.py:433
+msgid "Pyro port :"
+msgstr "Cổng Pyro :"
+
+#: ../py_ext/PythonEditor.py:84
+msgid "Python code"
+msgstr "Python code"
+
+#: ../features.py:23
+msgid "Python file"
+msgstr "Tệp Python"
+
+#: ../dialogs/ActionBlockDialog.py:42
+msgid "Qualifier"
+msgstr ""
+
+#: ../BeremizIDE.py:263 ../PLCOpenEditor.py:101 ../Beremiz_service.py:296
+msgid "Quit"
+msgstr "Thoát"
+
+#: ../controls/DebugVariablePanel/DebugVariablePanel.py:224
+msgid "Range:"
+msgstr ""
+
+#: ../ProjectController.py:1955
+msgid "Raw IEC code"
+msgstr "IEC code thô"
+
+#: ../etherlab/ConfigEditor.py:344
+msgid "Read from (nodeid, index, subindex)"
+msgstr "Đọc từ (nút id, chỉ mục, chỉ mục phụ)"
+
+#: ../BeremizIDE.py:1080
+#, python-format
+msgid "Really delete node '%s'?"
+msgstr "Bạn có muốn xóa nút '%s'?"
+
+#: ../connectors/WAMP/dialog.py:50
+msgid "Realm:"
+msgstr ""
+
+#: ../IDEFrame.py:370 ../IDEFrame.py:425
+msgid "Redo"
+msgstr "Lặp lại"
+
+#: ../dialogs/SFCTransitionDialog.py:76
+msgid "Reference"
+msgstr ""
+
+#: ../dialogs/DiscoveryDialog.py:109 ../IDEFrame.py:436
+msgid "Refresh"
+msgstr "Làm mới"
+
+#: ../etherlab/EtherCATManagementEditor.py:1965
+msgid "Register Modify Dialog"
+msgstr ""
+
+#: ../dialogs/SearchInProjectDialog.py:70
+msgid "Regular expression"
+msgstr ""
+
+#: ../dialogs/FindInPouDialog.py:99
+msgid "Regular expressions"
+msgstr ""
+
+#: ../editors/Viewer.py:1638
+msgid "Release value"
+msgstr ""
+
+#: ../plcopen/iec_std.csv:37
+msgid "Remainder (modulo)"
+msgstr "Chia (lấy dư)"
+
+#: ../BeremizIDE.py:1081
+#, python-format
+msgid "Remove %s node"
+msgstr "Xóa nút %s"
+
+#: ../IDEFrame.py:2463
+msgid "Remove Datatype"
+msgstr "Xóa kiểu dữ liệu"
+
+#: ../IDEFrame.py:2468
+msgid "Remove Pou"
+msgstr "Xóa Pou"
+
+#: ../dialogs/ActionBlockDialog.py:144
+msgid "Remove action"
+msgstr "Xóa tác vụ"
+
+#: ../editors/DataTypeEditor.py:365
+msgid "Remove element"
+msgstr "Xóa phần tử"
+
+#: ../etherlab/ConfigEditor.py:1353
+msgid "Remove file from database"
+msgstr "Xóa tệp khỏi cơ sở dữ liệu"
+
+#: ../editors/FileManagementPanel.py:65
+msgid "Remove file from left folder"
+msgstr "Xóa tệp từ thư mục bên trái"
+
+#: ../etherlab/ConfigEditor.py:1389
+msgid "Remove file from library"
+msgstr "Xóa tệp từ thư viện"
+
+#: ../editors/ResourceEditor.py:282
+msgid "Remove instance"
+msgstr "Xóa thực thể"
+
+#: ../etherlab/ConfigEditor.py:653
+msgid "Remove process variable"
+msgstr ""
+
+#: ../canfestival/NetworkEditor.py:111
+msgid "Remove slave"
+msgstr "Xóa trạm tớ"
+
+#: ../etherlab/ConfigEditor.py:680
+msgid "Remove startup service variable"
+msgstr ""
+
+#: ../editors/ResourceEditor.py:251
+msgid "Remove task"
+msgstr "Xóa tác vụ"
+
+#: ../bacnet/BacnetSlaveEditor.py:812 ../editors/CodeFileEditor.py:673
+#: ../controls/VariablePanel.py:484
+msgid "Remove variable"
+msgstr "Xóa biến"
+
+#: ../IDEFrame.py:1996
+msgid "Rename"
+msgstr "Đổi tên"
+
+#: ../editors/FileManagementPanel.py:186
+msgid "Replace File"
+msgstr "Thay thế tệp"
+
+#: ../editors/Viewer.py:601
+msgid "Replace Wire by connections"
+msgstr ""
+
+#: ../plcopen/iec_std.csv:89
+msgid "Replacement (within)"
+msgstr "Thay thế (trong)"
+
+#: ../dialogs/LDElementDialog.py:79
+msgid "Reset"
+msgstr "Đặt lại"
+
+#: ../editors/Viewer.py:684
+msgid "Reset Execution Order"
+msgstr "Đặt lại thứ tự thực hiện"
+
+#: ../IDEFrame.py:459
+msgid "Reset Perspective"
+msgstr "Đặt lại chế độ xem"
+
+#: ../controls/SearchResultPanel.py:103
+msgid "Reset search result"
+msgstr "Đặt lại kết quả tìm kiếm"
+
+#: ../BeremizIDE.py:1012 ../plcopen/types_enums.py:77
+msgid "Resources"
+msgstr "Tài nguyên"
+
+#: ../controls/VariablePanel.py:77
+msgid "Retain"
+msgstr ""
+
+#: ../controls/VariablePanel.py:457
+msgid "Return Type:"
+msgstr "Kiểu trả về:"
+
+#: ../editors/Viewer.py:585
+msgid "Right"
+msgstr "Phải"
+
+#: ../dialogs/LDPowerRailDialog.py:65
+msgid "Right PowerRail"
+msgstr "Nguồn phải"
+
+#: ../dialogs/LDElementDialog.py:80 ../editors/Viewer.py:558
+msgid "Rising Edge"
+msgstr "Sự quá độ dương"
+
+#: ../plcopen/iec_std.csv:65
+msgid "Rotate left"
+msgstr "Xoay trái"
+
+#: ../plcopen/iec_std.csv:64
+msgid "Rotate right"
+msgstr "Xoay phải"
+
+#: ../plcopen/iec_std.csv:17
+msgid "Rounding up/down"
+msgstr "Làm tròn lên/xuống"
+
+#: ../ProjectController.py:1911
+msgid "Run"
+msgstr "Chạy"
+
+#: ../ProjectController.py:1175
+msgid "Runtime IO extensions C code generation failed !\n"
+msgstr "Tạo runtime IO extensions C code thất bại!\n"
+
+#: ../ProjectController.py:1186
+msgid "Runtime library extensions C code generation failed !\n"
+msgstr "Tạo thư viện runtime extensions C code thất bại!\n"
+
+#: ../canfestival/SlaveEditor.py:65 ../canfestival/NetworkEditor.py:89
+msgid "SDO Client"
+msgstr "Máy khách SDO"
+
+#: ../canfestival/SlaveEditor.py:64 ../canfestival/NetworkEditor.py:88
+msgid "SDO Server"
+msgstr "Máy chủ SDO"
+
+#: ../dialogs/PouDialog.py:128 ../controls/ProjectPropertiesPanel.py:161
+msgid "SFC"
+msgstr "SFC"
+
+#: ../PLCGenerator.py:1482
+#, python-brace-format
+msgid "SFC jump in pou \"{a1}\" refers to non-existent SFC step \"{a2}\""
+msgstr ""
+
+#: ../PLCGenerator.py:780
+#, python-format
+msgid "SFC transition in POU \"%s\" must be connected."
+msgstr ""
+
+#: ../dialogs/PouTransitionDialog.py:40 ../dialogs/PouActionDialog.py:36
+#: ../dialogs/PouDialog.py:128
+msgid "ST"
+msgstr "ST"
+
+#: ../PLCOpenEditor.py:308
+msgid "ST files (*.st)|*.st|All files|*.*"
+msgstr "ST tệp (*.st)|*.st|Tất cả tệp|*.*"
+
+#: ../svgui/svgui.py:136
+msgid "SVG files (*.svg)|*.svg|All files|*.*"
+msgstr "Tệp SVG (*.svg)|*.svg|Tất cả tệp|*.*"
+
+#: ../features.py:25
+msgid "SVGUI"
+msgstr "SVGUI"
+
+#: ../BeremizIDE.py:247 ../BeremizIDE.py:278 ../PLCOpenEditor.py:84
+#: ../PLCOpenEditor.py:119
+msgid "Save"
+msgstr "Lưu"
+
+#: ../BeremizIDE.py:279 ../PLCOpenEditor.py:86 ../PLCOpenEditor.py:120
+msgid "Save As..."
+msgstr "Lưu như..."
+
+#: ../BeremizIDE.py:249
+msgid "Save as"
+msgstr "Lưu như"
+
+#: ../etherlab/EtherCATManagementEditor.py:941
+#: ../etherlab/EtherCATManagementEditor.py:1289
+msgid "Save as..."
+msgstr "Lưu như..."
+
+#: ../ProjectController.py:546
+msgid "Save path is the same as path of a project! \n"
+msgstr "Đường đẫn lưu và đường dẫn dự án trùng nhau! \n"
+
+#: ../etherlab/EthercatMaster.py:455 ../etherlab/EthercatMaster.py:764
+#: ../etherlab/EthercatMaster.py:765
+msgid "Scan Network"
+msgstr "Quét mạng"
+
+#: ../dialogs/SearchInProjectDialog.py:73
+msgid "Scope"
+msgstr ""
+
+#: ../IDEFrame.py:650
+msgid "Search"
+msgstr "Tìm"
+
+#: ../dialogs/SearchInProjectDialog.py:49 ../IDEFrame.py:387
+#: ../IDEFrame.py:431
+msgid "Search in Project"
+msgstr "Tìm trong dự án"
+
+#: ../dialogs/DurationEditorDialog.py:60
+msgid "Seconds:"
+msgstr "Giây:"
+
+#: ../IDEFrame.py:393
+msgid "Select All"
+msgstr "Chọn tất cả"
+
+#: ../editors/Viewer.py:331 ../editors/TextViewer.py:305
+#: ../controls/LocationCellEditor.py:101 ../controls/VariablePanel.py:314
+#: ../controls/VariablePanel.py:377
+msgid "Select a variable class:"
+msgstr "Chọn một biến lớp:"
+
+#: ../ProjectController.py:1354
+msgid "Select an editor:"
+msgstr "Chọn một trình chỉnh sửa:"
+
+#: ../controls/PouInstanceVariablesPanel.py:292
+msgid "Select an instance"
+msgstr "Chọn một thực thể"
+
+#: ../IDEFrame.py:634
+msgid "Select an object"
+msgstr "Chọn một đối tượng"
+
+#: ../ProjectController.py:555
+msgid "Selected directory already contains another project. Overwrite? \n"
+msgstr "Dự án khác đã tồn tại trong thư mục đã chọn. Ghi đè? \n"
+
+#: ../plcopen/iec_std.csv:70
+msgid "Selection"
+msgstr "Chọn"
+
+#: ../dialogs/SFCDivergenceDialog.py:66
+msgid "Selection Convergence"
+msgstr ""
+
+#: ../dialogs/SFCDivergenceDialog.py:65
+msgid "Selection Divergence"
+msgstr ""
+
+#: ../runtime/NevowServer.py:182
+msgid "Send"
+msgstr "Gửi"
+
+#: ../runtime/NevowServer.py:181
+msgid "Send a message to the log"
+msgstr "Gửi một tin nhắn đến nhật kí"
+
+#: ../dialogs/DiscoveryDialog.py:135
+msgid "Service Discovery"
+msgstr ""
+
+#: ../dialogs/DiscoveryDialog.py:104
+msgid "Services available:"
+msgstr ""
+
+#: ../dialogs/LDElementDialog.py:79 ../runtime/WampClient.py:434
+msgid "Set"
+msgstr "Đặt"
+
+#: ../plcopen/iec_std.csv:62
+msgid "Shift left"
+msgstr "Dịch chuyển sang trái"
+
+#: ../plcopen/iec_std.csv:63
+msgid "Shift right"
+msgstr "Dịch chuyển sang phải"
+
+#: ../ProjectController.py:1946
+msgid "Show IEC code generated by PLCGenerator"
+msgstr "Hiện IEC code tạo bởi PLCGenerator"
+
+#: ../canfestival/canfestival.py:407
+msgid "Show Master"
+msgstr "Hiện trạm chủ"
+
+#: ../canfestival/canfestival.py:408
+msgid "Show Master generated by config_utils"
+msgstr "Hiện trạm chủ tạo bởi config_utils"
+
+#: ../ProjectController.py:1945
+msgid "Show code"
+msgstr "Hiện code"
+
+#: ../dialogs/SFCDivergenceDialog.py:68
+msgid "Simultaneous Convergence"
+msgstr ""
+
+#: ../dialogs/SFCDivergenceDialog.py:67
+msgid "Simultaneous Divergence"
+msgstr ""
+
+#: ../plcopen/iec_std.csv:27
+msgid "Sine"
+msgstr "Sin"
+
+#: ../editors/ResourceEditor.py:76
+msgid "Single"
+msgstr ""
+
+#: ../etherlab/EtherCATManagementEditor.py:361
+msgid "Slave SDO Monitoring"
+msgstr "Giám sát trạm tớ SDO"
+
+#: ../etherlab/ConfigEditor.py:135
+msgid "Slave entries"
+msgstr ""
+
+#: ../targets/toolchain_makefile.py:130
+msgid "Source didn't change, no build.\n"
+msgstr ""
+
+#: ../PLCGenerator.py:404
+#, python-brace-format
+msgid ""
+"Source signal has to be defined for single task '{a1}' in resource "
+"'{a2}.{a3}'."
+msgstr ""
+
+#: ../plcopen/iec_std.csv:23
+msgid "Square root (base 2)"
+msgstr "Khai căn (bậc 2)"
+
+#: ../plcopen/definitions.py:50
+msgid "Standard function blocks"
+msgstr "Khối chức năng tiêu chuẩn"
+
+#: ../etherlab/ConfigEditor.py:68
+msgid "Standardized Device Profile"
+msgstr "Hồ sơ thiết bị được chuẩn hóa"
+
+#: ../etherlab/EtherCATManagementEditor.py:37
+msgid "Start Address"
+msgstr ""
+
+#: ../ProjectController.py:1912 ../Beremiz_service.py:284
+msgid "Start PLC"
+msgstr "Khởi động PLC"
+
+#: ../ProjectController.py:1121
+#, python-format
+msgid "Start build in %s\n"
+msgstr ""
+
+#: ../runtime/PlcStatus.py:12
+msgid "Started"
+msgstr ""
+
+#: ../ProjectController.py:1714
+msgid "Starting PLC\n"
+msgstr "Đang khởi động PLC\n"
+
+#: ../etherlab/ConfigEditor.py:674
+msgid "Startup service variables assignments:"
+msgstr ""
+
+#: ../BeremizIDE.py:389
+msgid "Status ToolBar"
+msgstr ""
+
+#: ../editors/Viewer.py:654 ../editors/Viewer.py:2426
+msgid "Step"
+msgstr ""
+
+#: ../ProjectController.py:1918
+msgid "Stop"
+msgstr "Dừng"
+
+#: ../Beremiz_service.py:285
+msgid "Stop PLC"
+msgstr "Dừng PLC"
+
+#: ../ProjectController.py:1919
+msgid "Stop Running PLC"
+msgstr "Dừng PLC"
+
+#: ../runtime/PlcStatus.py:13
+msgid "Stopped"
+msgstr "Đã dừng"
+
+#: ../editors/DataTypeEditor.py:60
+msgid "Structure"
+msgstr "Cấu trúc"
+
+#: ../etherlab/ConfigEditor.py:48
+msgid "SubIndex"
+msgstr "Chỉ mục phụ"
+
+#: ../etherlab/ConfigEditor.py:465
+msgid "Subindex"
+msgstr "Chỉ mục phụ"
+
+#: ../editors/DataTypeEditor.py:60
+msgid "Subrange"
+msgstr "Dãy con"
+
+#: ../plcopen/iec_std.csv:35
+msgid "Subtraction"
+msgstr "Trừ"
+
+#: ../ProjectController.py:1160
+msgid "Successfully built.\n"
+msgstr ""
+
+#: ../IDEFrame.py:451
+msgid "Switch perspective"
+msgstr "Thay đổi chế độ xem"
+
+#: ../dialogs/SearchInProjectDialog.py:169 ../dialogs/FindInPouDialog.py:118
+msgid "Syntax error in regular expression of pattern to search!"
+msgstr "Cú pháp biểu thức chính quy sai!"
+
+#: ../dialogs/DiscoveryDialog.py:90
+msgid "TYPE"
+msgstr "KIỂU"
+
+#: ../plcopen/iec_std.csv:29
+msgid "Tangent"
+msgstr "Tan"
+
+#: ../editors/ResourceEditor.py:94
+msgid "Task"
+msgstr "Tác vụ"
+
+#: ../editors/ResourceEditor.py:246
+msgid "Tasks:"
+msgstr "Tác vụ:"
+
+#: ../controls/VariablePanel.py:88
+msgid "Temp"
+msgstr "Tạm thời"
+
+#: ../version.py:37
+msgid ""
+"The best place to ask questions about Beremiz/PLCOpenEditor\n"
+"is project's mailing list: beremiz-devel@lists.sourceforge.net\n"
+"\n"
+"This is the main community support channel.\n"
+"For posting it is required to be subscribed to the mailing list.\n"
+"\n"
+"You can subscribe to the list here:\n"
+"https://lists.sourceforge.net/lists/listinfo/beremiz-devel"
+msgstr ""
+"Nơi tốt nhất để giải đáp các thắc mắc của bạn về Beremiz/PLCOpenEditor\n"
+"là qua danh sách mail: beremiz-devel@lists.sourceforge.net\n"
+"\n"
+"Đây là kênh hỗ trợ cộng đồng chính thức.\n"
+"Để dăng tin bạn cần đăng kí vào danh sách trên.\n"
+"\n"
+"Đăng kí tại đây:\n"
+"https://lists.sourceforge.net/lists/listinfo/beremiz-devel"
+
+#: ../etherlab/EthercatMaster.py:454
+msgid ""
+"The current network configuration will be deleted.\n"
+"Do you want to continue?"
+msgstr ""
+"Cấu hình mạng hiện tại sẽ bị xóa.\n"
+"Bạn có muốn tiếp tục?"
+
+#: ../editors/FileManagementPanel.py:185
+#, python-format
+msgid ""
+"The file '%s' already exist.\n"
+"Do you want to replace it?"
+msgstr ""
+"Tệp '%s' đã tồn tại.\n"
+"Bạn có muốn thay thế?"
+
+#: ../etherlab/EtherCATManagementEditor.py:928
+#: ../etherlab/EtherCATManagementEditor.py:1320
+msgid "The file does not exist!"
+msgstr "Tệp không tồn tại!"
+
+#: ../editors/LDViewer.py:893
+msgid "The group of block must be coherent!"
+msgstr ""
+
+#: ../BeremizIDE.py:569 ../IDEFrame.py:1059
+msgid "There are changes, do you want to save?"
+msgstr "Bạn có muốn lưu các thay đổi?"
+
+#: ../IDEFrame.py:1708 ../IDEFrame.py:1727
+#, python-format
+msgid ""
+"There is a POU named \"%s\". This could cause a conflict. Do you wish to "
+"continue?"
+msgstr "Có một POU tên \"%s\". Sẽ gây ra xung đột. Bạn có muốn tiếp tục?"
+
+#: ../IDEFrame.py:1146
+msgid ""
+"There was a problem printing.\n"
+"Perhaps your current printer is not set correctly?"
+msgstr ""
+"Có lỗi khi in.\n"
+"Có lẽ máy in của bạn được cài đặt không đúng?"
+
+#: ../editors/LDViewer.py:902
+msgid "This option isn't available yet!"
+msgstr ""
+
+#: ../controls/DebugVariablePanel/DebugVariablePanel.py:546
+#, python-format
+msgid "Tick: %d"
+msgstr ""
+
+#: ../plcopen/iec_std.csv:40
+msgid "Time"
+msgstr "Thời gian"
+
+#: ../plcopen/iec_std.csv:40 ../plcopen/iec_std.csv:41
+msgid "Time addition"
+msgstr "Cộng giờ"
+
+#: ../plcopen/iec_std.csv:86
+msgid "Time concatenation"
+msgstr "Nối giờ"
+
+#: ../plcopen/iec_std.csv:60 ../plcopen/iec_std.csv:61
+msgid "Time division"
+msgstr "Chia giờ"
+
+#: ../plcopen/iec_std.csv:46 ../plcopen/iec_std.csv:47
+msgid "Time multiplication"
+msgstr "Nhân giờ"
+
+#: ../plcopen/iec_std.csv:48 ../plcopen/iec_std.csv:49
+msgid "Time subtraction"
+msgstr "Trừ giờ"
+
+#: ../plcopen/iec_std.csv:42 ../plcopen/iec_std.csv:43
+msgid "Time-of-day addition"
+msgstr "Cộng giờ trong ngày"
+
+#: ../plcopen/iec_std.csv:52 ../plcopen/iec_std.csv:53
+#: ../plcopen/iec_std.csv:54 ../plcopen/iec_std.csv:55
+msgid "Time-of-day subtraction"
+msgstr "Trừ giờ trong ngày"
+
+#: ../IDEFrame.py:432
+msgid "Toggle fullscreen mode"
+msgstr "Bật chê độ toàn màn hình"
+
+#: ../dialogs/ForceVariableDialog.py:188
+msgid "Toggle value"
+msgstr ""
+
+#: ../editors/Viewer.py:587
+msgid "Top"
+msgstr "Trên"
+
+#: ../ProjectController.py:1931
+msgid "Transfer"
+msgstr ""
+
+#: ../ProjectController.py:1932
+msgid "Transfer PLC"
+msgstr ""
+
+#: ../ProjectController.py:1884
+msgid "Transfer completed successfully.\n"
+msgstr ""
+
+#: ../ProjectController.py:1887
+msgid "Transfer failed\n"
+msgstr ""
+
+#: ../editors/Viewer.py:655 ../editors/Viewer.py:2428
+#: ../editors/Viewer.py:2455
+msgid "Transition"
+msgstr ""
+
+#: ../PLCGenerator.py:1613
+#, python-format
+msgid ""
+"Transition \"%s\" body must contain an output variable or coil referring to "
+"its name"
+msgstr ""
+
+#: ../dialogs/PouTransitionDialog.py:90
+msgid "Transition Name"
+msgstr ""
+
+#: ../dialogs/PouTransitionDialog.py:59
+msgid "Transition Name:"
+msgstr ""
+
+#: ../PLCGenerator.py:1706
+#, python-brace-format
+msgid "Transition with content \"{a1}\" not connected to a next step in \"{a2}\" POU"
+msgstr ""
+
+#: ../PLCGenerator.py:1695
+#, python-brace-format
+msgid ""
+"Transition with content \"{a1}\" not connected to a previous step in "
+"\"{a2}\" POU"
+msgstr ""
+
+#: ../plcopen/plcopen.py:1526
+#, python-format
+msgid "Transition with name %s doesn't exist!"
+msgstr ""
+
+#: ../plcopen/types_enums.py:76
+msgid "Transitions"
+msgstr ""
+
+#: ../dialogs/AboutDialog.py:127
+msgid "Translated by"
+msgstr ""
+
+#: ../editors/ResourceEditor.py:76
+msgid "Triggering"
+msgstr "Đang khởi động"
+
+#: ../Beremiz_service.py:503
+msgid "Twisted unavailable."
+msgstr ""
+
+#: ../dialogs/ActionBlockDialog.py:42 ../etherlab/ConfigEditor.py:48
+#: ../editors/ResourceEditor.py:94 ../editors/DataTypeEditor.py:55
+#: ../editors/CodeFileEditor.py:752 ../controls/VariablePanel.py:61
+msgid "Type"
+msgstr "Kiểu"
+
+#: ../dialogs/BrowseLocationsDialog.py:51
+msgid "Type and derivated"
+msgstr "Kiểu và dẫn xuất"
+
+#: ../canfestival/config_utils.py:359 ../canfestival/config_utils.py:666
+#, python-format
+msgid "Type conflict for location \"%s\""
+msgstr "Xung đột về kiểu ở địa chỉ \"%s\""
+
+#: ../plcopen/iec_std.csv:16
+msgid "Type conversion"
+msgstr "Chuyển đổi kiểu"
+
+#: ../editors/DataTypeEditor.py:170
+msgid "Type infos:"
+msgstr ""
+
+#: ../etherlab/EthercatCFileGenerator.py:76
+#, python-format
+msgid "Type of location \"%s\" not yet supported!"
+msgstr "Kiểu của địa chỉ \"%s\" chưa được hỗ trợ!"
+
+#: ../dialogs/BrowseLocationsDialog.py:52
+msgid "Type strict"
+msgstr ""
+
+#: ../dialogs/SFCDivergenceDialog.py:60 ../dialogs/SFCTransitionDialog.py:59
+#: ../dialogs/LDPowerRailDialog.py:58 ../dialogs/BrowseLocationsDialog.py:110
+#: ../dialogs/FBDBlockDialog.py:69 ../dialogs/ConnectionDialog.py:61
+msgid "Type:"
+msgstr "Kiểu:"
+
+#: ../runtime/WampClient.py:129
+msgid "TypeError register option: {}"
+msgstr ""
+
+#: ../connectors/PYRO/dialog.py:39 ../connectors/WAMP/dialog.py:42
+msgid "URI host:"
+msgstr ""
+
+#: ../connectors/PYRO/dialog.py:43 ../connectors/WAMP/dialog.py:46
+msgid "URI port:"
+msgstr "Cổng URI:"
+
+#: ../controls/UriLocationEditor.py:35
+msgid "URI type:"
+msgstr "Kiểu URI:"
+
+#: ../canfestival/config_utils.py:500 ../canfestival/config_utils.py:515
+#, python-format
+msgid "Unable to define PDO mapping for node %02x"
+msgstr ""
+
+#: ../targets/Xenomai/__init__.py:43
+#, python-format
+msgid "Unable to get Xenomai's %s \n"
+msgstr ""
+
+#: ../bacnet/bacnet.py:430
+#, python-format
+msgid "Unable to load file \"%s\"!"
+msgstr "Không thể tải tệp \"%s\"!"
+
+#: ../bacnet/bacnet.py:420
+#, python-format
+msgid "Unable to save to file \"%s\"!"
+msgstr "Không thể lưu vào tệp \"%s\"!"
+
+#: ../PLCGenerator.py:1023 ../PLCGenerator.py:1301
+#, python-brace-format
+msgid "Undefined block type \"{a1}\" in \"{a2}\" POU"
+msgstr "Kiểu khối không xác định \"{a1}\" trong \"{a2}\" POU"
+
+#: ../PLCGenerator.py:261
+#, python-format
+msgid "Undefined pou type \"%s\""
+msgstr "Loại pou chưa được định nghĩa \"%s\""
+
+#: ../IDEFrame.py:368 ../IDEFrame.py:424
+msgid "Undo"
+msgstr "Hoàn tác"
+
+#: ../ProjectController.py:457
+msgid "Unknown"
+msgstr ""
+
+#: ../etherlab/EthercatCFileGenerator.py:470
+#, python-brace-format
+msgid "Unknown entry index 0x{a1:.4x}, subindex 0x{a2:.2x} for device {a3}"
+msgstr ""
+
+#: ../editors/Viewer.py:437
+#, python-format
+msgid "Unknown variable \"%s\" for this POU!"
+msgstr "Biến \"%s\" chưa dược định nghĩa trong POU này!"
+
+#: ../ProjectController.py:454 ../ProjectController.py:455
+msgid "Unnamed"
+msgstr "Chưa dặt tên"
+
+#: ../PLCControler.py:263
+#, python-format
+msgid "Unnamed%d"
+msgstr "%dchưa dặt tên "
+
+#: ../controls/VariablePanel.py:307
+#, python-format
+msgid "Unrecognized data size \"%s\""
+msgstr ""
+
+#: ../etherlab/EtherCATManagementEditor.py:2080
+msgid "Update"
+msgstr "Cập nhật"
+
+#: ../runtime/WampClient.py:380
+msgid "Upload:"
+msgstr "Tải lên:"
+
+#: ../editors/DataTypeEditor.py:646 ../controls/VariablePanel.py:852
+msgid "User Data Types"
+msgstr "Tự định nghĩa"
+
+#: ../canfestival/SlaveEditor.py:69 ../canfestival/NetworkEditor.py:93
+msgid "User Type"
+msgstr "Tự định nghĩa"
+
+#: ../plcopen/types_enums.py:75
+msgid "User-defined POUs"
+msgstr "Tự định nghĩa POU"
+
+#: ../dialogs/ActionBlockDialog.py:42 ../etherlab/ConfigEditor.py:465
+msgid "Value"
+msgstr "Giá trị"
+
+#: ../editors/DataTypeEditor.py:267
+msgid "Values:"
+msgstr "Giá trị:"
+
+#: ../dialogs/ActionBlockDialog.py:47 ../editors/Viewer.py:625
+#: ../editors/Viewer.py:2458
+msgid "Variable"
+msgstr "Biến"
+
+#: ../editors/Viewer.py:352 ../editors/Viewer.py:382 ../editors/Viewer.py:404
+#: ../editors/TextViewer.py:290 ../editors/TextViewer.py:344
+#: ../editors/TextViewer.py:367 ../controls/VariablePanel.py:354
+msgid "Variable Drop"
+msgstr ""
+
+#: ../etherlab/ConfigEditor.py:70
+#, python-format
+msgid "Variable Index: #x%4.4X"
+msgstr ""
+
+#: ../dialogs/FBDVariableDialog.py:58
+msgid "Variable Properties"
+msgstr "Chi tiết về biến"
+
+#: ../editors/Viewer.py:332 ../editors/TextViewer.py:306
+#: ../controls/LocationCellEditor.py:102 ../controls/VariablePanel.py:315
+#: ../controls/VariablePanel.py:378
+msgid "Variable class"
+msgstr "Biến lớp"
+
+#: ../editors/Viewer.py:439 ../editors/TextViewer.py:388
+msgid "Variable don't belong to this POU!"
+msgstr "Biến không thuộc POU này!"
+
+#: ../etherlab/ConfigEditor.py:280
+msgid "Variable entries:"
+msgstr ""
+
+#: ../dialogs/LDElementDialog.py:92
+msgid "Variable:"
+msgstr ""
+
+#: ../controls/VariablePanel.py:87
+msgid "Variables"
+msgstr ""
+
+#: ../controls/ProjectPropertiesPanel.py:169
+msgid "Vertical:"
+msgstr ""
+
+#: ../runtime/WampClient.py:170
+#, python-format
+msgid "WAMP Client connection failed (%s) .. retrying .."
+msgstr ""
+
+#: ../runtime/WampClient.py:179
+#, python-format
+msgid "WAMP Client connection lost (%s) .. retrying .."
+msgstr ""
+
+#: ../connectors/WAMP/dialog.py:54
+msgid "WAMP ID:"
+msgstr "WAMP ID:"
+
+#: ../runtime/WampClient.py:413
+msgid "WAMP Server URL"
+msgstr "WAMP Server URL"
+
+#: ../runtime/WampClient.py:276
+msgid "WAMP authentication has no secret configured"
+msgstr ""
+
+#: ../runtime/WampClient.py:304
+msgid "WAMP client can not connect to :"
+msgstr ""
+
+#: ../runtime/WampClient.py:301
+msgid "WAMP client connecting to :"
+msgstr ""
+
+#: ../Beremiz_service.py:628
+msgid "WAMP client startup failed. "
+msgstr ""
+
+#: ../runtime/WampClient.py:206
+msgid "WAMP configuration error : missing '{}' parameter."
+msgstr "Lỗi cấu hình WAMP: thiếu tham số '{}'."
+
+#: ../runtime/WampClient.py:192
+msgid "WAMP configuration error:"
+msgstr "Lỗi cấu hình WAMP:"
+
+#: ../connectors/WAMP/__init__.py:100
+#, python-format
+msgid "WAMP connecting to URL : %s\n"
+msgstr "WAMP đang kết nối đến URL : %s\n"
+
+#: ../connectors/WAMP/__init__.py:141
+msgid "WAMP connection timeout"
+msgstr ""
+
+#: ../connectors/WAMP/__init__.py:159
+#, python-format
+msgid "WAMP connection to '%s' failed.\n"
+msgstr ""
+
+#: ../runtime/WampClient.py:280
+msgid "WAMP deactivated in configuration"
+msgstr "WAMP bị vô hiệu trong cấu hình"
+
+#: ../Beremiz_service.py:605
+msgid "WAMP import failed :"
+msgstr ""
+
+#: ../runtime/WampClient.py:241
+msgid "WAMP secret empty"
+msgstr ""
+
+#: ../runtime/WampClient.py:139
+#, python-format
+msgid "WAMP session joined (%s) by:"
+msgstr ""
+
+#: ../runtime/WampClient.py:146
+msgid "WAMP session left"
+msgstr ""
+
+#: ../wxglade_hmi/wxglade_hmi.py:44
+msgid "WXGLADE GUI"
+msgstr ""
+
+#: ../runtime/WampClient.py:432
+msgid "Wamp Settings"
+msgstr ""
+
+#: ../dialogs/PouDialog.py:172 ../editors/LDViewer.py:902
+msgid "Warning"
+msgstr "Cảnh báo"
+
+#: ../etherlab/EthercatCFileGenerator.py:405
+#: ../etherlab/EthercatCFileGenerator.py:571
+msgid "Warning: "
+msgstr "Cảnh báo:"
+
+#: ../wxglade_hmi/wxglade_hmi.py:166
+msgid ""
+"Warning: WxGlade HMI has no object with name identical to extension name, "
+"and no python code is provided in start section to create object.\n"
+msgstr ""
+
+#: ../ProjectController.py:756
+msgid "Warnings in ST/IL/SFC code generator :\n"
+msgstr ""
+
+#: ../dialogs/SearchInProjectDialog.py:82
+msgid "Whole Project"
+msgstr ""
+
+#: ../controls/ProjectPropertiesPanel.py:137
+msgid "Width:"
+msgstr "Rộng:"
+
+#: ../dialogs/FindInPouDialog.py:94
+msgid "Wrap search"
+msgstr ""
+
+#: ../etherlab/ConfigEditor.py:345
+msgid "Write to (nodeid, index, subindex)"
+msgstr "Viết vào (nút id, chỉ mục, chỉ mục phụ)"
+
+#: ../dialogs/AboutDialog.py:126
+msgid "Written by"
+msgstr "Được viết bởi"
+
+#: ../etherlab/EthercatCFileGenerator.py:409
+#: ../etherlab/EthercatCFileGenerator.py:499
+#, python-format
+msgid "Wrong direction for location \"%s\"!"
+msgstr ""
+
+#: ../etherlab/EthercatCFileGenerator.py:400
+#: ../etherlab/EthercatCFileGenerator.py:487
+#, python-format
+msgid "Wrong type for location \"%s\"!"
+msgstr "Sai kiểu ở vị trí \"%s\"!"
+
+#: ../features.py:24
+msgid "WxGlade GUI"
+msgstr "WxGlade GUI"
+
+#: ../etherlab/ConfigEditor.py:1236
+msgid "XML files (*.xml)|*.xml|All files|*.*"
+msgstr "Tệp XML (*.xml)|*.xml|Tất cả tệp|*.*"
+
+#: ../etherlab/EtherCATManagementEditor.py:652
+msgid "You can input only hex, dec value"
+msgstr "Bạn chỉ có thể nhập các giá trị hex, dec"
+
+#: ../etherlab/EtherCATManagementEditor.py:1999
+msgid "You can't modify it. This register is read-only or it's not connected."
+msgstr ""
+
+#: ../etherlab/EtherCATManagementEditor.py:648
+msgid "You cannot SDO download this state"
+msgstr ""
+
+#: ../svgui/svgui.py:150
+msgid ""
+"You don't have write permissions.\n"
+"Open Inkscape anyway ?"
+msgstr ""
+"Bạn không có quyền ghi.\n"
+"Vẫn mở Inkscape ?"
+
+#: ../wxglade_hmi/wxglade_hmi.py:175
+msgid ""
+"You don't have write permissions.\n"
+"Open wxGlade anyway ?"
+msgstr ""
+"Bạn không có quyền ghi.\n"
+"Vẫn mở wxGlade ?"
+
+#: ../etherlab/EtherCATManagementEditor.py:2002
+msgid "You entered wrong value. You can enter dec or hex value only."
+msgstr "Bạn nhập giá trị sai. Chỉ nhập giá trij dec hoặc hex."
+
+#: ../ProjectController.py:403
+msgid ""
+"You must have permission to work on the project\n"
+"Work on a project copy ?"
+msgstr ""
+"Bạn phải được cấp quyền để làm việc với dự án\n"
+"Tạo bản sao của dự án ?"
+
+#: ../editors/LDViewer.py:897
+msgid ""
+"You must select the block or group of blocks around which a branch should be"
+" added!"
+msgstr "Để thêm nhánh bạn phải chọn một khối hoặc một nhóm khối!"
+
+#: ../editors/LDViewer.py:677
+msgid "You must select the wire where a contact should be added!"
+msgstr "Bạn cần thêm dây nối tại chỗ cần thêm tiếp điểm!"
+
+#: ../dialogs/SFCStepNameDialog.py:52 ../dialogs/PouNameDialog.py:50
+msgid "You must type a name!"
+msgstr "Bạn phải nhập một tên!"
+
+#: ../dialogs/ForceVariableDialog.py:209
+msgid "You must type a value!"
+msgstr "Bạn phải nhập một giá trị!"
+
+#: ../IDEFrame.py:442
+msgid "Zoom"
+msgstr "Thu phóng"
+
+#: ../etherlab/EtherCATManagementEditor.py:911
+#: ../etherlab/EtherCATManagementEditor.py:1307
+msgid "bin files (*.bin)|*.bin"
+msgstr "Tệp bin (*.bin)|*.bin"
+
+#: ../etherlab/EtherCATManagementEditor.py:942
+#: ../etherlab/EtherCATManagementEditor.py:1290
+msgid "bin files (*.bin)|*.bin|All files|*.*"
+msgstr "Tệp bin (*.bin)|*.bin|Tất cả tệp|*.*"
+
+#: ../dialogs/DurationEditorDialog.py:159
+msgid "days"
+msgstr "ngày"
+
+#: ../PLCOpenEditor.py:317
+#, python-format
+msgid "error: %s\n"
+msgstr "lỗi: %s\n"
+
+#: ../util/ProcessLogger.py:178
+#, python-brace-format
+msgid "exited with status {a1} (pid {a2})\n"
+msgstr "thoát với trạng thái {a1} (pid {a2})\n"
+
+#: ../dialogs/PouDialog.py:110
+msgid "function"
+msgstr "hàm"
+
+#: ../dialogs/PouDialog.py:110
+msgid "functionBlock"
+msgstr "khối chức năng"
+
+#: ../dialogs/DurationEditorDialog.py:159
+msgid "hours"
+msgstr "giờ"
+
+#: ../ProjectController.py:784
+msgid "matiec installation is not found\n"
+msgstr "Chưa cài đặt MatPLC\n"
+
+#: ../dialogs/DurationEditorDialog.py:162
+msgid "microseconds"
+msgstr "micro giây"
+
+#: ../dialogs/DurationEditorDialog.py:161
+msgid "milliseconds"
+msgstr "mili giây"
+
+#: ../dialogs/DurationEditorDialog.py:160
+msgid "minutes"
+msgstr "phút"
+
+#: ../dialogs/PouDialog.py:110
+msgid "program"
+msgstr "chương trình"
+
+#: ../dialogs/DurationEditorDialog.py:160
+msgid "seconds"
+msgstr "giây"
+
+#: ../plcopen/iec_std.csv:84
+msgid "string from the middle"
+msgstr "xâu ở giữa"
+
+#: ../plcopen/iec_std.csv:82
+msgid "string left of"
+msgstr "xâu trái"
+
+#: ../plcopen/iec_std.csv:83
+msgid "string right of"
+msgstr "xâu phải"
+
+#: ../etherlab/EtherCATManagementEditor.py:323
+msgid "update"
+msgstr "cập nhật"
+
+#: ../Beremiz.py:167
+msgid "update info unavailable."
+msgstr "thông tin cập nhật không khả dụng."
+
+#: ../PLCOpenEditor.py:315
+#, python-format
+msgid "warning: %s\n"
+msgstr "cảnh báo: %s\n"
+
+#: ../PLCControler.py:576
+#, python-brace-format
+msgid "{a1} \"{a2}\" can't be pasted as a {a3}."
+msgstr "{a1} \"{a2}\" không thể dán như {a3}."
+
+#: ../ConfigTreeNode.py:58
+#, python-brace-format
+msgid ""
+"{a1} XML file doesn't follow XSD schema at line {a2}:\n"
+"{a3}"
+msgstr ""
+
+#: Extra XSD strings
+msgid "CanFestivalSlaveNode"
+msgstr ""
+
+msgid "CAN_Device"
+msgstr ""
+
+msgid "CAN_Baudrate"
+msgstr ""
+
+msgid "NodeId"
+msgstr "Nút Id"
+
+msgid "Sync_Align"
+msgstr ""
+
+msgid "Sync_Align_Ratio"
+msgstr ""
+
+msgid "CanFestivalNode"
+msgstr ""
+
+msgid "Sync_TPDOs"
+msgstr ""
+
+msgid "CanFestivalInstance"
+msgstr ""
+
+msgid "CAN_Driver"
+msgstr ""
+
+msgid "BACnetServerNode"
+msgstr ""
+
+msgid "Network_Interface"
+msgstr "Giao tiếp mạng"
+
+msgid "UDP_Port_Number"
+msgstr "Số cổng UDP"
+
+msgid "BACnet_Communication_Control_Password"
+msgstr ""
+
+msgid "BACnet_Device_ID"
+msgstr "ID thiết bị BACnet"
+
+msgid "BACnet_Device_Name"
+msgstr "Tên thiết bị BACnet"
+
+msgid "BACnet_Device_Location"
+msgstr "Địa chỉ của thiết bị BACnet"
+
+msgid "BACnet_Device_Description"
+msgstr "Mô tả cho thiết bị BACnet"
+
+msgid "BACnet_Device_Application_Software_Version"
+msgstr ""
+
+msgid "Generic"
+msgstr ""
+
+msgid "Command"
+msgstr ""
+
+msgid "Xenomai"
+msgstr ""
+
+msgid "XenoConfig"
+msgstr ""
+
+msgid "Compiler"
+msgstr "Trình biên dịch"
+
+msgid "CFLAGS"
+msgstr ""
+
+msgid "Linker"
+msgstr ""
+
+msgid "LDFLAGS"
+msgstr ""
+
+msgid "Linux"
+msgstr "Linux"
+
+msgid "Win32"
+msgstr "Win32"
+
+msgid "ModbusRequest"
+msgstr ""
+
+msgid "SlaveID"
+msgstr "ID trạm tớ"
+
+msgid "Nr_of_Channels"
+msgstr ""
+
+msgid "Start_Address"
+msgstr ""
+
+msgid "Timeout_in_ms"
+msgstr "Thời gian chờ theo ms"
+
+msgid "MemoryArea"
+msgstr ""
+
+msgid "MemoryAreaType"
+msgstr ""
+
+msgid "ModbusTCPclient"
+msgstr ""
+
+msgid "Remote_IP_Address"
+msgstr ""
+
+msgid "Remote_Port_Number"
+msgstr ""
+
+msgid "Invocation_Rate_in_ms"
+msgstr ""
+
+msgid "ModbusServerNode"
+msgstr ""
+
+msgid "Local_IP_Address"
+msgstr "Địa chỉ IP cục bộ"
+
+msgid "Local_Port_Number"
+msgstr "Số cổng cục bộ"
+
+msgid "ModbusRTUclient"
+msgstr ""
+
+msgid "Serial_Port"
+msgstr ""
+
+msgid "Baud_Rate"
+msgstr ""
+
+msgid "Parity"
+msgstr ""
+
+msgid "Stop_Bits"
+msgstr ""
+
+msgid "ModbusRTUslave"
+msgstr "Trạm tớ ModbusRTU"
+
+msgid "ModbusRoot"
+msgstr ""
+
+msgid "MaxRemoteTCPclients"
+msgstr ""
+
+msgid "CIA402SlaveParams"
+msgstr "Tham số trạm tớ CIA402"
+
+msgid "Enable%s"
+msgstr ""
+
+msgid "ProcessVariables"
+msgstr ""
+
+msgid "variable"
+msgstr ""
+
+msgid "ReadFrom"
+msgstr ""
+
+msgid "WriteTo"
+msgstr ""
+
+msgid "BaseParams"
+msgstr ""
+
+msgid "IEC_Channel"
+msgstr ""
+
+msgid "Enabled"
+msgstr ""
+
+msgid "BeremizRoot"
+msgstr ""
+
+msgid "TargetType"
+msgstr "Kiểu mục tiêu"
+
+msgid "Libraries"
+msgstr ""
+
+msgid "URI_location"
+msgstr ""
+
+msgid "Disable_Extensions"
+msgstr ""
+
+msgid "%(codefile_name)s"
+msgstr "%(codefile_name)s"
+
+msgid "variables"
+msgstr "biến"
+
+msgid "name"
+msgstr "tên"
+
+msgid "type"
+msgstr "kiểu"
+
+msgid "class"
+msgstr "lớp"
+
+msgid "initial"
+msgstr "ban đầu"
+
+msgid "desc"
+msgstr ""
+
+msgid "onchange"
+msgstr ""
+
+msgid "opts"
+msgstr ""
+
+#: Extra TC6 documentation strings
+msgid "0 - current time, 1 - load time from PDT"
+msgstr "0 - thời gian hiện tại, 1 - thời gian từ PDT"
+
+msgid "Preset datetime"
+msgstr ""
+
+msgid "Copy of IN"
+msgstr ""
+
+msgid "Datetime, current or relative to PDT"
+msgstr ""
+
+msgid ""
+"The real time clock has many uses including time stamping, setting dates and"
+" times of day in batch reports, in alarm messages and so on."
+msgstr ""
+"Đồng hồ thời gian thực có nhiều công dụng như đánh dấu mốc thời gian, đặt "
+"ngày và giờ cho nhiều báo cáo cùng lúc, trong các thông báo và nhiều hơn "
+"nữa."
+
+msgid "1 = integrate, 0 = hold"
+msgstr ""
+
+msgid "Overriding reset"
+msgstr ""
+
+msgid "Input variable"
+msgstr "Biến vào"
+
+msgid "Initial value"
+msgstr "Giá trị ban đầu"
+
+msgid "Sampling period"
+msgstr ""
+
+msgid "NOT R1"
+msgstr ""
+
+msgid "Integrated output"
+msgstr ""
+
+msgid ""
+"The integral function block integrates the value of input XIN over time."
+msgstr ""
+
+msgid "0 = reset"
+msgstr "0 = đặt lại"
+
+msgid "Input to be differentiated"
+msgstr ""
+
+msgid "Differentiated output"
+msgstr ""
+
+msgid ""
+"The derivative function block produces an output XOUT proportional to the "
+"rate of change of the input XIN."
+msgstr ""
+
+msgid "0 - manual , 1 - automatic"
+msgstr "0 - thủ công , 1 - tự động"
+
+msgid "Process variable"
+msgstr ""
+
+msgid "Set point"
+msgstr ""
+
+msgid "Manual output adjustment - Typically from transfer station"
+msgstr ""
+
+msgid "Proportionality constant"
+msgstr ""
+
+msgid "Reset time"
+msgstr "Đặt lại thời gian"
+
+msgid "Derivative time constant"
+msgstr ""
+
+msgid "PV - SP"
+msgstr ""
+
+msgid "FB for integral term"
+msgstr ""
+
+msgid "FB for derivative term"
+msgstr ""
+
+msgid ""
+"The PID (proportional, Integral, Derivative) function block provides the "
+"classical three term controller for closed loop control."
+msgstr ""
+
+msgid "0 - track X0, 1 - ramp to/track X1"
+msgstr ""
+
+msgid "Ramp duration"
+msgstr ""
+
+msgid "BUSY = 1 during ramping period"
+msgstr ""
+
+msgid "Elapsed time of ramp"
+msgstr ""
+
+msgid "The RAMP function block is modelled on example given in the standard."
+msgstr ""
+
+msgid ""
+"The hysteresis function block provides a hysteresis boolean output driven by"
+" the difference of two floating point (REAL) inputs XIN1 and XIN2."
+msgstr ""
+
+msgid "The SR bistable is a latch where the Set dominates."
+msgstr "SR là mạch chốt hai trạng thái của bit Set trội."
+
+msgid "The RS bistable is a latch where the Reset dominates."
+msgstr "RS là mạch chốt hai trạng thái của bit Reset trội."
+
+msgid ""
+"The semaphore provides a mechanism to allow software elements mutually "
+"exclusive access to certain resources."
+msgstr ""
+"Cung cấp một cơ chế để cho phép phần tử trong phần mềm không đồng thời truy "
+"cập vào các tài nguyên nhất định."
+
+msgid "The output produces a single pulse when a rising edge is detected."
+msgstr "Ngõ ra sẽ sinh ra một dòng xung khi phát hiện có sự quá độ dương."
+
+msgid "The output produces a single pulse when a falling edge is detected."
+msgstr "Ngõ ra sẽ sinh ra một dòng xung khi phát hiện có sự quá độ âm."
+
+msgid ""
+"The up-counter can be used to signal when a count has reached a maximum "
+"value."
+msgstr "Bộ đếm lên dùng để báo hiệu khi bộ đếm dạt giá trị cực đại."
+
+msgid ""
+"The down-counter can be used to signal when a count has reached zero, on "
+"counting down from a preset value."
+msgstr ""
+"Bộ đếm xuống dùng để báo hiệu khi bộ đếm đạt giá trị 0, hay xuống một giá "
+"trị cho trước."
+
+msgid ""
+"The up-down counter has two inputs CU and CD. It can be used to both count "
+"up on one input and down on the other."
+msgstr ""
+"Bộ đếm lên xuống có hai ngõ vào CU và CD. Dùng để đếm lên ngõ này và đếm "
+"xuống ngõ kia."
+
+msgid "first input parameter"
+msgstr "tham số vào 1"
+
+msgid "second input parameter"
+msgstr "tham số vào 2"
+
+msgid "first output parameter"
+msgstr "tham số ra 1"
+
+msgid "second output parameter"
+msgstr "tham số ra 2"
+
+msgid "internal state: 0-reset, 1-counting, 2-set"
+msgstr ""
+
+msgid ""
+"The pulse timer can be used to generate output pulses of a given time "
+"duration."
+msgstr "Bộ định thì xung phát ra xung với thời gian cho trước."
+
+msgid ""
+"The on-delay timer can be used to delay setting an output true, for fixed "
+"period after an input becomes true."
+msgstr ""
+"Bộ định thì on-delay có ngõ ra là true khi ngõ vào true sau một thời gian cố"
+" định."
+
+msgid ""
+"The off-delay timer can be used to delay setting an output false, for fixed "
+"period after input goes false."
+msgstr ""
+"Bộ định thì off-delay có ngõ ra là false khi ngõ vào false sau một thời gian"
+" cố định."

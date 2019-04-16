@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='utf-8'?>
+<PyFile xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <variables/>
+  <globals>
+    <xhtml:p><![CDATA[
+
+/*
+    Web interface is build as SVG file in Inkscape. 
+    To edit SVG file click 'Inkscape' button on the toolbar above.
+    
+    Inkscape is a free and open-source vector graphics editor. 
+    It's not part of Beremiz and needs to be installed separately.
+*/
+
+]]></xhtml:p>
+  </globals>
+  <init>
+    <xhtml:p><![CDATA[
+]]></xhtml:p>
+  </init>
+  <cleanup>
+    <xhtml:p><![CDATA[
+]]></xhtml:p>
+  </cleanup>
+  <start>
+    <xhtml:p><![CDATA[
+]]></xhtml:p>
+  </start>
+  <stop>
+    <xhtml:p><![CDATA[
+]]></xhtml:p>
+  </stop>
+</PyFile>

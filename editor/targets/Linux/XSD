@@ -1,0 +1,6 @@
+
+                  <xsd:element name="Linux">
+                    <xsd:complexType>
+                      %(toolchain_gcc)s
+                    </xsd:complexType>
+                  </xsd:element>

@@ -1,0 +1,4851 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the Beremiz package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+# Translators:
+# Ibrahim KILICARSLAN <ibrahimhalilkilicarslan@outlook.com>, 2019
+# 
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Beremiz\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-10-03 14:20+0300\n"
+"PO-Revision-Date: 2017-06-13 13:14+0000\n"
+"Last-Translator: Ibrahim KILICARSLAN <ibrahimhalilkilicarslan@outlook.com>, 2019\n"
+"Language-Team: Turkish (Turkey) (https://www.transifex.com/beremiz/teams/75746/tr_TR/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: tr_TR\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: ../util/ExceptionHandler.py:58
+#, python-format
+msgid ""
+"\n"
+"An unhandled exception (bug) occured. Bug report saved at :\n"
+"(%s)\n"
+"\n"
+"Please be kind enough to send this file to:\n"
+"beremiz-devel@lists.sourceforge.net\n"
+"\n"
+"You should now restart program.\n"
+"\n"
+"Traceback:\n"
+msgstr ""
+"\n"
+"Beklenmeyen özel bir durum(hata) oluştu. Hata raporu kaydedildi:\n"
+"(%s)\n"
+"Bu raporu bize göndererek düzeltmemize yardımcı olun.\n"
+"beremiz-devel@lists.sourceforge.net\n"
+"\n"
+"Çalışmaya devam etmek için programı yeniden başlatmanız gerekmektedir.\n"
+"\n"
+"Döndürülen hata:\n"
+
+#: ../controls/VariablePanel.py:87
+msgid "   External"
+msgstr "Harici"
+
+#: ../controls/VariablePanel.py:86
+msgid "   InOut"
+msgstr "Giriş-Çıkış"
+
+#: ../controls/VariablePanel.py:86
+msgid "   Input"
+msgstr "Giriş"
+
+#: ../controls/VariablePanel.py:87
+msgid "   Local"
+msgstr "Yerel"
+
+#: ../controls/VariablePanel.py:86
+msgid "   Output"
+msgstr "Çıkış"
+
+#: ../controls/VariablePanel.py:88
+msgid "   Temp"
+msgstr "Geçici"
+
+#: ../etherlab/etherlab.py:301
+#, python-format
+msgid " (rev. %s)"
+msgstr " (rev. %s)"
+
+#: ../etherlab/CommonEtherCATFunction.py:1599
+msgid " Warning..."
+msgstr "Uyarı..."
+
+#: ../dialogs/PouTransitionDialog.py:100 ../dialogs/ProjectDialog.py:72
+#: ../dialogs/PouActionDialog.py:99 ../dialogs/PouDialog.py:157
+#, python-format
+msgid " and %s"
+msgstr "ve %s"
+
+#: ../ProjectController.py:1236
+msgid " generation failed !\n"
+msgstr "Derleme başarısız oldu !\n"
+
+#: ../plcopen/plcopen.py:1029
+#, python-format
+msgid "\"%s\" Data Type doesn't exist !!!"
+msgstr "\"%s\" Veri türü mevcut değil !!!"
+
+#: ../plcopen/plcopen.py:1047
+#, python-format
+msgid "\"%s\" POU already exists !!!"
+msgstr "\"%s\" isminde bir program zaten var !!!"
+
+#: ../plcopen/plcopen.py:1068
+#, python-format
+msgid "\"%s\" POU doesn't exist !!!"
+msgstr "\"%s\" isminde bir program bulunamadı !!!"
+
+#: ../editors/Viewer.py:288
+#, python-format
+msgid "\"%s\" can't use itself!"
+msgstr "\"%s\" kullanamazsın!"
+
+#: ../IDEFrame.py:1705 ../IDEFrame.py:1724
+#, python-format
+msgid "\"%s\" config already exists!"
+msgstr "\"%s\" adında bir konfigürasyon zaten mevcut!"
+
+#: ../plcopen/plcopen.py:531
+#, python-format
+msgid "\"%s\" configuration already exists !!!"
+msgstr "\"%s\" adında bir konfigürasyon zaten mevcut !!!"
+
+#: ../plcopen/plcopen.py:540
+#, python-format
+msgid "\"%s\" configuration doesn't exist !!!"
+msgstr "\"%s\" adında bir konfigürasyon bulunamadı !!!"
+
+#: ../IDEFrame.py:1655
+#, python-format
+msgid "\"%s\" data type already exists!"
+msgstr "\"%s\" adında veri türü zaten mevcut!"
+
+#: ../dialogs/PouTransitionDialog.py:111 ../dialogs/BlockPreviewDialog.py:220
+#: ../dialogs/PouActionDialog.py:110 ../editors/Viewer.py:304
+#: ../editors/Viewer.py:374 ../editors/Viewer.py:398 ../editors/Viewer.py:418
+#: ../editors/TextViewer.py:270 ../editors/TextViewer.py:299
+#: ../controls/VariablePanel.py:424
+#, python-format
+msgid "\"%s\" element for this pou already exists!"
+msgstr "\"%s\"  öğe bu program için zaten kullanılmış!"
+
+#: ../BeremizIDE.py:925
+#, python-format
+msgid "\"%s\" folder is not a valid Beremiz project\n"
+msgstr "\"%s\" bu klasör geçerli bir Beremiz projesi değil\n"
+
+#: ../dialogs/SFCStepNameDialog.py:56 ../dialogs/PouTransitionDialog.py:107
+#: ../dialogs/BlockPreviewDialog.py:209 ../dialogs/PouNameDialog.py:54
+#: ../dialogs/PouActionDialog.py:106 ../dialogs/PouDialog.py:164
+#: ../etherlab/ConfigEditor.py:973 ../editors/ResourceEditor.py:481
+#: ../editors/ResourceEditor.py:518 ../editors/DataTypeEditor.py:571
+#: ../editors/DataTypeEditor.py:603 ../editors/CodeFileEditor.py:793
+#: ../controls/VariablePanel.py:798 ../IDEFrame.py:1646
+#, python-format
+msgid "\"%s\" is a keyword. It can't be used!"
+msgstr "\"%s\" bu bir anahtar kelimedir. Kullanamazsınız!"
+
+#: ../plcopen/plcopen.py:2836
+#, python-format
+msgid "\"%s\" is an invalid value!"
+msgstr "\"%s\" değeri geçersizdir!"
+
+#: ../PLCOpenEditor.py:323 ../PLCOpenEditor.py:365
+#, python-format
+msgid "\"%s\" is not a valid folder!"
+msgstr "\"%s\" klasörü geçerli değildir!"
+
+#: ../dialogs/SFCStepNameDialog.py:54 ../dialogs/PouTransitionDialog.py:105
+#: ../dialogs/BlockPreviewDialog.py:205 ../dialogs/PouNameDialog.py:52
+#: ../dialogs/PouActionDialog.py:104 ../dialogs/PouDialog.py:162
+#: ../etherlab/ConfigEditor.py:971 ../editors/ResourceEditor.py:479
+#: ../editors/ResourceEditor.py:516 ../editors/DataTypeEditor.py:601
+#: ../editors/CodeFileEditor.py:791 ../controls/VariablePanel.py:796
+#: ../IDEFrame.py:1644
+#, python-format
+msgid "\"%s\" is not a valid identifier!"
+msgstr "\"%s\" tanımı geçerli değil!"
+
+#: ../IDEFrame.py:2454
+#, python-format
+msgid "\"%s\" is used by one or more POUs. Do you wish to continue?"
+msgstr ""
+"\"%s\" bir veya daha fazla program tarafından kullanılmaktadır. Devam etmek "
+"istediğinize emin misiniz?"
+
+#: ../dialogs/BlockPreviewDialog.py:213 ../dialogs/PouDialog.py:166
+#: ../editors/Viewer.py:302 ../editors/Viewer.py:359 ../editors/Viewer.py:389
+#: ../editors/Viewer.py:411 ../editors/TextViewer.py:268
+#: ../editors/TextViewer.py:297 ../editors/TextViewer.py:351
+#: ../editors/TextViewer.py:374 ../controls/VariablePanel.py:363
+#: ../IDEFrame.py:1664
+#, python-format
+msgid "\"%s\" pou already exists!"
+msgstr "\"%s\" adında bir program zaten mevcut!"
+
+#: ../dialogs/SFCStepNameDialog.py:62
+#, python-format
+msgid "\"%s\" step already exists!"
+msgstr "\"%s\" adında bir adım zaten mevcut!"
+
+#: ../editors/DataTypeEditor.py:566
+#, python-format
+msgid "\"%s\" value already defined!"
+msgstr "\"%s\" değeri zaten tanımlanmış!"
+
+#: ../dialogs/ArrayTypeDialog.py:105 ../editors/DataTypeEditor.py:759
+#, python-format
+msgid "\"%s\" value isn't a valid array dimension!"
+msgstr "\"%s\" değeri geçerli bir dizi değil!"
+
+#: ../dialogs/ArrayTypeDialog.py:109 ../editors/DataTypeEditor.py:766
+#, python-format
+msgid ""
+"\"%s\" value isn't a valid array dimension!\n"
+"Right value must be greater than left value."
+msgstr ""
+"\"%s\" değeri geçerli bir dizi değil! Sağda ki değer soldakinden büyük "
+"olmalıdır."
+
+#: ../PLCGenerator.py:1182
+#, python-brace-format
+msgid "\"{a1}\" function cancelled in \"{a2}\" POU: No input connected"
+msgstr "\"{a1}\" işlevi \"{a2}\" konumunda iptal edildi POU: Bağlantılı giriş yok"
+
+#: ../editors/Viewer.py:292
+#, python-brace-format
+msgid "\"{a1}\" is already used by \"{a2}\"!"
+msgstr "\"{a1}\" zaten \"{a2}\" tarafından kullanılıyor!"
+
+#: ../plcopen/plcopen.py:557
+#, python-brace-format
+msgid "\"{a1}\" resource already exists in \"{a2}\" configuration !!!"
+msgstr "\"{a1}\" kaynağı \"{a2}\" yapılandırmasında zaten var !!!"
+
+#: ../plcopen/plcopen.py:577
+#, python-brace-format
+msgid "\"{a1}\" resource doesn't exist in \"{a2}\" configuration !!!"
+msgstr "\"{a1}\" kaynağı \"{a2}\" yapılandırmasında mevcut değil!"
+
+#: ../controls/DebugVariablePanel/DebugVariablePanel.py:559
+#, python-format
+msgid "%03gms"
+msgstr "%03g ms"
+
+#: ../controls/DebugVariablePanel/DebugVariablePanel.py:550
+#, python-format
+msgid "%dd"
+msgstr "%d gün"
+
+#: ../controls/DebugVariablePanel/DebugVariablePanel.py:189
+#: ../controls/DebugVariablePanel/DebugVariablePanel.py:551
+#, python-format
+msgid "%dh"
+msgstr "%d sa"
+
+#: ../controls/DebugVariablePanel/DebugVariablePanel.py:188
+#: ../controls/DebugVariablePanel/DebugVariablePanel.py:552
+#, python-format
+msgid "%dm"
+msgstr "%d ay"
+
+#: ../controls/DebugVariablePanel/DebugVariablePanel.py:186
+#, python-format
+msgid "%dms"
+msgstr "%d ms"
+
+#: ../controls/DebugVariablePanel/DebugVariablePanel.py:187
+#: ../controls/DebugVariablePanel/DebugVariablePanel.py:553
+#, python-format
+msgid "%ds"
+msgstr "%d sn"
+
+#: ../PLCControler.py:1114
+#, python-format
+msgid "%s Data Types"
+msgstr "%s Veri tipi"
+
+#: ../PLCControler.py:1097
+#, python-format
+msgid "%s POUs"
+msgstr "%s Programı"
+
+#: ../canfestival/SlaveEditor.py:73 ../canfestival/NetworkEditor.py:97
+#, python-format
+msgid "%s Profile"
+msgstr "%s Profil"
+
+#: ../plcopen/plcopen.py:1901 ../plcopen/plcopen.py:1908
+#: ../plcopen/plcopen.py:1921 ../plcopen/plcopen.py:1929
+#: ../plcopen/plcopen.py:1939 ../plcopen/plcopen.py:1950
+#, python-format
+msgid "%s body don't have instances!"
+msgstr "%s vücudun örnekleri yok!"
+
+#: ../plcopen/plcopen.py:1957 ../plcopen/plcopen.py:1964
+#: ../plcopen/plcopen.py:1971
+#, python-format
+msgid "%s body don't have text!"
+msgstr "%s gövde metni yok!"
+
+#: ../etherlab/ConfigEditor.py:856
+#, python-format
+msgid "%s's nodes"
+msgstr "%s'ın düğümleri"
+
+#: ../IDEFrame.py:391
+msgid "&Add Element"
+msgstr "& Öğe ekle"
+
+#: ../dialogs/AboutDialog.py:71 ../dialogs/AboutDialog.py:117
+#: ../dialogs/AboutDialog.py:152
+msgid "&Close"
+msgstr "&Kapat"
+
+#: ../IDEFrame.py:364
+msgid "&Configuration"
+msgstr "& Ayarlar"
+
+#: ../IDEFrame.py:353
+msgid "&Data Type"
+msgstr "&Veri tipi"
+
+#: ../IDEFrame.py:395
+msgid "&Delete"
+msgstr "& Sil"
+
+#: ../IDEFrame.py:345
+msgid "&Display"
+msgstr "&Görüntüle"
+
+#: ../IDEFrame.py:344
+msgid "&Edit"
+msgstr "&Düzenle"
+
+#: ../IDEFrame.py:343
+msgid "&File"
+msgstr "&Dosya"
+
+#: ../IDEFrame.py:355
+msgid "&Function"
+msgstr "& Function"
+
+#: ../IDEFrame.py:346
+msgid "&Help"
+msgstr "&Yardım et"
+
+#: ../dialogs/AboutDialog.py:70
+msgid "&License"
+msgstr "&Lisans"
+
+#: ../IDEFrame.py:359
+msgid "&Program"
+msgstr "ve Program"
+
+#: ../PLCOpenEditor.py:98
+msgid "&Properties"
+msgstr "&Özellikleri"
+
+#: ../BeremizIDE.py:244
+msgid "&Recent Projects"
+msgstr "&Son Projeler"
+
+#: ../IDEFrame.py:361
+msgid "&Resource"
+msgstr "&Kaynak"
+
+#: ../etherlab/ConfigEditor.py:450
+msgid "'Read from' and 'Write to' variables types are not compatible"
+msgstr "'Okuma' ve 'Yazma' değişkenleri türleri uyumlu değildir"
+
+#: ../controls/SearchResultPanel.py:247
+#, python-brace-format
+msgid "'{a1}' - {a2} match in project"
+msgstr "'{a1}' - {a2} projede eşleşme"
+
+#: ../controls/SearchResultPanel.py:249
+#, python-brace-format
+msgid "'{a1}' - {a2} matches in project"
+msgstr "'{a1}' - {a2} projede eşleşti"
+
+#: ../connectors/PYRO/__init__.py:99
+#, python-brace-format
+msgid "'{a1}' is located at {a2}\n"
+msgstr "'{a1}', {a2} konumunda bulunuyor\n"
+
+#: ../controls/SearchResultPanel.py:298
+#, python-format
+msgid "(%d matches)"
+msgstr "(%d maçlar)"
+
+#: ../dialogs/PouTransitionDialog.py:102 ../dialogs/PouActionDialog.py:101
+#: ../dialogs/PouDialog.py:159
+#, python-format
+msgid ", %s"
+msgstr ", %s"
+
+#: ../controls/UriLocationEditor.py:49
+msgid "- Select URI type -"
+msgstr "- URI tipini seçin -"
+
+#: ../controls/LogViewer.py:287
+msgid "1d"
+msgstr "1d"
+
+#: ../controls/LogViewer.py:288
+msgid "1h"
+msgstr "1h"
+
+#: ../controls/LogViewer.py:289
+msgid "1m"
+msgstr "1m"
+
+#: ../controls/LogViewer.py:290
+msgid "1s"
+msgstr "1s"
+
+#: ../dialogs/PouDialog.py:168 ../IDEFrame.py:1667 ../IDEFrame.py:1713
+#: ../IDEFrame.py:1732
+#, python-format
+msgid ""
+"A POU has an element named \"%s\". This could cause a conflict. Do you wish "
+"to continue?"
+msgstr ""
+"POU'nun \"%s\" adlı bir öğesi vardır. Bu bir çatışmaya neden olabilir. Devam"
+" etmek ister misiniz?"
+
+#: ../dialogs/SFCStepNameDialog.py:58 ../dialogs/PouTransitionDialog.py:109
+#: ../dialogs/PouNameDialog.py:56 ../dialogs/PouActionDialog.py:108
+#: ../controls/VariablePanel.py:800 ../IDEFrame.py:1681 ../IDEFrame.py:1694
+#, python-format
+msgid "A POU named \"%s\" already exists!"
+msgstr "\"%s\" adlı bir POU zaten var!"
+
+#: ../ConfigTreeNode.py:424
+#, python-brace-format
+msgid "A child named \"{a1}\" already exists -> \"{a2}\"\n"
+msgstr "\"{A1}\" adlı bir çocuk zaten var -> \"{a2}\"\n"
+
+#: ../dialogs/BrowseLocationsDialog.py:228
+msgid "A location must be selected!"
+msgstr "Bir yer seçilmelidir!"
+
+#: ../editors/ResourceEditor.py:483
+msgid "A task with the same name already exists!"
+msgstr "Aynı ada sahip bir görev zaten var!"
+
+#: ../dialogs/SFCStepNameDialog.py:60 ../controls/VariablePanel.py:802
+#: ../IDEFrame.py:1683 ../IDEFrame.py:1696
+#, python-format
+msgid "A variable with \"%s\" as name already exists in this pou!"
+msgstr "Bu pou'da ad olarak \"%s\" olan bir değişken zaten var!"
+
+#: ../editors/CodeFileEditor.py:797
+#, python-format
+msgid "A variable with \"%s\" as name already exists!"
+msgstr "İsim olarak \"%s\" olan bir değişken zaten var!"
+
+#: ../BeremizIDE.py:311 ../dialogs/AboutDialog.py:46 ../PLCOpenEditor.py:142
+msgid "About"
+msgstr "hakkında"
+
+#: ../plcopen/iec_std.csv:22
+msgid "Absolute number"
+msgstr "Mutlak sayı"
+
+#: ../etherlab/ConfigEditor.py:48
+msgid "Access"
+msgstr "Erişim"
+
+#: ../dialogs/SFCStepDialog.py:75 ../dialogs/ActionBlockDialog.py:47
+msgid "Action"
+msgstr "Aksiyon"
+
+#: ../editors/Viewer.py:656 ../editors/Viewer.py:2429
+msgid "Action Block"
+msgstr "Eylem Bloğu"
+
+#: ../dialogs/PouActionDialog.py:89
+msgid "Action Name"
+msgstr "Eylem adı"
+
+#: ../dialogs/PouActionDialog.py:56
+msgid "Action Name:"
+msgstr "Eylem adı:"
+
+#: ../plcopen/plcopen.py:1567
+#, python-format
+msgid "Action with name %s doesn't exist!"
+msgstr "%s adıyla hareket yok!"
+
+#: ../plcopen/types_enums.py:76
+msgid "Actions"
+msgstr "Eylemler"
+
+#: ../dialogs/ActionBlockDialog.py:139
+msgid "Actions:"
+msgstr "Eylemler:"
+
+#: ../editors/Viewer.py:484
+msgid "Active"
+msgstr "Aktif"
+
+#: ../canfestival/SlaveEditor.py:84 ../canfestival/NetworkEditor.py:108
+#: ../BeremizIDE.py:998 ../editors/Viewer.py:689
+msgid "Add"
+msgstr "Eklemek"
+
+#: ../IDEFrame.py:1941 ../IDEFrame.py:1976
+msgid "Add Action"
+msgstr "Eylem ekle"
+
+#: ../features.py:22
+msgid "Add C code accessing located variables synchronously"
+msgstr "Yerleşim değişkenlerine senkronize olarak erişen C kodu ekle"
+
+#: ../IDEFrame.py:1924
+msgid "Add Configuration"
+msgstr "Yapılandırma ekle"
+
+#: ../IDEFrame.py:1904
+msgid "Add DataType"
+msgstr "DataType ekle"
+
+#: ../editors/Viewer.py:612
+msgid "Add Divergence Branch"
+msgstr "Divergence Şubesi Ekle"
+
+#: ../etherlab/EthercatMaster.py:297
+msgid "Add Ethercat Slave"
+msgstr "Ethercat Slave ekle"
+
+#: ../etherlab/EthercatMaster.py:297
+msgid "Add Ethercat Slave to Master"
+msgstr "Mastercat Slave'ı master'a ekle"
+
+#: ../dialogs/DiscoveryDialog.py:121
+msgid "Add IP"
+msgstr "IP ekle"
+
+#: ../IDEFrame.py:1912
+msgid "Add POU"
+msgstr "POU ekle"
+
+#: ../features.py:23
+msgid "Add Python code executed asynchronously"
+msgstr "Eşzamansız yürütülen Python kodunu ekle"
+
+#: ../IDEFrame.py:1952 ../IDEFrame.py:2002
+msgid "Add Resource"
+msgstr "Kaynak ekle"
+
+#: ../IDEFrame.py:1930 ../IDEFrame.py:1973
+msgid "Add Transition"
+msgstr "Geçiş ekle"
+
+#: ../editors/Viewer.py:599
+msgid "Add Wire Segment"
+msgstr "Tel Segmenti ekle"
+
+#: ../editors/SFCViewer.py:447
+msgid "Add a new initial step"
+msgstr "Yeni bir başlangıç ​​adımı ekle"
+
+#: ../editors/Viewer.py:2790 ../editors/SFCViewer.py:784
+msgid "Add a new jump"
+msgstr "Yeni bir atlama ekle"
+
+#: ../editors/SFCViewer.py:469
+msgid "Add a new step"
+msgstr "Yeni bir adım ekle"
+
+#: ../features.py:24
+msgid "Add a simple WxGlade based GUI."
+msgstr "Basit bir WxGlade tabanlı GUI ekleyin."
+
+#: ../dialogs/ActionBlockDialog.py:143
+msgid "Add action"
+msgstr "Eylem ekle"
+
+#: ../editors/DataTypeEditor.py:364
+msgid "Add element"
+msgstr "Eleman ekle"
+
+#: ../etherlab/ConfigEditor.py:1388
+msgid "Add file from ESI files database"
+msgstr "ESI dosya veritabanından dosya ekle"
+
+#: ../etherlab/ConfigEditor.py:1360
+msgid "Add file to project"
+msgstr "Projeye dosya ekle"
+
+#: ../editors/ResourceEditor.py:281
+msgid "Add instance"
+msgstr "Örnek ekle"
+
+#: ../etherlab/ConfigEditor.py:652
+msgid "Add process variable"
+msgstr "Süreç değişkeni ekle"
+
+#: ../canfestival/NetworkEditor.py:110
+msgid "Add slave"
+msgstr "Köle ekle"
+
+#: ../etherlab/ConfigEditor.py:679
+msgid "Add startup service variable"
+msgstr "Başlangıç ​​hizmeti değişkeni ekle"
+
+#: ../editors/ResourceEditor.py:250
+msgid "Add task"
+msgstr "Görev ekle"
+
+#: ../bacnet/BacnetSlaveEditor.py:811 ../editors/CodeFileEditor.py:672
+#: ../controls/VariablePanel.py:483
+msgid "Add variable"
+msgstr "Değişken ekle"
+
+#: ../etherlab/etherlab.py:186
+msgid ""
+"Adding a PDO not defined in default configuration\n"
+"for mapping needed location variables\n"
+"(1 if possible)"
+msgstr ""
+"Varsayılan yapılandırmada tanımlanmamış bir PDO ekleme\n"
+"Gerekli konum değişkenlerini eşlemek için\n"
+"(Mümkünse 1)"
+
+#: ../plcopen/iec_std.csv:33
+msgid "Addition"
+msgstr "İlave"
+
+#: ../plcopen/definitions.py:51
+msgid "Additional function blocks"
+msgstr "Ek fonksiyon blokları"
+
+#: ../editors/Viewer.py:672
+msgid "Adjust Block Size"
+msgstr "Blok Boyutunu Ayarla"
+
+#: ../editors/Viewer.py:1722
+msgid "Alignment"
+msgstr "hizalanma"
+
+#: ../dialogs/BrowseLocationsDialog.py:42
+#: ../dialogs/BrowseLocationsDialog.py:50
+#: ../dialogs/BrowseLocationsDialog.py:151
+#: ../dialogs/BrowseLocationsDialog.py:154 ../etherlab/ConfigEditor.py:65
+#: ../etherlab/ConfigEditor.py:853 ../controls/LogViewer.py:307
+#: ../controls/VariablePanel.py:85
+msgid "All"
+msgstr "Herşey"
+
+#: ../editors/FileManagementPanel.py:51
+msgid "All files (*.*)|*.*|CSV files (*.csv)|*.csv"
+msgstr "Tüm dosyalar (*. *) | *. * | CSV dosyaları (* .csv) | * .csv"
+
+#: ../ProjectController.py:1752
+msgid "Already connected. Please disconnect\n"
+msgstr "Zaten bağlı. Lütfen kes\n"
+
+#: ../editors/DataTypeEditor.py:607
+#, python-format
+msgid "An element named \"%s\" already exists in this structure!"
+msgstr "Bu yapıda \"%s\" adlı bir öğe zaten var!"
+
+#: ../editors/ResourceEditor.py:520
+msgid "An instance with the same name already exists!"
+msgstr "Aynı ada sahip bir örnek zaten var!"
+
+#: ../etherlab/ConfigEditor.py:975
+#, python-format
+msgid "An variable named \"%s\" already exists!"
+msgstr "\"%s\" adlı bir değişken zaten var!"
+
+#: ../bacnet/BacnetSlaveEditor.py:935
+msgid "Analog Input Objects"
+msgstr "Analog Giriş Nesneleri"
+
+#: ../bacnet/BacnetSlaveEditor.py:934
+msgid "Analog Output Objects"
+msgstr "Analog Çıkış Nesneleri"
+
+#: ../bacnet/BacnetSlaveEditor.py:933
+msgid "Analog Value Objects"
+msgstr "Analog Değer Nesneleri"
+
+#: ../dialogs/ConnectionDialog.py:103
+msgid "Apply name modification to all continuations with the same name"
+msgstr "Tüm isimlere aynı adla ad değişikliği uygulayın."
+
+#: ../plcopen/iec_std.csv:31
+msgid "Arc cosine"
+msgstr "Ark kosinüsü"
+
+#: ../plcopen/iec_std.csv:30
+msgid "Arc sine"
+msgstr "Ark sinüs"
+
+#: ../plcopen/iec_std.csv:32
+msgid "Arc tangent"
+msgstr "Ark tanjantı"
+
+#: ../plcopen/iec_std.csv:33
+msgid "Arithmetic"
+msgstr "Aritmetik"
+
+#: ../editors/DataTypeEditor.py:60 ../editors/DataTypeEditor.py:649
+#: ../controls/VariablePanel.py:883
+msgid "Array"
+msgstr "Dizi"
+
+#: ../plcopen/iec_std.csv:39
+msgid "Assignment"
+msgstr "atama"
+
+#: ../dialogs/FBDVariableDialog.py:227
+msgid "At least a variable or an expression must be selected!"
+msgstr "En azından bir değişken veya bir ifade seçilmelidir!"
+
+#: ../controls/ProjectPropertiesPanel.py:113
+msgid "Author"
+msgstr "Yazar"
+
+#: ../controls/ProjectPropertiesPanel.py:110
+msgid "Author Name (optional):"
+msgstr "Yazar Adı (isteğe bağlı):"
+
+#: ../etherlab/EthercatCIA402Slave.py:125
+msgid "Axis Pos"
+msgstr "Eksen Pos"
+
+#: ../etherlab/EthercatCIA402Slave.py:118
+msgid "Axis Ref"
+msgstr "Eksen Ref"
+
+#: ../dialogs/FindInPouDialog.py:80
+msgid "Backward"
+msgstr "Geriye"
+
+#: ../features.py:19
+msgid "Bacnet support"
+msgstr "Bacnet desteği"
+
+#: ../canfestival/config_utils.py:365 ../canfestival/config_utils.py:672
+#, python-format
+msgid "Bad location size : %s"
+msgstr "Bozuk konum büyüklüğü: %s"
+
+#: ../dialogs/ArrayTypeDialog.py:57 ../editors/DataTypeEditor.py:183
+#: ../editors/DataTypeEditor.py:213 ../editors/DataTypeEditor.py:307
+msgid "Base Type:"
+msgstr "Baz türü:"
+
+#: ../editors/DataTypeEditor.py:639 ../controls/VariablePanel.py:841
+msgid "Base Types"
+msgstr "Baz Çeşitleri"
+
+#: ../BeremizIDE.py:479
+msgid "Beremiz"
+msgstr "Beremiz"
+
+#: ../runtime/NevowServer.py:201
+msgid "Beremiz Runtime Settings"
+msgstr "Beremiz Çalışma Zamanı Ayarları"
+
+#: ../bacnet/BacnetSlaveEditor.py:938
+msgid "Binary Input Objects"
+msgstr "İkili Giriş Nesneleri"
+
+#: ../bacnet/BacnetSlaveEditor.py:937
+msgid "Binary Output Objects"
+msgstr "İkili Çıkış Nesneleri"
+
+#: ../bacnet/BacnetSlaveEditor.py:936
+msgid "Binary Value Objects"
+msgstr "İkili Değer Nesneleri"
+
+#: ../plcopen/iec_std.csv:70
+msgid "Binary selection (1 of 2)"
+msgstr "İkili seçim (1/2)"
+
+#: ../plcopen/iec_std.csv:62
+msgid "Bit-shift"
+msgstr "Bit-shift"
+
+#: ../plcopen/iec_std.csv:66
+msgid "Bitwise"
+msgstr "Bitsel"
+
+#: ../plcopen/iec_std.csv:66
+msgid "Bitwise AND"
+msgstr "Bitsel VE"
+
+#: ../plcopen/iec_std.csv:67
+msgid "Bitwise OR"
+msgstr "Bitwise VEYA"
+
+#: ../plcopen/iec_std.csv:68
+msgid "Bitwise XOR"
+msgstr "Bitwise XOR"
+
+#: ../plcopen/iec_std.csv:69
+msgid "Bitwise inverting"
+msgstr "Bitsel olarak ters çevirme"
+
+#: ../editors/Viewer.py:624 ../editors/Viewer.py:2442
+msgid "Block"
+msgstr "Blok"
+
+#: ../dialogs/FBDBlockDialog.py:63
+msgid "Block Properties"
+msgstr "Blok Özellikleri"
+
+#: ../editors/TextViewer.py:260
+msgid "Block name"
+msgstr "Blok adı"
+
+#: ../editors/Viewer.py:589
+msgid "Bottom"
+msgstr "Alt"
+
+#: ../runtime/PlcStatus.py:11
+msgid "Broken"
+msgstr "Kırık"
+
+#: ../dialogs/BrowseValuesLibraryDialog.py:40
+#, python-format
+msgid "Browse %s values library"
+msgstr "%s değer kütüphanesine gözat"
+
+#: ../dialogs/BrowseLocationsDialog.py:69
+msgid "Browse Locations"
+msgstr "Konumlara Göz At"
+
+#: ../ProjectController.py:1898
+msgid "Build"
+msgstr "İnşa etmek"
+
+#: ../ProjectController.py:1397
+msgid "Build directory already clean\n"
+msgstr "Oluşturma dizini zaten temiz\n"
+
+#: ../ProjectController.py:1899
+msgid "Build project into build folder"
+msgstr "Proje oluştur klasörüne oluştur"
+
+#: ../ProjectController.py:1155
+msgid "C Build crashed !\n"
+msgstr "C Build çöktü!\n"
+
+#: ../ProjectController.py:1152
+msgid "C Build failed.\n"
+msgstr "C Oluşturu başarısız oldu.\n"
+
+#: ../c_ext/CFileEditor.py:66
+msgid "C code"
+msgstr "C kodu"
+
+#: ../ProjectController.py:1240
+msgid "C code generated successfully.\n"
+msgstr "C kodu başarıyla oluşturuldu.\n"
+
+#: ../targets/toolchain_makefile.py:126
+msgid "C compilation failed.\n"
+msgstr "C derleme başarısız oldu.\n"
+
+#: ../targets/toolchain_gcc.py:199
+#, python-format
+msgid "C compilation of %s failed.\n"
+msgstr "%s C derlemesi başarısız oldu.\n"
+
+#: ../features.py:22
+msgid "C extension"
+msgstr "C uzantısı"
+
+#: ../dialogs/AboutDialog.py:69
+msgid "C&redits"
+msgstr "Kredi"
+
+#: ../canfestival/NetworkEditor.py:58
+msgid "CANOpen network"
+msgstr "CAN aç iletişim ağı"
+
+#: ../canfestival/SlaveEditor.py:48
+msgid "CANOpen slave"
+msgstr "CANOpen köle"
+
+#: ../features.py:18
+msgid "CANopen support"
+msgstr "CANopen desteği"
+
+#: ../etherlab/ConfigEditor.py:858
+msgid "CIA402 nodes"
+msgstr "CIA402 düğümleri"
+
+#: ../plcopen/plcopen.py:1839 ../plcopen/plcopen.py:1853
+#: ../plcopen/plcopen.py:1878 ../plcopen/plcopen.py:1894
+msgid "Can only generate execution order on FBD networks!"
+msgstr "FBD ağlarında sadece yürütme emri verebilir!"
+
+#: ../controls/VariablePanel.py:290
+msgid "Can only give a location to local or global variables"
+msgstr "Yerel veya global değişkenlere yalnızca bir yer verebilir"
+
+#: ../PLCOpenEditor.py:318
+#, python-format
+msgid "Can't generate program to file %s!"
+msgstr "%s dosyasına program oluşturulamıyor!"
+
+#: ../controls/VariablePanel.py:288
+msgid "Can't give a location to a function block instance"
+msgstr "Bir işlev blok örneğine konum verilemiyor"
+
+#: ../PLCOpenEditor.py:363
+#, python-format
+msgid "Can't save project to file %s!"
+msgstr "Proje %s dosyasına kaydedilemiyor!"
+
+#: ../controls/VariablePanel.py:338
+msgid "Can't set an initial value to a function block instance"
+msgstr "Bir işlev bloğu örneğine başlangıç ​​değeri ayarlanamıyor"
+
+#: ../ConfigTreeNode.py:532
+#, python-brace-format
+msgid "Cannot create child {a1} of type {a2} "
+msgstr "{A2} türündeki {a1} alt öğesi oluşturulamadı"
+
+#: ../ConfigTreeNode.py:454
+#, python-format
+msgid "Cannot find lower free IEC channel than %d\n"
+msgstr "%d'den daha düşük ücretsiz IEC kanalı bulunamıyor\n"
+
+#: ../connectors/PYRO/__init__.py:140
+msgid "Cannot get PLC status - connection failed.\n"
+msgstr "PLC durumu alınamıyor - bağlantı kurulamadı.\n"
+
+#: ../ProjectController.py:1013
+msgid "Cannot open/parse VARIABLES.csv!\n"
+msgstr "VARIABLES.csv açılamıyor / ayrışamıyor!\n"
+
+#: ../canfestival/config_utils.py:400
+#, python-brace-format
+msgid ""
+"Cannot set bit offset for non bool '{a1}' variable "
+"(ID:{a2},Idx:{a3},sIdx:{a4}))"
+msgstr ""
+"Boole '{a1}' değişkeni için bit kayması ayarlanamaz (ID: {a2}, Idx: {a3}, "
+"sIdx: {a4}))"
+
+#: ../ProjectController.py:1842
+msgid "Cannot transfer while PLC is running. Stop it now?"
+msgstr "PLC çalışırken aktarılamıyor. Kes şunu?"
+
+#: ../dialogs/SearchInProjectDialog.py:63 ../dialogs/FindInPouDialog.py:89
+msgid "Case sensitive"
+msgstr "Harfe duyarlı"
+
+#: ../editors/Viewer.py:584
+msgid "Center"
+msgstr "merkez"
+
+#: ../Beremiz_service.py:289
+msgid "Change IP of interface to bind"
+msgstr "Bağlamak için arabirimin IP'sini değiştirin"
+
+#: ../Beremiz_service.py:288
+msgid "Change Name"
+msgstr "İsmini değiştir"
+
+#: ../IDEFrame.py:1994
+msgid "Change POU Type To"
+msgstr "POU Tipini Değiştir"
+
+#: ../Beremiz_service.py:290
+msgid "Change Port Number"
+msgstr "Bağlantı Noktası Numarasını Değiştir"
+
+#: ../Beremiz_service.py:291
+msgid "Change working directory"
+msgstr "Çalışma dizinini değiştir"
+
+#: ../plcopen/iec_std.csv:81
+msgid "Character string"
+msgstr "Karakter dizesi"
+
+#: ../svgui/svgui.py:136
+msgid "Choose a SVG file"
+msgstr "SVG dosyası seç"
+
+#: ../etherlab/EtherCATManagementEditor.py:911
+#: ../etherlab/EtherCATManagementEditor.py:1306
+msgid "Choose a binary file"
+msgstr "Bir ikili dosya seç"
+
+#: ../ProjectController.py:582
+msgid "Choose a directory to save project"
+msgstr "Proje kaydetmek için bir dizin seçin"
+
+#: ../canfestival/canfestival.py:171 ../bacnet/bacnet.py:434
+#: ../PLCOpenEditor.py:276 ../PLCOpenEditor.py:308 ../PLCOpenEditor.py:357
+msgid "Choose a file"
+msgstr "Bir dosya seçin"
+
+#: ../BeremizIDE.py:897
+msgid "Choose a project"
+msgstr "Bir proje seç"
+
+#: ../dialogs/BrowseValuesLibraryDialog.py:43
+#, python-format
+msgid "Choose a value for %s:"
+msgstr "%s için bir değer seçin:"
+
+#: ../Beremiz_service.py:346
+msgid "Choose a working directory "
+msgstr "Bir çalışma dizini seçin"
+
+#: ../etherlab/ConfigEditor.py:1234
+msgid "Choose an XML file"
+msgstr "Bir XML dosyası seçin"
+
+#: ../BeremizIDE.py:861
+msgid "Choose an empty directory for new project"
+msgstr "Yeni proje için boş bir dizin seçin"
+
+#: ../ProjectController.py:483
+msgid "Chosen folder doesn't contain a program. It's not a valid project!"
+msgstr "Seçilen klasör bir program içermiyor. Geçerli bir proje değil!"
+
+#: ../ProjectController.py:450
+msgid "Chosen folder isn't empty. You can't use it for a new project!"
+msgstr "Seçilen klasör boş değil. Yeni bir proje için kullanamazsın!"
+
+#: ../controls/VariablePanel.py:60
+msgid "Class"
+msgstr "Sınıf"
+
+#: ../controls/VariablePanel.py:474
+msgid "Class Filter:"
+msgstr "Sınıf filtre:"
+
+#: ../dialogs/FBDVariableDialog.py:75
+msgid "Class:"
+msgstr "Sınıf:"
+
+#: ../ProjectController.py:1904
+msgid "Clean"
+msgstr "Temiz"
+
+#: ../controls/LogViewer.py:327
+msgid "Clean log messages"
+msgstr "Günlük mesajlarını temizle"
+
+#: ../ProjectController.py:1905
+msgid "Clean project build folder"
+msgstr "Proje oluşturma klasörünü temizle"
+
+#: ../ProjectController.py:1394
+msgid "Cleaning the build directory\n"
+msgstr "Yapı dizinini temizleme\n"
+
+#: ../IDEFrame.py:439
+msgid "Clear Errors"
+msgstr "Hataları Temizle"
+
+#: ../editors/Viewer.py:683
+msgid "Clear Execution Order"
+msgstr "Uygulama Siparişini Temizle"
+
+#: ../dialogs/SearchInProjectDialog.py:107 ../dialogs/FindInPouDialog.py:112
+#: ../etherlab/ConfigEditor.py:1361
+msgid "Close"
+msgstr "Kapat"
+
+#: ../BeremizIDE.py:623 ../PLCOpenEditor.py:183
+msgid "Close Application"
+msgstr "Uygulamayı kapa"
+
+#: ../BeremizIDE.py:253 ../BeremizIDE.py:562 ../PLCOpenEditor.py:81
+#: ../IDEFrame.py:1053
+msgid "Close Project"
+msgstr "Projeyi Kapat"
+
+#: ../BeremizIDE.py:251 ../PLCOpenEditor.py:79
+msgid "Close Tab"
+msgstr "Sekmeyi Kapat"
+
+#: ../editors/Viewer.py:641 ../editors/Viewer.py:2450
+msgid "Coil"
+msgstr "bobin"
+
+#: ../editors/Viewer.py:662 ../editors/LDViewer.py:517
+msgid "Comment"
+msgstr "Yorum Yap"
+
+#: ../etherlab/ConfigEditor.py:66
+msgid "Communication Parameters"
+msgstr "İletişim parametreleri"
+
+#: ../BeremizIDE.py:303 ../BeremizIDE.py:307 ../PLCOpenEditor.py:134
+#: ../PLCOpenEditor.py:138
+msgid "Community support"
+msgstr "Topluluk desteği"
+
+#: ../dialogs/ProjectDialog.py:63
+msgid "Company Name"
+msgstr "Şirket Adı"
+
+#: ../controls/ProjectPropertiesPanel.py:108
+msgid "Company Name (required):"
+msgstr "Şirket İsmi (gerekli):"
+
+#: ../controls/ProjectPropertiesPanel.py:109
+msgid "Company URL (optional):"
+msgstr "Şirket URL'si (isteğe bağlı):"
+
+#: ../plcopen/iec_std.csv:75
+msgid "Comparison"
+msgstr "karşılaştırma"
+
+#: ../ProjectController.py:787
+msgid "Compiling IEC Program into C code...\n"
+msgstr "IEC Programının C koduna derlenmesi ...\n"
+
+#: ../plcopen/iec_std.csv:85
+msgid "Concatenation"
+msgstr "birbirine bağlama"
+
+#: ../editors/ConfTreeNodeEditor.py:241
+msgid "Config"
+msgstr "Yapılandırma"
+
+#: ../editors/ProjectNodeEditor.py:39
+msgid "Config variables"
+msgstr "Yapı değişkenleri"
+
+#: ../dialogs/SearchInProjectDialog.py:43
+msgid "Configuration"
+msgstr "Yapılandırma"
+
+#: ../plcopen/types_enums.py:77
+msgid "Configurations"
+msgstr "yapılandırmalar"
+
+#: ../editors/Viewer.py:351 ../editors/Viewer.py:381 ../editors/Viewer.py:403
+#: ../editors/TextViewer.py:289 ../editors/TextViewer.py:343
+#: ../editors/TextViewer.py:366 ../controls/VariablePanel.py:353
+msgid "Confirm or change variable name"
+msgstr "Değişken adı doğrulayın veya değiştirin"
+
+#: ../ProjectController.py:1925
+msgid "Connect"
+msgstr "bağlamak"
+
+#: ../ProjectController.py:1926
+msgid "Connect to the target PLC"
+msgstr "Hedef PLC'ye bağlanın"
+
+#: ../ProjectController.py:1469
+#, python-format
+msgid "Connected to URI: %s"
+msgstr "URI'ye bağlandı: %s"
+
+#: ../dialogs/SFCTransitionDialog.py:78 ../editors/Viewer.py:626
+#: ../editors/Viewer.py:2443
+msgid "Connection"
+msgstr "Bağ"
+
+#: ../dialogs/ConnectionDialog.py:55
+msgid "Connection Properties"
+msgstr "Bağlantı Özellikleri"
+
+#: ../ProjectController.py:1773
+msgid "Connection canceled!\n"
+msgstr "Bağlantı iptal edildi!\n"
+
+#: ../ProjectController.py:1797
+#, python-format
+msgid "Connection failed to %s!\n"
+msgstr "Bağlantı %s için başarısız oldu!\n"
+
+#: ../connectors/PYRO/__init__.py:124 ../connectors/WAMP/__init__.py:121
+msgid "Connection lost!\n"
+msgstr "Bağlantı koptu!\n"
+
+#: ../connectors/PYRO/__init__.py:111
+#, python-format
+msgid "Connection to '%s' failed.\n"
+msgstr "'%s' bağlantısı başarısız oldu.\n"
+
+#: ../dialogs/ConnectionDialog.py:67 ../editors/Viewer.py:1678
+msgid "Connector"
+msgstr "Bağlayıcı"
+
+#: ../dialogs/SFCStepDialog.py:68
+msgid "Connectors:"
+msgstr "Konektörler:"
+
+#: ../BeremizIDE.py:374
+msgid "Console"
+msgstr "konsol"
+
+#: ../controls/VariablePanel.py:75
+msgid "Constant"
+msgstr "Sabit"
+
+#: ../editors/Viewer.py:637 ../editors/Viewer.py:2446
+msgid "Contact"
+msgstr "Temas"
+
+#: ../controls/ProjectPropertiesPanel.py:219
+msgid "Content Description (optional):"
+msgstr "İçerik Açıklaması (isteğe bağlı):"
+
+#: ../dialogs/ConnectionDialog.py:68 ../editors/Viewer.py:1679
+msgid "Continuation"
+msgstr "devam"
+
+#: ../etherlab/EtherCATManagementEditor.py:37
+msgid "Control Byte"
+msgstr "Kontrol Bayt"
+
+#: ../plcopen/iec_std.csv:18
+msgid "Conversion from BCD"
+msgstr "BCD'den Dönüşüm"
+
+#: ../plcopen/iec_std.csv:19
+msgid "Conversion to BCD"
+msgstr "BCD'ye Dönüştürme"
+
+#: ../plcopen/iec_std.csv:21
+msgid "Conversion to date"
+msgstr "Tarihe dönüşüm"
+
+#: ../plcopen/iec_std.csv:20
+msgid "Conversion to time-of-day"
+msgstr "Günün zamana dönüşümü"
+
+#: ../editors/Viewer.py:698 ../controls/LogViewer.py:713 ../IDEFrame.py:375
+#: ../IDEFrame.py:428
+msgid "Copy"
+msgstr "kopya"
+
+#: ../IDEFrame.py:1981
+msgid "Copy POU"
+msgstr "POU'yu kopyala"
+
+#: ../editors/FileManagementPanel.py:67
+msgid "Copy file from left folder to right"
+msgstr "Dosyayı soldaki klasörden sağa kopyala"
+
+#: ../editors/FileManagementPanel.py:66
+msgid "Copy file from right folder to left"
+msgstr "Dosyayı sağdaki klasörden sola kopyala"
+
+#: ../plcopen/iec_std.csv:28
+msgid "Cosine"
+msgstr "Kosinüs"
+
+#: ../ConfigTreeNode.py:660
+#, python-brace-format
+msgid ""
+"Could not add child \"{a1}\", type {a2} :\n"
+"{a3}\n"
+msgstr ""
+"\"{A1}\" alt öğesi eklenemedi, {a2} yazın:\n"
+"{A3}\n"
+
+#: ../py_ext/PythonFileCTNMixin.py:81
+#, python-format
+msgid "Couldn't import old %s file."
+msgstr "Eski %s dosyası alınamadı."
+
+#: ../etherlab/EthercatMaster.py:258
+#, python-format
+msgid "Couldn't load %s network configuration file."
+msgstr "%s ağ yapılandırma dosyası yüklenemedi."
+
+#: ../etherlab/EthercatMaster.py:279
+#, python-format
+msgid "Couldn't load %s network process variables file."
+msgstr "%s ağ işlemi değişkenleri dosyası yüklenemedi."
+
+#: ../ConfigTreeNode.py:630
+#, python-brace-format
+msgid ""
+"Couldn't load confnode base parameters {a1} :\n"
+" {a2}"
+msgstr ""
+"Temel temel parametreleri {a1} yüklenemedi:\n"
+" {A2}"
+
+#: ../ConfigTreeNode.py:647 ../CodeFileTreeNode.py:127
+#, python-brace-format
+msgid ""
+"Couldn't load confnode parameters {a1} :\n"
+" {a2}"
+msgstr ""
+"Kapsama parametreleri kopyalanamadı {a1}:\n"
+" {A2}"
+
+#: ../etherlab/etherlab.py:264
+#, python-brace-format
+msgid ""
+"Couldn't load {a1} XML file:\n"
+"{a2}"
+msgstr ""
+"{A1} XML dosyası yüklenemedi:\n"
+"{A2}"
+
+#: ../PLCControler.py:552
+msgid "Couldn't paste non-POU object."
+msgstr "POU olmayan nesne yapıştırılamadı."
+
+#: ../ProjectController.py:1717
+msgid "Couldn't start PLC !\n"
+msgstr "PLC başlatılamadı!\n"
+
+#: ../ProjectController.py:1725
+msgid "Couldn't stop PLC !\n"
+msgstr "PLC durduramadı!\n"
+
+#: ../svgui/svgui.py:57
+msgid "Create HMI"
+msgstr "HMI oluştur"
+
+#: ../dialogs/PouDialog.py:48
+msgid "Create a new POU"
+msgstr "Yeni bir POU oluştur"
+
+#: ../dialogs/PouActionDialog.py:42
+msgid "Create a new action"
+msgstr "Yeni bir eylem oluştur"
+
+#: ../IDEFrame.py:313
+msgid "Create a new action block"
+msgstr "Yeni işlem bloğu oluştur"
+
+#: ../IDEFrame.py:262 ../IDEFrame.py:292 ../IDEFrame.py:325
+msgid "Create a new block"
+msgstr "Yeni bir blok oluştur"
+
+#: ../IDEFrame.py:286
+msgid "Create a new branch"
+msgstr "Yeni bir şube oluştur"
+
+#: ../IDEFrame.py:280
+msgid "Create a new coil"
+msgstr "Yeni bir bobin oluştur"
+
+#: ../IDEFrame.py:256 ../IDEFrame.py:271 ../IDEFrame.py:301
+msgid "Create a new comment"
+msgstr "Yeni bir yorum oluştur"
+
+#: ../IDEFrame.py:265 ../IDEFrame.py:295 ../IDEFrame.py:328
+msgid "Create a new connection"
+msgstr "Yeni bağlantı oluştur"
+
+#: ../IDEFrame.py:283 ../IDEFrame.py:334
+msgid "Create a new contact"
+msgstr "Yeni bir kişi oluştur"
+
+#: ../IDEFrame.py:316
+msgid "Create a new divergence"
+msgstr "Yeni bir sapma oluştur"
+
+#: ../dialogs/SFCDivergenceDialog.py:54
+msgid "Create a new divergence or convergence"
+msgstr "Yeni bir sapma veya yakınlaşma yaratın"
+
+#: ../IDEFrame.py:304
+msgid "Create a new initial step"
+msgstr "Yeni bir başlangıç ​​adımı oluştur"
+
+#: ../IDEFrame.py:319
+msgid "Create a new jump"
+msgstr "Yeni bir sıçrama oluştur"
+
+#: ../IDEFrame.py:274 ../IDEFrame.py:331
+msgid "Create a new power rail"
+msgstr "Yeni bir güç kaynağı oluştur"
+
+#: ../IDEFrame.py:277
+msgid "Create a new rung"
+msgstr "Yeni bir basamak oluştur"
+
+#: ../IDEFrame.py:307
+msgid "Create a new step"
+msgstr "Yeni bir adım oluştur"
+
+#: ../dialogs/PouTransitionDialog.py:45 ../IDEFrame.py:310
+msgid "Create a new transition"
+msgstr "Yeni bir geçiş oluştur"
+
+#: ../IDEFrame.py:259 ../IDEFrame.py:289 ../IDEFrame.py:322
+msgid "Create a new variable"
+msgstr "Yeni bir değişken oluştur"
+
+#: ../etherlab/etherlab.py:183
+msgid "Creating new PDO"
+msgstr "Yeni PDO oluşturma"
+
+#: ../dialogs/AboutDialog.py:109
+msgid "Credits"
+msgstr "Kredi"
+
+#: ../runtime/WampClient.py:400
+msgid "Current status"
+msgstr "Şu anki durum"
+
+#: ../Beremiz_service.py:437
+msgid "Current working directory :"
+msgstr "Geçerli çalışma dizini:"
+
+#: ../runtime/WampClient.py:161
+msgid "Custom protocol options failed :"
+msgstr "Özel protokol seçenekleri başarısız oldu:"
+
+#: ../editors/Viewer.py:697 ../IDEFrame.py:373 ../IDEFrame.py:427
+msgid "Cut"
+msgstr "Kesmek"
+
+#: ../editors/ResourceEditor.py:81
+msgid "Cyclic"
+msgstr "halkalı"
+
+#: ../plcopen/iec_std.csv:42 ../plcopen/iec_std.csv:44
+#: ../plcopen/iec_std.csv:46 ../plcopen/iec_std.csv:50
+#: ../plcopen/iec_std.csv:52 ../plcopen/iec_std.csv:54
+#: ../plcopen/iec_std.csv:56 ../plcopen/iec_std.csv:58
+#: ../plcopen/iec_std.csv:60
+msgid "DEPRECATED"
+msgstr "DEPRECATED"
+
+#: ../canfestival/SlaveEditor.py:80 ../canfestival/NetworkEditor.py:104
+msgid "DS-301 Profile"
+msgstr "DS-301 Profili"
+
+#: ../canfestival/SlaveEditor.py:81 ../canfestival/NetworkEditor.py:105
+msgid "DS-302 Profile"
+msgstr "DS-302 Profili"
+
+#: ../dialogs/SearchInProjectDialog.py:39
+msgid "Data Type"
+msgstr "Veri tipi"
+
+#: ../plcopen/types_enums.py:76
+msgid "Data Types"
+msgstr "Veri tipleri"
+
+#: ../plcopen/iec_std.csv:16
+msgid "Data type conversion"
+msgstr "Veri tipi dönüşüm"
+
+#: ../plcopen/iec_std.csv:44 ../plcopen/iec_std.csv:45
+msgid "Date addition"
+msgstr "Eklenme tarihi"
+
+#: ../plcopen/iec_std.csv:56 ../plcopen/iec_std.csv:57
+#: ../plcopen/iec_std.csv:58 ../plcopen/iec_std.csv:59
+msgid "Date and time subtraction"
+msgstr "Tarih ve saat çıkarma"
+
+#: ../plcopen/iec_std.csv:50 ../plcopen/iec_std.csv:51
+msgid "Date subtraction"
+msgstr "Tarih çıkarma"
+
+#: ../dialogs/DurationEditorDialog.py:57
+msgid "Days:"
+msgstr "Günler:"
+
+#: ../ProjectController.py:1809
+msgid "Debug does not match PLC - stop/transfert/start to re-enable\n"
+msgstr ""
+"Hata ayıklama, PLC ile eşleşmiyor - yeniden etkinleştirmek için aktarma / "
+"aktarma / başlat\n"
+
+#: ../controls/PouInstanceVariablesPanel.py:144
+msgid "Debug instance"
+msgstr "Hata ayıklama örneği"
+
+#: ../editors/Viewer.py:493
+#, python-format
+msgid "Debug: %s"
+msgstr "Hata ayıklama: %s"
+
+#: ../ProjectController.py:1548
+#, python-format
+msgid "Debug: Unknown variable '%s'\n"
+msgstr "Hata ayıklama: Bilinmeyen '%s' değişkeni\n"
+
+#: ../ProjectController.py:1545
+#, python-format
+msgid "Debug: Unsupported type to debug '%s'\n"
+msgstr "Hata ayıklama: '%s' hata ayıklamak için desteklenmeyen tür\n"
+
+#: ../IDEFrame.py:666
+msgid "Debugger"
+msgstr "Debugger"
+
+#: ../ProjectController.py:1805
+msgid "Debugger ready\n"
+msgstr "Hata ayıklayıcı hazır\n"
+
+#: ../etherlab/EtherCATManagementEditor.py:37
+msgid "Default Size"
+msgstr "Varsayılan boyutu"
+
+#: ../etherlab/EthercatCFileGenerator.py:174
+#, python-format
+msgid "Definition conflict for location \"%s\""
+msgstr "\"%s\" konumu için tanım çakışması"
+
+#: ../BeremizIDE.py:1001 ../editors/Viewer.py:673 ../IDEFrame.py:2010
+msgid "Delete"
+msgstr "silmek"
+
+#: ../editors/Viewer.py:613
+msgid "Delete Divergence Branch"
+msgstr "Divergence Şubesini Sil"
+
+#: ../etherlab/ConfigEditor.py:1261 ../editors/FileManagementPanel.py:156
+msgid "Delete File"
+msgstr "Dosyayı sil"
+
+#: ../editors/Viewer.py:600
+msgid "Delete Wire Segment"
+msgstr "Tel Segmentini Sil"
+
+#: ../controls/CustomEditableListBox.py:44
+msgid "Delete item"
+msgstr "Öğeyi silmek"
+
+#: ../plcopen/iec_std.csv:88
+msgid "Deletion (within)"
+msgstr "Silme (içinde)"
+
+#: ../editors/DataTypeEditor.py:161
+msgid "Derivation Type:"
+msgstr "Türetme Türü"
+
+#: ../etherlab/ConfigEditor.py:346 ../etherlab/ConfigEditor.py:465
+#: ../editors/CodeFileEditor.py:754
+msgid "Description"
+msgstr "Açıklama"
+
+#: ../controls/VariablePanel.py:465
+msgid "Description:"
+msgstr "Açıklama:"
+
+#: ../dialogs/ArrayTypeDialog.py:63 ../editors/DataTypeEditor.py:332
+msgid "Dimensions:"
+msgstr "Boyutlar:"
+
+#: ../dialogs/FindInPouDialog.py:69
+msgid "Direction"
+msgstr "yön"
+
+#: ../dialogs/BrowseLocationsDialog.py:101
+msgid "Direction:"
+msgstr "Yön:"
+
+#: ../editors/DataTypeEditor.py:60
+msgid "Directly"
+msgstr "Direkt olarak"
+
+#: ../ProjectController.py:1938
+msgid "Disconnect"
+msgstr "kesmek"
+
+#: ../ProjectController.py:1939
+msgid "Disconnect from PLC"
+msgstr "PLC'den ayırın"
+
+#: ../runtime/PlcStatus.py:14
+msgid "Disconnected"
+msgstr "Bağlantı kesildi"
+
+#: ../editors/Viewer.py:657 ../editors/Viewer.py:2438
+msgid "Divergence"
+msgstr "uyuşmazlık"
+
+#: ../plcopen/iec_std.csv:36
+msgid "Division"
+msgstr "Bölünme"
+
+#: ../etherlab/ConfigEditor.py:1260 ../editors/FileManagementPanel.py:155
+#, python-format
+msgid "Do you really want to delete the file '%s'?"
+msgstr "'%s' dosyasını gerçekten silmek istiyor musunuz?"
+
+#: ../controls/VariablePanel.py:65
+msgid "Documentation"
+msgstr "belgeleme"
+
+#: ../PLCOpenEditor.py:312
+msgid "Done"
+msgstr "tamam"
+
+#: ../runtime/WampClient.py:384
+msgid "Download"
+msgstr "İndir"
+
+#: ../dialogs/ActionBlockDialog.py:42
+msgid "Duration"
+msgstr "süre"
+
+#: ../bacnet/bacnet.py:437
+msgid "EDE files (*_EDE.csv)|*_EDE.csv|All files|*.*"
+msgstr "EDE dosyaları (* _EDE.csv) | * _EDE.csv | Tüm dosyalar | *. *"
+
+#: ../canfestival/canfestival.py:174
+msgid "EDS files (*.eds)|*.eds|All files|*.*"
+msgstr "EDS dosyaları (* .eds) | * .eds | Tüm dosyalar | *. *"
+
+#: ../etherlab/ConfigEditor.py:1342
+msgid "ESI Files Database management"
+msgstr "ESI Dosyaları Veri Tabanı Yönetimi"
+
+#: ../etherlab/ConfigEditor.py:1109
+msgid "ESI Files:"
+msgstr "ESI Dosyaları:"
+
+#: ../editors/Viewer.py:671
+msgid "Edit Block"
+msgstr "Bloğu Düzenle"
+
+#: ../dialogs/LDElementDialog.py:58
+msgid "Edit Coil Values"
+msgstr "Bobin Değerlerini Düzenle"
+
+#: ../dialogs/LDElementDialog.py:56
+msgid "Edit Contact Values"
+msgstr "İletişim Değerlerini Düzenle"
+
+#: ../dialogs/DurationEditorDialog.py:54
+msgid "Edit Duration"
+msgstr "Süreyi Düzenle"
+
+#: ../dialogs/SFCStepDialog.py:53
+msgid "Edit Step"
+msgstr "Adımı Düzenle"
+
+#: ../wxglade_hmi/wxglade_hmi.py:45
+msgid "Edit a WxWidgets GUI with WXGlade"
+msgstr "WXWlade ile WxWidgets GUI düzenleme"
+
+#: ../dialogs/ActionBlockDialog.py:127
+msgid "Edit action block properties"
+msgstr "Eylem bloğu özelliklerini düzenle"
+
+#: ../dialogs/ArrayTypeDialog.py:47
+msgid "Edit array type properties"
+msgstr "Dizi türü özelliklerini düzenle"
+
+#: ../dialogs/CommentEditDialog.py:53
+msgid "Edit comment"
+msgstr "Yorumu düzenle"
+
+#: ../editors/FileManagementPanel.py:68
+msgid "Edit file"
+msgstr "Dosya düzenle"
+
+#: ../controls/CustomEditableListBox.py:42
+msgid "Edit item"
+msgstr "Ögeyi düzenle"
+
+#: ../editors/Viewer.py:3058
+msgid "Edit jump target"
+msgstr "Atlama hedefini düzenle"
+
+#: ../ProjectController.py:1956
+msgid "Edit raw IEC code added to code generated by PLCGenerator"
+msgstr ""
+"PLCGenerator tarafından oluşturulan kodlara eklenmiş ham IEC kodunu düzenle"
+
+#: ../editors/SFCViewer.py:815
+msgid "Edit step name"
+msgstr "Adım adını düzenle"
+
+#: ../dialogs/SFCTransitionDialog.py:53
+msgid "Edit transition"
+msgstr "Geçişi düzenle"
+
+#: ../IDEFrame.py:638
+msgid "Editor ToolBar"
+msgstr "Editör Araç Çubuğu"
+
+#: ../ProjectController.py:1355
+msgid "Editor selection"
+msgstr "Editör seçimi"
+
+#: ../editors/DataTypeEditor.py:360
+msgid "Elements :"
+msgstr "Elementler :"
+
+#: ../runtime/PlcStatus.py:15
+msgid "Empty"
+msgstr "Boş"
+
+#: ../dialogs/ArrayTypeDialog.py:100
+msgid "Empty dimension isn't allowed."
+msgstr "Boş boyut izin verilmiyor."
+
+#: ../etherlab/EtherCATManagementEditor.py:37
+msgid "Enable"
+msgstr "etkinleştirme"
+
+#: ../runtime/WampClient.py:410
+msgid "Enable WAMP connection"
+msgstr "WAMP bağlantısını etkinleştir"
+
+#: ../Beremiz_service.py:354
+msgid "Enter a name "
+msgstr "İsim girin"
+
+#: ../Beremiz_service.py:339
+msgid "Enter a port number "
+msgstr "Bir port numarası girin"
+
+#: ../etherlab/EtherCATManagementEditor.py:627
+msgid ""
+"Enter hex or dec value (if enter dec value, it automatically conversed hex "
+"value)"
+msgstr ""
+"Hex veya dec değerini girin (dec değerini girin, otomatik olarak hex "
+"değerini söyleyin)"
+
+#: ../etherlab/EtherCATManagementEditor.py:1964
+msgid "Enter hex(0xnnnn) or dec(n) value"
+msgstr "Onaltılı (0xnnnn) veya dec (n) değerini girin"
+
+#: ../Beremiz_service.py:330
+msgid "Enter the IP of the interface to bind"
+msgstr "Bağlamak için arabirimin IP'sini girin"
+
+#: ../etherlab/ConfigEditor.py:502
+msgid "Entry can't be write through SDO"
+msgstr "Giriş, SDO aracılığıyla yazamaz"
+
+#: ../etherlab/EthercatCFileGenerator.py:569
+#, python-brace-format
+msgid "Entry index 0x{a1:.4x}, subindex 0x{a2:.2x} not mapped for device {a3}"
+msgstr ""
+"Giriş dizini 0x {a1: .4x}, alt dizin 0x {a2: .2x} cihaz için eşlenmemiş {a3}"
+
+#: ../editors/DataTypeEditor.py:60
+msgid "Enumerated"
+msgstr "numaralandırılmış"
+
+#: ../plcopen/iec_std.csv:77
+msgid "Equal to"
+msgstr "Eşittir"
+
+#: ../dialogs/ForceVariableDialog.py:213
+#: ../dialogs/SearchInProjectDialog.py:172 ../dialogs/SFCStepNameDialog.py:64
+#: ../dialogs/DurationEditorDialog.py:125
+#: ../dialogs/DurationEditorDialog.py:172
+#: ../dialogs/PouTransitionDialog.py:113 ../dialogs/BlockPreviewDialog.py:237
+#: ../dialogs/ProjectDialog.py:78 ../dialogs/ArrayTypeDialog.py:114
+#: ../dialogs/PouNameDialog.py:58 ../dialogs/BrowseLocationsDialog.py:228
+#: ../dialogs/BrowseValuesLibraryDialog.py:87
+#: ../dialogs/PouActionDialog.py:112 ../dialogs/PouDialog.py:178
+#: ../PLCOpenEditor.py:319 ../PLCOpenEditor.py:324
+#: ../etherlab/ConfigEditor.py:458 ../etherlab/ConfigEditor.py:510
+#: ../etherlab/ConfigEditor.py:981 ../etherlab/ConfigEditor.py:1047
+#: ../etherlab/ConfigEditor.py:1246 ../etherlab/ConfigEditor.py:1314
+#: ../etherlab/EthercatMaster.py:463 ../editors/ResourceEditor.py:468
+#: ../editors/Viewer.py:467 ../editors/LDViewer.py:677
+#: ../editors/LDViewer.py:893 ../editors/LDViewer.py:897
+#: ../editors/DataTypeEditor.py:566 ../editors/DataTypeEditor.py:571
+#: ../editors/DataTypeEditor.py:590 ../editors/DataTypeEditor.py:759
+#: ../editors/DataTypeEditor.py:766 ../editors/TextViewer.py:390
+#: ../editors/CodeFileEditor.py:779 ../ProjectController.py:404
+#: ../ProjectController.py:548 ../ProjectController.py:557
+#: ../controls/FolderTree.py:222 ../controls/ProjectPropertiesPanel.py:308
+#: ../controls/DebugVariablePanel/DebugVariablePanel.py:163
+#: ../controls/DebugVariablePanel/DebugVariableTextViewer.py:138
+#: ../controls/DebugVariablePanel/DebugVariableGraphicViewer.py:227
+#: ../controls/VariablePanel.py:430 ../controls/VariablePanel.py:784
+#: ../util/ExceptionHandler.py:70 ../IDEFrame.py:1049 ../IDEFrame.py:1667
+#: ../IDEFrame.py:1708 ../IDEFrame.py:1713 ../IDEFrame.py:1727
+#: ../IDEFrame.py:1732 ../Beremiz_service.py:234
+msgid "Error"
+msgstr "Hata"
+
+#: ../ProjectController.py:848
+msgid ""
+"Error : At least one configuration and one resource must be declared in PLC "
+"!\n"
+msgstr "Hata: PLC'de en az bir yapılandırma ve bir kaynak belirtilmelidir!\n"
+
+#: ../ProjectController.py:838
+#, python-format
+msgid "Error : IEC to C compiler returned %d\n"
+msgstr "Hata: C compiler için IEC, %d döndürdü\n"
+
+#: ../ProjectController.py:762
+#, python-format
+msgid ""
+"Error in ST/IL/SFC code generator :\n"
+"%s\n"
+msgstr ""
+"ST / IL / SFC kod üretecinde hata:\n"
+"%s\n"
+
+#: ../ConfigTreeNode.py:219
+#, python-format
+msgid "Error while saving \"%s\"\n"
+msgstr "\"%s\" kaydederken hata oluştu\n"
+
+#: ../bacnet/bacnet.py:581
+#, python-brace-format
+msgid ""
+"Error: BACnet server '{a1}.x: {a2}' contains objects with duplicate object "
+"identifiers.\n"
+msgstr ""
+"Hata: BACnet sunucusu '{a1} .x: {a2}', yinelenen nesne tanımlayıcılarına "
+"sahip nesneler içeriyor.\n"
+
+#: ../bacnet/bacnet.py:573
+#, python-brace-format
+msgid ""
+"Error: BACnet server '{a1}.x:{a2}' contains objects with duplicate object "
+"names.\n"
+msgstr ""
+"Hata: BACnet sunucusu '{a1} .x: {a2}', yinelenen nesne adlarına sahip "
+"nesneler içeriyor.\n"
+
+#: ../canfestival/canfestival.py:179 ../bacnet/bacnet.py:444
+msgid "Error: Export slave failed\n"
+msgstr "Hata: İhracat kölesi başarısız oldu\n"
+
+#: ../modbus/modbus.py:601
+#, python-brace-format
+msgid ""
+"Error: Modbus/IP Servers %{a1}.x and %{a2}.x use the same port number "
+"{a3}.\n"
+msgstr ""
+"Hata: Modbus / IP Sunucuları% {a1} .x ve% {a2} .x, {a3} aynı port numarasını"
+" kullanıyor.\n"
+
+#: ../canfestival/canfestival.py:388
+msgid "Error: No Master generated\n"
+msgstr "Hata: Master üretilmedi\n"
+
+#: ../canfestival/canfestival.py:383
+msgid "Error: No PLC built\n"
+msgstr "Hata: PLC yapılmadı\n"
+
+#: ../etherlab/ConfigEditor.py:269
+msgid "EtherCAT Management"
+msgstr "EtherCAT Yönetimi"
+
+#: ../features.py:20
+msgid "EtherCAT master"
+msgstr "EtherCAT master"
+
+#: ../etherlab/EthercatMaster.py:302
+msgid "Ethercat Slave Type"
+msgstr "Ethercat Slave Türü"
+
+#: ../etherlab/ConfigEditor.py:267
+msgid "Ethercat node"
+msgstr "Ethercat düğümü"
+
+#: ../ProjectController.py:1791
+#, python-format
+msgid "Exception while connecting %s!\n"
+msgstr "%s bağlanırken istisna!\n"
+
+#: ../dialogs/FBDBlockDialog.py:123
+msgid "Execution Control:"
+msgstr "Yürütme Denetimi:"
+
+#: ../dialogs/FBDVariableDialog.py:85 ../dialogs/FBDBlockDialog.py:111
+msgid "Execution Order:"
+msgstr "Uygulama emri:"
+
+#: ../features.py:25
+msgid "Experimental web based HMI"
+msgstr "Deneysel web tabanlı HMI"
+
+#: ../plcopen/iec_std.csv:38
+msgid "Exponent"
+msgstr "üs"
+
+#: ../plcopen/iec_std.csv:26
+msgid "Exponentiation"
+msgstr "Üs"
+
+#: ../bacnet/bacnet.py:156
+msgid "Export BACnet slave to EDE file"
+msgstr "BACnet kölesini EDE dosyasına aktar"
+
+#: ../canfestival/canfestival.py:186
+msgid "Export CanOpen slave to EDS file"
+msgstr "CanOpen kölesini EDS dosyasına dışa aktar"
+
+#: ../controls/DebugVariablePanel/DebugVariablePanel.py:243
+msgid "Export graph values to clipboard"
+msgstr "Grafik değerlerini panoya aktar"
+
+#: ../canfestival/canfestival.py:185 ../bacnet/bacnet.py:155
+msgid "Export slave"
+msgstr "Köleyi dışa aktar"
+
+#: ../dialogs/FBDVariableDialog.py:95
+msgid "Expression:"
+msgstr "İfade:"
+
+#: ../controls/VariablePanel.py:87
+msgid "External"
+msgstr "dış"
+
+#: ../ProjectController.py:866
+msgid "Extracting Located Variables...\n"
+msgstr "Bulunan Değişkenler Ayıklanıyor ...\n"
+
+#: ../dialogs/PouTransitionDialog.py:40 ../dialogs/PouActionDialog.py:36
+#: ../dialogs/PouDialog.py:128 ../controls/ProjectPropertiesPanel.py:161
+msgid "FBD"
+msgstr "FBD"
+
+#: ../ProjectController.py:1855
+msgid "Failed : Must build before transfer.\n"
+msgstr "Başarısız: Aktarımdan önce oluşturulmalıdır.\n"
+
+#: ../dialogs/LDElementDialog.py:80 ../editors/Viewer.py:559
+msgid "Falling Edge"
+msgstr "Düşen kenar"
+
+#: ../ProjectController.py:1145
+msgid "Fatal : cannot get builder.\n"
+msgstr "Fatal: inşaatçı olamaz.\n"
+
+#: ../Beremiz.py:160
+#, python-format
+msgid "Fetching %s"
+msgstr "Alıştırma %s"
+
+#: ../dialogs/DurationEditorDialog.py:169
+#, python-format
+msgid "Field %s hasn't a valid value!"
+msgstr "Alan %s geçerli bir değeri yok!"
+
+#: ../dialogs/DurationEditorDialog.py:171
+#, python-format
+msgid "Fields %s haven't a valid value!"
+msgstr "Alanlar %s geçerli bir değeri yok!"
+
+#: ../controls/FolderTree.py:221
+#, python-format
+msgid "File '%s' already exists!"
+msgstr "'%s' dosyası zaten var!"
+
+#: ../runtime/WampClient.py:407
+msgid "File containing secret for that ID"
+msgstr "Bu kimliğe ait sır içeren dosya"
+
+#: ../dialogs/SearchInProjectDialog.py:102 ../dialogs/FindInPouDialog.py:40
+#: ../dialogs/FindInPouDialog.py:107 ../IDEFrame.py:380
+msgid "Find"
+msgstr "bulmak"
+
+#: ../IDEFrame.py:382
+msgid "Find Next"
+msgstr "Sonraki Bul"
+
+#: ../IDEFrame.py:384
+msgid "Find Previous"
+msgstr "Önceki bul"
+
+#: ../plcopen/iec_std.csv:90
+msgid "Find position"
+msgstr "Pozisyon bul"
+
+#: ../dialogs/FindInPouDialog.py:58
+msgid "Find:"
+msgstr "bul:"
+
+#: ../editors/Viewer.py:1635
+msgid "Force value"
+msgstr "Kuvvet değeri"
+
+#: ../dialogs/ForceVariableDialog.py:176
+msgid "Forcing Variable Value"
+msgstr "Değişken Değeri Zorlamak"
+
+#: ../dialogs/SFCTransitionDialog.py:184 ../dialogs/PouTransitionDialog.py:103
+#: ../dialogs/ProjectDialog.py:77 ../dialogs/PouActionDialog.py:102
+#: ../dialogs/PouDialog.py:160
+#, python-format
+msgid "Form isn't complete. %s must be filled!"
+msgstr "Form tamamlanmadı. %s doldurulmalıdır!"
+
+#: ../dialogs/SFCStepDialog.py:150 ../dialogs/FBDBlockDialog.py:239
+#: ../dialogs/ConnectionDialog.py:166
+msgid "Form isn't complete. Name must be filled!"
+msgstr "Form tamamlanmadı. İsim doldurulmalı!"
+
+#: ../dialogs/FBDBlockDialog.py:235
+msgid "Form isn't complete. Valid block type must be selected!"
+msgstr "Form tamamlanmadı. Geçerli blok tipi seçilmelidir!"
+
+#: ../dialogs/FindInPouDialog.py:75
+msgid "Forward"
+msgstr "ileri"
+
+#: ../IDEFrame.py:455
+msgid "Full screen"
+msgstr "Tam ekran"
+
+#: ../dialogs/SearchInProjectDialog.py:40 ../IDEFrame.py:1797
+msgid "Function"
+msgstr "fonksiyon"
+
+#: ../IDEFrame.py:357
+msgid "Function &Block"
+msgstr "İşlev ve Blok"
+
+#: ../dialogs/SearchInProjectDialog.py:41 ../IDEFrame.py:1796
+#: ../IDEFrame.py:1989
+msgid "Function Block"
+msgstr "Fonksiyon Bloğu"
+
+#: ../controls/VariablePanel.py:879
+msgid "Function Block Types"
+msgstr "Fonksiyon Blok Tipleri"
+
+#: ../plcopen/types_enums.py:75
+msgid "Function Blocks"
+msgstr "Fonksiyon Blokları"
+
+#: ../editors/Viewer.py:290
+msgid "Function Blocks can't be used in Functions!"
+msgstr "İşlev Blokları İşlevlerde kullanılamaz!"
+
+#: ../PLCControler.py:1907
+#, python-format
+msgid "FunctionBlock \"%s\" can't be pasted in a Function!!!"
+msgstr "FunctionBlock \"%s\" bir İşlevde yapıştırılamaz!"
+
+#: ../plcopen/types_enums.py:75
+msgid "Functions"
+msgstr "Fonksiyonlar"
+
+#: ../PLCOpenEditor.py:88
+msgid "Generate Program"
+msgstr "Program oluştur"
+
+#: ../ProjectController.py:750
+msgid "Generating SoftPLC IEC-61131 ST/IL/SFC code...\n"
+msgstr "SoftPLC IEC-61131 ST / IL / SFC kodu üretiliyor ...\n"
+
+#: ../controls/VariablePanel.py:88
+msgid "Global"
+msgstr "global"
+
+#: ../controls/DebugVariablePanel/DebugVariablePanel.py:242
+msgid "Go to current value"
+msgstr "Geçerli değere git"
+
+#: ../controls/ProjectPropertiesPanel.py:192
+msgid "Graphics"
+msgstr "Grafik"
+
+#: ../plcopen/iec_std.csv:75
+msgid "Greater than"
+msgstr "Daha büyük"
+
+#: ../plcopen/iec_std.csv:76
+msgid "Greater than or equal to"
+msgstr "Daha büyük veya eşit"
+
+#: ../controls/ProjectPropertiesPanel.py:152
+msgid "Grid Resolution:"
+msgstr "Izgara Çözünürlüğü:"
+
+#: ../runtime/NevowServer.py:313
+msgid "HTTP interface port :"
+msgstr "HTTP arayüz bağlantı noktası:"
+
+#: ../controls/ProjectPropertiesPanel.py:138
+msgid "Height:"
+msgstr "Yükseklik:"
+
+#: ../editors/FileManagementPanel.py:88
+msgid "Home Directory:"
+msgstr "Ana Dizin:"
+
+#: ../controls/ProjectPropertiesPanel.py:168
+msgid "Horizontal:"
+msgstr "Yatay:"
+
+#: ../dialogs/DurationEditorDialog.py:58
+msgid "Hours:"
+msgstr "Saatler:"
+
+#: ../runtime/WampClient.py:404
+msgid "ID"
+msgstr "İD"
+
+#: ../dialogs/PouTransitionDialog.py:40 ../dialogs/PouActionDialog.py:36
+#: ../dialogs/PouDialog.py:128
+msgid "IL"
+msgstr "IL"
+
+#: ../dialogs/DiscoveryDialog.py:91
+msgid "IP"
+msgstr "IP"
+
+#: ../Beremiz_service.py:331 ../Beremiz_service.py:333
+msgid "IP is not valid!"
+msgstr "IP geçerli değil!"
+
+#: ../etherlab/ConfigEditor.py:1387
+msgid "Import ESI file"
+msgstr "ESI dosyasını içe aktar"
+
+#: ../svgui/svgui.py:50 ../svgui/svgui.py:51
+msgid "Import SVG"
+msgstr "SVG'yi içe aktar"
+
+#: ../etherlab/ConfigEditor.py:1352
+msgid "Import file to ESI files database"
+msgstr "ESI dosya veritabanına dosya içe aktar"
+
+#: ../dialogs/FBDVariableDialog.py:64 ../editors/Viewer.py:1664
+#: ../controls/VariablePanel.py:86
+msgid "InOut"
+msgstr "InOut"
+
+#: ../PLCGenerator.py:1089
+#, python-brace-format
+msgid "InOut variable {a1} in block {a2} in POU {a3} must be connected."
+msgstr ""
+"POU {a3} içindeki {a2} bloğundaki InOut değişkeni {a1} bağlı olmalıdır."
+
+#: ../editors/Viewer.py:484
+msgid "Inactive"
+msgstr "etkisiz"
+
+#: ../controls/VariablePanel.py:299
+#, python-brace-format
+msgid "Incompatible data types between \"{a1}\" and \"{a2}\""
+msgstr "\"{A1}\" ile \"{a2}\" arasındaki uyumsuz veri türleri"
+
+#: ../controls/VariablePanel.py:305
+#, python-format
+msgid "Incompatible size of data between \"%s\" and \"BOOL\""
+msgstr "\"%s\" ve \"BOOL\" arasındaki veri uyuşmazlığı"
+
+#: ../controls/VariablePanel.py:309
+#, python-brace-format
+msgid "Incompatible size of data between \"{a1}\" and \"{a2}\""
+msgstr "\"{A1}\" ile \"{a2}\" arasındaki veriye uymayan boyut"
+
+#: ../etherlab/ConfigEditor.py:48 ../etherlab/ConfigEditor.py:465
+msgid "Index"
+msgstr "indeks"
+
+#: ../dialogs/ActionBlockDialog.py:42
+msgid "Indicator"
+msgstr "Gösterge"
+
+#: ../editors/CodeFileEditor.py:753
+msgid "Initial"
+msgstr "ilk"
+
+#: ../editors/Viewer.py:653
+msgid "Initial Step"
+msgstr "İlk adım"
+
+#: ../editors/DataTypeEditor.py:55 ../controls/VariablePanel.py:63
+msgid "Initial Value"
+msgstr "Başlangıç ​​değeri"
+
+#: ../editors/DataTypeEditor.py:193 ../editors/DataTypeEditor.py:224
+#: ../editors/DataTypeEditor.py:281 ../editors/DataTypeEditor.py:320
+msgid "Initial Value:"
+msgstr "Başlangıç ​​değeri:"
+
+#: ../etherlab/EthercatCIA402Slave.py:119
+msgid "Initiate Drag'n drop of Axis ref located variable"
+msgstr "Axis ref konum değişkeninin Drag'n düşüşünü başlat"
+
+#: ../etherlab/EthercatCIA402Slave.py:126
+msgid "Initiate Drag'n drop of Network position located variable"
+msgstr "Ağ konumu bulunan değişkenin Drag'n düşüşünü başlat"
+
+#: ../svgui/svgui.py:56
+msgid "Inkscape"
+msgstr "Inkscape"
+
+#: ../dialogs/SFCTransitionDialog.py:77 ../dialogs/ActionBlockDialog.py:47
+msgid "Inline"
+msgstr "Çizgide"
+
+#: ../dialogs/SFCStepDialog.py:73 ../dialogs/FBDVariableDialog.py:63
+#: ../dialogs/BrowseLocationsDialog.py:43 ../editors/Viewer.py:333
+#: ../editors/Viewer.py:1662 ../editors/TextViewer.py:307
+#: ../controls/LocationCellEditor.py:103 ../controls/VariablePanel.py:86
+#: ../controls/VariablePanel.py:316 ../controls/VariablePanel.py:379
+msgid "Input"
+msgstr "Giriş"
+
+#: ../dialogs/FBDBlockDialog.py:99
+msgid "Inputs:"
+msgstr "girişler:"
+
+#: ../plcopen/iec_std.csv:87
+msgid "Insertion (into)"
+msgstr "Ekleme (içine)"
+
+#: ../plcopen/plcopen.py:1948
+#, python-format
+msgid "Instance with id %d doesn't exist!"
+msgstr "%d kimliğine sahip örnek mevcut değil!"
+
+#: ../editors/ResourceEditor.py:277
+msgid "Instances:"
+msgstr "Örnekleri:"
+
+#: ../controls/VariablePanel.py:85
+msgid "Interface"
+msgstr "arayüzey"
+
+#: ../editors/ResourceEditor.py:81
+msgid "Interrupt"
+msgstr "Kesmek"
+
+#: ../editors/ResourceEditor.py:76
+msgid "Interval"
+msgstr "Aralık"
+
+#: ../controls/ProjectPropertiesPanel.py:306
+msgid ""
+"Invalid URL!\n"
+"Please enter correct URL address."
+msgstr ""
+"Geçersiz URL!\n"
+"Lütfen doğru URL adresini giriniz."
+
+#: ../PLCControler.py:1895
+msgid "Invalid plcopen element(s)!!!"
+msgstr "Geçersiz plcopen element (ler)!"
+
+#: ../canfestival/config_utils.py:407
+#, python-brace-format
+msgid "Invalid type \"{a1}\"-> {a2} != {a3}  for location \"{a4}\""
+msgstr "\"{A4}\" konumu için geçersiz \"{a1}\" -> {a2}! = {A3} türü"
+
+#: ../canfestival/config_utils.py:689
+#, python-brace-format
+msgid "Invalid type \"{a1}\"-> {a2} != {a3} for location \"{a4}\""
+msgstr "\"{A4}\" konumu için geçersiz \"{a1}\" -> {a2}! = {A3} türü"
+
+#: ../controls/DebugVariablePanel/DebugVariablePanel.py:129
+#: ../controls/DebugVariablePanel/DebugVariableTextViewer.py:93
+#: ../controls/DebugVariablePanel/DebugVariableGraphicViewer.py:162
+#, python-format
+msgid "Invalid value \"%s\" for debug variable"
+msgstr "Hata ayıklama değişkeni için geçersiz değer \"%s\""
+
+#: ../etherlab/ConfigEditor.py:418 ../etherlab/ConfigEditor.py:421
+#: ../etherlab/ConfigEditor.py:452
+#, python-format
+msgid "Invalid value \"%s\" for process variable"
+msgstr "İşlem değişkeni için geçersiz değer \"%s\""
+
+#: ../etherlab/ConfigEditor.py:480 ../etherlab/ConfigEditor.py:483
+#: ../etherlab/ConfigEditor.py:504
+#, python-format
+msgid "Invalid value \"%s\" for startup command"
+msgstr "Başlangıç ​​komutu için geçersiz değer \"%s\""
+
+#: ../controls/VariablePanel.py:278 ../controls/VariablePanel.py:281
+#, python-format
+msgid "Invalid value \"%s\" for variable grid element"
+msgstr "Değişken ızgara elemanı için geçersiz değer \"%s\""
+
+#: ../editors/Viewer.py:276 ../editors/Viewer.py:279
+#, python-format
+msgid "Invalid value \"%s\" for viewer block"
+msgstr "Görüntüleyici bloğu için geçersiz değer \"%s\""
+
+#: ../dialogs/ForceVariableDialog.py:211
+#, python-brace-format
+msgid "Invalid value \"{a1}\" for \"{a2}\" variable!"
+msgstr "\"{A2}\" değişkeni için geçersiz değer \"{a1}\"!"
+
+#: ../etherlab/CommonEtherCATFunction.py:31
+#, python-format
+msgid "Invalid value for HexDecValue \"%s\""
+msgstr "HexDecValue \"%s\" için geçersiz değer"
+
+#: ../dialogs/DurationEditorDialog.py:125
+msgid ""
+"Invalid value!\n"
+"You must fill a numeric value."
+msgstr ""
+"Geçersiz değer!\n"
+"Sayısal bir değer doldurmalısınız."
+
+#: ../connectors/WAMP/dialog.py:38
+msgid "Is connection secure?"
+msgstr "Bağlantı güvenli mi?"
+
+#: ../editors/Viewer.py:658 ../editors/Viewer.py:2427
+msgid "Jump"
+msgstr "Atlama"
+
+#: ../dialogs/PouTransitionDialog.py:40 ../dialogs/PouActionDialog.py:36
+#: ../dialogs/PouDialog.py:128 ../controls/ProjectPropertiesPanel.py:161
+msgid "LD"
+msgstr "LD"
+
+#: ../editors/LDViewer.py:221 ../editors/LDViewer.py:240
+#, python-format
+msgid "Ladder element with id %d is on more than one rung."
+msgstr ""
+"%d kimliğine sahip merdiven elemanı, birden fazla basamak üzerindedir."
+
+#: ../dialogs/PouTransitionDialog.py:92 ../dialogs/PouActionDialog.py:91
+#: ../dialogs/PouDialog.py:148
+msgid "Language"
+msgstr "Dil"
+
+#: ../controls/ProjectPropertiesPanel.py:208
+msgid "Language (optional):"
+msgstr "Dil (isteğe bağlı):"
+
+#: ../dialogs/PouTransitionDialog.py:66 ../dialogs/PouActionDialog.py:63
+#: ../dialogs/PouDialog.py:79
+msgid "Language:"
+msgstr "Dil:"
+
+#: ../ProjectController.py:1861
+msgid "Latest build already matches current target. Transfering anyway...\n"
+msgstr "Son yapı zaten mevcut hedefle eşleşiyor. Yine de aktarılıyor ...\n"
+
+#: ../Beremiz_service.py:294
+msgid "Launch WX GUI inspector"
+msgstr "WX GUI denetçisini başlat"
+
+#: ../Beremiz_service.py:293
+msgid "Launch a live Python shell"
+msgstr "Canlı bir Python kabuğu başlat"
+
+#: ../editors/Viewer.py:583
+msgid "Left"
+msgstr "Ayrıldı"
+
+#: ../dialogs/LDPowerRailDialog.py:64
+msgid "Left PowerRail"
+msgstr "Sol PowerRail"
+
+#: ../plcopen/iec_std.csv:81
+msgid "Length of string"
+msgstr "Dize uzunluğu"
+
+#: ../plcopen/iec_std.csv:78
+msgid "Less than"
+msgstr "Daha az"
+
+#: ../plcopen/iec_std.csv:79
+msgid "Less than or equal to"
+msgstr "Daha az veya eşit"
+
+#: ../IDEFrame.py:658
+msgid "Library"
+msgstr "Kütüphane"
+
+#: ../dialogs/AboutDialog.py:145
+msgid "License"
+msgstr "Lisans"
+
+#: ../plcopen/iec_std.csv:73
+msgid "Limitation"
+msgstr "sınırlama"
+
+#: ../targets/toolchain_gcc.py:209
+msgid "Linking :\n"
+msgstr "Bağlama:\n"
+
+#: ../dialogs/DiscoveryDialog.py:115 ../controls/VariablePanel.py:87
+msgid "Local"
+msgstr "Yerel"
+
+#: ../canfestival/canfestival.py:359
+msgid "Local entries"
+msgstr "Yerel girişler"
+
+#: ../ProjectController.py:1767
+msgid "Local service discovery failed!\n"
+msgstr "Yerel servis keşfi başarısız oldu!\n"
+
+#: ../controls/VariablePanel.py:62
+msgid "Location"
+msgstr "yer"
+
+#: ../dialogs/BrowseLocationsDialog.py:78
+msgid "Locations available:"
+msgstr "Mevcut yerler:"
+
+#: ../runtime/NevowServer.py:175
+msgid "Log message level"
+msgstr "Günlük mesaj seviyesi"
+
+#: ../plcopen/iec_std.csv:25
+msgid "Logarithm to base 10"
+msgstr "10 tabanına logaritma"
+
+#: ../connectors/PYRO/__init__.py:103
+#, python-format
+msgid "MDNS resolution failure for '%s'\n"
+msgstr "'%s' için MDNS çözünürlük hatası\n"
+
+#: ../etherlab/ConfigEditor.py:67
+msgid "Manufacturer Specific"
+msgstr "Üreticiye Özel"
+
+#: ../canfestival/SlaveEditor.py:68 ../canfestival/NetworkEditor.py:92
+msgid "Map Variable"
+msgstr "Harita Değişkeni"
+
+#: ../features.py:19
+msgid "Map located variables over Bacnet"
+msgstr "Bacnet'te harita değişkenleri bulundu"
+
+#: ../features.py:18
+msgid "Map located variables over CANopen"
+msgstr "CANopen üzerinde harita değişkenleri bulundu"
+
+#: ../features.py:20
+msgid "Map located variables over EtherCAT"
+msgstr "EtherCAT üzerinden harita değişkenleri bulundu"
+
+#: ../features.py:21
+msgid "Map located variables over Modbus"
+msgstr "Modbus üzerinden bulunan harita değişkenleri"
+
+#: ../canfestival/NetworkEditor.py:113
+msgid "Master"
+msgstr "usta"
+
+#: ../etherlab/ConfigEditor.py:613
+msgid "Master State"
+msgstr "Ana Devlet"
+
+#: ../ConfigTreeNode.py:544
+#, python-brace-format
+msgid "Max count ({a1}) reached for this confnode of type {a2} "
+msgstr "{A2} türünde bu özellik için maksimum sayı ({a1}) ulaştı"
+
+#: ../etherlab/etherlab.py:173
+msgid "Max entries by PDO"
+msgstr "PDO tarafından maksimum giriş"
+
+#: ../etherlab/etherlab.py:176
+msgid ""
+"Maximal number of entries mapped in a PDO\n"
+"including empty entries used for PDO alignment"
+msgstr ""
+"Bir PDO'da eşlenen maksimum giriş sayısı\n"
+"PDO hizalaması için kullanılan boş girişler dahil"
+
+#: ../plcopen/iec_std.csv:71
+msgid "Maximum"
+msgstr "Maksimum"
+
+#: ../editors/DataTypeEditor.py:246
+msgid "Maximum:"
+msgstr "Maksimum:"
+
+#: ../dialogs/BrowseLocationsDialog.py:45 ../editors/Viewer.py:333
+#: ../editors/TextViewer.py:307 ../controls/LocationCellEditor.py:103
+#: ../controls/VariablePanel.py:316 ../controls/VariablePanel.py:379
+msgid "Memory"
+msgstr "Bellek"
+
+#: ../IDEFrame.py:623
+msgid "Menu ToolBar"
+msgstr "Menü Araç Çubuğu"
+
+#: ../runtime/NevowServer.py:176
+msgid "Message text"
+msgstr "Mesaj metni"
+
+#: ../dialogs/DurationEditorDialog.py:62
+msgid "Microseconds:"
+msgstr "mikrosaniye:"
+
+#: ../editors/Viewer.py:588
+msgid "Middle"
+msgstr "Orta"
+
+#: ../dialogs/DurationEditorDialog.py:61
+msgid "Milliseconds:"
+msgstr "milisaniyeler:"
+
+#: ../etherlab/etherlab.py:167
+msgid "Minimal size in bits between 2 pdo entries"
+msgstr "2 pdo girişi arasındaki bitlerin minimum boyutu"
+
+#: ../plcopen/iec_std.csv:72
+msgid "Minimum"
+msgstr "minimum"
+
+#: ../editors/DataTypeEditor.py:233
+msgid "Minimum:"
+msgstr "En az:"
+
+#: ../dialogs/DurationEditorDialog.py:59
+msgid "Minutes:"
+msgstr "dakika:"
+
+#: ../etherlab/etherlab.py:238 ../controls/ProjectPropertiesPanel.py:233
+msgid "Miscellaneous"
+msgstr "Çeşitli"
+
+#: ../features.py:21
+msgid "Modbus support"
+msgstr "Modbus desteği"
+
+#: ../dialogs/LDElementDialog.py:65
+msgid "Modifier:"
+msgstr "Değiştirici:"
+
+#: ../etherlab/ConfigEditor.py:1313
+#, python-format
+msgid "Module %s must be an integer!"
+msgstr "Modül %s bir tamsayı olmalı!"
+
+#: ../etherlab/ConfigEditor.py:1376
+msgid "Modules Library"
+msgstr "Modüller Kütüphanesi"
+
+#: ../etherlab/ConfigEditor.py:1145
+msgid "Modules library:"
+msgstr "Modüller kütüphanesi:"
+
+#: ../PLCGenerator.py:795 ../PLCGenerator.py:1318
+#, python-brace-format
+msgid ""
+"More than one connector found corresponding to \"{a1}\" continuation in "
+"\"{a2}\" POU"
+msgstr ""
+"\"{A2}\" POU'da \"{a1}\" devamına karşılık gelen birden fazla bağlayıcı "
+"bulundu"
+
+#: ../dialogs/ActionBlockDialog.py:146
+msgid "Move action down"
+msgstr "Eylemi aşağı taşı"
+
+#: ../dialogs/ActionBlockDialog.py:145
+msgid "Move action up"
+msgstr "Harekete geç"
+
+#: ../controls/CustomEditableListBox.py:46
+msgid "Move down"
+msgstr "Aşağı inmek"
+
+#: ../editors/DataTypeEditor.py:367
+msgid "Move element down"
+msgstr "Öğeyi aşağı taşı"
+
+#: ../editors/DataTypeEditor.py:366
+msgid "Move element up"
+msgstr "Öğeyi yukarı taşı"
+
+#: ../editors/ResourceEditor.py:284
+msgid "Move instance down"
+msgstr "Örneği aşağı taşı"
+
+#: ../editors/ResourceEditor.py:283
+msgid "Move instance up"
+msgstr "Örneği yukarı taşı"
+
+#: ../etherlab/ConfigEditor.py:655
+msgid "Move process variable down"
+msgstr "İşlem değişkenini aşağı taşı"
+
+#: ../etherlab/ConfigEditor.py:654
+msgid "Move process variable up"
+msgstr "İşlem değişkenini yukarı taşı"
+
+#: ../editors/ResourceEditor.py:253
+msgid "Move task down"
+msgstr "Görevi aşağı taşı"
+
+#: ../editors/ResourceEditor.py:252
+msgid "Move task up"
+msgstr "Görevi yukarı taşı"
+
+#: ../IDEFrame.py:253 ../IDEFrame.py:268 ../IDEFrame.py:298 ../IDEFrame.py:339
+msgid "Move the view"
+msgstr "Görünümü taşı"
+
+#: ../controls/CustomEditableListBox.py:45
+msgid "Move up"
+msgstr "Yukarı git"
+
+#: ../bacnet/BacnetSlaveEditor.py:814 ../editors/CodeFileEditor.py:675
+#: ../controls/VariablePanel.py:486
+msgid "Move variable down"
+msgstr "Değişkenini aşağı taşı"
+
+#: ../bacnet/BacnetSlaveEditor.py:813 ../editors/CodeFileEditor.py:674
+#: ../controls/VariablePanel.py:485
+msgid "Move variable up"
+msgstr "Değişken yukarı taşı"
+
+#: ../bacnet/BacnetSlaveEditor.py:941
+msgid "Multi-State Input Objects"
+msgstr "Çok Durumlu Giriş Nesneleri"
+
+#: ../bacnet/BacnetSlaveEditor.py:940
+msgid "Multi-State Output Objects"
+msgstr "Çok Durumlu Çıkış Nesneleri"
+
+#: ../bacnet/BacnetSlaveEditor.py:939
+msgid "Multi-State Value Objects"
+msgstr "Çok Eyaletli Değer Nesneleri"
+
+#: ../plcopen/iec_std.csv:74
+msgid "Multiplexer (select 1 of N)"
+msgstr "Çoklayıcı (N'den 1'i seç)"
+
+#: ../plcopen/iec_std.csv:34
+msgid "Multiplication"
+msgstr "Çarpma işlemi"
+
+#: ../editors/FileManagementPanel.py:86
+msgid "My Computer:"
+msgstr "Benim bilgisayarım:"
+
+#: ../dialogs/DiscoveryDialog.py:89
+msgid "NAME"
+msgstr "ADI"
+
+#: ../etherlab/EtherCATManagementEditor.py:37 ../etherlab/ConfigEditor.py:48
+#: ../etherlab/ConfigEditor.py:343 ../etherlab/ConfigEditor.py:1167
+#: ../editors/ResourceEditor.py:76 ../editors/ResourceEditor.py:94
+#: ../editors/DataTypeEditor.py:55 ../editors/CodeFileEditor.py:751
+#: ../controls/VariablePanel.py:59
+msgid "Name"
+msgstr "isim"
+
+#: ../Beremiz_service.py:355
+msgid "Name must not be null!"
+msgstr "İsim boş olmamalı!"
+
+#: ../dialogs/SFCStepDialog.py:59 ../dialogs/FBDBlockDialog.py:89
+#: ../dialogs/ConnectionDialog.py:78
+msgid "Name:"
+msgstr "Adı:"
+
+#: ../plcopen/iec_std.csv:24
+msgid "Natural logarithm"
+msgstr "Doğal logaritma"
+
+#: ../dialogs/LDElementDialog.py:78 ../editors/Viewer.py:557
+msgid "Negated"
+msgstr "Negatiflenmiş"
+
+#: ../etherlab/ConfigEditor.py:612
+msgid "Network"
+msgstr "Ağ"
+
+#: ../Beremiz_service.py:620
+msgid "Nevow Web service failed. "
+msgstr "Nevow Web hizmeti başarısız oldu."
+
+#: ../Beremiz_service.py:596
+msgid "Nevow/Athena import failed :"
+msgstr "Nevow / Athena ithalatı başarısız oldu:"
+
+#: ../BeremizIDE.py:241 ../BeremizIDE.py:276 ../PLCOpenEditor.py:75
+#: ../PLCOpenEditor.py:117
+msgid "New"
+msgstr "Yeni"
+
+#: ../controls/CustomEditableListBox.py:43
+msgid "New item"
+msgstr "Yeni öğe"
+
+#: ../editors/Viewer.py:556
+msgid "No Modifier"
+msgstr "Değiştirici Yok"
+
+#: ../ProjectController.py:1891
+msgid "No PLC to transfer (did build succeed ?)\n"
+msgstr "Aktarılacak PLC yok mu (başarılı oldu?)\n"
+
+#: ../etherlab/EthercatCFileGenerator.py:504
+#, python-format
+msgid "No Sync manager defined for %s!"
+msgstr "%s için Sync yöneticisi tanımlanmadı!"
+
+#: ../PLCGenerator.py:1727
+#, python-format
+msgid "No body defined in \"%s\" POU"
+msgstr "\"%s\" POU'da tanımlanmış gövde yok"
+
+#: ../etherlab/CommonEtherCATFunction.py:1581
+msgid "No connected slaves"
+msgstr "Bağlı köle yok"
+
+#: ../PLCGenerator.py:816 ../PLCGenerator.py:1330
+#, python-brace-format
+msgid "No connector found corresponding to \"{a1}\" continuation in \"{a2}\" POU"
+msgstr "\"{A2}\" POU'da \"{a1}\" devamına karşılık gelen hiçbir bağlayıcı bulunamadı"
+
+#: ../PLCOpenEditor.py:331
+msgid ""
+"No documentation available.\n"
+"Coming soon."
+msgstr ""
+"Belge mevcut değil.\n"
+"Çok yakında."
+
+#: ../PLCGenerator.py:841
+#, python-format
+msgid "No informations found for \"%s\" block"
+msgstr "\"%s\" bloğu için bilgi bulunamadı"
+
+#: ../etherlab/EthercatCFileGenerator.py:224
+#, python-format
+msgid "No informations found for device %s!"
+msgstr "Cihaz %s için bir bilgi bulunamadı!"
+
+#: ../etherlab/EthercatCFileGenerator.py:515
+#, python-format
+msgid "No more free PDO index available for %s!"
+msgstr "%s için artık ücretsiz PDO endeksi mevcut değil!"
+
+#: ../PLCGenerator.py:1281
+#, python-brace-format
+msgid ""
+"No output {a1} variable found in block {a2} in POU {a3}. Connection must be "
+"broken"
+msgstr ""
+"POU {a3} 'da {a2} bloğunda çıktı {a1} değişkeni bulunamadı. Bağlantı bozuk "
+"olmalı"
+
+#: ../controls/SearchResultPanel.py:175
+msgid "No search results available."
+msgstr "Arama sonucu yok."
+
+#: ../etherlab/ConfigEditor.py:1029
+#, python-format
+msgid "No slave defined at position %d!"
+msgstr "%d konumunda hiçbir slave tanımlanmamış!"
+
+#: ../svgui/svgui.py:142
+#, python-format
+msgid "No such SVG file: %s\n"
+msgstr "Böyle bir SVG dosyası yok: %s\n"
+
+#: ../etherlab/ConfigEditor.py:1245
+#, python-format
+msgid "No such XML file: %s\n"
+msgstr "Böyle bir XML dosyası yok: %s\n"
+
+#: ../canfestival/config_utils.py:682
+#, python-brace-format
+msgid "No such index/subindex ({a1},{a2}) (variable {a3})"
+msgstr "Böyle bir indeks / alt indeks yok ({a1}, {a2}) (değişken {a3})"
+
+#: ../canfestival/config_utils.py:387
+#, python-brace-format
+msgid "No such index/subindex ({a1},{a2}) in ID : {a3} (variable {a4})"
+msgstr ""
+"Kimlikte böyle bir dizin / alt endeks ({a1}, {a2}) yok: {a3} (değişken {a4})"
+
+#: ../etherlab/EthercatCFileGenerator.py:438
+#, python-format
+msgid "No sync manager available for %s pdo!"
+msgstr "%s pdo! İçin bir senkronizasyon yöneticisi yok"
+
+#: ../dialogs/BrowseValuesLibraryDialog.py:87
+msgid "No valid value selected!"
+msgstr "Geçerli bir değer seçilmedi!"
+
+#: ../PLCGenerator.py:1725
+#, python-format
+msgid "No variable defined in \"%s\" POU"
+msgstr "\"%s\" POU'da tanımlanmış değişken yok"
+
+#: ../etherlab/ConfigEditor.py:606
+#, python-format
+msgid "Node Position: %d"
+msgstr "Düğüm pozisyonu: %d"
+
+#: ../etherlab/ConfigEditor.py:697
+msgid "Node filter:"
+msgstr "Düğüm filtresi:"
+
+#: ../etherlab/ConfigEditor.py:717
+msgid "Nodes variables filter:"
+msgstr "Düğüm değişkenleri filtresi:"
+
+#: ../canfestival/config_utils.py:379
+#, python-brace-format
+msgid "Non existing node ID : {a1} (variable {a2})"
+msgstr "Mevcut olmayan düğüm kimliği: {a1} (değişken {a2})"
+
+#: ../controls/VariablePanel.py:79
+msgid "Non-Retain"
+msgstr "Sigara koru"
+
+#: ../dialogs/LDElementDialog.py:78
+msgid "Normal"
+msgstr "Normal"
+
+#: ../canfestival/config_utils.py:426
+#, python-brace-format
+msgid "Not PDO mappable variable : '{a1}' (ID:{a2},Idx:{a3},sIdx:{a4}))"
+msgstr ""
+"PDO eşlenik değişkeni değil: '{a1}' (ID: {a2}, Idx: {a3}, sIdx: {a4}))"
+
+#: ../plcopen/iec_std.csv:80
+msgid "Not equal to"
+msgstr "Eşit değil"
+
+#: ../etherlab/EtherCATManagementEditor.py:361
+msgid "Now Uploading..."
+msgstr "Şimdi Yükleniyor ..."
+
+#: ../dialogs/SFCDivergenceDialog.py:91
+msgid "Number of sequences:"
+msgstr "Dizi sayısı:"
+
+#: ../plcopen/iec_std.csv:22
+msgid "Numerical"
+msgstr "Sayısal"
+
+#: ../bacnet/BacnetSlaveEditor.py:808
+msgid "Object Properties:"
+msgstr "Nesne Özellikleri:"
+
+#: ../editors/CodeFileEditor.py:755
+msgid "OnChange"
+msgstr "OnChange"
+
+#: ../dialogs/SearchInProjectDialog.py:88
+msgid "Only Elements"
+msgstr "Sadece Eleman"
+
+#: ../BeremizIDE.py:243 ../BeremizIDE.py:277 ../PLCOpenEditor.py:77
+#: ../PLCOpenEditor.py:118
+msgid "Open"
+msgstr "Açık"
+
+#: ../svgui/svgui.py:151
+msgid "Open Inkscape"
+msgstr "Inkscape'i aç"
+
+#: ../version.py:88
+msgid ""
+"Open Source framework for automation, implemented IEC 61131 IDE with "
+"constantly growing set of extensions and flexible PLC runtime."
+msgstr ""
+"Otomasyon için Açık Kaynak çerçevesi, sürekli büyüyen uzatma seti ve esnek "
+"PLC çalışma zamanı ile IEC 61131 IDE'yi uyguladı."
+
+#: ../ProjectController.py:1962
+msgid "Open a file explorer to manage project files"
+msgstr "Proje dosyalarını yönetmek için bir dosya gezgini açın"
+
+#: ../wxglade_hmi/wxglade_hmi.py:176
+msgid "Open wxGlade"
+msgstr "WxGlade'i aç"
+
+#: ../controls/VariablePanel.py:64
+msgid "Option"
+msgstr "seçenek"
+
+#: ../dialogs/FindInPouDialog.py:84 ../editors/CodeFileEditor.py:756
+msgid "Options"
+msgstr "Seçenekler"
+
+#: ../controls/ProjectPropertiesPanel.py:111
+msgid "Organization (optional):"
+msgstr "Organizasyon (isteğe bağlı):"
+
+#: ../canfestival/SlaveEditor.py:78 ../canfestival/NetworkEditor.py:102
+msgid "Other Profile"
+msgstr "Diğer Profil"
+
+#: ../dialogs/SFCStepDialog.py:74 ../dialogs/FBDVariableDialog.py:65
+#: ../dialogs/BrowseLocationsDialog.py:44 ../editors/Viewer.py:333
+#: ../editors/Viewer.py:1663 ../editors/TextViewer.py:307
+#: ../controls/LocationCellEditor.py:103 ../controls/VariablePanel.py:86
+#: ../controls/VariablePanel.py:316 ../controls/VariablePanel.py:379
+msgid "Output"
+msgstr "Çıktı"
+
+#: ../etherlab/EthercatCFileGenerator.py:170
+#, python-brace-format
+msgid ""
+"Output variables can't be defined with different locations ({a1} and {a2})"
+msgstr "Çıkış değişkenleri farklı konumlarla tanımlanamaz ({a1} ve {a2})"
+
+#: ../canfestival/SlaveEditor.py:67 ../canfestival/NetworkEditor.py:91
+msgid "PDO Receive"
+msgstr "PDO Alımı"
+
+#: ../canfestival/SlaveEditor.py:66 ../canfestival/NetworkEditor.py:90
+msgid "PDO Transmit"
+msgstr "PDO iletimi"
+
+#: ../etherlab/etherlab.py:164
+msgid "PDO alignment"
+msgstr "PDO hizalama"
+
+#: ../targets/toolchain_gcc.py:174
+msgid "PLC :\n"
+msgstr "PLC:\n"
+
+#: ../BeremizIDE.py:379
+msgid "PLC Log"
+msgstr "PLC Kayıt"
+
+#: ../ProjectController.py:1129
+msgid "PLC code generation failed !\n"
+msgstr "PLC kod üretimi başarısız!\n"
+
+#: ../etherlab/EtherCATManagementEditor.py:250
+msgid "PLC is Not Started"
+msgstr "PLC Başlamadı"
+
+#: ../Beremiz_service.py:318
+msgid "PLC is empty or already started."
+msgstr "PLC boş veya çoktan başladı."
+
+#: ../Beremiz_service.py:325
+msgid "PLC is not started."
+msgstr "PLC başlatılmamış."
+
+#: ../etherlab/EtherCATManagementEditor.py:2160
+#: ../etherlab/CommonEtherCATFunction.py:1589
+msgid "PLC not connected!"
+msgstr "PLC bağlı değil!"
+
+#: ../PLCOpenEditor.py:180 ../PLCOpenEditor.py:293
+#, python-brace-format
+msgid ""
+"PLC syntax error at line {a1}:\n"
+"{a2}"
+msgstr ""
+"{A1} satırında PLC söz dizimi hatası:\n"
+"{A2}"
+
+#: ../PLCOpenEditor.py:276 ../PLCOpenEditor.py:357
+msgid "PLCOpen files (*.xml)|*.xml|All files|*.*"
+msgstr "PLCOpen dosyaları (* .xml) | * .xml | Tüm dosyalar | *. *"
+
+#: ../PLCOpenEditor.py:125 ../PLCOpenEditor.py:193
+msgid "PLCOpenEditor"
+msgstr "PLCOpenEditor"
+
+#: ../PLCOpenEditor.py:339
+msgid ""
+"PLCOpenEditor is part of Beremiz project.\n"
+"\n"
+"Beremiz is an "
+msgstr ""
+"PLCOpenEditor, Beremiz projesinin bir parçasıdır.\n"
+"\n"
+"Beremiz bir"
+
+#: ../dialogs/DiscoveryDialog.py:92
+msgid "PORT"
+msgstr "LİMAN"
+
+#: ../dialogs/PouDialog.py:144
+msgid "POU Name"
+msgstr "POU Adı"
+
+#: ../dialogs/PouDialog.py:64
+msgid "POU Name:"
+msgstr "POU adı:"
+
+#: ../dialogs/PouDialog.py:146
+msgid "POU Type"
+msgstr "POU Türü"
+
+#: ../dialogs/PouDialog.py:71
+msgid "POU Type:"
+msgstr "POU Tipi:"
+
+#: ../connectors/PYRO/__init__.py:53
+#, python-format
+msgid "PYRO connecting to URI : %s\n"
+msgstr "URI'ye bağlanan PYRO: %s\n"
+
+#: ../connectors/PYRO/__init__.py:69
+#, python-format
+msgid "PYRO using certificates in '%s' \n"
+msgstr "PYRO '%s' sertifikalarını kullanarak\n"
+
+#: ../BeremizIDE.py:256 ../PLCOpenEditor.py:91
+msgid "Page Setup"
+msgstr "Sayfa ayarı"
+
+#: ../controls/ProjectPropertiesPanel.py:127
+msgid "Page Size (optional):"
+msgstr "Sayfa Boyutu (isteğe bağlı):"
+
+#: ../IDEFrame.py:2660
+#, python-format
+msgid "Page: %d"
+msgstr "Sayfa: %d"
+
+#: ../controls/PouInstanceVariablesPanel.py:134
+msgid "Parent instance"
+msgstr "Ana örnek"
+
+#: ../editors/Viewer.py:699 ../IDEFrame.py:377 ../IDEFrame.py:429
+msgid "Paste"
+msgstr "Yapıştırmak"
+
+#: ../IDEFrame.py:1916
+msgid "Paste POU"
+msgstr "POU Yapıştır"
+
+#: ../dialogs/SearchInProjectDialog.py:60
+msgid "Pattern to search:"
+msgstr "Arama yapmak için desen:"
+
+#: ../dialogs/LDPowerRailDialog.py:75
+msgid "Pin number:"
+msgstr "PIN numarası:"
+
+#: ../runtime/NevowServer.py:163
+msgid "Platform"
+msgstr "platform"
+
+#: ../editors/Viewer.py:2791 ../editors/Viewer.py:3059
+#: ../editors/SFCViewer.py:785
+msgid "Please choose a target"
+msgstr "Lütfen bir hedef seçiniz"
+
+#: ../editors/TextViewer.py:260
+msgid "Please enter a block name"
+msgstr "Lütfen bir blok adı girin"
+
+#: ../dialogs/CommentEditDialog.py:52
+msgid "Please enter comment text"
+msgstr "Lütfen yorum yazınız"
+
+#: ../editors/SFCViewer.py:447 ../editors/SFCViewer.py:469
+#: ../editors/SFCViewer.py:815
+msgid "Please enter step name"
+msgstr "Lütfen adımı giriniz"
+
+#: ../dialogs/SFCStepNameDialog.py:37 ../dialogs/PouNameDialog.py:37
+#: ../Beremiz_service.py:222
+msgid "Please enter text"
+msgstr "Lütfen metin giriniz"
+
+#: ../dialogs/ForceVariableDialog.py:177
+#, python-format
+msgid "Please enter value for a \"%s\" variable:"
+msgstr "Lütfen \"%s\" değişkeninin değerini girin:"
+
+#: ../Beremiz_service.py:340
+msgid "Port number must be 0 <= port <= 65535!"
+msgstr "Bağlantı noktası numarası 0 <= bağlantı noktası <= 65535 olmalıdır!"
+
+#: ../Beremiz_service.py:340
+msgid "Port number must be an integer!"
+msgstr "Port numarası bir tamsayı olmalı!"
+
+#: ../etherlab/ConfigEditor.py:47 ../etherlab/ConfigEditor.py:465
+msgid "Position"
+msgstr "pozisyon"
+
+#: ../editors/Viewer.py:636 ../editors/Viewer.py:2451
+msgid "Power Rail"
+msgstr "Güç Ray"
+
+#: ../dialogs/LDPowerRailDialog.py:52
+msgid "Power Rail Properties"
+msgstr "Güç Raylı Özellikleri"
+
+#: ../BeremizIDE.py:258 ../PLCOpenEditor.py:93
+msgid "Preview"
+msgstr "Ön izleme"
+
+#: ../dialogs/BlockPreviewDialog.py:59
+msgid "Preview:"
+msgstr "Ön izleme:"
+
+#: ../BeremizIDE.py:260 ../BeremizIDE.py:280 ../PLCOpenEditor.py:95
+#: ../PLCOpenEditor.py:121
+msgid "Print"
+msgstr "baskı"
+
+#: ../IDEFrame.py:1123
+msgid "Print preview"
+msgstr "Baskı Önizleme"
+
+#: ../editors/ResourceEditor.py:76
+msgid "Priority"
+msgstr "öncelik"
+
+#: ../dialogs/SFCTransitionDialog.py:91
+msgid "Priority:"
+msgstr "Öncelik:"
+
+#: ../runtime/PLCObject.py:523
+#, python-format
+msgid "Problem starting PLC : error %d"
+msgstr "PLC başlatma sorunu: hata %d"
+
+#: ../etherlab/ConfigEditor.py:647
+msgid "Process variables mapped between nodes:"
+msgstr "Düğümler arasında eşlenen işlem değişkenleri:"
+
+#: ../dialogs/ProjectDialog.py:61
+msgid "Product Name"
+msgstr "Ürün adı"
+
+#: ../controls/ProjectPropertiesPanel.py:91
+msgid "Product Name (required):"
+msgstr "Ürün Adı (gerekli):"
+
+#: ../controls/ProjectPropertiesPanel.py:93
+msgid "Product Release (optional):"
+msgstr "Ürün sürümü (isteğe bağlı):"
+
+#: ../dialogs/ProjectDialog.py:62
+msgid "Product Version"
+msgstr "Ürün Sürümü"
+
+#: ../controls/ProjectPropertiesPanel.py:92
+msgid "Product Version (required):"
+msgstr "Ürün Versiyonu (gerekli):"
+
+#: ../dialogs/SearchInProjectDialog.py:42 ../IDEFrame.py:1795
+#: ../IDEFrame.py:1992
+msgid "Program"
+msgstr "program"
+
+#: ../PLCOpenEditor.py:321
+msgid "Program was successfully generated!"
+msgstr "Program başarıyla oluşturuldu!"
+
+#: ../plcopen/types_enums.py:76
+msgid "Programs"
+msgstr "Programlar"
+
+#: ../editors/Viewer.py:285
+msgid "Programs can't be used by other POUs!"
+msgstr "Programlar diğer POU'lar tarafından kullanılamaz!"
+
+#: ../controls/ProjectPropertiesPanel.py:95 ../IDEFrame.py:607
+msgid "Project"
+msgstr "proje"
+
+#: ../controls/SearchResultPanel.py:180
+#, python-format
+msgid "Project '%s':"
+msgstr "'%s' projesi:"
+
+#: ../ProjectController.py:1961
+msgid "Project Files"
+msgstr "Proje Dosyaları"
+
+#: ../dialogs/ProjectDialog.py:60
+msgid "Project Name"
+msgstr "proje Adı"
+
+#: ../controls/ProjectPropertiesPanel.py:89
+msgid "Project Name (required):"
+msgstr "Proje Adı (gerekli):"
+
+#: ../controls/ProjectPropertiesPanel.py:90
+msgid "Project Version (optional):"
+msgstr "Proje Sürümü (isteğe bağlı):"
+
+#: ../PLCControler.py:2717
+msgid ""
+"Project file syntax error:\n"
+"\n"
+msgstr ""
+"Proje dosyası sözdizimi hatası:\n"
+"\n"
+
+#: ../dialogs/ProjectDialog.py:36 ../editors/ProjectNodeEditor.py:40
+msgid "Project properties"
+msgstr "Proje özellikleri"
+
+#: ../ConfigTreeNode.py:571
+#, python-brace-format
+msgid "Project tree layout do not match confnode.xml {a1}!={a2} "
+msgstr "Proje ağacı düzeni, confnode.xml {a1}! = {A2} ile eşleşmiyor"
+
+#: ../dialogs/ConnectionDialog.py:101
+msgid "Propagate Name"
+msgstr "Adı propagate"
+
+#: ../plcopen/types_enums.py:77
+msgid "Properties"
+msgstr "Özellikleri"
+
+#: ../Beremiz_service.py:440
+msgid "Publishing service on local network"
+msgstr "Yerel ağda yayın hizmeti"
+
+#: ../connectors/PYRO/__init__.py:127
+#, python-format
+msgid "Pyro exception: %s\n"
+msgstr "Pyro istisnası: %s\n"
+
+#: ../Beremiz_service.py:433
+msgid "Pyro port :"
+msgstr "Pyro bağlantı noktası:"
+
+#: ../py_ext/PythonEditor.py:84
+msgid "Python code"
+msgstr "Python kodu"
+
+#: ../features.py:23
+msgid "Python file"
+msgstr "Python dosyası"
+
+#: ../dialogs/ActionBlockDialog.py:42
+msgid "Qualifier"
+msgstr "Niteleyici"
+
+#: ../BeremizIDE.py:263 ../PLCOpenEditor.py:101 ../Beremiz_service.py:296
+msgid "Quit"
+msgstr "çıkmak"
+
+#: ../controls/DebugVariablePanel/DebugVariablePanel.py:224
+msgid "Range:"
+msgstr "aralık:"
+
+#: ../ProjectController.py:1955
+msgid "Raw IEC code"
+msgstr "Ham IEC kodu"
+
+#: ../etherlab/ConfigEditor.py:344
+msgid "Read from (nodeid, index, subindex)"
+msgstr "Kimden oku (nodeid, index, subindex)"
+
+#: ../BeremizIDE.py:1080
+#, python-format
+msgid "Really delete node '%s'?"
+msgstr "Gerçekten '%s' düğümünü sil?"
+
+#: ../connectors/WAMP/dialog.py:50
+msgid "Realm:"
+msgstr "Diyar:"
+
+#: ../IDEFrame.py:370 ../IDEFrame.py:425
+msgid "Redo"
+msgstr "yeniden yapmak"
+
+#: ../dialogs/SFCTransitionDialog.py:76
+msgid "Reference"
+msgstr "Referans"
+
+#: ../dialogs/DiscoveryDialog.py:109 ../IDEFrame.py:436
+msgid "Refresh"
+msgstr "Yenile"
+
+#: ../etherlab/EtherCATManagementEditor.py:1965
+msgid "Register Modify Dialog"
+msgstr "Kayıt Değiştir İletişim"
+
+#: ../dialogs/SearchInProjectDialog.py:70
+msgid "Regular expression"
+msgstr "Düzenli ifade"
+
+#: ../dialogs/FindInPouDialog.py:99
+msgid "Regular expressions"
+msgstr "Düzenli ifadeler"
+
+#: ../editors/Viewer.py:1638
+msgid "Release value"
+msgstr "Yayın değeri"
+
+#: ../plcopen/iec_std.csv:37
+msgid "Remainder (modulo)"
+msgstr "Kalan (modulo)"
+
+#: ../BeremizIDE.py:1081
+#, python-format
+msgid "Remove %s node"
+msgstr "%s düğümünü kaldır"
+
+#: ../IDEFrame.py:2463
+msgid "Remove Datatype"
+msgstr "Datatype'ı kaldır"
+
+#: ../IDEFrame.py:2468
+msgid "Remove Pou"
+msgstr "Pou'yu kaldır"
+
+#: ../dialogs/ActionBlockDialog.py:144
+msgid "Remove action"
+msgstr "Eylemi kaldır"
+
+#: ../editors/DataTypeEditor.py:365
+msgid "Remove element"
+msgstr "Elemanı kaldırmak"
+
+#: ../etherlab/ConfigEditor.py:1353
+msgid "Remove file from database"
+msgstr "Dosyayı veritabanından kaldır"
+
+#: ../editors/FileManagementPanel.py:65
+msgid "Remove file from left folder"
+msgstr "Dosyayı sol klasörden kaldır"
+
+#: ../etherlab/ConfigEditor.py:1389
+msgid "Remove file from library"
+msgstr "Dosyayı kitaplıktan kaldır"
+
+#: ../editors/ResourceEditor.py:282
+msgid "Remove instance"
+msgstr "Örneği kaldır"
+
+#: ../etherlab/ConfigEditor.py:653
+msgid "Remove process variable"
+msgstr "İşlem değişkenini kaldır"
+
+#: ../canfestival/NetworkEditor.py:111
+msgid "Remove slave"
+msgstr "Köleyi kaldır"
+
+#: ../etherlab/ConfigEditor.py:680
+msgid "Remove startup service variable"
+msgstr "Başlangıç ​​hizmeti değişkeni kaldır"
+
+#: ../editors/ResourceEditor.py:251
+msgid "Remove task"
+msgstr "Görevi kaldır"
+
+#: ../bacnet/BacnetSlaveEditor.py:812 ../editors/CodeFileEditor.py:673
+#: ../controls/VariablePanel.py:484
+msgid "Remove variable"
+msgstr "Değişkeni kaldır"
+
+#: ../IDEFrame.py:1996
+msgid "Rename"
+msgstr "Adını değiştirmek"
+
+#: ../editors/FileManagementPanel.py:186
+msgid "Replace File"
+msgstr "Dosyayı değiştir"
+
+#: ../editors/Viewer.py:601
+msgid "Replace Wire by connections"
+msgstr "Kabloları bağlantılarla değiştirin"
+
+#: ../plcopen/iec_std.csv:89
+msgid "Replacement (within)"
+msgstr "Değiştirme (içinde)"
+
+#: ../dialogs/LDElementDialog.py:79
+msgid "Reset"
+msgstr "Reset"
+
+#: ../editors/Viewer.py:684
+msgid "Reset Execution Order"
+msgstr "Yürütme Sırasını Sıfırla"
+
+#: ../IDEFrame.py:459
+msgid "Reset Perspective"
+msgstr "Perspektifi Sıfırla"
+
+#: ../controls/SearchResultPanel.py:103
+msgid "Reset search result"
+msgstr "Arama sonucunu sıfırla"
+
+#: ../BeremizIDE.py:1012 ../plcopen/types_enums.py:77
+msgid "Resources"
+msgstr "kaynaklar"
+
+#: ../controls/VariablePanel.py:77
+msgid "Retain"
+msgstr "tutmak"
+
+#: ../controls/VariablePanel.py:457
+msgid "Return Type:"
+msgstr "Dönüş tipi:"
+
+#: ../editors/Viewer.py:585
+msgid "Right"
+msgstr "Sağ"
+
+#: ../dialogs/LDPowerRailDialog.py:65
+msgid "Right PowerRail"
+msgstr "Sağ PowerRail"
+
+#: ../dialogs/LDElementDialog.py:80 ../editors/Viewer.py:558
+msgid "Rising Edge"
+msgstr "Yükselen kenar"
+
+#: ../plcopen/iec_std.csv:65
+msgid "Rotate left"
+msgstr "Sola dön"
+
+#: ../plcopen/iec_std.csv:64
+msgid "Rotate right"
+msgstr "Sağa döndür"
+
+#: ../plcopen/iec_std.csv:17
+msgid "Rounding up/down"
+msgstr "Yukarı / aşağı yuvarlama"
+
+#: ../ProjectController.py:1911
+msgid "Run"
+msgstr "Koşmak"
+
+#: ../ProjectController.py:1175
+msgid "Runtime IO extensions C code generation failed !\n"
+msgstr "Çalışma zamanı IO uzantıları C kodu üretimi başarısız!\n"
+
+#: ../ProjectController.py:1186
+msgid "Runtime library extensions C code generation failed !\n"
+msgstr "Çalışma zamanı kitaplığı uzantıları C kodu oluşturulamadı!\n"
+
+#: ../canfestival/SlaveEditor.py:65 ../canfestival/NetworkEditor.py:89
+msgid "SDO Client"
+msgstr "SDO İstemcisi"
+
+#: ../canfestival/SlaveEditor.py:64 ../canfestival/NetworkEditor.py:88
+msgid "SDO Server"
+msgstr "SDO Sunucusu"
+
+#: ../dialogs/PouDialog.py:128 ../controls/ProjectPropertiesPanel.py:161
+msgid "SFC"
+msgstr "SFC"
+
+#: ../PLCGenerator.py:1482
+#, python-brace-format
+msgid "SFC jump in pou \"{a1}\" refers to non-existent SFC step \"{a2}\""
+msgstr ""
+"\"{A1}\" ifadesinde SFC atlaması, mevcut olmayan SFC adımı \"{a2}\" anlamına"
+" gelir"
+
+#: ../PLCGenerator.py:780
+#, python-format
+msgid "SFC transition in POU \"%s\" must be connected."
+msgstr "POU \"%s\" cinsinden SFC geçişi bağlanmalıdır."
+
+#: ../dialogs/PouTransitionDialog.py:40 ../dialogs/PouActionDialog.py:36
+#: ../dialogs/PouDialog.py:128
+msgid "ST"
+msgstr "ST"
+
+#: ../PLCOpenEditor.py:308
+msgid "ST files (*.st)|*.st|All files|*.*"
+msgstr "ST dosyaları (* .st) | * .st | Tüm dosyalar | *. *"
+
+#: ../svgui/svgui.py:136
+msgid "SVG files (*.svg)|*.svg|All files|*.*"
+msgstr "SVG dosyaları (* .svg) | * .svg | Tüm dosyalar | *. *"
+
+#: ../features.py:25
+msgid "SVGUI"
+msgstr "SVGUI"
+
+#: ../BeremizIDE.py:247 ../BeremizIDE.py:278 ../PLCOpenEditor.py:84
+#: ../PLCOpenEditor.py:119
+msgid "Save"
+msgstr "Kayıt etmek"
+
+#: ../BeremizIDE.py:279 ../PLCOpenEditor.py:86 ../PLCOpenEditor.py:120
+msgid "Save As..."
+msgstr "Farklı kaydet..."
+
+#: ../BeremizIDE.py:249
+msgid "Save as"
+msgstr "Farklı kaydet"
+
+#: ../etherlab/EtherCATManagementEditor.py:941
+#: ../etherlab/EtherCATManagementEditor.py:1289
+msgid "Save as..."
+msgstr "Farklı kaydet..."
+
+#: ../ProjectController.py:546
+msgid "Save path is the same as path of a project! \n"
+msgstr "Kayıt yolu, bir projenin yolu ile aynı!\n"
+
+#: ../etherlab/EthercatMaster.py:455 ../etherlab/EthercatMaster.py:764
+#: ../etherlab/EthercatMaster.py:765
+msgid "Scan Network"
+msgstr "Tarama Ağı"
+
+#: ../dialogs/SearchInProjectDialog.py:73
+msgid "Scope"
+msgstr "kapsam"
+
+#: ../IDEFrame.py:650
+msgid "Search"
+msgstr "Arama"
+
+#: ../dialogs/SearchInProjectDialog.py:49 ../IDEFrame.py:387
+#: ../IDEFrame.py:431
+msgid "Search in Project"
+msgstr "Projede Ara"
+
+#: ../dialogs/DurationEditorDialog.py:60
+msgid "Seconds:"
+msgstr "saniye:"
+
+#: ../IDEFrame.py:393
+msgid "Select All"
+msgstr "Hepsini seç"
+
+#: ../editors/Viewer.py:331 ../editors/TextViewer.py:305
+#: ../controls/LocationCellEditor.py:101 ../controls/VariablePanel.py:314
+#: ../controls/VariablePanel.py:377
+msgid "Select a variable class:"
+msgstr "Bir değişken sınıfı seçin:"
+
+#: ../ProjectController.py:1354
+msgid "Select an editor:"
+msgstr "Bir editör seç:"
+
+#: ../controls/PouInstanceVariablesPanel.py:292
+msgid "Select an instance"
+msgstr "Bir örnek seçin"
+
+#: ../IDEFrame.py:634
+msgid "Select an object"
+msgstr "Bir nesne seç"
+
+#: ../ProjectController.py:555
+msgid "Selected directory already contains another project. Overwrite? \n"
+msgstr "Seçilen dizin zaten başka bir proje içeriyor. Üzerine yaz?\n"
+
+#: ../plcopen/iec_std.csv:70
+msgid "Selection"
+msgstr "seçim"
+
+#: ../dialogs/SFCDivergenceDialog.py:66
+msgid "Selection Convergence"
+msgstr "Seçim Yakınsama"
+
+#: ../dialogs/SFCDivergenceDialog.py:65
+msgid "Selection Divergence"
+msgstr "Seçim Divergence"
+
+#: ../runtime/NevowServer.py:182
+msgid "Send"
+msgstr "göndermek"
+
+#: ../runtime/NevowServer.py:181
+msgid "Send a message to the log"
+msgstr "Günlüğe mesaj gönder"
+
+#: ../dialogs/DiscoveryDialog.py:135
+msgid "Service Discovery"
+msgstr "Servis Bulma"
+
+#: ../dialogs/DiscoveryDialog.py:104
+msgid "Services available:"
+msgstr "Mevcut hizmetler:"
+
+#: ../dialogs/LDElementDialog.py:79 ../runtime/WampClient.py:434
+msgid "Set"
+msgstr "Set"
+
+#: ../plcopen/iec_std.csv:62
+msgid "Shift left"
+msgstr "Sola kay"
+
+#: ../plcopen/iec_std.csv:63
+msgid "Shift right"
+msgstr "Sağa kaydır"
+
+#: ../ProjectController.py:1946
+msgid "Show IEC code generated by PLCGenerator"
+msgstr "PLCGenerator tarafından üretilen IEC kodunu göster"
+
+#: ../canfestival/canfestival.py:407
+msgid "Show Master"
+msgstr "Master göster"
+
+#: ../canfestival/canfestival.py:408
+msgid "Show Master generated by config_utils"
+msgstr "Config_utils tarafından oluşturulan Master göster"
+
+#: ../ProjectController.py:1945
+msgid "Show code"
+msgstr "Kodu göster"
+
+#: ../dialogs/SFCDivergenceDialog.py:68
+msgid "Simultaneous Convergence"
+msgstr "Eşzamanlı Yakınsama"
+
+#: ../dialogs/SFCDivergenceDialog.py:67
+msgid "Simultaneous Divergence"
+msgstr "Eşzamanlı Diverjans"
+
+#: ../plcopen/iec_std.csv:27
+msgid "Sine"
+msgstr "Sinüs"
+
+#: ../editors/ResourceEditor.py:76
+msgid "Single"
+msgstr "Tek"
+
+#: ../etherlab/EtherCATManagementEditor.py:361
+msgid "Slave SDO Monitoring"
+msgstr "Slave SDO İzleme"
+
+#: ../etherlab/ConfigEditor.py:135
+msgid "Slave entries"
+msgstr "Köle girişleri"
+
+#: ../targets/toolchain_makefile.py:130
+msgid "Source didn't change, no build.\n"
+msgstr "Kaynak değişmedi, inşa yok.\n"
+
+#: ../PLCGenerator.py:404
+#, python-brace-format
+msgid ""
+"Source signal has to be defined for single task '{a1}' in resource "
+"'{a2}.{a3}'."
+msgstr ""
+"Kaynak sinyal, '{a1}' {a2}. {A3} 'kaynağında' {a1} 'tek görev için "
+"tanımlanmalıdır."
+
+#: ../plcopen/iec_std.csv:23
+msgid "Square root (base 2)"
+msgstr "Kare kök (baz 2)"
+
+#: ../plcopen/definitions.py:50
+msgid "Standard function blocks"
+msgstr "Standart fonksiyon blokları"
+
+#: ../etherlab/ConfigEditor.py:68
+msgid "Standardized Device Profile"
+msgstr "Standart Cihaz Profili"
+
+#: ../etherlab/EtherCATManagementEditor.py:37
+msgid "Start Address"
+msgstr "Adrese Başla"
+
+#: ../ProjectController.py:1912 ../Beremiz_service.py:284
+msgid "Start PLC"
+msgstr "PLC'yi başlat"
+
+#: ../ProjectController.py:1121
+#, python-format
+msgid "Start build in %s\n"
+msgstr "%s’da oluşturmaya başlayın\n"
+
+#: ../runtime/PlcStatus.py:12
+msgid "Started"
+msgstr "Başlatılan"
+
+#: ../ProjectController.py:1714
+msgid "Starting PLC\n"
+msgstr "Başlangıç ​​PLC\n"
+
+#: ../etherlab/ConfigEditor.py:674
+msgid "Startup service variables assignments:"
+msgstr "Başlangıç ​​hizmeti değişkenleri atamaları:"
+
+#: ../BeremizIDE.py:389
+msgid "Status ToolBar"
+msgstr "Durum Araç Çubuğu"
+
+#: ../editors/Viewer.py:654 ../editors/Viewer.py:2426
+msgid "Step"
+msgstr "Adım"
+
+#: ../ProjectController.py:1918
+msgid "Stop"
+msgstr "durdurmak"
+
+#: ../Beremiz_service.py:285
+msgid "Stop PLC"
+msgstr "PLC'yi durdur"
+
+#: ../ProjectController.py:1919
+msgid "Stop Running PLC"
+msgstr "PLC Çalışmayı Durdur"
+
+#: ../runtime/PlcStatus.py:13
+msgid "Stopped"
+msgstr "Durduruldu"
+
+#: ../editors/DataTypeEditor.py:60
+msgid "Structure"
+msgstr "yapı"
+
+#: ../etherlab/ConfigEditor.py:48
+msgid "SubIndex"
+msgstr "Alt Endeks"
+
+#: ../etherlab/ConfigEditor.py:465
+msgid "Subindex"
+msgstr "Alt Endeks"
+
+#: ../editors/DataTypeEditor.py:60
+msgid "Subrange"
+msgstr "subrange"
+
+#: ../plcopen/iec_std.csv:35
+msgid "Subtraction"
+msgstr "Çıkarma"
+
+#: ../ProjectController.py:1160
+msgid "Successfully built.\n"
+msgstr "Başarıyla inşa edildi.\n"
+
+#: ../IDEFrame.py:451
+msgid "Switch perspective"
+msgstr "Perspektifi değiştir"
+
+#: ../dialogs/SearchInProjectDialog.py:169 ../dialogs/FindInPouDialog.py:118
+msgid "Syntax error in regular expression of pattern to search!"
+msgstr "Arama için düzenli ifade ifadesinde sözdizimi hatası!"
+
+#: ../dialogs/DiscoveryDialog.py:90
+msgid "TYPE"
+msgstr "TİP"
+
+#: ../plcopen/iec_std.csv:29
+msgid "Tangent"
+msgstr "Teğet"
+
+#: ../editors/ResourceEditor.py:94
+msgid "Task"
+msgstr "Görev"
+
+#: ../editors/ResourceEditor.py:246
+msgid "Tasks:"
+msgstr "Görevler:"
+
+#: ../controls/VariablePanel.py:88
+msgid "Temp"
+msgstr "Sıcaklık"
+
+#: ../version.py:37
+msgid ""
+"The best place to ask questions about Beremiz/PLCOpenEditor\n"
+"is project's mailing list: beremiz-devel@lists.sourceforge.net\n"
+"\n"
+"This is the main community support channel.\n"
+"For posting it is required to be subscribed to the mailing list.\n"
+"\n"
+"You can subscribe to the list here:\n"
+"https://lists.sourceforge.net/lists/listinfo/beremiz-devel"
+msgstr ""
+"Beremiz / PLCOpenEditor hakkında soru sormak için en iyi yer\n"
+"projenin posta listesi: beremiz-devel@lists.sourceforge.net\n"
+"\n"
+"Bu ana topluluk destek kanalı.\n"
+"Göndermek için posta listesine üye olmanız gerekmektedir.\n"
+"\n"
+"Listeye buradan abone olabilirsiniz:\n"
+"https://lists.sourceforge.net/lists/listinfo/beremiz-devel"
+
+#: ../etherlab/EthercatMaster.py:454
+msgid ""
+"The current network configuration will be deleted.\n"
+"Do you want to continue?"
+msgstr ""
+"Mevcut ağ yapılandırması silinecek.\n"
+"Devam etmek istiyor musun?"
+
+#: ../editors/FileManagementPanel.py:185
+#, python-format
+msgid ""
+"The file '%s' already exist.\n"
+"Do you want to replace it?"
+msgstr ""
+"'%s' dosyası zaten var.\n"
+"Onu değiştirmek ister misin?"
+
+#: ../etherlab/EtherCATManagementEditor.py:928
+#: ../etherlab/EtherCATManagementEditor.py:1320
+msgid "The file does not exist!"
+msgstr "Dosya yok!"
+
+#: ../editors/LDViewer.py:893
+msgid "The group of block must be coherent!"
+msgstr "Blok grubu tutarlı olmalı!"
+
+#: ../BeremizIDE.py:569 ../IDEFrame.py:1059
+msgid "There are changes, do you want to save?"
+msgstr "Değişiklikler var, kaydetmek istiyor musunuz?"
+
+#: ../IDEFrame.py:1708 ../IDEFrame.py:1727
+#, python-format
+msgid ""
+"There is a POU named \"%s\". This could cause a conflict. Do you wish to "
+"continue?"
+msgstr ""
+"\"%s\" adlı bir POU var. Bu bir çatışmaya neden olabilir. Devam etmek ister "
+"misiniz?"
+
+#: ../IDEFrame.py:1146
+msgid ""
+"There was a problem printing.\n"
+"Perhaps your current printer is not set correctly?"
+msgstr ""
+"Yazdırmada bir sorun oluştu.\n"
+"Belki şu anki yazıcınız doğru ayarlanmamış mı?"
+
+#: ../editors/LDViewer.py:902
+msgid "This option isn't available yet!"
+msgstr "Bu seçenek henüz mevcut değil!"
+
+#: ../controls/DebugVariablePanel/DebugVariablePanel.py:546
+#, python-format
+msgid "Tick: %d"
+msgstr "Tick: %d"
+
+#: ../plcopen/iec_std.csv:40
+msgid "Time"
+msgstr "zaman"
+
+#: ../plcopen/iec_std.csv:40 ../plcopen/iec_std.csv:41
+msgid "Time addition"
+msgstr "Zaman ek"
+
+#: ../plcopen/iec_std.csv:86
+msgid "Time concatenation"
+msgstr "Zaman birleştirme"
+
+#: ../plcopen/iec_std.csv:60 ../plcopen/iec_std.csv:61
+msgid "Time division"
+msgstr "Zaman bölümü"
+
+#: ../plcopen/iec_std.csv:46 ../plcopen/iec_std.csv:47
+msgid "Time multiplication"
+msgstr "Zaman çarpımı"
+
+#: ../plcopen/iec_std.csv:48 ../plcopen/iec_std.csv:49
+msgid "Time subtraction"
+msgstr "Zaman çıkarma"
+
+#: ../plcopen/iec_std.csv:42 ../plcopen/iec_std.csv:43
+msgid "Time-of-day addition"
+msgstr "Günün eklenmesi"
+
+#: ../plcopen/iec_std.csv:52 ../plcopen/iec_std.csv:53
+#: ../plcopen/iec_std.csv:54 ../plcopen/iec_std.csv:55
+msgid "Time-of-day subtraction"
+msgstr "Günün saati çıkarma"
+
+#: ../IDEFrame.py:432
+msgid "Toggle fullscreen mode"
+msgstr "Tam ekran modunu değiştir"
+
+#: ../dialogs/ForceVariableDialog.py:188
+msgid "Toggle value"
+msgstr "Geçiş değeri"
+
+#: ../editors/Viewer.py:587
+msgid "Top"
+msgstr "Üst"
+
+#: ../ProjectController.py:1931
+msgid "Transfer"
+msgstr "Aktar"
+
+#: ../ProjectController.py:1932
+msgid "Transfer PLC"
+msgstr "PLC Aktarımı"
+
+#: ../ProjectController.py:1884
+msgid "Transfer completed successfully.\n"
+msgstr "Aktarım başarıyla tamamlandı.\n"
+
+#: ../ProjectController.py:1887
+msgid "Transfer failed\n"
+msgstr "Aktarım başarısız oldu\n"
+
+#: ../editors/Viewer.py:655 ../editors/Viewer.py:2428
+#: ../editors/Viewer.py:2455
+msgid "Transition"
+msgstr "Geçiş"
+
+#: ../PLCGenerator.py:1613
+#, python-format
+msgid ""
+"Transition \"%s\" body must contain an output variable or coil referring to "
+"its name"
+msgstr "\"%s\" geçişi, adına başvuran bir çıkış değişkeni veya bobin içermelidir"
+
+#: ../dialogs/PouTransitionDialog.py:90
+msgid "Transition Name"
+msgstr "Geçiş adı"
+
+#: ../dialogs/PouTransitionDialog.py:59
+msgid "Transition Name:"
+msgstr "Geçiş adı:"
+
+#: ../PLCGenerator.py:1706
+#, python-brace-format
+msgid "Transition with content \"{a1}\" not connected to a next step in \"{a2}\" POU"
+msgstr "\"{A2}\" POU'daki bir sonraki adıma bağlı olmayan \"{a1}\" içeriğiyle geçiş"
+
+#: ../PLCGenerator.py:1695
+#, python-brace-format
+msgid ""
+"Transition with content \"{a1}\" not connected to a previous step in "
+"\"{a2}\" POU"
+msgstr "\"{A2}\" POU'daki bir önceki adıma bağlı olmayan \"{a1}\" içeriğiyle geçiş"
+
+#: ../plcopen/plcopen.py:1526
+#, python-format
+msgid "Transition with name %s doesn't exist!"
+msgstr "%s adıyla geçiş mevcut değil!"
+
+#: ../plcopen/types_enums.py:76
+msgid "Transitions"
+msgstr "Geçişler"
+
+#: ../dialogs/AboutDialog.py:127
+msgid "Translated by"
+msgstr "Tercüme eden"
+
+#: ../editors/ResourceEditor.py:76
+msgid "Triggering"
+msgstr "Tetikleme"
+
+#: ../Beremiz_service.py:503
+msgid "Twisted unavailable."
+msgstr "Twisted kullanılamaz."
+
+#: ../dialogs/ActionBlockDialog.py:42 ../etherlab/ConfigEditor.py:48
+#: ../editors/ResourceEditor.py:94 ../editors/DataTypeEditor.py:55
+#: ../editors/CodeFileEditor.py:752 ../controls/VariablePanel.py:61
+msgid "Type"
+msgstr "tip"
+
+#: ../dialogs/BrowseLocationsDialog.py:51
+msgid "Type and derivated"
+msgstr "Tipi ve türetilmiş"
+
+#: ../canfestival/config_utils.py:359 ../canfestival/config_utils.py:666
+#, python-format
+msgid "Type conflict for location \"%s\""
+msgstr "\"%s\" konumu için çakışma yazın"
+
+#: ../plcopen/iec_std.csv:16
+msgid "Type conversion"
+msgstr "Türü dönüşüm"
+
+#: ../editors/DataTypeEditor.py:170
+msgid "Type infos:"
+msgstr "Bilgi türü:"
+
+#: ../etherlab/EthercatCFileGenerator.py:76
+#, python-format
+msgid "Type of location \"%s\" not yet supported!"
+msgstr "\"%s\" adresinin yeri henüz desteklenmiyor!"
+
+#: ../dialogs/BrowseLocationsDialog.py:52
+msgid "Type strict"
+msgstr "Sıkı yazın"
+
+#: ../dialogs/SFCDivergenceDialog.py:60 ../dialogs/SFCTransitionDialog.py:59
+#: ../dialogs/LDPowerRailDialog.py:58 ../dialogs/BrowseLocationsDialog.py:110
+#: ../dialogs/FBDBlockDialog.py:69 ../dialogs/ConnectionDialog.py:61
+msgid "Type:"
+msgstr "Tür:"
+
+#: ../runtime/WampClient.py:129
+msgid "TypeError register option: {}"
+msgstr "TypeError kayıt seçeneği: {}"
+
+#: ../connectors/PYRO/dialog.py:39 ../connectors/WAMP/dialog.py:42
+msgid "URI host:"
+msgstr "URI ana bilgisayarı:"
+
+#: ../connectors/PYRO/dialog.py:43 ../connectors/WAMP/dialog.py:46
+msgid "URI port:"
+msgstr "URI bağlantı noktası:"
+
+#: ../controls/UriLocationEditor.py:35
+msgid "URI type:"
+msgstr "URI türü:"
+
+#: ../canfestival/config_utils.py:500 ../canfestival/config_utils.py:515
+#, python-format
+msgid "Unable to define PDO mapping for node %02x"
+msgstr "Düğüm %02x için PDO eşleştirmesi tanımlanamıyor"
+
+#: ../targets/Xenomai/__init__.py:43
+#, python-format
+msgid "Unable to get Xenomai's %s \n"
+msgstr "Xenomai'nın %s elde edilemedi\n"
+
+#: ../bacnet/bacnet.py:430
+#, python-format
+msgid "Unable to load file \"%s\"!"
+msgstr "\"%s\" dosyası yüklenemedi!"
+
+#: ../bacnet/bacnet.py:420
+#, python-format
+msgid "Unable to save to file \"%s\"!"
+msgstr "\"%s\" dosyasına kaydedilemiyor!"
+
+#: ../PLCGenerator.py:1023 ../PLCGenerator.py:1301
+#, python-brace-format
+msgid "Undefined block type \"{a1}\" in \"{a2}\" POU"
+msgstr "\"{A2}\" POU'sunda tanımlanmamış blok tipi \"{a1}\""
+
+#: ../PLCGenerator.py:261
+#, python-format
+msgid "Undefined pou type \"%s\""
+msgstr "Tanımsız pou türü \"%s\""
+
+#: ../IDEFrame.py:368 ../IDEFrame.py:424
+msgid "Undo"
+msgstr "Geri alma"
+
+#: ../ProjectController.py:457
+msgid "Unknown"
+msgstr "Bilinmeyen"
+
+#: ../etherlab/EthercatCFileGenerator.py:470
+#, python-brace-format
+msgid "Unknown entry index 0x{a1:.4x}, subindex 0x{a2:.2x} for device {a3}"
+msgstr ""
+"Bilinmeyen giriş dizini 0x {a1: .4x}, alt dizin 0x {a2: .2x} cihaz {a3} için"
+
+#: ../editors/Viewer.py:437
+#, python-format
+msgid "Unknown variable \"%s\" for this POU!"
+msgstr "Bu POU için bilinmeyen değişken \"%s\"!"
+
+#: ../ProjectController.py:454 ../ProjectController.py:455
+msgid "Unnamed"
+msgstr "adsız"
+
+#: ../PLCControler.py:263
+#, python-format
+msgid "Unnamed%d"
+msgstr "Unnamed%d"
+
+#: ../controls/VariablePanel.py:307
+#, python-format
+msgid "Unrecognized data size \"%s\""
+msgstr "Tanınmayan veri boyutu \"%s\""
+
+#: ../etherlab/EtherCATManagementEditor.py:2080
+msgid "Update"
+msgstr "Güncelleştirme"
+
+#: ../runtime/WampClient.py:380
+msgid "Upload:"
+msgstr "Yükle:"
+
+#: ../editors/DataTypeEditor.py:646 ../controls/VariablePanel.py:852
+msgid "User Data Types"
+msgstr "Kullanıcı Veri Tipleri"
+
+#: ../canfestival/SlaveEditor.py:69 ../canfestival/NetworkEditor.py:93
+msgid "User Type"
+msgstr "Kullanıcı tipi"
+
+#: ../plcopen/types_enums.py:75
+msgid "User-defined POUs"
+msgstr "Kullanıcı tanımlı POU'lar"
+
+#: ../dialogs/ActionBlockDialog.py:42 ../etherlab/ConfigEditor.py:465
+msgid "Value"
+msgstr "değer"
+
+#: ../editors/DataTypeEditor.py:267
+msgid "Values:"
+msgstr "Değerler:"
+
+#: ../dialogs/ActionBlockDialog.py:47 ../editors/Viewer.py:625
+#: ../editors/Viewer.py:2458
+msgid "Variable"
+msgstr "Değişken"
+
+#: ../editors/Viewer.py:352 ../editors/Viewer.py:382 ../editors/Viewer.py:404
+#: ../editors/TextViewer.py:290 ../editors/TextViewer.py:344
+#: ../editors/TextViewer.py:367 ../controls/VariablePanel.py:354
+msgid "Variable Drop"
+msgstr "Değişken damla"
+
+#: ../etherlab/ConfigEditor.py:70
+#, python-format
+msgid "Variable Index: #x%4.4X"
+msgstr "Değişken Endeksi: # x%4.4X"
+
+#: ../dialogs/FBDVariableDialog.py:58
+msgid "Variable Properties"
+msgstr "Değişken Özellikler"
+
+#: ../editors/Viewer.py:332 ../editors/TextViewer.py:306
+#: ../controls/LocationCellEditor.py:102 ../controls/VariablePanel.py:315
+#: ../controls/VariablePanel.py:378
+msgid "Variable class"
+msgstr "Değişken sınıf"
+
+#: ../editors/Viewer.py:439 ../editors/TextViewer.py:388
+msgid "Variable don't belong to this POU!"
+msgstr "Değişken bu POU'ya ait değil!"
+
+#: ../etherlab/ConfigEditor.py:280
+msgid "Variable entries:"
+msgstr "Değişken girişler:"
+
+#: ../dialogs/LDElementDialog.py:92
+msgid "Variable:"
+msgstr "Değişken:"
+
+#: ../controls/VariablePanel.py:87
+msgid "Variables"
+msgstr "Değişkenler"
+
+#: ../controls/ProjectPropertiesPanel.py:169
+msgid "Vertical:"
+msgstr "Dikey:"
+
+#: ../runtime/WampClient.py:170
+#, python-format
+msgid "WAMP Client connection failed (%s) .. retrying .."
+msgstr "WAMP İstemci bağlantısı başarısız oldu (%s) .. yeniden deneniyor .."
+
+#: ../runtime/WampClient.py:179
+#, python-format
+msgid "WAMP Client connection lost (%s) .. retrying .."
+msgstr "WAMP İstemci bağlantısı kesildi (%s) .. yeniden deneniyor .."
+
+#: ../connectors/WAMP/dialog.py:54
+msgid "WAMP ID:"
+msgstr "WAMP ID:"
+
+#: ../runtime/WampClient.py:413
+msgid "WAMP Server URL"
+msgstr "WAMP Sunucusu URL'si"
+
+#: ../runtime/WampClient.py:276
+msgid "WAMP authentication has no secret configured"
+msgstr "WAMP kimlik doğrulamasının yapılandırılmış bir sırrı yoktur"
+
+#: ../runtime/WampClient.py:304
+msgid "WAMP client can not connect to :"
+msgstr "WAMP istemcisi şu adrese bağlanamaz:"
+
+#: ../runtime/WampClient.py:301
+msgid "WAMP client connecting to :"
+msgstr "WAMP istemcisi:"
+
+#: ../Beremiz_service.py:628
+msgid "WAMP client startup failed. "
+msgstr "WAMP istemci başlatılamadı."
+
+#: ../runtime/WampClient.py:206
+msgid "WAMP configuration error : missing '{}' parameter."
+msgstr "WAMP yapılandırma hatası: '{}' parametresi eksik."
+
+#: ../runtime/WampClient.py:192
+msgid "WAMP configuration error:"
+msgstr "WAMP konfigürasyon hatası:"
+
+#: ../connectors/WAMP/__init__.py:100
+#, python-format
+msgid "WAMP connecting to URL : %s\n"
+msgstr "URL'ye bağlanan WAMP: %s\n"
+
+#: ../connectors/WAMP/__init__.py:141
+msgid "WAMP connection timeout"
+msgstr "WAMP bağlantısı zaman aşımı"
+
+#: ../connectors/WAMP/__init__.py:159
+#, python-format
+msgid "WAMP connection to '%s' failed.\n"
+msgstr "'%s' değerine WAMP bağlantısı başarısız oldu.\n"
+
+#: ../runtime/WampClient.py:280
+msgid "WAMP deactivated in configuration"
+msgstr "WAMP konfigürasyonda devre dışı bırakıldı"
+
+#: ../Beremiz_service.py:605
+msgid "WAMP import failed :"
+msgstr "WAMP içe aktarma işlemi başarısız oldu:"
+
+#: ../runtime/WampClient.py:241
+msgid "WAMP secret empty"
+msgstr "WAMP gizli boş"
+
+#: ../runtime/WampClient.py:139
+#, python-format
+msgid "WAMP session joined (%s) by:"
+msgstr "WAMP oturumu (%s) katıldı:"
+
+#: ../runtime/WampClient.py:146
+msgid "WAMP session left"
+msgstr "WAMP oturumu kaldı"
+
+#: ../wxglade_hmi/wxglade_hmi.py:44
+msgid "WXGLADE GUI"
+msgstr "WXGLADE GUI"
+
+#: ../runtime/WampClient.py:432
+msgid "Wamp Settings"
+msgstr "Wamp Ayarları"
+
+#: ../dialogs/PouDialog.py:172 ../editors/LDViewer.py:902
+msgid "Warning"
+msgstr "Uyarı"
+
+#: ../etherlab/EthercatCFileGenerator.py:405
+#: ../etherlab/EthercatCFileGenerator.py:571
+msgid "Warning: "
+msgstr "Uyarı:"
+
+#: ../wxglade_hmi/wxglade_hmi.py:166
+msgid ""
+"Warning: WxGlade HMI has no object with name identical to extension name, "
+"and no python code is provided in start section to create object.\n"
+msgstr ""
+"Uyarı: WxGlade HMI, uzantı adına özdeş bir nesneye sahip değildir ve nesne "
+"oluşturmak için başlangıç ​​bölümünde python kodu bulunmaz.\n"
+
+#: ../ProjectController.py:756
+msgid "Warnings in ST/IL/SFC code generator :\n"
+msgstr "ST / IL / SFC kod üretecindeki uyarılar:\n"
+
+#: ../dialogs/SearchInProjectDialog.py:82
+msgid "Whole Project"
+msgstr "Bütün proje"
+
+#: ../controls/ProjectPropertiesPanel.py:137
+msgid "Width:"
+msgstr "Genişlik:"
+
+#: ../dialogs/FindInPouDialog.py:94
+msgid "Wrap search"
+msgstr "Aramayı ara"
+
+#: ../etherlab/ConfigEditor.py:345
+msgid "Write to (nodeid, index, subindex)"
+msgstr "Yazmak için (nodeid, index, subindex)"
+
+#: ../dialogs/AboutDialog.py:126
+msgid "Written by"
+msgstr "Tarafından yazılmıştır"
+
+#: ../etherlab/EthercatCFileGenerator.py:409
+#: ../etherlab/EthercatCFileGenerator.py:499
+#, python-format
+msgid "Wrong direction for location \"%s\"!"
+msgstr "Konumu \"%s\" için yanlış yön!"
+
+#: ../etherlab/EthercatCFileGenerator.py:400
+#: ../etherlab/EthercatCFileGenerator.py:487
+#, python-format
+msgid "Wrong type for location \"%s\"!"
+msgstr "\"%s\" konumu için yanlış tip!"
+
+#: ../features.py:24
+msgid "WxGlade GUI"
+msgstr "WxGlade GUI"
+
+#: ../etherlab/ConfigEditor.py:1236
+msgid "XML files (*.xml)|*.xml|All files|*.*"
+msgstr "XML dosyaları (* .xml) | * .xml | Tüm dosyalar | *. *"
+
+#: ../etherlab/EtherCATManagementEditor.py:652
+msgid "You can input only hex, dec value"
+msgstr "Yalnızca onaltılık değeri girebilirsiniz, dec değeri"
+
+#: ../etherlab/EtherCATManagementEditor.py:1999
+msgid "You can't modify it. This register is read-only or it's not connected."
+msgstr "Değiştiremezsin. Bu kayıt salt okunur veya bağlı değil."
+
+#: ../etherlab/EtherCATManagementEditor.py:648
+msgid "You cannot SDO download this state"
+msgstr "SDO bu durumu indiremezsiniz"
+
+#: ../svgui/svgui.py:150
+msgid ""
+"You don't have write permissions.\n"
+"Open Inkscape anyway ?"
+msgstr ""
+"Yazma yetkiniz yok.\n"
+"Yine de Inkscape'i açtın mı?"
+
+#: ../wxglade_hmi/wxglade_hmi.py:175
+msgid ""
+"You don't have write permissions.\n"
+"Open wxGlade anyway ?"
+msgstr ""
+"Yazma yetkiniz yok.\n"
+"Yine de wxGlade'i açtın mı?"
+
+#: ../etherlab/EtherCATManagementEditor.py:2002
+msgid "You entered wrong value. You can enter dec or hex value only."
+msgstr "Yanlış değer girdiniz. Yalnızca dec veya hex değerini girebilirsiniz."
+
+#: ../ProjectController.py:403
+msgid ""
+"You must have permission to work on the project\n"
+"Work on a project copy ?"
+msgstr ""
+"Projede çalışma iznine sahip olmalısınız.\n"
+"Proje kopyası üzerinde çalışmak?"
+
+#: ../editors/LDViewer.py:897
+msgid ""
+"You must select the block or group of blocks around which a branch should be"
+" added!"
+msgstr ""
+"Bir dalın eklenmesinin gerektiği bloğu veya blok grubunu seçmelisiniz!"
+
+#: ../editors/LDViewer.py:677
+msgid "You must select the wire where a contact should be added!"
+msgstr "Bir kişinin ekleneceği telleri seçmelisiniz!"
+
+#: ../dialogs/SFCStepNameDialog.py:52 ../dialogs/PouNameDialog.py:50
+msgid "You must type a name!"
+msgstr "Bir isim yazmalısın!"
+
+#: ../dialogs/ForceVariableDialog.py:209
+msgid "You must type a value!"
+msgstr "Bir değer yazmalısın!"
+
+#: ../IDEFrame.py:442
+msgid "Zoom"
+msgstr "yakınlaştırma"
+
+#: ../etherlab/EtherCATManagementEditor.py:911
+#: ../etherlab/EtherCATManagementEditor.py:1307
+msgid "bin files (*.bin)|*.bin"
+msgstr "çöp kutusu dosyaları (* .bin) | * .bin"
+
+#: ../etherlab/EtherCATManagementEditor.py:942
+#: ../etherlab/EtherCATManagementEditor.py:1290
+msgid "bin files (*.bin)|*.bin|All files|*.*"
+msgstr "bin dosyaları (* .bin) | * .bin | Tüm dosyalar | *. *"
+
+#: ../dialogs/DurationEditorDialog.py:159
+msgid "days"
+msgstr "günler"
+
+#: ../PLCOpenEditor.py:317
+#, python-format
+msgid "error: %s\n"
+msgstr "hata: %s\n"
+
+#: ../util/ProcessLogger.py:178
+#, python-brace-format
+msgid "exited with status {a1} (pid {a2})\n"
+msgstr "{a1} durumundan çıkıldı (pid {a2})\n"
+
+#: ../dialogs/PouDialog.py:110
+msgid "function"
+msgstr "fonksiyon"
+
+#: ../dialogs/PouDialog.py:110
+msgid "functionBlock"
+msgstr "functionBlock"
+
+#: ../dialogs/DurationEditorDialog.py:159
+msgid "hours"
+msgstr "saatler"
+
+#: ../ProjectController.py:784
+msgid "matiec installation is not found\n"
+msgstr "matiec yüklemesi bulunamadı\n"
+
+#: ../dialogs/DurationEditorDialog.py:162
+msgid "microseconds"
+msgstr "mikrosaniye"
+
+#: ../dialogs/DurationEditorDialog.py:161
+msgid "milliseconds"
+msgstr "milisaniye"
+
+#: ../dialogs/DurationEditorDialog.py:160
+msgid "minutes"
+msgstr "dakika"
+
+#: ../dialogs/PouDialog.py:110
+msgid "program"
+msgstr "program"
+
+#: ../dialogs/DurationEditorDialog.py:160
+msgid "seconds"
+msgstr "saniye"
+
+#: ../plcopen/iec_std.csv:84
+msgid "string from the middle"
+msgstr "ortadan dize"
+
+#: ../plcopen/iec_std.csv:82
+msgid "string left of"
+msgstr "dizgi kaldı"
+
+#: ../plcopen/iec_std.csv:83
+msgid "string right of"
+msgstr "dize"
+
+#: ../etherlab/EtherCATManagementEditor.py:323
+msgid "update"
+msgstr "güncelleştirme"
+
+#: ../Beremiz.py:167
+msgid "update info unavailable."
+msgstr "güncelleme bilgisi mevcut değil."
+
+#: ../PLCOpenEditor.py:315
+#, python-format
+msgid "warning: %s\n"
+msgstr "uyarı: %s\n"
+
+#: ../PLCControler.py:576
+#, python-brace-format
+msgid "{a1} \"{a2}\" can't be pasted as a {a3}."
+msgstr "{a1} \"{a2}\", {a3} olarak yapıştırılamaz."
+
+#: ../ConfigTreeNode.py:58
+#, python-brace-format
+msgid ""
+"{a1} XML file doesn't follow XSD schema at line {a2}:\n"
+"{a3}"
+msgstr ""
+"{a1} XML dosyası, {a2} satırında XSD şemasını takip etmiyor:\n"
+"{A3}"
+
+#: Extra XSD strings
+msgid "CanFestivalSlaveNode"
+msgstr "CanFestivalSlaveNode"
+
+msgid "CAN_Device"
+msgstr "CAN_Device"
+
+msgid "CAN_Baudrate"
+msgstr "CAN_Baudrate"
+
+msgid "NodeId"
+msgstr "nodeID"
+
+msgid "Sync_Align"
+msgstr "Sync_Align"
+
+msgid "Sync_Align_Ratio"
+msgstr "Sync_Align_Ratio"
+
+msgid "CanFestivalNode"
+msgstr "CanFestivalNode"
+
+msgid "Sync_TPDOs"
+msgstr "Sync_TPDOs"
+
+msgid "CanFestivalInstance"
+msgstr "CanFestivalInstance"
+
+msgid "CAN_Driver"
+msgstr "CAN_Driver"
+
+msgid "BACnetServerNode"
+msgstr "BACnetServerNode"
+
+msgid "Network_Interface"
+msgstr "Ağ Arayüzü"
+
+msgid "UDP_Port_Number"
+msgstr "UDP_Port_Number"
+
+msgid "BACnet_Communication_Control_Password"
+msgstr "BACnet_Communication_Control_Password"
+
+msgid "BACnet_Device_ID"
+msgstr "BACnet_Device_ID"
+
+msgid "BACnet_Device_Name"
+msgstr "BACnet_Device_Name"
+
+msgid "BACnet_Device_Location"
+msgstr "BACnet_Device_Location"
+
+msgid "BACnet_Device_Description"
+msgstr "BACnet_Device_Description"
+
+msgid "BACnet_Device_Application_Software_Version"
+msgstr "BACnet_Device_Application_Software_Version"
+
+msgid "Generic"
+msgstr "genel"
+
+msgid "Command"
+msgstr "komuta"
+
+msgid "Xenomai"
+msgstr "Xenomai"
+
+msgid "XenoConfig"
+msgstr "XenoConfig"
+
+msgid "Compiler"
+msgstr "Derleyici"
+
+msgid "CFLAGS"
+msgstr "CFLAGS"
+
+msgid "Linker"
+msgstr "bağlayıcı"
+
+msgid "LDFLAGS"
+msgstr "LDFLAGS"
+
+msgid "Linux"
+msgstr "Linux"
+
+msgid "Win32"
+msgstr "Win32"
+
+msgid "ModbusRequest"
+msgstr "ModbusRequest"
+
+msgid "SlaveID"
+msgstr "SlaveID"
+
+msgid "Nr_of_Channels"
+msgstr "Nr_of_Channels"
+
+msgid "Start_Address"
+msgstr "Start_Address"
+
+msgid "Timeout_in_ms"
+msgstr "Timeout_in_ms"
+
+msgid "MemoryArea"
+msgstr "MemoryArea"
+
+msgid "MemoryAreaType"
+msgstr "MemoryAreaType"
+
+msgid "ModbusTCPclient"
+msgstr "ModbusTCPclient"
+
+msgid "Remote_IP_Address"
+msgstr "Remote_IP_Address"
+
+msgid "Remote_Port_Number"
+msgstr "Remote_Port_Number"
+
+msgid "Invocation_Rate_in_ms"
+msgstr "Invocation_Rate_in_ms"
+
+msgid "ModbusServerNode"
+msgstr "ModbusServerNode"
+
+msgid "Local_IP_Address"
+msgstr "Local_IP_Address"
+
+msgid "Local_Port_Number"
+msgstr "Local_Port_Number"
+
+msgid "ModbusRTUclient"
+msgstr "ModbusRTUclient"
+
+msgid "Serial_Port"
+msgstr "Seri port"
+
+msgid "Baud_Rate"
+msgstr "Baud_Rate"
+
+msgid "Parity"
+msgstr "parite"
+
+msgid "Stop_Bits"
+msgstr "Stop_Bits"
+
+msgid "ModbusRTUslave"
+msgstr "ModbusRTUslave"
+
+msgid "ModbusRoot"
+msgstr "ModbusRoot"
+
+msgid "MaxRemoteTCPclients"
+msgstr "MaxRemoteTCPclients"
+
+msgid "CIA402SlaveParams"
+msgstr "CIA402SlaveParams"
+
+msgid "Enable%s"
+msgstr "Enable%s"
+
+msgid "ProcessVariables"
+msgstr "ProcessVariables"
+
+msgid "variable"
+msgstr "değişken"
+
+msgid "ReadFrom"
+msgstr "Dan oku"
+
+msgid "WriteTo"
+msgstr "WriteTo"
+
+msgid "BaseParams"
+msgstr "BaseParams"
+
+msgid "IEC_Channel"
+msgstr "IEC_Channel"
+
+msgid "Enabled"
+msgstr "Etkin"
+
+msgid "BeremizRoot"
+msgstr "BeremizRoot"
+
+msgid "TargetType"
+msgstr "TargetType"
+
+msgid "Libraries"
+msgstr "Kütüphaneler"
+
+msgid "URI_location"
+msgstr "URI_location"
+
+msgid "Disable_Extensions"
+msgstr "Disable_Extensions"
+
+msgid "%(codefile_name)s"
+msgstr "%(codefile_name)s"
+
+msgid "variables"
+msgstr "değişkenler"
+
+msgid "name"
+msgstr "isim"
+
+msgid "type"
+msgstr "tip"
+
+msgid "class"
+msgstr "sınıf"
+
+msgid "initial"
+msgstr "ilk"
+
+msgid "desc"
+msgstr "desc"
+
+msgid "onchange"
+msgstr "Onchange"
+
+msgid "opts"
+msgstr "dolaş"
+
+#: Extra TC6 documentation strings
+msgid "0 - current time, 1 - load time from PDT"
+msgstr "0 - şimdiki zaman, 1 - PDT'den yükleme süresi"
+
+msgid "Preset datetime"
+msgstr "Preset datetime"
+
+msgid "Copy of IN"
+msgstr "IN kopyası"
+
+msgid "Datetime, current or relative to PDT"
+msgstr "Geçerli tarih veya PDT'ye göre"
+
+msgid ""
+"The real time clock has many uses including time stamping, setting dates and"
+" times of day in batch reports, in alarm messages and so on."
+msgstr ""
+"Gerçek zamanlı saat, zaman damgası, tarih raporları ve günün raporlarını, "
+"alarm mesajlarında vb."
+
+msgid "1 = integrate, 0 = hold"
+msgstr "1 = tümleştir, 0 = bekle"
+
+msgid "Overriding reset"
+msgstr "Sıfırlamayı geçersiz kıl"
+
+msgid "Input variable"
+msgstr "Giriş değişkeni"
+
+msgid "Initial value"
+msgstr "Başlangıç ​​değeri"
+
+msgid "Sampling period"
+msgstr "Örnekleme periyodu"
+
+msgid "NOT R1"
+msgstr "R1 DEĞİL"
+
+msgid "Integrated output"
+msgstr "Entegre çıktı"
+
+msgid ""
+"The integral function block integrates the value of input XIN over time."
+msgstr "İntegral fonksiyon bloğu zamanla XIN girişinin değerini entegre eder."
+
+msgid "0 = reset"
+msgstr "0 = sıfırla"
+
+msgid "Input to be differentiated"
+msgstr "Farklılaştırılacak giriş"
+
+msgid "Differentiated output"
+msgstr "Farklılaşmış çıkış"
+
+msgid ""
+"The derivative function block produces an output XOUT proportional to the "
+"rate of change of the input XIN."
+msgstr ""
+"Türev fonksiyon bloğu, XIN girişinin değişim oranına orantılı bir çıkış XOUT"
+" üretir."
+
+msgid "0 - manual , 1 - automatic"
+msgstr "0 - manuel, 1 - otomatik"
+
+msgid "Process variable"
+msgstr "Süreç değişkeni"
+
+msgid "Set point"
+msgstr "Ayar noktası"
+
+msgid "Manual output adjustment - Typically from transfer station"
+msgstr "Manuel çıkış ayarı - Tipik olarak transfer istasyonundan"
+
+msgid "Proportionality constant"
+msgstr "Orantısallık sabiti"
+
+msgid "Reset time"
+msgstr "Sıfırlama süresi"
+
+msgid "Derivative time constant"
+msgstr "Türev zaman sabiti"
+
+msgid "PV - SP"
+msgstr "PV - SP"
+
+msgid "FB for integral term"
+msgstr "Integral terimi için FB"
+
+msgid "FB for derivative term"
+msgstr "Türev terim için FB"
+
+msgid ""
+"The PID (proportional, Integral, Derivative) function block provides the "
+"classical three term controller for closed loop control."
+msgstr ""
+"PID (oransal, İntegral, Türev) fonksiyon bloğu, kapalı çevrim kontrolü için "
+"klasik üçlü kontrolör sağlar."
+
+msgid "0 - track X0, 1 - ramp to/track X1"
+msgstr "0 - X0 yolunu takip edin, 1 - rampa X1 yolunu takip edin"
+
+msgid "Ramp duration"
+msgstr "Rampa süresi"
+
+msgid "BUSY = 1 during ramping period"
+msgstr "Ramping döneminde BUSY = 1"
+
+msgid "Elapsed time of ramp"
+msgstr "Rampa Geçen zaman"
+
+msgid "The RAMP function block is modelled on example given in the standard."
+msgstr "RAMP fonksiyon bloğu, standartta verilen örnekte modellenmiştir."
+
+msgid ""
+"The hysteresis function block provides a hysteresis boolean output driven by"
+" the difference of two floating point (REAL) inputs XIN1 and XIN2."
+msgstr ""
+"Histerezis fonksiyon bloğu, iki kayan nokta (REAL) XIN1 ve XIN2 girişlerinin"
+" farkı tarafından tetiklenen bir histerezis boolean çıkışı sağlar."
+
+msgid "The SR bistable is a latch where the Set dominates."
+msgstr "SR bistable, Set'in baskın olduğu bir mandaldır."
+
+msgid "The RS bistable is a latch where the Reset dominates."
+msgstr "RS bistable, Sıfırlamanın baskın olduğu bir mandaldır."
+
+msgid ""
+"The semaphore provides a mechanism to allow software elements mutually "
+"exclusive access to certain resources."
+msgstr ""
+"Semafor, yazılım öğelerinin belirli kaynaklara karşılıklı olarak özel erişim"
+" izni vermesi için bir mekanizma sağlar."
+
+msgid "The output produces a single pulse when a rising edge is detected."
+msgstr "Çıkış, yükselen bir kenar algılandığında tek bir darbe üretir."
+
+msgid "The output produces a single pulse when a falling edge is detected."
+msgstr "Çıkış, düşme kenarı algılandığında tek bir darbe üretir."
+
+msgid ""
+"The up-counter can be used to signal when a count has reached a maximum "
+"value."
+msgstr ""
+"Yukarı sayıcı, bir sayım maksimum değere ulaştığında sinyal vermek için "
+"kullanılabilir."
+
+msgid ""
+"The down-counter can be used to signal when a count has reached zero, on "
+"counting down from a preset value."
+msgstr ""
+"Sayaç, bir sayının sıfıra ulaştığı zaman, ön ayarlı bir değerden geri sayım "
+"yaparken sinyal vermek için kullanılabilir."
+
+msgid ""
+"The up-down counter has two inputs CU and CD. It can be used to both count "
+"up on one input and down on the other."
+msgstr ""
+"Yukarı-aşağı sayıcı iki girdi CU ve CD'ye sahiptir. Hem bir girişe hem de "
+"diğerine saymak için kullanılabilir."
+
+msgid "first input parameter"
+msgstr "ilk giriş parametresi"
+
+msgid "second input parameter"
+msgstr "ikinci giriş parametresi"
+
+msgid "first output parameter"
+msgstr "ilk çıkış parametresi"
+
+msgid "second output parameter"
+msgstr "ikinci çıkış parametresi"
+
+msgid "internal state: 0-reset, 1-counting, 2-set"
+msgstr "iç durum: 0-reset, 1-sayma, 2-set"
+
+msgid ""
+"The pulse timer can be used to generate output pulses of a given time "
+"duration."
+msgstr ""
+"Darbe zamanlayıcısı, belirli bir zaman süresinin çıkış darbeleri üretmek "
+"için kullanılabilir."
+
+msgid ""
+"The on-delay timer can be used to delay setting an output true, for fixed "
+"period after an input becomes true."
+msgstr ""
+"Bir gecikme zamanlayıcısı, bir girişin gerçek hale gelmesinden sonra sabit "
+"bir süre için bir çıkışı true olarak ayarlamayı geciktirmek için "
+"kullanılabilir."
+
+msgid ""
+"The off-delay timer can be used to delay setting an output false, for fixed "
+"period after input goes false."
+msgstr ""
+"Gecikme zamanlayıcısı, giriş yanlış geçtikten sonra sabit bir süre için bir "
+"çıkışı yanlış ayarlamayı geciktirmek için kullanılabilir."

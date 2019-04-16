@@ -1,0 +1,1454 @@
+<?xml version='1.0' encoding='utf-8'?>
+<project xmlns="http://www.plcopen.org/xml/tc6_0201" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xhtml="http://www.w3.org/1999/xhtml" xsi:schemaLocation="http://www.plcopen.org/xml/tc6_0201">
+  <fileHeader companyName="" productName="Beremiz" productVersion="0.0" creationDateTime="2008-12-14T16:21:19" contentDescription="This example shows many features in Beremiz:&#10;&#10;   1. How to implement python extensions.&#10;   2. How to implement basic C extension.&#10;   3. How to use C code in IEC POUs.&#10;   4. How to call C functions from python code.&#10;   5. How to avoid race conditions between IEC, C and python code.&#10;   6. How to convert betweet different IEC types.&#10;"/>
+  <contentHeader name="Beremiz Python Support Tests" modificationDateTime="2018-09-26T13:15:28">
+    <coordinateInfo>
+      <pageSize x="1024" y="1024"/>
+      <fbd>
+        <scaling x="5" y="5"/>
+      </fbd>
+      <ld>
+        <scaling x="5" y="5"/>
+      </ld>
+      <sfc>
+        <scaling x="5" y="5"/>
+      </sfc>
+    </coordinateInfo>
+  </contentHeader>
+  <types>
+    <dataTypes>
+      <dataType name="CPLX_TYPE">
+        <baseType>
+          <struct>
+            <variable name="FIRSTBYTE">
+              <type>
+                <SINT/>
+              </type>
+            </variable>
+            <variable name="SECONDBYTE">
+              <type>
+                <SINT/>
+              </type>
+            </variable>
+          </struct>
+        </baseType>
+      </dataType>
+      <dataType name="StateMachine">
+        <baseType>
+          <enum>
+            <values>
+              <value name="STANDBY"/>
+              <value name="START"/>
+              <value name="STOP"/>
+            </values>
+          </enum>
+        </baseType>
+      </dataType>
+      <dataType name="datatype0">
+        <baseType>
+          <BOOL/>
+        </baseType>
+      </dataType>
+    </dataTypes>
+    <pous>
+      <pou name="main_pytest" pouType="program">
+        <interface>
+          <localVars>
+            <variable name="mux1_sel">
+              <type>
+                <INT/>
+              </type>
+              <initialValue>
+                <simpleValue value="3"/>
+              </initialValue>
+            </variable>
+            <variable name="mux2_sel">
+              <type>
+                <INT/>
+              </type>
+              <initialValue>
+                <simpleValue value="3"/>
+              </initialValue>
+            </variable>
+            <variable name="pytest_var1">
+              <type>
+                <string/>
+              </type>
+            </variable>
+            <variable name="fefvsd">
+              <type>
+                <derived name="datatype0"/>
+              </type>
+            </variable>
+            <variable name="pytest_var2">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="py1">
+              <type>
+                <derived name="python_eval"/>
+              </type>
+            </variable>
+            <variable name="Block1">
+              <type>
+                <derived name="python_eval"/>
+              </type>
+            </variable>
+            <variable name="Block2">
+              <type>
+                <derived name="python_eval"/>
+              </type>
+            </variable>
+            <variable name="Block3">
+              <type>
+                <derived name="python_eval"/>
+              </type>
+            </variable>
+            <variable name="pytest_var3">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="FromC">
+              <type>
+                <SINT/>
+              </type>
+            </variable>
+            <variable name="C_Pragma0">
+              <type>
+                <derived name="C_Pragma"/>
+              </type>
+            </variable>
+          </localVars>
+          <externalVars>
+            <variable name="TestInput">
+              <type>
+                <SINT/>
+              </type>
+            </variable>
+            <variable name="TestOutput">
+              <type>
+                <SINT/>
+              </type>
+            </variable>
+          </externalVars>
+          <localVars>
+            <variable name="FromInput">
+              <type>
+                <SINT/>
+              </type>
+            </variable>
+            <variable name="Test_BCD">
+              <type>
+                <WORD/>
+              </type>
+              <initialValue>
+                <simpleValue value="151"/>
+              </initialValue>
+            </variable>
+            <variable name="Test_BCD_WRONG">
+              <type>
+                <WORD/>
+              </type>
+              <initialValue>
+                <simpleValue value="154"/>
+              </initialValue>
+            </variable>
+            <variable name="Test_BCD_CONVERTED">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="Test_BCD_RESULT">
+              <type>
+                <UINT/>
+              </type>
+            </variable>
+            <variable name="Test_BCD_WRONG_RESULT">
+              <type>
+                <UINT/>
+              </type>
+            </variable>
+            <variable name="Test_DT">
+              <type>
+                <DT/>
+              </type>
+              <initialValue>
+                <simpleValue value="DT#2013-02-23-22:35:46"/>
+              </initialValue>
+            </variable>
+            <variable name="Test_TOD">
+              <type>
+                <TOD/>
+              </type>
+            </variable>
+            <variable name="Test_TOD_STRING">
+              <type>
+                <string/>
+              </type>
+            </variable>
+            <variable name="Test_Date">
+              <type>
+                <DATE/>
+              </type>
+            </variable>
+            <variable name="Test_String">
+              <type>
+                <string/>
+              </type>
+              <initialValue>
+                <simpleValue value="test"/>
+              </initialValue>
+            </variable>
+            <variable name="Test_Bool">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+          </localVars>
+          <externalVars>
+            <variable name="Global_RS">
+              <type>
+                <derived name="RS"/>
+              </type>
+            </variable>
+            <variable name="TUTU">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+            <variable name="TOTO">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+            <variable name="Test_Python_Var">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+            <variable name="Second_Python_Var">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+          </externalVars>
+        </interface>
+        <body>
+          <FBD>
+            <inVariable localId="4" height="30" width="160" executionOrderId="0" negated="false">
+              <position x="295" y="450"/>
+              <connectionPointOut>
+                <relPosition x="160" y="15"/>
+              </connectionPointOut>
+              <expression>'time.sleep(1)'</expression>
+            </inVariable>
+            <block localId="5" width="125" height="80" typeName="python_eval" instanceName="py1" executionOrderId="0">
+              <position x="686" y="400"/>
+              <inputVariables>
+                <variable formalParameter="TRIG">
+                  <connectionPointIn>
+                    <relPosition x="0" y="35"/>
+                    <connection refLocalId="7" formalParameter="OUT">
+                      <position x="686" y="435"/>
+                      <position x="285" y="435"/>
+                      <position x="285" y="480"/>
+                      <position x="250" y="480"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="CODE">
+                  <connectionPointIn>
+                    <relPosition x="0" y="65"/>
+                    <connection refLocalId="4">
+                      <position x="686" y="465"/>
+                      <position x="455" y="465"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="ACK">
+                  <connectionPointOut>
+                    <relPosition x="125" y="35"/>
+                  </connectionPointOut>
+                </variable>
+                <variable formalParameter="RESULT">
+                  <connectionPointOut>
+                    <relPosition x="125" y="65"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <block localId="7" width="70" height="45" typeName="NOT" executionOrderId="0">
+              <position x="180" y="450"/>
+              <inputVariables>
+                <variable formalParameter="IN">
+                  <connectionPointIn>
+                    <relPosition x="0" y="30"/>
+                    <connection refLocalId="3">
+                      <position x="180" y="480"/>
+                      <position x="155" y="480"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="70" y="30"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inOutVariable localId="3" height="30" width="120" executionOrderId="0" negatedOut="false" negatedIn="false">
+              <position x="35" y="465"/>
+              <connectionPointIn>
+                <relPosition x="0" y="15"/>
+                <connection refLocalId="7" formalParameter="OUT">
+                  <position x="35" y="480"/>
+                  <position x="25" y="480"/>
+                  <position x="25" y="440"/>
+                  <position x="270" y="440"/>
+                  <position x="270" y="480"/>
+                  <position x="250" y="480"/>
+                </connection>
+              </connectionPointIn>
+              <connectionPointOut>
+                <relPosition x="120" y="15"/>
+              </connectionPointOut>
+              <expression>pytest_var2</expression>
+            </inOutVariable>
+            <block localId="8" width="125" height="80" typeName="python_eval" instanceName="Block1" executionOrderId="0">
+              <position x="686" y="545"/>
+              <inputVariables>
+                <variable formalParameter="TRIG">
+                  <connectionPointIn>
+                    <relPosition x="0" y="35"/>
+                    <connection refLocalId="7" formalParameter="OUT">
+                      <position x="686" y="580"/>
+                      <position x="285" y="580"/>
+                      <position x="285" y="480"/>
+                      <position x="250" y="480"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="CODE">
+                  <connectionPointIn>
+                    <relPosition x="0" y="65"/>
+                    <connection refLocalId="9">
+                      <position x="686" y="610"/>
+                      <position x="665" y="610"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="ACK">
+                  <connectionPointOut>
+                    <relPosition x="125" y="35"/>
+                  </connectionPointOut>
+                </variable>
+                <variable formalParameter="RESULT">
+                  <connectionPointOut>
+                    <relPosition x="125" y="65"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="9" height="30" width="370" executionOrderId="0" negated="false">
+              <position x="295" y="595"/>
+              <connectionPointOut>
+                <relPosition x="370" y="15"/>
+              </connectionPointOut>
+              <expression>'sys.stdout.write("FBID :"+str(FBID)+"\n")'</expression>
+            </inVariable>
+            <inVariable localId="11" height="30" width="290" executionOrderId="0" negated="false">
+              <position x="295" y="735"/>
+              <connectionPointOut>
+                <relPosition x="290" y="15"/>
+              </connectionPointOut>
+              <expression>'PLCBinary.Simple_C_Call(5678)'</expression>
+            </inVariable>
+            <block localId="12" width="125" height="80" typeName="python_eval" instanceName="Block2" executionOrderId="0">
+              <position x="686" y="687"/>
+              <inputVariables>
+                <variable formalParameter="TRIG">
+                  <connectionPointIn>
+                    <relPosition x="0" y="33"/>
+                    <connection refLocalId="7" formalParameter="OUT">
+                      <position x="686" y="720"/>
+                      <position x="285" y="720"/>
+                      <position x="285" y="480"/>
+                      <position x="250" y="480"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="CODE">
+                  <connectionPointIn>
+                    <relPosition x="0" y="63"/>
+                    <connection refLocalId="11">
+                      <position x="686" y="750"/>
+                      <position x="585" y="750"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="ACK">
+                  <connectionPointOut>
+                    <relPosition x="125" y="33"/>
+                  </connectionPointOut>
+                </variable>
+                <variable formalParameter="RESULT">
+                  <connectionPointOut>
+                    <relPosition x="125" y="63"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="14" height="30" width="290" executionOrderId="0" negated="false">
+              <position x="290" y="885"/>
+              <connectionPointOut>
+                <relPosition x="290" y="15"/>
+              </connectionPointOut>
+              <expression>'MyPythonFunc(42)'</expression>
+            </inVariable>
+            <block localId="15" width="125" height="80" typeName="python_eval" instanceName="Block3" executionOrderId="0">
+              <position x="686" y="837"/>
+              <inputVariables>
+                <variable formalParameter="TRIG">
+                  <connectionPointIn>
+                    <relPosition x="0" y="33"/>
+                    <connection refLocalId="7" formalParameter="OUT">
+                      <position x="686" y="870"/>
+                      <position x="285" y="870"/>
+                      <position x="285" y="480"/>
+                      <position x="250" y="480"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="CODE">
+                  <connectionPointIn>
+                    <relPosition x="0" y="63"/>
+                    <connection refLocalId="14">
+                      <position x="686" y="900"/>
+                      <position x="580" y="900"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="ACK">
+                  <connectionPointOut>
+                    <relPosition x="125" y="33"/>
+                  </connectionPointOut>
+                </variable>
+                <variable formalParameter="RESULT">
+                  <connectionPointOut>
+                    <relPosition x="125" y="63"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <comment localId="16" height="90" width="680">
+              <position x="35" y="275"/>
+              <content>
+                <xhtml:p><![CDATA[This part of the example test that, despite of 2T period clock stimulating TRIG pin of pyth_eval blocks, blocks keep executing one after the other, in respect of execution order.]]></xhtml:p>
+              </content>
+            </comment>
+            <block localId="17" width="80" height="120" typeName="MUX" executionOrderId="0">
+              <position x="1101" y="790"/>
+              <inputVariables>
+                <variable formalParameter="K">
+                  <connectionPointIn>
+                    <relPosition x="0" y="30"/>
+                    <connection refLocalId="18">
+                      <position x="1101" y="820"/>
+                      <position x="1076" y="820"/>
+                      <position x="1076" y="810"/>
+                      <position x="1060" y="810"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN0">
+                  <connectionPointIn>
+                    <relPosition x="0" y="50"/>
+                    <connection refLocalId="5" formalParameter="RESULT">
+                      <position x="1101" y="840"/>
+                      <position x="941" y="840"/>
+                      <position x="941" y="465"/>
+                      <position x="811" y="465"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="70"/>
+                    <connection refLocalId="8" formalParameter="RESULT">
+                      <position x="1101" y="860"/>
+                      <position x="926" y="860"/>
+                      <position x="926" y="610"/>
+                      <position x="811" y="610"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="90"/>
+                    <connection refLocalId="12" formalParameter="RESULT">
+                      <position x="1101" y="880"/>
+                      <position x="911" y="880"/>
+                      <position x="911" y="750"/>
+                      <position x="811" y="750"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN3">
+                  <connectionPointIn>
+                    <relPosition x="0" y="110"/>
+                    <connection refLocalId="15" formalParameter="RESULT">
+                      <position x="1101" y="900"/>
+                      <position x="811" y="900"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="80" y="30"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <outVariable localId="19" height="35" width="125" executionOrderId="0" negated="false">
+              <position x="1271" y="805"/>
+              <connectionPointIn>
+                <relPosition x="0" y="15"/>
+                <connection refLocalId="17" formalParameter="OUT">
+                  <position x="1271" y="820"/>
+                  <position x="1181" y="820"/>
+                </connection>
+              </connectionPointIn>
+              <expression>pytest_var1</expression>
+            </outVariable>
+            <block localId="21" width="80" height="120" typeName="MUX" executionOrderId="0">
+              <position x="1106" y="385"/>
+              <inputVariables>
+                <variable formalParameter="K">
+                  <connectionPointIn>
+                    <relPosition x="0" y="30"/>
+                    <connection refLocalId="22">
+                      <position x="1106" y="415"/>
+                      <position x="1076" y="415"/>
+                      <position x="1076" y="405"/>
+                      <position x="1055" y="405"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN0">
+                  <connectionPointIn>
+                    <relPosition x="0" y="50"/>
+                    <connection refLocalId="5" formalParameter="ACK">
+                      <position x="1106" y="435"/>
+                      <position x="811" y="435"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="70"/>
+                    <connection refLocalId="8" formalParameter="ACK">
+                      <position x="1106" y="455"/>
+                      <position x="841" y="455"/>
+                      <position x="841" y="580"/>
+                      <position x="811" y="580"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="90"/>
+                    <connection refLocalId="12" formalParameter="ACK">
+                      <position x="1106" y="475"/>
+                      <position x="856" y="475"/>
+                      <position x="856" y="720"/>
+                      <position x="811" y="720"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN3">
+                  <connectionPointIn>
+                    <relPosition x="0" y="110"/>
+                    <connection refLocalId="15" formalParameter="ACK">
+                      <position x="1106" y="495"/>
+                      <position x="871" y="495"/>
+                      <position x="871" y="870"/>
+                      <position x="811" y="870"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="80" y="30"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="22" height="30" width="74" executionOrderId="0" negated="false">
+              <position x="981" y="390"/>
+              <connectionPointOut>
+                <relPosition x="74" y="15"/>
+              </connectionPointOut>
+              <expression>mux1_sel</expression>
+            </inVariable>
+            <outVariable localId="23" height="35" width="125" executionOrderId="0" negated="false">
+              <position x="1271" y="400"/>
+              <connectionPointIn>
+                <relPosition x="0" y="15"/>
+                <connection refLocalId="21" formalParameter="OUT">
+                  <position x="1271" y="415"/>
+                  <position x="1186" y="415"/>
+                </connection>
+              </connectionPointIn>
+              <expression>pytest_var3</expression>
+            </outVariable>
+            <outVariable localId="25" height="30" width="60" executionOrderId="0" negated="false">
+              <position x="320" y="1075"/>
+              <connectionPointIn>
+                <relPosition x="0" y="15"/>
+                <connection refLocalId="26" formalParameter="OUT">
+                  <position x="320" y="1090"/>
+                  <position x="265" y="1090"/>
+                </connection>
+              </connectionPointIn>
+              <expression>FromC</expression>
+            </outVariable>
+            <inVariable localId="1" height="30" width="30" executionOrderId="0" negated="false">
+              <position x="105" y="1075"/>
+              <connectionPointOut>
+                <relPosition x="30" y="15"/>
+              </connectionPointOut>
+              <expression>23</expression>
+            </inVariable>
+            <block localId="26" width="80" height="45" typeName="C_Pragma" instanceName="C_Pragma0" executionOrderId="0">
+              <position x="185" y="1060"/>
+              <inputVariables>
+                <variable formalParameter="IN">
+                  <connectionPointIn>
+                    <relPosition x="0" y="30"/>
+                    <connection refLocalId="1">
+                      <position x="185" y="1090"/>
+                      <position x="135" y="1090"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="80" y="30"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="27" height="30" width="90" executionOrderId="0" negated="false">
+              <position x="100" y="1190"/>
+              <connectionPointOut>
+                <relPosition x="90" y="15"/>
+              </connectionPointOut>
+              <expression>TestInput</expression>
+            </inVariable>
+            <outVariable localId="28" height="30" width="105" executionOrderId="0" negated="false">
+              <position x="195" y="1125"/>
+              <connectionPointIn>
+                <relPosition x="0" y="15"/>
+                <connection refLocalId="2">
+                  <position x="195" y="1140"/>
+                  <position x="140" y="1140"/>
+                </connection>
+              </connectionPointIn>
+              <expression>TestOutput</expression>
+            </outVariable>
+            <outVariable localId="29" height="30" width="85" executionOrderId="0" negated="false">
+              <position x="215" y="1190"/>
+              <connectionPointIn>
+                <relPosition x="0" y="15"/>
+                <connection refLocalId="27">
+                  <position x="215" y="1205"/>
+                  <position x="190" y="1205"/>
+                </connection>
+              </connectionPointIn>
+              <expression>FromInput</expression>
+            </outVariable>
+            <inVariable localId="2" height="30" width="30" executionOrderId="0" negated="false">
+              <position x="110" y="1125"/>
+              <connectionPointOut>
+                <relPosition x="30" y="15"/>
+              </connectionPointOut>
+              <expression>10</expression>
+            </inVariable>
+            <comment localId="30" height="105" width="465">
+              <position x="50" y="925"/>
+              <content>
+                <xhtml:p><![CDATA[You will be ready to use beremiz with C and Python when you will understand why "FromInput" is equal  to 75.
+Happy hacking! ]]></xhtml:p>
+              </content>
+            </comment>
+            <comment localId="31" height="90" width="345">
+              <position x="295" y="485"/>
+              <content>
+                <xhtml:p><![CDATA[Sleep here is bad. It blocks other py_eval instances. Whith a wxGlade GUI, GUI freeze for a second.]]></xhtml:p>
+              </content>
+            </comment>
+            <comment localId="6" height="80" width="345">
+              <position x="295" y="630"/>
+              <content>
+                <xhtml:p><![CDATA[Prints FBID to stdout of PLC runtime. FBID is a unique reference to py_eval instance.]]></xhtml:p>
+              </content>
+            </comment>
+            <comment localId="10" height="85" width="345">
+              <position x="295" y="770"/>
+              <content>
+                <xhtml:p><![CDATA[Simple_C_Call is declared in C_File "1.x:c_code". See python ctypes manual for details on typing.]]></xhtml:p>
+              </content>
+            </comment>
+            <comment localId="32" height="145" width="235">
+              <position x="25" y="505"/>
+              <content>
+                <xhtml:p><![CDATA[Fast clock, at least faster that sleep(1). See what happens when python takes time to answer : PLC continues.]]></xhtml:p>
+              </content>
+            </comment>
+            <outVariable localId="33" height="30" width="133" executionOrderId="0" negated="false">
+              <position x="580" y="1564"/>
+              <connectionPointIn>
+                <relPosition x="0" y="16"/>
+                <connection refLocalId="35" formalParameter="OUT">
+                  <position x="580" y="1580"/>
+                  <position x="371" y="1580"/>
+                </connection>
+              </connectionPointIn>
+              <expression>Test_BCD_RESULT</expression>
+            </outVariable>
+            <inVariable localId="34" height="30" width="75" executionOrderId="0" negated="false">
+              <position x="60" y="1564"/>
+              <connectionPointOut>
+                <relPosition x="75" y="16"/>
+              </connectionPointOut>
+              <expression>Test_BCD</expression>
+            </inVariable>
+            <block localId="35" width="106" height="60" typeName="BCD_TO_UINT" executionOrderId="0">
+              <position x="265" y="1539"/>
+              <inputVariables>
+                <variable formalParameter="IN">
+                  <connectionPointIn>
+                    <relPosition x="0" y="41"/>
+                    <connection refLocalId="34">
+                      <position x="265" y="1580"/>
+                      <position x="135" y="1580"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="106" y="41"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="36" height="30" width="66" executionOrderId="0" negated="false">
+              <position x="60" y="1774"/>
+              <connectionPointOut>
+                <relPosition x="66" y="16"/>
+              </connectionPointOut>
+              <expression>Test_DT</expression>
+            </inVariable>
+            <block localId="37" width="255" height="45" typeName="DATE_AND_TIME_TO_TIME_OF_DAY" executionOrderId="0">
+              <position x="265" y="1759"/>
+              <inputVariables>
+                <variable formalParameter="IN">
+                  <connectionPointIn>
+                    <relPosition x="0" y="31"/>
+                    <connection refLocalId="36">
+                      <position x="265" y="1790"/>
+                      <position x="125" y="1790"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="255" y="31"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <block localId="38" width="195" height="45" typeName="DATE_AND_TIME_TO_DATE" executionOrderId="0">
+              <position x="265" y="1834"/>
+              <inputVariables>
+                <variable formalParameter="IN">
+                  <connectionPointIn>
+                    <relPosition x="0" y="31"/>
+                    <connection refLocalId="36">
+                      <position x="265" y="1865"/>
+                      <position x="242" y="1865"/>
+                      <position x="242" y="1790"/>
+                      <position x="125" y="1790"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="195" y="31"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <outVariable localId="40" height="30" width="82" executionOrderId="0" negated="false">
+              <position x="580" y="1849"/>
+              <connectionPointIn>
+                <relPosition x="0" y="16"/>
+                <connection refLocalId="38" formalParameter="OUT">
+                  <position x="580" y="1865"/>
+                  <position x="460" y="1865"/>
+                </connection>
+              </connectionPointIn>
+              <expression>Test_Date</expression>
+            </outVariable>
+            <outVariable localId="42" height="30" width="98" executionOrderId="0" negated="false">
+              <position x="465" y="1944"/>
+              <connectionPointIn>
+                <relPosition x="0" y="16"/>
+                <connection refLocalId="46" formalParameter="OUT">
+                  <position x="465" y="1960"/>
+                  <position x="395" y="1960"/>
+                </connection>
+              </connectionPointIn>
+              <expression>Test_String</expression>
+            </outVariable>
+            <outVariable localId="43" height="30" width="82" executionOrderId="0" negated="false">
+              <position x="465" y="2014"/>
+              <connectionPointIn>
+                <relPosition x="0" y="16"/>
+                <connection refLocalId="44" formalParameter="OUT">
+                  <position x="465" y="2030"/>
+                  <position x="400" y="2030"/>
+                </connection>
+              </connectionPointIn>
+              <expression>Test_Bool</expression>
+            </outVariable>
+            <block localId="44" width="135" height="45" typeName="STRING_TO_BOOL" executionOrderId="0">
+              <position x="265" y="1999"/>
+              <inputVariables>
+                <variable formalParameter="IN">
+                  <connectionPointIn>
+                    <relPosition x="0" y="31"/>
+                    <connection refLocalId="45">
+                      <position x="265" y="2030"/>
+                      <position x="115" y="2030"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="135" y="31"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="45" height="30" width="58" executionOrderId="0" negated="false">
+              <position x="60" y="2014"/>
+              <connectionPointOut>
+                <relPosition x="58" y="16"/>
+              </connectionPointOut>
+              <expression>'True'</expression>
+            </inVariable>
+            <block localId="46" width="130" height="45" typeName="INT_TO_STRING" executionOrderId="0">
+              <position x="265" y="1929"/>
+              <inputVariables>
+                <variable formalParameter="IN">
+                  <connectionPointIn>
+                    <relPosition x="0" y="31"/>
+                    <connection refLocalId="58">
+                      <position x="265" y="1960"/>
+                      <position x="205" y="1960"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="130" y="31"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="50" height="30" width="106" executionOrderId="0" negated="false">
+              <position x="75" y="2275"/>
+              <connectionPointOut>
+                <relPosition x="106" y="15"/>
+              </connectionPointOut>
+              <expression>Global_RS.Q1</expression>
+            </inVariable>
+            <block localId="51" width="70" height="85" typeName="AND" executionOrderId="0">
+              <position x="240" y="2255"/>
+              <inputVariables>
+                <variable formalParameter="IN1" negated="true">
+                  <connectionPointIn>
+                    <relPosition x="0" y="35"/>
+                    <connection refLocalId="50">
+                      <position x="240" y="2290"/>
+                      <position x="180" y="2290"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="70"/>
+                    <connection refLocalId="52">
+                      <position x="240" y="2325"/>
+                      <position x="180" y="2325"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="70" y="35"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="52" height="30" width="105" executionOrderId="0" negated="false">
+              <position x="75" y="2310"/>
+              <connectionPointOut>
+                <relPosition x="105" y="15"/>
+              </connectionPointOut>
+              <expression>BOOL#TRUE</expression>
+            </inVariable>
+            <outVariable localId="13" height="30" width="105" executionOrderId="0" negated="false">
+              <position x="385" y="2275"/>
+              <connectionPointIn>
+                <relPosition x="0" y="15"/>
+                <connection refLocalId="51" formalParameter="OUT">
+                  <position x="385" y="2290"/>
+                  <position x="310" y="2290"/>
+                </connection>
+              </connectionPointIn>
+              <expression>Global_RS.S</expression>
+            </outVariable>
+            <outVariable localId="20" height="30" width="106" executionOrderId="0" negated="false">
+              <position x="385" y="2390"/>
+              <connectionPointIn>
+                <relPosition x="0" y="15"/>
+                <connection refLocalId="41" formalParameter="OUT">
+                  <position x="385" y="2405"/>
+                  <position x="310" y="2405"/>
+                </connection>
+              </connectionPointIn>
+              <expression>Global_RS.R1</expression>
+            </outVariable>
+            <inVariable localId="24" height="30" width="106" executionOrderId="0" negated="false">
+              <position x="75" y="2390"/>
+              <connectionPointOut>
+                <relPosition x="106" y="15"/>
+              </connectionPointOut>
+              <expression>Global_RS.Q1</expression>
+            </inVariable>
+            <block localId="41" width="70" height="85" typeName="OR" executionOrderId="0">
+              <position x="240" y="2370"/>
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="35"/>
+                    <connection refLocalId="24">
+                      <position x="240" y="2405"/>
+                      <position x="180" y="2405"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="70"/>
+                    <connection refLocalId="48">
+                      <position x="240" y="2440"/>
+                      <position x="180" y="2440"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="70" y="35"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="48" height="30" width="105" executionOrderId="0" negated="false">
+              <position x="75" y="2425"/>
+              <connectionPointOut>
+                <relPosition x="105" y="15"/>
+              </connectionPointOut>
+              <expression>BOOL#FALSE</expression>
+            </inVariable>
+            <outVariable localId="54" height="30" width="135" executionOrderId="0" negated="false">
+              <position x="930" y="1774"/>
+              <connectionPointIn>
+                <relPosition x="0" y="16"/>
+                <connection refLocalId="55" formalParameter="OUT">
+                  <position x="930" y="1790"/>
+                  <position x="855" y="1790"/>
+                </connection>
+              </connectionPointIn>
+              <expression>Test_TOD_STRING</expression>
+            </outVariable>
+            <block localId="55" width="125" height="45" typeName="TOD_TO_STRING" executionOrderId="0">
+              <position x="730" y="1759"/>
+              <inputVariables>
+                <variable formalParameter="IN">
+                  <connectionPointIn>
+                    <relPosition x="0" y="31"/>
+                    <connection refLocalId="39">
+                      <position x="730" y="1790"/>
+                      <position x="655" y="1790"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="125" y="31"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inOutVariable localId="39" height="30" width="75" executionOrderId="0" negatedOut="false" negatedIn="false">
+              <position x="580" y="1774"/>
+              <connectionPointIn>
+                <relPosition x="0" y="16"/>
+                <connection refLocalId="37" formalParameter="OUT">
+                  <position x="580" y="1790"/>
+                  <position x="520" y="1790"/>
+                </connection>
+              </connectionPointIn>
+              <connectionPointOut>
+                <relPosition x="75" y="16"/>
+              </connectionPointOut>
+              <expression>Test_TOD</expression>
+            </inOutVariable>
+            <inVariable localId="49" height="30" width="30" executionOrderId="0" negated="false">
+              <position x="160" y="2510"/>
+              <connectionPointOut>
+                <relPosition x="30" y="15"/>
+              </connectionPointOut>
+              <expression>42</expression>
+            </inVariable>
+            <outVariable localId="57" height="30" width="50" executionOrderId="0" negated="false">
+              <position x="240" y="2510"/>
+              <connectionPointIn>
+                <relPosition x="0" y="15"/>
+                <connection refLocalId="49">
+                  <position x="240" y="2525"/>
+                  <position x="190" y="2525"/>
+                </connection>
+              </connectionPointIn>
+              <expression>TOTO</expression>
+            </outVariable>
+            <outVariable localId="56" height="30" width="50" executionOrderId="0" negated="false">
+              <position x="240" y="2550"/>
+              <connectionPointIn>
+                <relPosition x="0" y="15"/>
+                <connection refLocalId="49">
+                  <position x="240" y="2565"/>
+                  <position x="215" y="2565"/>
+                  <position x="215" y="2525"/>
+                  <position x="190" y="2525"/>
+                </connection>
+              </connectionPointIn>
+              <expression>TUTU</expression>
+            </outVariable>
+            <inVariable localId="58" height="30" width="146" executionOrderId="0" negated="false">
+              <position x="60" y="1944"/>
+              <connectionPointOut>
+                <relPosition x="146" y="16"/>
+              </connectionPointOut>
+              <expression>Second_Python_Var</expression>
+            </inVariable>
+            <outVariable localId="47" height="30" width="130" executionOrderId="0" negated="false">
+              <position x="200" y="1385"/>
+              <connectionPointIn>
+                <relPosition x="0" y="15"/>
+                <connection refLocalId="59">
+                  <position x="200" y="1400"/>
+                  <position x="130" y="1400"/>
+                </connection>
+              </connectionPointIn>
+              <expression>Test_Python_Var</expression>
+            </outVariable>
+            <inVariable localId="59" height="30" width="30" executionOrderId="0" negated="false">
+              <position x="100" y="1385"/>
+              <connectionPointOut>
+                <relPosition x="30" y="15"/>
+              </connectionPointOut>
+              <expression>23</expression>
+            </inVariable>
+            <block localId="61" typeName="function0" executionOrderId="0" height="45" width="111">
+              <position x="760" y="1170"/>
+              <inputVariables>
+                <variable formalParameter="LocalVar0">
+                  <connectionPointIn>
+                    <relPosition x="0" y="30"/>
+                    <connection refLocalId="62">
+                      <position x="760" y="1200"/>
+                      <position x="723" y="1200"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="111" y="30"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="62" executionOrderId="0" height="30" width="58" negated="false">
+              <position x="665" y="1185"/>
+              <connectionPointOut>
+                <relPosition x="58" y="15"/>
+              </connectionPointOut>
+              <expression>fefvsd</expression>
+            </inVariable>
+            <outVariable localId="63" executionOrderId="0" height="30" width="58" negated="false">
+              <position x="905" y="1185"/>
+              <connectionPointIn>
+                <relPosition x="0" y="15"/>
+                <connection refLocalId="61" formalParameter="OUT">
+                  <position x="905" y="1200"/>
+                  <position x="871" y="1200"/>
+                </connection>
+              </connectionPointIn>
+              <expression>fefvsd</expression>
+            </outVariable>
+            <comment localId="53" height="80" width="420">
+              <position x="75" y="2160"/>
+              <content>
+                <xhtml:p><![CDATA[Shows global variables access from resource configuration (res_pytest) and from project's configuration.]]></xhtml:p>
+              </content>
+            </comment>
+            <inVariable localId="18" height="30" width="74" executionOrderId="0" negated="false">
+              <position x="986" y="795"/>
+              <connectionPointOut>
+                <relPosition x="74" y="15"/>
+              </connectionPointOut>
+              <expression>mux2_sel</expression>
+            </inVariable>
+            <comment localId="60" height="45" width="930">
+              <position x="60" y="1480"/>
+              <content>
+                <xhtml:p><![CDATA[Here is shown how to convert values between different types (BCD, DT, TOD, STRING and others) using standard functions.]]></xhtml:p>
+              </content>
+            </comment>
+            <comment localId="64" height="55" width="300">
+              <position x="665" y="1095"/>
+              <content>
+                <xhtml:p><![CDATA[Example of usage of user-defined function.]]></xhtml:p>
+              </content>
+            </comment>
+            <comment localId="65" height="45" width="410">
+              <position x="55" y="1315"/>
+              <content>
+                <xhtml:p><![CDATA[Shows access variable defined in python extension. ]]></xhtml:p>
+              </content>
+            </comment>
+            <inVariable localId="66" height="30" width="137" executionOrderId="0" negated="false">
+              <position x="60" y="1685"/>
+              <connectionPointOut>
+                <relPosition x="137" y="15"/>
+              </connectionPointOut>
+              <expression>Test_BCD_WRONG</expression>
+            </inVariable>
+            <block localId="67" width="106" height="100" typeName="BCD_TO_UINT" executionOrderId="0">
+              <position x="265" y="1620"/>
+              <inputVariables>
+                <variable formalParameter="EN">
+                  <connectionPointIn>
+                    <relPosition x="0" y="40"/>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN">
+                  <connectionPointIn>
+                    <relPosition x="0" y="80"/>
+                    <connection refLocalId="66">
+                      <position x="265" y="1700"/>
+                      <position x="255" y="1700"/>
+                      <position x="255" y="1700"/>
+                      <position x="345" y="1700"/>
+                      <position x="345" y="1700"/>
+                      <position x="197" y="1700"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="ENO">
+                  <connectionPointOut>
+                    <relPosition x="106" y="40"/>
+                  </connectionPointOut>
+                </variable>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="106" y="80"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <outVariable localId="68" height="30" width="196" executionOrderId="0" negated="false">
+              <position x="580" y="1685"/>
+              <connectionPointIn>
+                <relPosition x="0" y="15"/>
+                <connection refLocalId="67" formalParameter="OUT">
+                  <position x="580" y="1700"/>
+                  <position x="371" y="1700"/>
+                </connection>
+              </connectionPointIn>
+              <expression>Test_BCD_WRONG_RESULT</expression>
+            </outVariable>
+            <comment localId="69" height="165" width="375">
+              <position x="795" y="1590"/>
+              <content>
+                <xhtml:p><![CDATA[Incorrect BCD number is not converted to UINT.
+
+151 (16#97) is good BCD number , but 
+154 (16#9A) is not.  
+
+Try this out and look at value of  Test_BCD_CONVERTED variable.
+
+
+]]></xhtml:p>
+              </content>
+            </comment>
+            <outVariable localId="70" height="30" width="185" executionOrderId="0" negated="false">
+              <position x="580" y="1645"/>
+              <connectionPointIn>
+                <relPosition x="0" y="15"/>
+                <connection refLocalId="67" formalParameter="ENO">
+                  <position x="580" y="1660"/>
+                  <position x="370" y="1660"/>
+                </connection>
+              </connectionPointIn>
+              <expression>Test_BCD_CONVERTED</expression>
+            </outVariable>
+            <comment localId="71" height="215" width="680">
+              <position x="35" y="30"/>
+              <content>
+                <xhtml:p><![CDATA[This example shows many features in Beremiz:
+
+   1. How to implement python extensions.
+   2. How to implement basic C extension.
+   3. How to use C code in IEC POUs.
+   4. How to call C functions from python code.
+   5. How to avoid race conditions between IEC, C and python code.
+   6. How to convert betweet different IEC types.
+]]></xhtml:p>
+              </content>
+            </comment>
+          </FBD>
+        </body>
+      </pou>
+      <pou name="C_Pragma" pouType="functionBlock">
+        <interface>
+          <outputVars>
+            <variable name="OUT">
+              <type>
+                <SINT/>
+              </type>
+            </variable>
+          </outputVars>
+          <inputVars>
+            <variable name="IN">
+              <type>
+                <SINT/>
+              </type>
+            </variable>
+          </inputVars>
+          <localVars>
+            <variable name="COORDS">
+              <type>
+                <array>
+                  <dimension lower="0" upper="5"/>
+                  <baseType>
+                    <SINT/>
+                  </baseType>
+                </array>
+              </type>
+              <initialValue>
+                <arrayValue>
+                  <value>
+                    <simpleValue value="54"/>
+                  </value>
+                  <value>
+                    <simpleValue value="55"/>
+                  </value>
+                  <value>
+                    <simpleValue value="56"/>
+                  </value>
+                  <value>
+                    <simpleValue value="57"/>
+                  </value>
+                  <value>
+                    <simpleValue value="58"/>
+                  </value>
+                  <value>
+                    <simpleValue value="59"/>
+                  </value>
+                </arrayValue>
+              </initialValue>
+            </variable>
+            <variable name="SMURF">
+              <type>
+                <derived name="CPLX_TYPE"/>
+              </type>
+            </variable>
+          </localVars>
+          <externalVars>
+            <variable name="Global_RS">
+              <type>
+                <derived name="RS"/>
+              </type>
+            </variable>
+          </externalVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[(* hereafter is a C pragma accessing FB interface in a clean way *)
+{{
+  char toPLC;
+  char fromPLC = GetFbVar(IN);
+  extern int PLC_C_Call(char, char *);
+  if(PLC_C_Call(fromPLC, &toPLC)){
+    SetFbVar(OUT, toPLC);
+  }
+  if(0){
+    /* that code demonstrate C access to complex types */
+    char somebyte = GetFbVar(COORDS, .table[3]);
+    SetFbVar(SMURF, somebyte, .FIRSTBYTE);
+    SetFbVar(COORDS, somebyte, .table[4]);
+  }
+}}
+(* If you do not use GetFbVar and SetFbVar macros, expect unexpected behaviour*)
+Global_RS();
+]]></xhtml:p>
+          </ST>
+        </body>
+      </pou>
+      <pou name="norm" pouType="function">
+        <interface>
+          <returnType>
+            <REAL/>
+          </returnType>
+          <inputVars>
+            <variable name="IN1">
+              <type>
+                <REAL/>
+              </type>
+            </variable>
+            <variable name="IN2">
+              <type>
+                <REAL/>
+              </type>
+            </variable>
+          </inputVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[NORM := SQRT(IN1 * IN1 + IN2 * IN2);]]></xhtml:p>
+          </ST>
+        </body>
+      </pou>
+      <pou name="function0" pouType="function">
+        <interface>
+          <returnType>
+            <derived name="datatype0"/>
+          </returnType>
+          <inputVars>
+            <variable name="LocalVar0">
+              <type>
+                <derived name="datatype0"/>
+              </type>
+            </variable>
+          </inputVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[function0 := LocalVar0;
+]]></xhtml:p>
+          </ST>
+        </body>
+      </pou>
+    </pous>
+  </types>
+  <instances>
+    <configurations>
+      <configuration name="config">
+        <resource name="res_pytest">
+          <task name="pytest_task" interval="T#1ms" priority="0"/>
+          <globalVars>
+            <variable name="TOTO">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+          </globalVars>
+          <pouInstance name="pytest_instance" typeName="main_pytest"/>
+        </resource>
+        <globalVars>
+          <variable name="Global_RS">
+            <type>
+              <derived name="RS"/>
+            </type>
+          </variable>
+          <variable name="TUTU">
+            <type>
+              <INT/>
+            </type>
+          </variable>
+        </globalVars>
+      </configuration>
+    </configurations>
+  </instances>
+</project>

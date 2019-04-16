@@ -1,0 +1,50 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) is 21st century inquisition
+# This file is distributed under the same license as the Beremiz package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Beremiz 1.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-09-08 01:21\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+# 6acef656390a43d59cf15591c724dbeb
+#: ../../overview.rst:2
+msgid "Project overview"
+msgstr ""
+
+# 92ad927cb1054cbc8045b0823dd8e5fc
+#: ../../overview.rst:4
+msgid ""
+"In order to target the widest possible range of programmable devices and "
+"keep efficient, Beremiz use C code as an intermediate language."
+msgstr ""
+
+# 75bb21429f7d4e8f932f2a4a4165684e
+#: ../../overview.rst:6
+msgid ""
+"To be executed, C needs to be compiled. `GCC <http://gcc.gnu.org>`_ serve "
+"that purpose perfectly."
+msgstr ""
+
+# c1e711046ada4ceca71f8d15a0bef1e9
+#: ../../overview.rst:8
+msgid ""
+"PLC program is expressed in languages defined in IEC-61131, including "
+"graphical languages. Thanks to PLCopen TC2, those graphical languages have a "
+"standardised representation, in XML."
+msgstr ""
+
+# 64355ef541204c7990a06fc5e00b44fe
+#: ../../overview.rst:10
+msgid "To be continued."
+msgstr ""

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<PyFile>
+  <variables/>
+  <globals>
+<![CDATA[
+from threading import Thread
+
+def OnConnectButton(self, event):
+  def OnWiiConnected(mac_addr):
+    self.label_2.SetLabel(
+      "Wiimote %s connected"%mac_addr 
+      if mac_addr else 
+      "Wiimote connection failed !")
+
+  def WiiConnected(mac_addr):
+    wx.CallAfter(OnWiiConnected,mac_addr)
+
+  Thread(target = Connect_Wiimote, args = (WiiConnected,)).start()
+  self.label_2.SetLabel("Press wiimote 1+2")
+  event.Skip()
+
+def OnDisconnectButton(self, event):
+  Disconnect_Wiimote()
+  self.label_2.SetLabel("Wiimote disconnected")
+  event.Skip()
+
+]]>
+  </globals>
+  <init>
+<![CDATA[
+]]>
+  </init>
+  <cleanup>
+<![CDATA[
+]]>
+  </cleanup>
+  <start>
+<![CDATA[
+]]>
+  </start>
+  <stop>
+<![CDATA[
+]]>
+  </stop>
+</PyFile>

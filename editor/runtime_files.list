@@ -1,0 +1,19 @@
+# those files are used in runtime
+# licensed according to LGPL, see COPYING.runtime 
+
+images/icostop24.png
+images/icoplay24.png
+images/brz.png
+util/__init__.py
+util/paths.py
+runtime/WampClient.py
+runtime/PLCObject.py
+runtime/NevowServer.py
+runtime/webinterface.js
+runtime/webinterface.css
+runtime/__init__.py
+runtime/ServicePublisher.py
+runtime/typemapping.py 
+runtime/loglevels.py 
+Beremiz_service.py
+version.py

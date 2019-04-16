@@ -1,0 +1,6 @@
+
+                  <xsd:element name="Generic">
+                    <xsd:complexType>
+                      %(toolchain_makefile)s
+                    </xsd:complexType>
+                  </xsd:element>

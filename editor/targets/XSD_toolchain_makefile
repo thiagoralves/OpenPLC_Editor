@@ -1,0 +1,3 @@
+
+          <xsd:attribute name="Command" type="xsd:string" use="optional" default="make -C %(buildpath)s all BEREMIZSRC=%(src)s BEREMIZCFLAGS=%(cflags)s MD5=%(md5)s USE_BEREMIZ=1 FROM_BEREMIZ=1"/>
+          

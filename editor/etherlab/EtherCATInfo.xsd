@@ -1,0 +1,955 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="EtherCATBase.xsd"/>
+	<xs:element name="EtherCATInfo">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="InfoReference" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="Vendor">
+					<xs:complexType>
+						<xs:complexContent>
+							<xs:extension base="VendorType">
+								<xs:attribute name="FileVersion" type="xs:int"/>
+							</xs:extension>
+						</xs:complexContent>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Descriptions">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Groups">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Group" minOccurs="0" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:complexContent>
+													<xs:extension base="GroupType">
+														<xs:attribute name="SortOrder" type="xs:int">
+															<xs:annotation>
+																<xs:documentation>Helps to display multiple groups in the order intended by the vendor</xs:documentation>
+															</xs:annotation>
+														</xs:attribute>
+														<xs:attribute name="ParentGroup" type="xs:string">
+															<xs:annotation>
+																<xs:documentation>Type of an optional parent group - only for additional display order possibilities</xs:documentation>
+															</xs:annotation>
+														</xs:attribute>
+													</xs:extension>
+												</xs:complexContent>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="Devices">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Device" minOccurs="0" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:complexContent>
+													<xs:extension base="DeviceType">
+														<xs:attribute name="Invisible" type="xs:boolean" use="optional"/>
+														<xs:attribute name="Physics" type="PhysicsType" use="required"/>
+														<xs:attribute name="Crc32" type="HexDecValue" use="optional"/>
+													</xs:extension>
+												</xs:complexContent>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="Modules" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Module" minOccurs="0" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:complexContent>
+													<xs:extension base="ModuleType">
+														<xs:attribute name="Crc32" type="HexDecValue" use="optional"/>
+													</xs:extension>
+												</xs:complexContent>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="Version" type="xs:string" use="optional">
+				<xs:annotation>
+					<xs:documentation>Schema version (1.4)</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="DeviceType">
+		<xs:sequence>
+			<xs:element name="Type">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="ProductCode" type="HexDecValue" use="optional"/>
+							<xs:attribute name="RevisionNo" type="HexDecValue" use="optional"/>
+							<xs:attribute name="SerialNo" type="HexDecValue" use="optional"/>
+							<xs:attribute name="CheckProductCode" use="optional">
+								<xs:simpleType>
+									<xs:restriction base="xs:NMTOKEN">
+										<xs:enumeration value="NONE"/>
+										<xs:enumeration value="EQ"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:attribute>
+							<xs:attribute name="CheckRevisionNo" use="optional">
+								<xs:simpleType>
+									<xs:restriction base="xs:NMTOKEN">
+										<xs:enumeration value="NONE"/>
+										<xs:enumeration value="EQ"/>
+										<xs:enumeration value="EQ_OR_G"/>
+										<xs:enumeration value="LW_EQ"/>
+										<xs:enumeration value="LW_EQ_HW_EQ_OR_G"/>
+										<xs:enumeration value="HW_EQ"/>
+										<xs:enumeration value="HW_EQ_LW_EQ_OR_G"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:attribute>
+							<xs:attribute name="CheckSerialNo" use="optional">
+								<xs:simpleType>
+									<xs:restriction base="xs:NMTOKEN">
+										<xs:enumeration value="NONE"/>
+										<xs:enumeration value="EQ"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:attribute>
+							<xs:attribute name="TcSmClass" type="xs:string" use="optional">
+								<xs:annotation>
+									<xs:documentation>obsolete</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+							<xs:attribute name="TcCfgModeSafeOp" type="xs:boolean" use="optional">
+								<xs:annotation>
+									<xs:documentation>obsolete</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+							<xs:attribute name="UseLrdLwr" type="xs:boolean" use="optional"/>
+							<xs:attribute name="ModulePdoGroup" type="xs:int" use="optional"/>
+							<xs:attribute name="DownloadModuleList" type="xs:boolean" use="optional">
+								<xs:annotation>
+									<xs:documentation>for future use</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="HideType" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="ProductCode" type="HexDecValue" use="optional"/>
+							<xs:attribute name="RevisionNo" type="HexDecValue" use="optional"/>
+							<xs:attribute name="ProductRevision" type="xs:string" use="optional">
+								<xs:annotation>
+									<xs:documentation>obsolete</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="AlternativeType" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="ProductCode" type="HexDecValue" use="optional">
+								<xs:annotation>
+									<xs:documentation>for future use</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+							<xs:attribute name="RevisionNo" type="HexDecValue" use="optional">
+								<xs:annotation>
+									<xs:documentation>for future use</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="SubDevice" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation> </xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="ProductCode" type="HexDecValue" use="optional">
+								<xs:annotation>
+									<xs:documentation>for future use</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+							<xs:attribute name="RevisionNo" type="HexDecValue" use="optional">
+								<xs:annotation>
+									<xs:documentation>for future use</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+							<xs:attribute name="PreviousDevice" type="xs:int" use="optional"/>
+							<xs:attribute name="PreviousPortNo" type="xs:int" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Name" type="NameType" maxOccurs="unbounded"/>
+			<xs:element name="Comment" type="NameType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="URL" type="NameType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Info" type="InfoType" minOccurs="0"/>
+			<xs:element name="GroupType" type="xs:string"/>
+			<xs:element name="Profile" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="ProfileType">
+							<xs:attribute name="Channel" type="xs:int" use="optional">
+								<xs:annotation>
+									<xs:documentation>obsolete</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Fmmu" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="OpOnly" type="xs:boolean" use="optional">
+								<xs:annotation>
+									<xs:documentation>obsolete</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+							<xs:attribute name="Sm" type="xs:int" use="optional"/>
+							<xs:attribute name="Su" type="xs:int" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Sm" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="MinSize" type="HexDecValue" use="optional"/>
+							<xs:attribute name="MaxSize" type="HexDecValue" use="optional"/>
+							<xs:attribute name="DefaultSize" type="HexDecValue" use="optional"/>
+							<xs:attribute name="StartAddress" type="HexDecValue" use="optional"/>
+							<xs:attribute name="ControlByte" type="HexDecValue" use="optional"/>
+							<xs:attribute name="Enable" type="HexDecValue" use="optional"/>
+							<xs:attribute name="OneByteMode" type="xs:boolean" use="optional">
+								<xs:annotation>
+									<xs:documentation>obsolete</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+							<xs:attribute name="Virtual" type="xs:boolean" use="optional"/>
+							<xs:attribute name="Watchdog" type="xs:boolean" use="optional">
+								<xs:annotation>
+									<xs:documentation>obsolete</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+							<xs:attribute name="OpOnly" type="xs:boolean" use="optional"/>
+							<xs:attribute name="FixedAssignment" type="xs:boolean" use="optional">
+								<xs:annotation>
+									<xs:documentation>obsolete</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Su" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="SeparateSu" type="xs:boolean" use="optional"/>
+							<xs:attribute name="SeparateFrame" type="xs:boolean" use="optional"/>
+							<xs:attribute name="DependOnInputState" type="xs:boolean" use="optional">
+								<xs:annotation>
+									<xs:documentation>for future use</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+							<xs:attribute name="FrameRepeatSupport" type="xs:boolean" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="RxPdo" type="PdoType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="TxPdo" type="PdoType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Mailbox" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="AoE" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="InitCmd" minOccurs="0" maxOccurs="unbounded">
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="Transition" maxOccurs="unbounded">
+													<xs:simpleType>
+														<xs:restriction base="xs:NMTOKEN">
+															<xs:enumeration value="PS"/>
+															<xs:enumeration value="SO"/>
+															<xs:enumeration value="SP"/>
+															<xs:enumeration value="OP"/>
+															<xs:enumeration value="OS"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element name="Data" type="xs:hexBinary"/>
+												<xs:element name="Comment" type="xs:string" minOccurs="0"/>
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+								<xs:attribute name="AdsRouter" type="xs:boolean" use="optional"/>
+								<xs:attribute name="GenerateOwnNetId" type="xs:boolean" use="optional"/>
+								<xs:attribute name="InitializeOwnNetId" type="xs:boolean" use="optional"/>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="EoE" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="InitCmd" minOccurs="0" maxOccurs="unbounded">
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="Transition" maxOccurs="unbounded">
+													<xs:simpleType>
+														<xs:restriction base="xs:NMTOKEN">
+															<xs:enumeration value="PS"/>
+															<xs:enumeration value="SO"/>
+															<xs:enumeration value="SP"/>
+															<xs:enumeration value="OP"/>
+															<xs:enumeration value="OS"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element name="Type" type="xs:int"/>
+												<xs:element name="Data" type="xs:hexBinary"/>
+												<xs:element name="Comment" type="xs:string" minOccurs="0"/>
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+								<xs:attribute name="IP" type="xs:boolean" use="optional" default="0"/>
+								<xs:attribute name="MAC" type="xs:boolean" use="optional" default="0"/>
+								<xs:attribute name="TimeStamp" type="xs:boolean" use="optional" default="0"/>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="CoE" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Object" minOccurs="0" maxOccurs="unbounded">
+										<xs:annotation>
+											<xs:documentation>obsolete</xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="Index" type="xs:int">
+													<xs:annotation>
+														<xs:documentation>obsolete</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="SubIndex" type="xs:int">
+													<xs:annotation>
+														<xs:documentation>obsolete</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="Data" type="xs:hexBinary">
+													<xs:annotation>
+														<xs:documentation>obsolete</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="Comment" type="xs:string" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>obsolete</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="InitCmd" minOccurs="0" maxOccurs="unbounded">
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="Transition" maxOccurs="unbounded">
+													<xs:simpleType>
+														<xs:restriction base="xs:NMTOKEN">
+															<xs:enumeration value="PS"/>
+															<xs:enumeration value="SO"/>
+															<xs:enumeration value="SP"/>
+															<xs:enumeration value="OP"/>
+															<xs:enumeration value="OS"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element name="Index" type="HexDecValue"/>
+												<xs:element name="SubIndex" type="HexDecValue"/>
+												<xs:element name="Data">
+													<xs:complexType>
+														<xs:simpleContent>
+															<xs:extension base="xs:hexBinary">
+																<xs:attribute name="AdaptAutomatically" type="xs:boolean" use="optional"/>
+															</xs:extension>
+														</xs:simpleContent>
+													</xs:complexType>
+												</xs:element>
+												<xs:element name="Comment" type="xs:string" minOccurs="0"/>
+											</xs:sequence>
+											<xs:attribute name="Fixed" type="xs:boolean" use="optional">
+												<xs:annotation>
+													<xs:documentation>obsolete</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+											<xs:attribute name="CompleteAccess" type="xs:boolean" use="optional"/>
+											<xs:attribute name="OverwrittenByModule" type="xs:boolean" use="optional"/>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+								<xs:attribute name="SdoInfo" type="xs:boolean" use="optional"/>
+								<xs:attribute name="PdoAssign" type="xs:boolean" use="optional"/>
+								<xs:attribute name="PdoConfig" type="xs:boolean" use="optional"/>
+								<xs:attribute name="PdoUpload" type="xs:boolean" use="optional"/>
+								<xs:attribute name="CompleteAccess" type="xs:boolean" use="optional"/>
+								<xs:attribute name="EdsFile" type="xs:string" use="optional"/>
+								<xs:attribute name="DS402Channels" type="xs:int" use="optional">
+									<xs:annotation>
+										<xs:documentation>obsolete</xs:documentation>
+									</xs:annotation>
+								</xs:attribute>
+								<xs:attribute name="SegmentedSdo" type="xs:boolean" use="optional"/>
+								<xs:attribute name="DiagHistory" type="xs:boolean" use="optional"/>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="FoE" minOccurs="0"/>
+						<xs:element name="SoE" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="InitCmd" minOccurs="0" maxOccurs="unbounded">
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="Transition" maxOccurs="unbounded">
+													<xs:simpleType>
+														<xs:restriction base="xs:NMTOKEN">
+															<xs:enumeration value="PS"/>
+															<xs:enumeration value="SO"/>
+															<xs:enumeration value="SP"/>
+															<xs:enumeration value="OP"/>
+															<xs:enumeration value="OS"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element name="IDN" type="xs:int"/>
+												<xs:element name="Data" type="xs:hexBinary"/>
+												<xs:element name="Comment" type="xs:string" minOccurs="0"/>
+											</xs:sequence>
+											<xs:attribute name="Chn" type="xs:int" use="optional" default="0"/>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+								<xs:attribute name="ChannelCount" type="xs:int" use="optional"/>
+								<xs:attribute name="DriveFollowsBit3Support" type="xs:boolean" use="optional"/>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="VoE" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:any minOccurs="0" maxOccurs="unbounded"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="VendorSpecific" type="VendorSpecificType" minOccurs="0"/>
+					</xs:sequence>
+					<xs:attribute name="DataLinkLayer" type="xs:boolean" use="optional" default="0"/>
+					<xs:attribute name="RealTimeMode" type="xs:boolean" use="optional" default="0">
+						<xs:annotation>
+							<xs:documentation>for future use</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Dc" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="OpMode" minOccurs="0" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Name" type="xs:string"/>
+									<xs:element name="Desc" type="xs:string" minOccurs="0"/>
+									<xs:element name="AssignActivate" type="HexDecValue"/>
+									<xs:element name="CycleTimeSync0" minOccurs="0">
+										<xs:complexType>
+											<xs:simpleContent>
+												<xs:extension base="xs:int">
+													<xs:attribute name="Factor" type="xs:int" use="optional"/>
+												</xs:extension>
+											</xs:simpleContent>
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="ShiftTimeSync0" minOccurs="0">
+										<xs:complexType>
+											<xs:simpleContent>
+												<xs:extension base="xs:int">
+													<xs:attribute name="Factor" type="xs:int" use="optional"/>
+													<xs:attribute name="Input" type="xs:boolean" use="optional"/>
+													<xs:attribute name="OutputDelayTime" type="xs:int" use="optional"/>
+													<xs:attribute name="InputDelayTime" type="xs:int" use="optional"/>
+												</xs:extension>
+											</xs:simpleContent>
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="CycleTimeSync1" minOccurs="0">
+										<xs:complexType>
+											<xs:simpleContent>
+												<xs:extension base="xs:int">
+													<xs:attribute name="Factor" type="xs:int" use="optional"/>
+												</xs:extension>
+											</xs:simpleContent>
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="ShiftTimeSync1" minOccurs="0">
+										<xs:complexType>
+											<xs:simpleContent>
+												<xs:extension base="xs:int">
+													<xs:attribute name="Factor" type="xs:int" use="optional">
+														<xs:annotation>
+															<xs:documentation>for future use</xs:documentation>
+														</xs:annotation>
+													</xs:attribute>
+													<xs:attribute name="Input" type="xs:boolean" use="optional"/>
+													<xs:attribute name="OutputDelayTime" type="xs:int" use="optional"/>
+													<xs:attribute name="InputDelayTime" type="xs:int" use="optional"/>
+												</xs:extension>
+											</xs:simpleContent>
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="Sm" minOccurs="0" maxOccurs="unbounded">
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="SyncType" type="xs:int" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>obsolete</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="CycleTime" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>obsolete</xs:documentation>
+													</xs:annotation>
+													<xs:complexType>
+														<xs:simpleContent>
+															<xs:extension base="xs:int">
+																<xs:attribute name="Factor" type="xs:int" use="optional">
+																	<xs:annotation>
+																		<xs:documentation>obsolete</xs:documentation>
+																	</xs:annotation>
+																</xs:attribute>
+															</xs:extension>
+														</xs:simpleContent>
+													</xs:complexType>
+												</xs:element>
+												<xs:element name="ShiftTime" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>obsolete</xs:documentation>
+													</xs:annotation>
+													<xs:complexType>
+														<xs:simpleContent>
+															<xs:extension base="xs:int">
+																<xs:attribute name="MinAfterSync" type="xs:int" use="optional">
+																	<xs:annotation>
+																		<xs:documentation>obsolete</xs:documentation>
+																	</xs:annotation>
+																</xs:attribute>
+																<xs:attribute name="MinBeforeFrame" type="xs:int" use="optional">
+																	<xs:annotation>
+																		<xs:documentation>obsolete</xs:documentation>
+																	</xs:annotation>
+																</xs:attribute>
+															</xs:extension>
+														</xs:simpleContent>
+													</xs:complexType>
+												</xs:element>
+												<xs:element name="Pdo" minOccurs="0" maxOccurs="unbounded">
+													<xs:complexType>
+														<xs:simpleContent>
+															<xs:extension base="HexDecValue">
+																<xs:attribute name="OSFac" type="xs:int"/>
+															</xs:extension>
+														</xs:simpleContent>
+													</xs:complexType>
+												</xs:element>
+											</xs:sequence>
+											<xs:attribute name="No" type="xs:int" use="required"/>
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="VendorSpecific" type="VendorSpecificType" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="VendorSpecific" type="VendorSpecificType" minOccurs="0"/>
+					</xs:sequence>
+					<xs:attribute name="UnknownFRMW" type="xs:boolean" use="optional"/>
+					<xs:attribute name="Unknown64Bit" type="xs:boolean" use="optional"/>
+					<xs:attribute name="ExternalRefClock" type="xs:boolean" use="optional"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Slots" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Slot" type="SlotType" minOccurs="0" maxOccurs="unbounded"/>
+						<xs:element name="ModulePdoGroup" minOccurs="0" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:simpleContent>
+									<xs:extension base="xs:string">
+										<xs:attribute name="Alignment" type="xs:int" use="optional"/>
+										<xs:attribute name="RxPdo" type="HexDecValue" use="optional"/>
+										<xs:attribute name="TxPdo" type="HexDecValue" use="optional"/>
+									</xs:extension>
+								</xs:simpleContent>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+					<xs:attribute name="MaxSlotCount" type="HexDecValue" use="optional"/>
+					<xs:attribute name="MaxSlotGroupCount" type="HexDecValue" use="optional"/>
+					<xs:attribute name="SlotPdoIncrement" type="HexDecValue" use="optional"/>
+					<xs:attribute name="SlotGroupPdoIncrement" type="HexDecValue" use="optional"/>
+					<xs:attribute name="SlotIndexIncrement" type="HexDecValue" use="optional"/>
+					<xs:attribute name="SlotGroupIndexIncrement" type="HexDecValue" use="optional"/>
+					<xs:attribute name="IdentifyModuleBy">
+						<xs:annotation>
+							<xs:documentation>obsolete</xs:documentation>
+						</xs:annotation>
+						<xs:simpleType>
+							<xs:restriction base="xs:NMTOKEN">
+								<xs:enumeration value="ModuleIdent"/>
+								<xs:enumeration value="IdentityObjekt"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:attribute>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ESC" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Reg0108" type="HexDecValue" minOccurs="0"/>
+						<xs:element name="Reg0400" type="HexDecValue" minOccurs="0"/>
+						<xs:element name="Reg0410" type="HexDecValue" minOccurs="0"/>
+						<xs:element name="Reg0420" type="HexDecValue" minOccurs="0"/>
+						<xs:element name="VendorSpecific" type="VendorSpecificType" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Eeprom" minOccurs="0">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="EepromType">
+							<xs:attribute name="AssignToPdi" type="xs:boolean"/>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:choice minOccurs="0">
+				<xs:element name="Image16x14" type="xs:string" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>obsolete</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="ImageFile16x14" type="xs:string" minOccurs="0"/>
+				<xs:element name="ImageData16x14" type="xs:hexBinary" minOccurs="0"/>
+			</xs:choice>
+			<xs:element name="VendorSpecific" type="VendorSpecificType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="GroupType">
+		<xs:sequence>
+			<xs:element name="Type" type="xs:string"/>
+			<xs:element name="Name" type="NameType" maxOccurs="unbounded"/>
+			<xs:element name="Comment" type="NameType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:choice>
+				<xs:element name="Image16x14" type="xs:string" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>obsolete</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="ImageFile16x14" type="xs:string" minOccurs="0"/>
+				<xs:element name="ImageData16x14" type="xs:hexBinary" minOccurs="0"/>
+			</xs:choice>
+			<xs:element name="VendorSpecific" type="VendorSpecificType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="EepromType">
+		<xs:sequence>
+			<xs:choice>
+				<xs:element name="Data" type="xs:hexBinary"/>
+				<xs:sequence>
+					<xs:element name="ByteSize" type="xs:int"/>
+					<xs:element name="ConfigData" type="xs:hexBinary"/>
+					<xs:element name="BootStrap" type="xs:hexBinary" minOccurs="0"/>
+					<xs:element name="Category" minOccurs="0" maxOccurs="unbounded">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="CatNo">
+									<xs:complexType>
+										<xs:simpleContent>
+											<xs:extension base="xs:int"/>
+										</xs:simpleContent>
+									</xs:complexType>
+								</xs:element>
+								<xs:choice>
+									<xs:element name="Data" type="xs:hexBinary"/>
+									<xs:element name="DataString" type="xs:string"/>
+									<xs:element name="DataUINT" type="xs:int"/>
+									<xs:element name="DataUDINT" type="xs:int"/>
+								</xs:choice>
+							</xs:sequence>
+							<xs:attribute name="PreserveOnlineData" type="xs:boolean" use="optional"/>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:choice>
+			<xs:element name="VendorSpecific" type="VendorSpecificType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="InfoType">
+		<xs:sequence>
+			<xs:element name="Electrical" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="EBusCurrent" type="xs:int"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="StateMachine" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Timeout" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="PreopTimeout" type="xs:int"/>
+									<xs:element name="SafeopOpTimeout" type="xs:int"/>
+									<xs:element name="BackToInitTimeout" type="xs:int"/>
+									<xs:element name="BackToSafeopTimeout" type="xs:int"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="Behavior" minOccurs="0">
+							<xs:complexType>
+								<xs:attribute name="StartToInit" type="xs:boolean" use="optional"/>
+								<xs:attribute name="StartToPreop" type="xs:boolean" use="optional"/>
+								<xs:attribute name="StartToSafeop" type="xs:boolean" use="optional"/>
+								<xs:attribute name="StartToSafeopNoSync" type="xs:boolean" use="optional"/>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Mailbox" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Timeout">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="RequestTimeout" type="xs:int"/>
+									<xs:element name="ResponseTimeout" type="xs:int"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="EtherCATController" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="DpramSize" type="xs:int" default="4096" minOccurs="0"/>
+						<xs:element name="SmCount" type="xs:int" minOccurs="0"/>
+						<xs:element name="FmmuCount" type="xs:int" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Port" minOccurs="0" maxOccurs="4">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Type">
+							<xs:simpleType>
+								<xs:restriction base="xs:NMTOKEN">
+									<xs:enumeration value="MII"/>
+									<xs:enumeration value="EBUS"/>
+									<xs:enumeration value="NONE"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="Connector" type="xs:string" minOccurs="0"/>
+						<xs:element name="Label" type="xs:string" minOccurs="0"/>
+						<xs:element name="RxDelay" type="xs:int" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>in 100ps</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="TxDelay" type="xs:int" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>in 100ps</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PhysicalPhyAddr" type="xs:int" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ExecutionUnit" minOccurs="0" maxOccurs="2">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Type">
+							<xs:simpleType>
+								<xs:restriction base="xs:NMTOKEN">
+									<xs:enumeration value="PRIMARY"/>
+									<xs:enumeration value="SECONDARY"/>
+									<xs:enumeration value="NONE"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="RxDelay" type="xs:int" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>in 100ps</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="TxDelay" type="xs:int" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>in 100ps</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="VendorSpecific" type="VendorSpecificType" minOccurs="0"/>
+			<xs:element name="StationAliasSupported" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>obsolete</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="NO_SUPPORT"/>
+						<xs:enumeration value="REGISTER_SUPPORT"/>
+						<xs:enumeration value="PROCESSDATA_SUPPORT"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="IdentificationAdo" type="HexDecValue" minOccurs="0"/>
+			<xs:element name="DeviceFeature" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>for future use</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Name" type="xs:string">
+							<xs:annotation>
+								<xs:documentation>for future use</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="Value" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>for future use</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="Description" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>for future use</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="Register" minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>for future use</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="StartAddress" type="xs:int">
+										<xs:annotation>
+											<xs:documentation>for future use;
+in bytes</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="Length" type="xs:int">
+										<xs:annotation>
+											<xs:documentation>for future use;
+in bytes</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="BitMask" type="HexDecValue" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>for future use</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="PhysicsType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[Y,K, ]{0,4}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="SlotType">
+		<xs:sequence>
+			<xs:element name="Name" type="NameType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:choice>
+				<xs:element name="ModuleIdent" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="HexDecValue">
+								<xs:attribute name="Default" type="HexDecValue" use="optional"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="ModuleClass" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Class" type="xs:string"/>
+							<xs:element name="VendorId" type="HexDecValue" minOccurs="0"/>
+							<xs:element name="Name" type="NameType" minOccurs="0" maxOccurs="unbounded"/>
+							<xs:choice minOccurs="0">
+								<xs:element name="Image16x14" type="xs:string" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>obsolete</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="ImageFile16x14" type="xs:string" minOccurs="0"/>
+								<xs:element name="ImageData16x14" type="xs:hexBinary" minOccurs="0"/>
+							</xs:choice>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:choice>
+			<xs:choice minOccurs="0">
+				<xs:element name="Image16x14" type="xs:string" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>obsolete</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="ImageFile16x14" type="xs:string" minOccurs="0"/>
+				<xs:element name="ImageData16x14" type="xs:hexBinary" minOccurs="0"/>
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="SlotGroup" type="HexDecValue" use="optional"/>
+		<xs:attribute name="MinInstances" type="HexDecValue" use="required"/>
+		<xs:attribute name="MaxInstances" type="HexDecValue" use="required"/>
+		<xs:attribute name="SlotPdoIncrement" type="HexDecValue" use="optional"/>
+		<xs:attribute name="SlotGroupPdoIncrement" type="HexDecValue" use="optional"/>
+		<xs:attribute name="SlotIndexIncrement" type="HexDecValue" use="optional"/>
+		<xs:attribute name="SlotGroupIndexIncrement" type="HexDecValue" use="optional"/>
+		<xs:attribute name="TreeView" use="optional">
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="SLOTGROUP"/>
+					<xs:enumeration value="SLOT"/>
+					<xs:enumeration value="PDO"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+</xs:schema>

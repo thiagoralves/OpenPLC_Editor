@@ -1,0 +1,175 @@
+include yslt_noindent.yml2
+istylesheet xmlns:ppx="http://www.plcopen.org/xml/tc6_0201"
+            xmlns:xhtml="http://www.w3.org/1999/xhtml"
+            xmlns:ns="beremiz" 
+            extension-element-prefixes="ns" 
+            exclude-result-prefixes="ns" {
+    
+    param "instance_path";
+    
+    variable "project", "ns:GetProject()";
+    
+    variable "stdlib", "ns:GetStdLibs()";
+
+    variable "extensions", "ns:GetExtensions()";
+
+    variable "all_types", "($project | $stdlib | $extensions)/ppx:types";
+    
+    function "element_name" {
+        param "path";
+        choose {
+            when "contains($path,'.')" > «substring-before($path,'.')»
+            otherwise > «$path»
+        }
+    }
+    
+    function "next_path" {
+        param "path";
+        choose {
+            when "contains($path,'.')" > «substring-after($path,'.')»
+        }
+    }
+    
+    template "ppx:project" {
+        variable "config_name" {
+            call "element_name" {
+                with "path", "$instance_path";
+            }
+        }
+        apply "ppx:instances/ppx:configurations/ppx:configuration[@name=$config_name]" {
+            with "element_path" {
+                call "next_path" {
+                    with "path", "$instance_path";
+                }
+            }
+        }
+    }
+    
+    template "ppx:configuration" {
+        param "element_path";
+        choose {
+            when "$element_path!=''" {
+                variable "child_name" {
+                    call "element_name" {
+                        with "path", "$element_path";
+                    }
+                }
+                apply "ppx:resource[@name=$child_name] | ppx:globalVars/ppx:variable[@name=$child_name]/ppx:type/*[self::ppx:derived or self::ppx:struct or self::ppx:array]" {
+                    with "element_path" {
+                        call "next_path" {
+                            with "path", "$element_path";
+                        }
+                    }
+                }
+            }
+            otherwise {
+                value "ns:ConfigTagName(@name)";
+            }
+        }
+    }
+    
+    template "ppx:resource" {
+        param "element_path";
+        choose {
+            when "$element_path!=''" {
+                variable "child_name" {
+                    call "element_name" {
+                        with "path" > «$element_path»
+                    }
+                }
+                apply "ppx:pouInstance[@name=$child_name] | ppx:task/ppx:pouInstance[@name=$child_name] | ppx:globalVars/ppx:variable[@name=$child_name]/ppx:type/*[self::ppx:derived or self::ppx:struct or self::ppx:array]" {
+                    with "element_path" {
+                        call "next_path" {
+                            with "path", "$element_path";
+                        }
+                    }
+                }
+            }
+            otherwise {
+                value "ns:ResourceTagName(ancestor::ppx:configuration/@name, @name)";
+            }
+        }
+    }
+    
+    template "ppx:pouInstance" {
+        param "element_path";
+        variable "type_name" > «@typeName»
+        apply """$all_types/ppx:pous/ppx:pou[@name=$type_name] | \
+                 $all_types/ppx:dataTypes/ppx:dataType[@name=$type_name]""" {
+            with "element_path", "$element_path";
+        }
+    }
+    
+    template "ppx:pou" {
+        param "element_path";
+        choose {
+            when "$element_path!=''" {
+                variable "child_name" {
+                    call "element_name" {
+                        with "path", "$element_path";
+                    }
+                }
+                apply "ppx:interface/*/ppx:variable[@name=$child_name]/ppx:type/*[self::ppx:derived or self::ppx:struct or self::ppx:array]" {
+                    with "element_path" {
+                        call "next_path" {
+                            with "path", "$element_path";
+                        }
+                    }
+                }
+                apply "ppx:actions/ppx:action[@name=$child_name] | ppx:transitions/ppx:transition[@name=$child_name]";
+            }
+            otherwise {
+                variable "name" > «@name»
+                value "ns:PouTagName($name)";
+            }
+        }
+    }
+    
+    template "ppx:action" {
+        value "ns:ActionTagName(ancestor::ppx:pou/@name, @name)";
+    }
+    
+    template "ppx:transition" {
+        value "ns:TransitionTagName(ancestor::ppx:pou/@name, @name)";
+    }
+    
+    template "ppx:dataType" {
+        param "element_path";
+        apply "ppx:baseType/*[self::ppx:derived or self::ppx:struct or self::ppx:array]" {
+            with "element_path", "$element_path";
+        }
+    }
+    
+    template "ppx:derived" {
+        param "element_path";
+        variable "type_name" > «@name»
+        apply """$all_types/ppx:pous/ppx:pou[@name=$type_name] | \
+                 $all_types/ppx:dataTypes/ppx:dataType[@name=$type_name]""" {
+            with "element_path", "$element_path";
+        }
+    }
+    
+    template "ppx:array" {
+        param "element_path";
+        apply "ppx:baseType/*[self::ppx:derived or self::ppx:struct or self::ppx:array]" {
+            with "element_path", "$element_path";
+        }
+    }
+    
+    template "ppx:struct" {
+        param "element_path";
+        variable "child_name" {
+            call "element_name" {
+                with "path", "$element_path";
+            }
+        }
+        apply "ppx:variable[@name=$child_name]/ppx:type/*[self::ppx:derived or self::ppx:struct or self::ppx:array]" {
+            with "element_path" {
+                call "next_path" {
+                    with "path", "$element_path";
+                }
+            }
+        }
+    }
+    
+}

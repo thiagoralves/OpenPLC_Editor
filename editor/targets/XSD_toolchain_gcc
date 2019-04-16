@@ -1,0 +1,5 @@
+
+          <xsd:attribute name="Compiler" type="xsd:string" use="optional" default="gcc"/>
+          <xsd:attribute name="CFLAGS" type="xsd:string" use="optional" default=""/>
+          <xsd:attribute name="Linker" type="xsd:string" use="optional" default="gcc"/>
+          <xsd:attribute name="LDFLAGS" type="xsd:string" use="optional" default=""/>

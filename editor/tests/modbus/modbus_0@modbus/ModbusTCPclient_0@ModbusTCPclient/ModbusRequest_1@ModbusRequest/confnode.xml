@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ModbusRequest xmlns:xsd="http://www.w3.org/2001/XMLSchema" Function="04 - Read Input Registers" SlaveID="0" Start_Address="0"/>

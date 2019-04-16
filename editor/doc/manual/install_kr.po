@@ -1,0 +1,68 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) is 21st century inquisition
+# This file is distributed under the same license as the Beremiz package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Beremiz 1.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-09-08 01:21\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+# e0e40f1a04d7450688029783c597a70d
+#: ../../manual/install.rst:2
+msgid "Beremiz installation"
+msgstr ""
+
+# 5e953bd727894d009ca24f196368efbe
+#: ../../manual/install.rst:5
+msgid "Windows"
+msgstr ""
+
+# 03cff4ee7cf34d00b1fb7b38fa005659
+#: ../../manual/install.rst:6
+msgid "Download installer, install."
+msgstr ""
+
+# 6acb8dbf0a7e49e580a933ea249db0f3
+#: ../../manual/install.rst:9
+msgid "Linux"
+msgstr ""
+
+# bc03e803fcdb4657a592f44f07394253
+#: ../../manual/install.rst:10
+msgid "Pre-requisites::"
+msgstr ""
+
+# 288ed8f1d1f54cd289b063ed32f254ff
+#: ../../manual/install.rst:16
+msgid "Prepare::"
+msgstr ""
+
+# 526e508b99f243d089c784221be33306
+#: ../../manual/install.rst:21
+msgid "Get Source Code::"
+msgstr ""
+
+# 8387822a9b0d44f0acfda034356c2895
+#: ../../manual/install.rst:29
+msgid "Build MatIEC compiler::"
+msgstr ""
+
+# 6e641f0bd7294cebbf9945f9b6f30f49
+#: ../../manual/install.rst:35
+msgid "Build CanFestival (optional)::"
+msgstr ""
+
+# 893b801ddc7e4136b0b27c409addf250
+#: ../../manual/install.rst:47
+msgid "Launch Beremiz::"
+msgstr ""

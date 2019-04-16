@@ -1,0 +1,183 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) is 21st century inquisition
+# This file is distributed under the same license as the Beremiz package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Beremiz 1.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-08-09 14:06+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../manual/connectors.rst:2
+msgid "Beremiz and Beremiz_service connectors"
+msgstr ""
+
+#: ../../manual/connectors.rst:6
+msgid "To connect a PLC, Beremiz provides 2 types of connectors :"
+msgstr ""
+
+#: ../../manual/connectors.rst:5
+msgid "a Pyro connector"
+msgstr ""
+
+#: ../../manual/connectors.rst:6
+msgid "a WAMP connector"
+msgstr ""
+
+#: ../../manual/connectors.rst:8
+msgid ""
+"To configure the connection, you have to set the *URI_location* in your "
+"project Config tab according to this documentation."
+msgstr ""
+
+#: ../../manual/connectors.rst:11
+msgid "The Pyro connector"
+msgstr ""
+
+#: ../../manual/connectors.rst:13
+msgid ""
+"Pyro is an advanced and powerful Distributed Object Technology system "
+"written entirely in Python. Beremiz_service spawns a Pyro server, serving a "
+"PLCObject (see runtime/PLCObject.py). Therefore, Beremiz acts as a Pyro "
+"client."
+msgstr ""
+
+#: ../../manual/connectors.rst:16
+msgid "TODO:: link to PLCObject API documentation"
+msgstr ""
+
+#: ../../manual/connectors.rst:22 ../../manual/connectors.rst:105
+msgid "URI_location :"
+msgstr ""
+
+#: ../../manual/connectors.rst:19
+msgid ""
+"LOCAL:// is a facility that starts the PLC service locally and connect "
+"Beremiz to it via Pyro. This is intended for use in development stage."
+msgstr ""
+
+#: ../../manual/connectors.rst:21
+msgid ""
+"PYRO://<ip:port> normal connection to a remote PLC. PLC default port is 3000."
+msgstr ""
+
+#: ../../manual/connectors.rst:22
+msgid "PYROS://<ip:port> SSL connection to a remote PLC, see below."
+msgstr ""
+
+#: ../../manual/connectors.rst:24
+msgid ""
+"more information about Pyro can be found on http://pythonhosted.org//Pyro/1-"
+"intro.html"
+msgstr ""
+
+#: ../../manual/connectors.rst:28
+msgid "Setup a Pyro SSL connection"
+msgstr ""
+
+#: ../../manual/connectors.rst:30
+msgid ""
+"Pyro v3 has a limited TLS/SSL support based on m2crypto. Pyro v4 had dropped "
+"it. In order to have a full and reliable SSL, we recommand to use a TLS/SSL "
+"wrapper as nginx, stub or stunnel."
+msgstr ""
+
+#: ../../manual/connectors.rst:35
+msgid "TLS-PSK with stunnel"
+msgstr ""
+
+#: ../../manual/connectors.rst:37
+msgid ""
+"In this example, we setup a simple TLS-PSK connection according to rfc4279. "
+"This ciphersuite avoid the need for public key operations and certificate "
+"management. It is perfect for a performance-constrained environments with "
+"limited CPU power as a PLC."
+msgstr ""
+
+#: ../../manual/connectors.rst:43
+msgid "Needed :"
+msgstr ""
+
+#: ../../manual/connectors.rst:43
+msgid "stunnel >= 5.09"
+msgstr ""
+
+#: ../../manual/connectors.rst:45
+msgid "verify openssl support for PSK cipher::"
+msgstr ""
+
+#: ../../manual/connectors.rst:51
+msgid "Client setup (Beremiz)"
+msgstr ""
+
+#: ../../manual/connectors.rst:53
+msgid ""
+"You need to choose an identity for your client, here *client1*. generate a "
+"valid and strong key::"
+msgstr ""
+
+#: ../../manual/connectors.rst:58
+msgid "write a stunnel client configuration file *stunnel-client.conf*::"
+msgstr ""
+
+#: ../../manual/connectors.rst:69
+msgid "start stunnel client side::"
+msgstr ""
+
+#: ../../manual/connectors.rst:73
+msgid ""
+"You could now connect beremiz with classic URI_location = "
+"PYRO://127.0.0.1:3002"
+msgstr ""
+
+#: ../../manual/connectors.rst:77
+msgid "Server setup (PLC)"
+msgstr ""
+
+#: ../../manual/connectors.rst:79
+msgid "import the client key in a keyfile psk.txt, concatening all client key."
+msgstr ""
+
+#: ../../manual/connectors.rst:81
+msgid "write a stunnel server  configuration file *stunnel-server.conf*::"
+msgstr ""
+
+#: ../../manual/connectors.rst:90
+msgid "start stunnel server side::"
+msgstr ""
+
+#: ../../manual/connectors.rst:94
+msgid "more documentation on stunnel http://www.stunnel.org/docs.html"
+msgstr ""
+
+#: ../../manual/connectors.rst:97
+msgid "The WAMP connector"
+msgstr ""
+
+#: ../../manual/connectors.rst:99
+msgid ""
+"WAMP is an open standard WebSocket subprotocol that provides two application "
+"messaging patterns in one unified protocol: Remote Procedure Calls + Publish "
+"& Subscribe."
+msgstr ""
+
+#: ../../manual/connectors.rst:102
+msgid "Beremiz WAMP connector implementation uses Autobahn and crossbar."
+msgstr ""
+
+#: ../../manual/connectors.rst:105
+msgid "WAMP://127.0.0.1:8888#Automation#2534667845"
+msgstr ""
+
+#: ../../manual/connectors.rst:107
+msgid "more information about WAMP can be found on http://wamp.ws/"
+msgstr ""

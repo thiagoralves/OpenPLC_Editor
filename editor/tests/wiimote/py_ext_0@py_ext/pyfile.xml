@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<PyFile>
+  <variables>
+    <variable name="WiiNunchuckStickX" type="INT"/>
+    <variable name="WiiNunchuckStickY" type="INT"/>
+    <variable name="WiiNunchuckAccX" type="INT"/>
+    <variable name="WiiNunchuckAccY" type="INT"/>
+    <variable name="WiiNunchuckAccZ" type="INT"/>
+    <variable name="WiiNunchuckButtons" type="WORD"/>
+    <variable name="WiiButtons" type="WORD"/>
+  </variables>
+  <globals>
+<![CDATA[
+import cwiid,commands,sys,re,os,time
+
+wiimote = None
+WIIMOTE_ADDR_MODEL = re.compile("((?:[0-9A-F]{2})(?::[0-9A-F]{2}){5})\s*Nintendo")
+nunchuckzero = None
+
+def Wiimote_cback(messages, time):
+    global nunchuckzero
+    state = dict(messages)
+    bts = state.get(cwiid.MESG_BTN, None)
+    if bts is not None:
+        PLCGlobals.WiiButtons = bts
+    nunchuck = state.get(cwiid.MESG_NUNCHUK, None)
+    if nunchuck is not None:
+        PLCGlobals.WiiNunchuckButtons = nunchuck['buttons']
+        X,Y = nunchuck['stick']
+        PLCGlobals.WiiNunchuckAccX = nunchuck['acc'][cwiid.X]
+        PLCGlobals.WiiNunchuckAccY = nunchuck['acc'][cwiid.Y]
+        PLCGlobals.WiiNunchuckAccZ = nunchuck['acc'][cwiid.Z]
+        if nunchuckzero is None:
+            nunchuckzero = X,Y
+        (PLCGlobals.WiiNunchuckStickX,
+         PLCGlobals.WiiNunchuckStickY) = X-nunchuckzero[0],Y-nunchuckzero[1]
+
+def Connect_Wiimote(connected_callback):
+    global wiimote,nunchuckzero
+    mac_addr = ''
+    try:
+        mac_addr = file("wiimac.txt","rt").read()
+    except:
+        PLCObject.LogMessage("Wiimote MAC unknown, scanning bluetooth")
+        output = commands.getoutput("hcitool scan")
+        result = WIIMOTE_ADDR_MODEL.search(output)
+        if result is not None:
+            mac_addr = result.group(1)
+            PLCObject.LogMessage("Found Wiimote with MAC %s"%mac_addr)
+            file("wiimac.txt","wt").write(mac_addr)
+ 
+    # Connect to wiimote
+    if not mac_addr:
+        PLCObject.LogMessage("Connection to unknown Wiimote...")
+        wiimote = cwiid.Wiimote()
+    else:
+        PLCObject.LogMessage("Connection to Wiimote %s..."%mac_addr)
+        wiimote = cwiid.Wiimote(mac_addr)
+
+    if wiimote is not None:
+        nunchuckzero = None
+        wiimote.rpt_mode = cwiid.RPT_BTN | cwiid.RPT_EXT
+        # use the callback interface
+        wiimote.mesg_callback = Wiimote_cback
+        wiimote.enable(cwiid.FLAG_MESG_IFC)
+        connected_callback(mac_addr)
+        PLCObject.LogMessage("Wiimote %s Connected"%mac_addr)
+    else:
+        PLCObject.LogMessage("Wiimote %s not found"%mac_addr)
+        os.remove("wiimac.txt")
+        connected_callback(None)
+
+def Disconnect_Wiimote():
+  global wiimote
+  if wiimote is not None:
+    wiimote.disable(cwiid.FLAG_MESG_IFC)
+    time.sleep(0.1)
+    wiimote.close()
+    wiimote = None
+    PLCObject.LogMessage("Wiimote disconnected")
+
+]]>
+  </globals>
+  <init>
+<![CDATA[
+]]>
+  </init>
+  <cleanup>
+<![CDATA[
+Disconnect_Wiimote()
+
+]]>
+  </cleanup>
+  <start>
+<![CDATA[
+]]>
+  </start>
+  <stop>
+<![CDATA[
+]]>
+  </stop>
+</PyFile>

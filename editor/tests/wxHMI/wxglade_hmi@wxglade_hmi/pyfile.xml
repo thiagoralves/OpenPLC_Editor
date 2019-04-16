@@ -1,0 +1,148 @@
+<?xml version='1.0' encoding='utf-8'?>
+<PyFile xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <variables>
+    <variable name="Power_ON" type="BOOL"/>
+    <variable name="Power_OFF" type="BOOL"/>
+    <variable name="DrawTest" type="BOOL"/>
+    <variable name="DrawLogo" type="BOOL"/>
+    <variable name="DrawEscher" type="BOOL"/>
+    <variable name="Detect_Circle" type="BOOL"/>
+    <variable name="XaxisPos" type="INT"/>
+    <variable name="YaxisPos" type="INT"/>
+    <variable name="ZaxisPos" type="INT"/>
+    <variable name="TaxisPos" type="INT"/>
+    <variable name="XaxisMinus" type="BOOL"/>
+    <variable name="YaxisMinus" type="BOOL"/>
+    <variable name="ZaxisMinus" type="BOOL"/>
+    <variable name="TaxisMinus" type="BOOL"/>
+    <variable name="XaxisPlus" type="BOOL"/>
+    <variable name="YaxisPlus" type="BOOL"/>
+    <variable name="ZaxisPlus" type="BOOL"/>
+    <variable name="TaxisPlus" type="BOOL"/>
+    <variable name="DrawTestBtn" type="BOOL"/>
+    <variable name="DrawTestBtn2" type="BOOL"/>
+  </variables>
+  <globals>
+    <xhtml:p><![CDATA[
+import ctypes
+import wx, sys
+
+AxisList = ["X","Y","Z","T"]
+
+PwrButtons = ['Power_ON',
+              'Power_OFF']
+
+ActionButtons = ['Detect_Circle',
+                 'DrawTest',
+                 'DrawLogo',
+                 'DrawEscher']
+
+class ThreeDee(wx.StaticText):
+    def __init__(self, *args, **kwargs):
+        self.initialized = False
+        kwargs["style"] = wx.ALIGN_CENTRE_HORIZONTAL
+        super(ThreeDee, self).__init__(*args, **kwargs)
+
+        self.SetFont(wx.Font(24, wx.SWISS, wx.NORMAL, wx.BOLD))
+        
+        self.positions = [0.]*4
+
+        self.Message = None
+        self.NegLimits = None
+        self.Disk = None
+
+
+    def UpdatePositions(self, positions):
+        # get globals from PLC
+        self.positions = positions
+        self.SetLabel(
+            ((self.Message  +'\n\n') if self.Message else '' )+
+            " ".join(["%s %+.2f"%(axis,self.positions[i])
+                          for i,axis in enumerate(AxisList)]))
+
+def MakeButtonFunc(window, sizer, btname):
+    def ButtonDown(event):
+        setattr(PLCGlobals,btname,1)
+        event.Skip()
+    def ButtonUp(event):
+        setattr(PLCGlobals,btname,0)
+        event.Skip()
+    obj = wx.BitmapButton(window, -1, wx.Bitmap('%s.png'%btname))
+    sizer.Add(obj, 2, wx.EXPAND, 0)
+    obj.Bind(wx.EVT_LEFT_DOWN, ButtonDown)
+    obj.Bind(wx.EVT_LEFT_UP, ButtonUp)
+    return obj
+
+def UpdPos(self):
+    positions = [getattr(PLCGlobals,axname+"axisPos") for axname in AxisList]
+
+    self.window_1.UpdatePositions(positions)
+
+Class_wxglade_hmi.UpdPos = UpdPos
+
+
+#def UpdatePositions(self, event):
+#
+#    positions = [getattr(PLCGlobals,axname+"axisPos") for axname in AxisList]
+#
+#    self.window_1.UpdatePositions(positions)
+#
+#    event.Skip()
+
+#Class_wxglade_hmi.UpdatePositions = UpdatePositions
+
+def CleanSizer(sizer):
+    sizer_len = sizer.GetItemCount()
+    if sizer_len > 0:
+        for i in reversed(range(sizer_len)):
+            sizer.Remove(i)
+
+initorig = Class_wxglade_hmi.__init__
+def Init(self,*args,**kargs):
+    initorig(self,*args,**kargs)
+    sizer = self.GetSizer().GetItem(1).GetSizer().GetItem(0).GetSizer()
+    CleanSizer(sizer)
+    self.main_buttons = map(
+        lambda btname: MakeButtonFunc(self, sizer, btname), PwrButtons)
+    sizer = self.GetSizer().GetItem(1).GetSizer().GetItem(1).GetSizer()
+    CleanSizer(sizer)
+    self.main_buttons = map(
+        lambda btname: MakeButtonFunc(self, sizer, btname), ActionButtons)
+    self.axis_buttons = map(
+        lambda axis:( MakeButtonFunc(self, sizer, axis+"axisMinus"), 
+                        MakeButtonFunc(self, sizer, axis+"axisPlus")),
+        AxisList)
+
+    
+    # self.timer = wx.Timer(self, -1)
+    # self.Bind(wx.EVT_TIMER, self.UpdatePositions, self.timer)
+    # self.ShowFullScreen(True,wx.FULLSCREEN_ALL)
+    # wx.CallAfter(self.timer.Start,200)
+    
+Class_wxglade_hmi.__init__ = Init
+
+def SetPLCTestBtnGlobalVar(self, evt):
+    setattr(PLCGlobals, "DrawTestBtn", evt.GetEventObject().GetValue())
+
+def SetPLCTestBtn2GlobalVar(self, evt):
+    setattr(PLCGlobals, "DrawTestBtn2", evt.GetEventObject().GetValue())
+
+]]></xhtml:p>
+  </globals>
+  <init>
+    <xhtml:p><![CDATA[
+]]></xhtml:p>
+  </init>
+  <cleanup>
+    <xhtml:p><![CDATA[
+]]></xhtml:p>
+  </cleanup>
+  <start>
+    <xhtml:p><![CDATA[
+]]></xhtml:p>
+  </start>
+  <stop>
+    <xhtml:p><![CDATA[
+]]></xhtml:p>
+  </stop>
+</PyFile>

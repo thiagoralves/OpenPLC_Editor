@@ -1,0 +1,1122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="EtherCATConfig">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Config">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Master">
+								<xs:annotation>
+									<xs:documentation>Description of the master </xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Info">
+											<xs:annotation>
+												<xs:documentation>General information abaout the master</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Name" type="xs:string">
+														<xs:annotation>
+															<xs:documentation>name of the master</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="Destination" type="xs:hexBinary">
+														<xs:annotation>
+															<xs:documentation>destination MAC address</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="Source" type="xs:hexBinary">
+														<xs:annotation>
+															<xs:documentation>source MAC address</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="EtherType" type="xs:hexBinary" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Ether type.</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="MailboxStates" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>If this tag exists the master checks the mailbox of one or more slaves for new messages during the cylcic process data communication.</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="StartAddr" type="xs:int">
+														<xs:annotation>
+															<xs:documentation>Start address of the logical address area, that is configured to the written bit of the input mailibox sync manager. In the cyclic frame the master will then include a LRD command with laddr = StartAddr.</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="Count" type="xs:int">
+														<xs:annotation>
+															<xs:documentation>Number of slave devices of which the state of the mailbox is tested by the master.</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="EoE" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Ethernet over EtherCAT settings</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="MaxPorts" type="xs:int"/>
+													<xs:element name="MaxFrames" type="xs:int"/>
+													<xs:element name="MaxMACs" type="xs:int"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="InitCmds" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Initialization commands that are directed at all slaves.</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="InitCmd" type="ECatCmdType" minOccurs="0" maxOccurs="unbounded"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="Slave" minOccurs="0" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>Description of one or more EtherCAT slave devices.</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Info">
+											<xs:annotation>
+												<xs:documentation>General information about the EtherCAT slave device</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Name" type="xs:string">
+														<xs:annotation>
+															<xs:documentation>Name of  the slave device. </xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:sequence minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Slave device has EtherCAT Slave Controller</xs:documentation>
+														</xs:annotation>
+														<xs:element name="PhysAddr" type="xs:int">
+															<xs:annotation>
+																<xs:documentation>Fixed EtherCAT address of the slave device.</xs:documentation>
+															</xs:annotation>
+														</xs:element>
+														<xs:element name="AutoIncAddr" type="xs:int">
+															<xs:annotation>
+																<xs:documentation>Auto Increment address of the slave device.</xs:documentation>
+															</xs:annotation>
+														</xs:element>
+														<xs:element name="Physics" type="PhysicsType">
+															<xs:annotation>
+																<xs:documentation>Physics at the individual ports(A,B,C,D) of the slave.</xs:documentation>
+															</xs:annotation>
+														</xs:element>
+													</xs:sequence>
+													<xs:element name="VendorId" type="xs:int">
+														<xs:annotation>
+															<xs:documentation>EtherCAT VendorId. VendorId, ProductCode and RevisionNo are used to identify a specific slave.</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="ProductCode" type="xs:int"/>
+													<xs:element name="RevisionNo" type="xs:int"/>
+													<xs:element name="SerialNo" type="xs:int"/>
+													<xs:element name="ProductRevision" type="xs:string" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>User friendly name generated from ProductCode  and RevisionNo with the help of a vendor specific algorithmn</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="ProcessData" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Description of the process data of this slave</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Send" minOccurs="0" maxOccurs="unbounded">
+														<xs:annotation>
+															<xs:documentation>Description of the output process data</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="BitStart" type="xs:int">
+																	<xs:annotation>
+																		<xs:documentation>Start address of the process data of this slave in the output image of the master</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="BitLength" type="xs:int">
+																	<xs:annotation>
+																		<xs:documentation>Length of the send process data</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="Recv" minOccurs="0" maxOccurs="unbounded">
+														<xs:annotation>
+															<xs:documentation>Description of the input process data</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="BitStart" type="xs:int">
+																	<xs:annotation>
+																		<xs:documentation>Start address of the process data of this slave in the inpute image of the master</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="BitLength" type="xs:int">
+																	<xs:annotation>
+																		<xs:documentation>Length of the recv process data</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="Sm0" type="SyncManagerSettings" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Settings of sync manager 0</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="Sm1" type="SyncManagerSettings" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Settings of sync manager 1</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="Sm2" type="SyncManagerSettings" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Settings of sync manager 2</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="Sm3" type="SyncManagerSettings" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Settings of sync manager 3</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:choice minOccurs="0" maxOccurs="unbounded">
+														<xs:element name="RxPdo" type="PdoType">
+															<xs:annotation>
+																<xs:documentation>Ouput Pdos</xs:documentation>
+															</xs:annotation>
+														</xs:element>
+														<xs:element name="TxPdo" type="PdoType">
+															<xs:annotation>
+																<xs:documentation>Input Pdos</xs:documentation>
+															</xs:annotation>
+														</xs:element>
+													</xs:choice>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="Mailbox" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Mailbox settings</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Send" type="MailboxSendInfoType">
+														<xs:annotation>
+															<xs:documentation>Output mailbox settings</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="Recv" type="MailboxRecvInfoType">
+														<xs:annotation>
+															<xs:documentation>Input mailbox settings</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="BootStrap" minOccurs="0">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="Send" type="MailboxSendInfoType">
+																	<xs:annotation>
+																		<xs:documentation>Output mailbox settings for bootstrap state</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="Recv" type="MailboxRecvInfoType">
+																	<xs:annotation>
+																		<xs:documentation>Input mailbox settings for bootstrap state</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="Protocol" minOccurs="0" maxOccurs="unbounded">
+														<xs:annotation>
+															<xs:documentation>Supported protocols</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:NMTOKEN">
+																<xs:enumeration value="AoE"/>
+																<xs:enumeration value="EoE"/>
+																<xs:enumeration value="CoE"/>
+																<xs:enumeration value="SoE"/>
+																<xs:enumeration value="FoE"/>
+																<xs:enumeration value="VoE"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="CoE" minOccurs="0">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="InitCmds" minOccurs="0">
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="InitCmd" minOccurs="0" maxOccurs="unbounded">
+																				<xs:annotation>
+																					<xs:documentation>SDO download cmds</xs:documentation>
+																				</xs:annotation>
+																				<xs:complexType>
+																					<xs:sequence>
+																						<xs:element name="Transition" type="TransitionType" maxOccurs="unbounded">
+																							<xs:annotation>
+																								<xs:documentation>init cmd will be send at the defined transitions</xs:documentation>
+																							</xs:annotation>
+																						</xs:element>
+																						<xs:element name="Comment" type="xs:string" minOccurs="0"/>
+																						<xs:element name="Timeout" type="xs:int">
+																							<xs:annotation>
+																								<xs:documentation>Timeout in ms</xs:documentation>
+																							</xs:annotation>
+																						</xs:element>
+																						<xs:element name="Ccs" type="xs:int"/>
+																						<xs:element name="Index" type="xs:int">
+																							<xs:annotation>
+																								<xs:documentation>SDO index</xs:documentation>
+																							</xs:annotation>
+																						</xs:element>
+																						<xs:element name="SubIndex" type="xs:int">
+																							<xs:annotation>
+																								<xs:documentation>SDO subindex</xs:documentation>
+																							</xs:annotation>
+																						</xs:element>
+																						<xs:element name="Data" type="xs:hexBinary" minOccurs="0">
+																							<xs:annotation>
+																								<xs:documentation>SDO data</xs:documentation>
+																							</xs:annotation>
+																						</xs:element>
+																						<xs:element name="Disabled" type="xs:boolean" minOccurs="0">
+																							<xs:annotation>
+																								<xs:documentation>If true the init command should not be sent</xs:documentation>
+																							</xs:annotation>
+																						</xs:element>
+																					</xs:sequence>
+																					<xs:attribute name="Fixed" type="xs:boolean" use="optional"/>
+																					<xs:attribute name="CompleteAccess" type="xs:boolean" use="optional"/>
+																				</xs:complexType>
+																			</xs:element>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="Profile" type="ProfileType" minOccurs="0"/>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="SoE" minOccurs="0">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="InitCmds" minOccurs="0">
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="InitCmd" minOccurs="0" maxOccurs="unbounded">
+																				<xs:annotation>
+																					<xs:documentation>service channel write req</xs:documentation>
+																				</xs:annotation>
+																				<xs:complexType>
+																					<xs:sequence>
+																						<xs:element name="Transition" maxOccurs="unbounded">
+																							<xs:annotation>
+																								<xs:documentation>init cmd will be send at the defined transitions</xs:documentation>
+																							</xs:annotation>
+																							<xs:simpleType>
+																								<xs:restriction base="xs:NMTOKEN">
+																									<xs:enumeration value="PS"/>
+																									<xs:enumeration value="SO"/>
+																									<xs:enumeration value="SP"/>
+																									<xs:enumeration value="OP"/>
+																									<xs:enumeration value="OS"/>
+																								</xs:restriction>
+																							</xs:simpleType>
+																						</xs:element>
+																						<xs:element name="Comment" type="xs:string" minOccurs="0"/>
+																						<xs:element name="Timeout" type="xs:int">
+																							<xs:annotation>
+																								<xs:documentation>Timeout in ms</xs:documentation>
+																							</xs:annotation>
+																						</xs:element>
+																						<xs:element name="OpCode" type="xs:int">
+																							<xs:annotation>
+																								<xs:documentation>Op Code</xs:documentation>
+																							</xs:annotation>
+																						</xs:element>
+																						<xs:element name="DriveNo" type="xs:int">
+																							<xs:annotation>
+																								<xs:documentation>Drive number</xs:documentation>
+																							</xs:annotation>
+																						</xs:element>
+																						<xs:element name="IDN" type="xs:int">
+																							<xs:annotation>
+																								<xs:documentation>IDN to write</xs:documentation>
+																							</xs:annotation>
+																						</xs:element>
+																						<xs:element name="Elements" type="xs:int"/>
+																						<xs:element name="Attribute" type="xs:int"/>
+																						<xs:element name="Data" type="xs:hexBinary" minOccurs="0">
+																							<xs:annotation>
+																								<xs:documentation>data to write</xs:documentation>
+																							</xs:annotation>
+																						</xs:element>
+																						<xs:element name="Disabled" type="xs:boolean" minOccurs="0">
+																							<xs:annotation>
+																								<xs:documentation>If true the init command should not be sent</xs:documentation>
+																							</xs:annotation>
+																						</xs:element>
+																					</xs:sequence>
+																					<xs:attribute name="Fixed" type="xs:boolean" use="optional" default="0"/>
+																				</xs:complexType>
+																			</xs:element>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="AoE" minOccurs="0">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="InitCmds" minOccurs="0">
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="InitCmd" type="MailboxCmdType" minOccurs="0" maxOccurs="unbounded"/>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="NetId" type="xs:string" minOccurs="0"/>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="EoE" minOccurs="0">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="InitCmds" minOccurs="0">
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="InitCmd" type="MailboxCmdType" minOccurs="0" maxOccurs="unbounded"/>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="FoE" minOccurs="0">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="InitCmds" minOccurs="0">
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="InitCmd" type="MailboxCmdType" minOccurs="0" maxOccurs="unbounded"/>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="VoE" minOccurs="0">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="InitCmds" minOccurs="0">
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="InitCmd" type="MailboxCmdType" minOccurs="0" maxOccurs="unbounded"/>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+												<xs:attribute name="DataLinkLayer" type="xs:boolean"/>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="InitCmds" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Initialization commands that are necessary for the slave device to run-up.</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="InitCmd" type="ECatCmdType" minOccurs="0" maxOccurs="unbounded"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="PreviousPort" minOccurs="0" maxOccurs="unbounded">
+											<xs:annotation>
+												<xs:documentation>Possible previous port. The current previous port is set with the Selected attribute</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="DeviceId" type="xs:int" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>deprecated</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="Port">
+														<xs:annotation>
+															<xs:documentation>Port of the previous slave device this device is connected to</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:NMTOKEN">
+																<xs:enumeration value="B"/>
+																<xs:enumeration value="C"/>
+																<xs:enumeration value="D"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="PhysAddr" type="xs:int" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Fixed EtherCAT Address of slave device</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+												</xs:sequence>
+												<xs:attribute name="Selected" type="xs:int" use="optional" default="0"/>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="HotConnect" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="GroupMemberCnt" type="xs:int"/>
+													<xs:element name="IdentifyCmd" type="ECatCmdType" maxOccurs="unbounded"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="DC" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Distributed clock settings</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="ReferenceClock" type="xs:boolean">
+														<xs:annotation>
+															<xs:documentation>Determines if this device is the reference clock</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="CycleTime0" type="xs:int"/>
+													<xs:element name="CycleTime1" type="xs:int"/>
+													<xs:element name="ShiftTime" type="xs:int"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="Cyclic" minOccurs="0" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>Cycles in which frames are sent</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Comment" type="xs:string" minOccurs="0"/>
+										<xs:element name="CycleTime" type="xs:int" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Cycle time of the task sending the frames</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="Priority" type="xs:int" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Priority of the task sending the frames</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="TaskId" type="xs:string" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Id of the task sending the frames</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="Frame" maxOccurs="unbounded">
+											<xs:annotation>
+												<xs:documentation>Frames to be sent in this cycle</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Comment" type="xs:string" minOccurs="0"/>
+													<xs:element name="Cmd" maxOccurs="unbounded">
+														<xs:annotation>
+															<xs:documentation>EtherCAT sub command</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="State" maxOccurs="4">
+																	<xs:annotation>
+																		<xs:documentation>Master state the command should be sent in. If the command should not be sent in the current master state one can either remove this command form the frame or set Cmd to Nop.</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:NMTOKEN">
+																			<xs:enumeration value="INIT"/>
+																			<xs:enumeration value="PREOP"/>
+																			<xs:enumeration value="SAFEOP"/>
+																			<xs:enumeration value="OP"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="Comment" type="xs:string" minOccurs="0"/>
+																<xs:element name="Cmd" type="xs:int"/>
+																<xs:choice>
+																	<xs:sequence>
+																		<xs:element name="Adp" type="xs:int" minOccurs="0">
+																			<xs:annotation>
+																				<xs:documentation>Adress position. Either Auto Increment Address or fixed EtherCAT Address</xs:documentation>
+																			</xs:annotation>
+																		</xs:element>
+																		<xs:element name="Ado" type="xs:int">
+																			<xs:annotation>
+																				<xs:documentation>Offset in DPRAM of the EtherCAT Slave Controller</xs:documentation>
+																			</xs:annotation>
+																		</xs:element>
+																	</xs:sequence>
+																	<xs:element name="Addr" type="xs:int">
+																		<xs:annotation>
+																			<xs:documentation>Logical Address</xs:documentation>
+																		</xs:annotation>
+																	</xs:element>
+																</xs:choice>
+																<xs:choice>
+																	<xs:element name="Data" type="xs:hexBinary">
+																		<xs:annotation>
+																			<xs:documentation>Data that should sent</xs:documentation>
+																		</xs:annotation>
+																	</xs:element>
+																	<xs:element name="DataLength" type="xs:int">
+																		<xs:annotation>
+																			<xs:documentation>Length of the data that should be sent. The data is then filled with 0.</xs:documentation>
+																		</xs:annotation>
+																	</xs:element>
+																</xs:choice>
+																<xs:element name="Cnt" type="xs:int" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>Expected working counter.</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="InputOffs" type="xs:int">
+																	<xs:annotation>
+																		<xs:documentation>Offset in the input image</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="OutputOffs" type="xs:int">
+																	<xs:annotation>
+																		<xs:documentation>Offset in the output image</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="CopyInfos" type="CopyInfosType" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>Copy information for slave to slave communication. The master has to copy valid input data of this command from the source offest (bit offs in the complete process image) to a destination offset.</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="ProcessImage" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Description of the process image of the master</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Inputs" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Input process image of the master</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="ByteSize" type="xs:int">
+														<xs:annotation>
+															<xs:documentation>Size of the input image</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="Variable" type="VariableType" minOccurs="0" maxOccurs="unbounded">
+														<xs:annotation>
+															<xs:documentation>Input variables</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="Outputs" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Output process image of the master</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="ByteSize" type="xs:int">
+														<xs:annotation>
+															<xs:documentation>Size of the output image</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="Variable" type="VariableType" minOccurs="0" maxOccurs="unbounded">
+														<xs:annotation>
+															<xs:documentation>Output variables</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="Version" type="xs:string" use="optional">
+				<xs:annotation>
+					<xs:documentation>Schema version (actual 1.3)</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="ECatCmdType">
+		<xs:sequence>
+			<xs:element name="Transition" type="TransitionType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Transition this command should be sent in</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BeforeSlave" type="xs:boolean" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>If BeforeSlave is true this command will be sent before the slave init commands defined for this transition</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Comment" type="xs:string" minOccurs="0"/>
+			<xs:element name="Requires" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>If Requires is set to cycle, this command has to be sent in a seperate cycle. If Requires is set to cycle, this command has to be sent in a seperate frame. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="frame"/>
+						<xs:enumeration value="cycle"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Cmd" type="xs:int">
+				<xs:annotation>
+					<xs:documentation>EtherCAT Command Id</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:choice>
+				<xs:sequence>
+					<xs:element name="Adp" type="xs:int" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Adress position. Either Auto Increment Address or fixed EtherCAT Address</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Ado" type="xs:int">
+						<xs:annotation>
+							<xs:documentation>Offset in DPRAM of the EtherCAT Slave Controller</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+				<xs:element name="Addr" type="xs:int">
+					<xs:annotation>
+						<xs:documentation>Logical Address</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:choice>
+			<xs:choice>
+				<xs:element name="Data" type="xs:hexBinary">
+					<xs:annotation>
+						<xs:documentation>Data that should sent</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="DataLength" type="xs:int">
+					<xs:annotation>
+						<xs:documentation>Length of the data that should be sent. The data is then filled with 0.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:choice>
+			<xs:element name="Cnt" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Expected working counter. If the returned working counter is not equal to this value the init command fails.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Retries" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines how many times the master should retry sending the command before the init command fails.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Validate" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>If validate is set the returned data has to be validated by the master.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Data" type="xs:hexBinary">
+							<xs:annotation>
+								<xs:documentation>Binary data with which the returned data has to be compared with.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="DataMask" type="xs:hexBinary" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>If a data mask is set, the returned data and the data mask is combined with an AND operatore, before comparing the data.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="Timeout" type="xs:int">
+							<xs:annotation>
+								<xs:documentation>Timeout in ms. Determis how long the master retries to read out the date, if the validation has failed.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SyncManagerSettings">
+		<xs:sequence>
+			<xs:element name="Type">
+				<xs:annotation>
+					<xs:documentation>Type of Sync Manager (e.g. Outputs)</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="MBoxOut"/>
+						<xs:enumeration value="MBoxIn"/>
+						<xs:enumeration value="Outputs"/>
+						<xs:enumeration value="Inputs"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="MinSize" type="xs:int" minOccurs="0"/>
+			<xs:element name="MaxSize" type="xs:int" minOccurs="0"/>
+			<xs:element name="DefaultSize" type="xs:int" minOccurs="0"/>
+			<xs:element name="StartAddress" type="xs:int"/>
+			<xs:element name="ControlByte" type="xs:int"/>
+			<xs:element name="Enable" type="xs:boolean"/>
+			<xs:element name="Virtual" type="xs:boolean" minOccurs="0"/>
+			<xs:element name="Watchdog" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Watchdog setting of the sync manager</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Pdo" type="xs:int" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Pdo indices</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="HexDecValue">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[+-]?[0-9]{1,}"/>
+			<xs:pattern value="#x[0-9|a-f|A-F]{1,}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="NameType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="LcId" type="xs:integer" default="1033"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="PdoType">
+		<xs:sequence>
+			<xs:element name="Index">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="HexDecValue">
+							<xs:attribute name="DependOnSlot" type="xs:boolean">
+								<xs:annotation>
+									<xs:documentation>The index of the PDO will be adapted depend on the slot number and the SlotPdoIncrement value in the Slots-part of the device description</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+							<xs:attribute name="DependOnSlotGroup" type="xs:boolean">
+								<xs:annotation>
+									<xs:documentation>The index of the PDO will be adapted depend on the slot group number and the SlotGroupPdoIncrement value in the Slots-part of the device description</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Name" type="NameType" maxOccurs="unbounded"/>
+			<xs:element name="Exclude" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>List of pdo indicies that are excluded if this pdo is in sync manager</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="HexDecValue">
+							<xs:attribute name="DependOnSlot" type="xs:boolean">
+								<xs:annotation>
+									<xs:documentation>The index of the Exclude PDO will be adapted depend on the slot number and the SlotPdoIncrement value in the Slots-part of the device description</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+							<xs:attribute name="DependOnSlotGroup" type="xs:boolean">
+								<xs:annotation>
+									<xs:documentation>The index of the Exclude-PDO will be adapted depend on the slot group number and the SlotPdoIncrement value in the Slots-part of the device description</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Entry" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="EntryType">
+							<xs:attribute name="Fixed" type="xs:boolean"/>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="Fixed" type="xs:boolean" use="optional">
+			<xs:annotation>
+				<xs:documentation>pdo is not configurable</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="Mandatory" type="xs:boolean" use="optional">
+			<xs:annotation>
+				<xs:documentation>pdo must be configured in a sync manager</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="Virtual" type="xs:boolean" use="optional">
+			<xs:annotation>
+				<xs:documentation>pdo will be configured internally (based on the configured variables)</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="Sm" type="xs:int" use="optional">
+			<xs:annotation>
+				<xs:documentation>default sync manager for this pdo (if set, this PDO will be include in the process image)</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="Su" type="xs:int" use="optional">
+			<xs:annotation>
+				<xs:documentation>default sync unit for this pdo</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="PdoOrder" type="xs:int" use="optional"/>
+		<xs:attribute name="OSFac" type="xs:int" use="optional">
+			<xs:annotation>
+				<xs:documentation>default oversampling factor</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="OSMin" type="xs:int" use="optional">
+			<xs:annotation>
+				<xs:documentation>min. oversampling factor</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="OSMax" type="xs:int" use="optional">
+			<xs:annotation>
+				<xs:documentation>max. oversampling factor</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="OSIndexInc" type="xs:int" use="optional">
+			<xs:annotation>
+				<xs:documentation>oversampling increment for entry indicies</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="OverwrittenByModule" type="xs:boolean">
+			<xs:annotation>
+				<xs:documentation>If this attribute is True, the PDO shall not be considered if the configurator supports the modular device description because this PDO will be defined via the module definition (only for configurators supporting V1.3). </xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="EntryType">
+		<xs:sequence>
+			<xs:element name="Index">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="HexDecValue">
+							<xs:attribute name="DependOnSlot" type="xs:boolean">
+								<xs:annotation>
+									<xs:documentation>The index will be adapted depend on the slot number and the SlotIndexIncrement value in the Slots-part of the device description</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+							<xs:attribute name="DependOnSlotGroup" type="xs:boolean">
+								<xs:annotation>
+									<xs:documentation>The index will be adapted depend on the slot group number and the SlotGroupIndexIncrement value in the Slots-part of the device description</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="SubIndex" type="HexDecValue" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Default value = 0</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BitLen" type="xs:int"/>
+			<xs:element name="Name" type="NameType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Name is mandatory if Index != 0</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Comment" type="xs:string" minOccurs="0"/>
+			<xs:element name="DataType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>DataType is mandatory if Index != 0</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="DScale" use="optional">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="+/-10"/>
+										<xs:enumeration value="0-10"/>
+										<xs:enumeration value="0-20"/>
+										<xs:enumeration value="4-20"/>
+										<xs:enumeration value="0.1°"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:attribute>
+							<xs:attribute name="SwapData" type="xs:boolean" use="optional">
+								<xs:annotation>
+									<xs:documentation>1 = swap hi and lo bytes; 2 = swap hi and lo words; 3 =  swap both</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="TransitionType">
+		<xs:restriction base="xs:NMTOKEN">
+			<xs:enumeration value="II"/>
+			<xs:enumeration value="IP"/>
+			<xs:enumeration value="PP"/>
+			<xs:enumeration value="PO"/>
+			<xs:enumeration value="PS"/>
+			<xs:enumeration value="PI"/>
+			<xs:enumeration value="SS"/>
+			<xs:enumeration value="SP"/>
+			<xs:enumeration value="SO"/>
+			<xs:enumeration value="SI"/>
+			<xs:enumeration value="OS"/>
+			<xs:enumeration value="OP"/>
+			<xs:enumeration value="OI"/>
+			<xs:enumeration value="IB"/>
+			<xs:enumeration value="BI"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="VariableType">
+		<xs:sequence>
+			<xs:element name="Name" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Name of the variable</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Comment" type="xs:string" minOccurs="0"/>
+			<xs:element name="DataType" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Datatype of the variable</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BitSize" type="xs:int">
+				<xs:annotation>
+					<xs:documentation>Size of the variable in bits</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BitOffs" type="xs:int">
+				<xs:annotation>
+					<xs:documentation>Bit offset of the variable in the image</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="VendorSpecificType">
+		<xs:sequence>
+			<xs:any namespace="##any" processContents="skip" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ProfileType">
+		<xs:sequence>
+			<xs:element name="ChannelInfo" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ProfileNo" type="xs:int"/>
+						<xs:element name="AddInfo" type="xs:string" minOccurs="0"/>
+						<xs:element name="DisplayName" type="NameType" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+					<xs:attribute name="OverwrittenByModule" type="xs:boolean">
+						<xs:annotation>
+							<xs:documentation>If this attribute is True, the object shall not be considered if the configurator supports the modular device description because this object will be defined via the module definition (only for configurators supporting V1.3). </xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="VendorSpecific" type="VendorSpecificType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="PhysicsType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[Y,K, ,B]{0,4}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="MailboxCmdType">
+		<xs:sequence>
+			<xs:element name="Transition" type="TransitionType" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>init cmd will be send at the defined transitions</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Comment" type="xs:string" minOccurs="0"/>
+			<xs:element name="Timeout" type="xs:int">
+				<xs:annotation>
+					<xs:documentation>Timeout in ms</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Data" type="xs:hexBinary">
+				<xs:annotation>
+					<xs:documentation>data of the mailbox cmd (excl. the mailbox)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Disabled" type="xs:boolean" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>If true the init command should not be sent</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="Fixed" type="xs:boolean" use="optional" default="0"/>
+	</xs:complexType>
+	<xs:complexType name="MailboxSendInfoType">
+		<xs:sequence>
+			<xs:element name="Start" type="xs:int"/>
+			<xs:element name="Length" type="xs:int"/>
+			<xs:element name="ShortSend" type="xs:boolean" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="MailboxRecvInfoType">
+		<xs:sequence>
+			<xs:element name="Start" type="xs:int"/>
+			<xs:element name="Length" type="xs:int"/>
+			<xs:element name="PollTime" type="xs:int" minOccurs="0"/>
+			<xs:element name="StatusBitAddr" type="xs:int" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CopyInfosType">
+		<xs:sequence>
+			<xs:element name="CopyInfo" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="SrcBitOffs" type="HexDecValue"/>
+						<xs:element name="DstBitOffs" type="HexDecValue"/>
+						<xs:element name="BitSize" type="HexDecValue"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

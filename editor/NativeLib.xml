@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://www.plcopen.org/xml/tc6.xsd"
+         xsi:schemaLocation="http://www.plcopen.org/xml/tc6.xsd"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <fileHeader companyName="Unknown"
+              productName="Unnamed"
+              productVersion="1"
+              creationDateTime="2013-01-29T14:01:00"/>
+  <contentHeader name="Unnamed"
+                 modificationDateTime="2013-02-26T15:59:13">
+    <coordinateInfo>
+      <fbd>
+        <scaling x="0" y="0"/>
+      </fbd>
+      <ld>
+        <scaling x="0" y="0"/>
+      </ld>
+      <sfc>
+        <scaling x="0" y="0"/>
+      </sfc>
+    </coordinateInfo>
+  </contentHeader>
+  <types>
+    <dataTypes>
+      <dataType name="LOGLEVEL">
+        <baseType>
+          <enum>
+            <values>
+              <value name="CRITICAL"/>
+              <value name="WARNING"/>
+              <value name="INFO"/>
+              <value name="DEBUG"/>
+            </values>
+          </enum>
+        </baseType>
+        <initialValue>
+          <simpleValue value="INFO"/>
+        </initialValue>
+      </dataType>
+    </dataTypes>
+    <pous>
+      <pou name="LOGGER" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="TRIG">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="MSG">
+              <type>
+                <string/>
+              </type>
+            </variable>
+            <variable name="LEVEL">
+              <type>
+                <derived name="LOGLEVEL"/>
+              </type>
+              <initialValue>
+                <simpleValue value="INFO"/>
+              </initialValue>
+            </variable>
+          </inputVars>
+          <localVars>
+            <variable name="TRIG0">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+          </localVars>
+        </interface>
+        <body>
+          <ST>
+<![CDATA[IF TRIG AND NOT TRIG0 THEN
+{{
+ LogMessage(GetFbVar(LEVEL),(char*)GetFbVar(MSG, .body),GetFbVar(MSG, .len));
+}}
+END_IF;
+TRIG0:=TRIG;
+]]>
+          </ST>
+        </body>
+      </pou>
+    </pous>
+  </types>
+  <instances>
+    <configurations/>
+  </instances>
+</project>

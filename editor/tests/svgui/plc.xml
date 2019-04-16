@@ -1,0 +1,485 @@
+<?xml version='1.0' encoding='utf-8'?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.plcopen.org/xml/tc6_0201" xmlns:xhtml="http://www.w3.org/1999/xhtml" xsi:schemaLocation="http://www.plcopen.org/xml/tc6_0201">
+  <fileHeader companyName="beremiz" productName="Beremiz" productVersion="0.0" creationDateTime="2008-12-14T16:21:19"/>
+  <contentHeader name="Beremiz SVGUI Test" modificationDateTime="2018-09-26T13:18:53">
+    <coordinateInfo>
+      <pageSize x="1024" y="1024"/>
+      <fbd>
+        <scaling x="0" y="0"/>
+      </fbd>
+      <ld>
+        <scaling x="5" y="5"/>
+      </ld>
+      <sfc>
+        <scaling x="5" y="5"/>
+      </sfc>
+    </coordinateInfo>
+  </contentHeader>
+  <types>
+    <dataTypes/>
+    <pous>
+      <pou name="main_pytest" pouType="program">
+        <interface>
+          <localVars>
+            <variable name="counter">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+            <variable name="Start_Stop">
+              <type>
+                <derived name="Button"/>
+              </type>
+            </variable>
+            <variable name="Counter_TextCtrl">
+              <type>
+                <derived name="TextCtrl"/>
+              </type>
+            </variable>
+            <variable name="State_LedCtrl">
+              <type>
+                <derived name="Led"/>
+              </type>
+            </variable>
+          </localVars>
+        </interface>
+        <body>
+          <FBD>
+            <block localId="32" width="80" height="110" typeName="ADD" executionOrderId="0">
+              <position x="649" y="285"/>
+              <inputVariables>
+                <variable formalParameter="EN">
+                  <connectionPointIn>
+                    <relPosition x="0" y="35"/>
+                    <connection refLocalId="5">
+                      <position x="649" y="320"/>
+                      <position x="594" y="320"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="65"/>
+                    <connection refLocalId="100" formalParameter="OUT">
+                      <position x="649" y="350"/>
+                      <position x="474" y="350"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="95"/>
+                    <connection refLocalId="33">
+                      <position x="649" y="380"/>
+                      <position x="629" y="380"/>
+                      <position x="629" y="418"/>
+                      <position x="854" y="418"/>
+                      <position x="854" y="350"/>
+                      <position x="839" y="350"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="ENO">
+                  <connectionPointOut>
+                    <relPosition x="80" y="35"/>
+                  </connectionPointOut>
+                </variable>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="80" y="65"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inOutVariable localId="33" height="35" width="85" executionOrderId="0" negatedOut="false" negatedIn="false">
+              <position x="754" y="333"/>
+              <connectionPointIn>
+                <relPosition x="0" y="17"/>
+                <connection refLocalId="32" formalParameter="OUT">
+                  <position x="754" y="350"/>
+                  <position x="729" y="350"/>
+                </connection>
+              </connectionPointIn>
+              <connectionPointOut>
+                <relPosition x="85" y="17"/>
+              </connectionPointOut>
+              <expression>counter</expression>
+            </inOutVariable>
+            <inVariable localId="39" height="35" width="89" executionOrderId="0" negated="false">
+              <position x="55" y="333"/>
+              <connectionPointOut>
+                <relPosition x="89" y="17"/>
+              </connectionPointOut>
+              <expression>BOOL#1</expression>
+            </inVariable>
+            <inVariable localId="41" height="30" width="120" executionOrderId="0" negated="false">
+              <position x="21" y="619"/>
+              <connectionPointOut>
+                <relPosition x="120" y="15"/>
+              </connectionPointOut>
+              <expression>'stop_back'</expression>
+            </inVariable>
+            <inVariable localId="42" height="30" width="120" executionOrderId="0" negated="false">
+              <position x="21" y="661"/>
+              <connectionPointOut>
+                <relPosition x="120" y="15"/>
+              </connectionPointOut>
+              <expression>'stop_sele'</expression>
+            </inVariable>
+            <inVariable localId="46" height="30" width="122" executionOrderId="0" negated="false">
+              <position x="694" y="799"/>
+              <connectionPointOut>
+                <relPosition x="122" y="15"/>
+              </connectionPointOut>
+              <expression>'text_counter'</expression>
+            </inVariable>
+            <inVariable localId="51" height="30" width="119" executionOrderId="0" negated="false">
+              <position x="692" y="612"/>
+              <connectionPointOut>
+                <relPosition x="119" y="15"/>
+              </connectionPointOut>
+              <expression>'led_stop'</expression>
+            </inVariable>
+            <inVariable localId="52" height="30" width="120" executionOrderId="0" negated="false">
+              <position x="691" y="648"/>
+              <connectionPointOut>
+                <relPosition x="120" y="15"/>
+              </connectionPointOut>
+              <expression>'led_start'</expression>
+            </inVariable>
+            <block localId="83" width="145" height="60" typeName="INT_TO_STRING" executionOrderId="0">
+              <position x="537" y="856"/>
+              <inputVariables>
+                <variable formalParameter="IN">
+                  <connectionPointIn>
+                    <relPosition x="0" y="40"/>
+                    <connection refLocalId="4">
+                      <position x="537" y="896"/>
+                      <position x="504" y="896"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="145" y="40"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <block localId="92" width="187" height="230" typeName="Button" instanceName="Start_Stop" executionOrderId="0">
+              <position x="201" y="593"/>
+              <inputVariables>
+                <variable formalParameter="back_id">
+                  <connectionPointIn>
+                    <relPosition x="0" y="41"/>
+                    <connection refLocalId="41">
+                      <position x="201" y="634"/>
+                      <position x="141" y="634"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="sele_id">
+                  <connectionPointIn>
+                    <relPosition x="0" y="83"/>
+                    <connection refLocalId="42">
+                      <position x="201" y="676"/>
+                      <position x="141" y="676"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="toggle">
+                  <connectionPointIn>
+                    <relPosition x="0" y="125"/>
+                    <connection refLocalId="93">
+                      <position x="201" y="718"/>
+                      <position x="141" y="718"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="set_state">
+                  <connectionPointIn>
+                    <relPosition x="0" y="167"/>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="state_in">
+                  <connectionPointIn>
+                    <relPosition x="0" y="209"/>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="state_out">
+                  <connectionPointOut>
+                    <relPosition x="187" y="41"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="93" height="30" width="120" executionOrderId="0" negated="false">
+              <position x="21" y="703"/>
+              <connectionPointOut>
+                <relPosition x="120" y="15"/>
+              </connectionPointOut>
+              <expression>BOOL#1</expression>
+            </inVariable>
+            <block localId="94" width="100" height="145" typeName="TextCtrl" instanceName="Counter_TextCtrl" executionOrderId="0">
+              <position x="876" y="774"/>
+              <inputVariables>
+                <variable formalParameter="back_id">
+                  <connectionPointIn>
+                    <relPosition x="0" y="40"/>
+                    <connection refLocalId="46">
+                      <position x="876" y="814"/>
+                      <position x="816" y="814"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="set_text">
+                  <connectionPointIn>
+                    <relPosition x="0" y="81"/>
+                    <connection refLocalId="3">
+                      <position x="876" y="855"/>
+                      <position x="815" y="855"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="text">
+                  <connectionPointIn>
+                    <relPosition x="0" y="122"/>
+                    <connection refLocalId="83" formalParameter="OUT">
+                      <position x="876" y="896"/>
+                      <position x="682" y="896"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables/>
+            </block>
+            <inVariable localId="1" height="30" width="88" executionOrderId="0" negated="false">
+              <position x="59" y="272"/>
+              <connectionPointOut>
+                <relPosition x="88" y="15"/>
+              </connectionPointOut>
+              <expression>BOOL#1</expression>
+            </inVariable>
+            <block localId="95" width="100" height="130" typeName="Led" instanceName="State_LedCtrl" executionOrderId="0">
+              <position x="876" y="589"/>
+              <inputVariables>
+                <variable formalParameter="back_id">
+                  <connectionPointIn>
+                    <relPosition x="0" y="38"/>
+                    <connection refLocalId="51">
+                      <position x="876" y="627"/>
+                      <position x="811" y="627"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="sele_id">
+                  <connectionPointIn>
+                    <relPosition x="0" y="74"/>
+                    <connection refLocalId="52">
+                      <position x="876" y="663"/>
+                      <position x="811" y="663"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="state_in">
+                  <connectionPointIn>
+                    <relPosition x="0" y="110"/>
+                    <connection refLocalId="2">
+                      <position x="876" y="699"/>
+                      <position x="811" y="699"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables/>
+            </block>
+            <block localId="96" width="80" height="65" typeName="AND" executionOrderId="0">
+              <position x="200" y="234"/>
+              <inputVariables>
+                <variable formalParameter="IN1" negated="true">
+                  <connectionPointIn>
+                    <relPosition x="0" y="31"/>
+                    <connection refLocalId="96" formalParameter="OUT">
+                      <position x="200" y="265"/>
+                      <position x="175" y="265"/>
+                      <position x="175" y="219"/>
+                      <position x="305" y="219"/>
+                      <position x="305" y="265"/>
+                      <position x="280" y="265"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="53"/>
+                    <connection refLocalId="1">
+                      <position x="200" y="287"/>
+                      <position x="147" y="287"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="80" y="31"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <connector name="CLOCK" localId="97" height="30" width="90">
+              <position x="345" y="250"/>
+              <connectionPointIn>
+                <relPosition x="0" y="15"/>
+                <connection refLocalId="96" formalParameter="OUT">
+                  <position x="345" y="265"/>
+                  <position x="280" y="265"/>
+                </connection>
+              </connectionPointIn>
+            </connector>
+            <connector name="COUNT" localId="98" height="30" width="90">
+              <position x="461" y="619"/>
+              <connectionPointIn>
+                <relPosition x="0" y="15"/>
+                <connection refLocalId="92" formalParameter="state_out">
+                  <position x="461" y="634"/>
+                  <position x="388" y="634"/>
+                </connection>
+              </connectionPointIn>
+            </connector>
+            <continuation name="COUNT" localId="2" height="30" width="120">
+              <position x="691" y="684"/>
+              <connectionPointOut>
+                <relPosition x="120" y="15"/>
+              </connectionPointOut>
+            </continuation>
+            <inVariable localId="4" height="35" width="85" executionOrderId="0" negated="false">
+              <position x="419" y="879"/>
+              <connectionPointOut>
+                <relPosition x="85" y="17"/>
+              </connectionPointOut>
+              <expression>counter</expression>
+            </inVariable>
+            <continuation name="COUNT" localId="5" height="30" width="90">
+              <position x="504" y="305"/>
+              <connectionPointOut>
+                <relPosition x="90" y="15"/>
+              </connectionPointOut>
+            </continuation>
+            <block localId="99" width="80" height="110" typeName="AND" executionOrderId="0">
+              <position x="199" y="308"/>
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="42"/>
+                    <connection refLocalId="39">
+                      <position x="199" y="350"/>
+                      <position x="144" y="350"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="87"/>
+                    <connection refLocalId="6">
+                      <position x="199" y="395"/>
+                      <position x="144" y="395"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="80" y="42"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <continuation name="CLOCK" localId="6" height="30" width="90">
+              <position x="54" y="380"/>
+              <connectionPointOut>
+                <relPosition x="90" y="15"/>
+              </connectionPointOut>
+            </continuation>
+            <block localId="100" width="125" height="45" typeName="BOOL_TO_INT" executionOrderId="0">
+              <position x="349" y="318"/>
+              <inputVariables>
+                <variable formalParameter="IN">
+                  <connectionPointIn>
+                    <relPosition x="0" y="32"/>
+                    <connection refLocalId="99" formalParameter="OUT">
+                      <position x="349" y="350"/>
+                      <position x="279" y="350"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="125" y="32"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <continuation name="CLOCK" localId="3" height="30" width="122">
+              <position x="693" y="840"/>
+              <connectionPointOut>
+                <relPosition x="122" y="15"/>
+              </connectionPointOut>
+            </continuation>
+            <comment localId="101" height="197" width="1001">
+              <position x="11" y="12"/>
+              <content>
+                <xhtml:p><![CDATA[This example shows how IEC program in PLC can interact with web interface. 
+
+svgui is extensions to build web interface to PLC. It has *integrated* web-server. So it's NOT necessary to install Apache, lighttpd or nginx for that!!!
+
+As the program is running in PLC, web UI will be available at http://localhost:8009/.
+
+
+Web interface is build as SVG file in Inkscape. To edit SVG file click 'Inkscape' button in 0x: svgui extension. 
+Inkscape is a free and open-source vector graphics editor. It's not part of Beremiz and needs to be installed separately.
+]]></xhtml:p>
+              </content>
+            </comment>
+            <comment localId="102" height="126" width="641">
+              <position x="17" y="441"/>
+              <content>
+                <xhtml:p><![CDATA[In this example basic elements like 'Button', 'Led' and 'Text' are used. 
+Back_id and sele_id inputs of these blocks are IDs  of graphic primitives in SVG file. 
+This is the way how elements in SVG are bound to elements in PLC program. 
+You can find out or edit these IDs in Inkscape.]]></xhtml:p>
+              </content>
+            </comment>
+          </FBD>
+        </body>
+      </pou>
+    </pous>
+  </types>
+  <instances>
+    <configurations>
+      <configuration name="config">
+        <resource name="res_pytest">
+          <task name="pytest_task" interval="t#100ms" priority="0"/>
+          <pouInstance name="pytest_instance" typeName="main_pytest"/>
+        </resource>
+      </configuration>
+    </configurations>
+  </instances>
+</project>

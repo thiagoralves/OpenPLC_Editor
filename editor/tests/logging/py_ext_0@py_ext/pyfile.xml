@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='utf-8'?>
+<PyFile xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <variables/>
+  <globals>
+    <xhtml:p><![CDATA[import threading, time
+
+MyT = None
+Stop = False
+
+def StartLog():
+    global MyT
+    MyT=threading.Thread(target = DoLog)
+    MyT.start()
+
+def DoLog():
+    global Stop
+    while not Stop:
+        PLCObject.LogMessage("Python side Logging (PLC is %s)"%PLCObject.PLCStatus)
+        time.sleep(0.3)
+
+def StopLog():
+    global MyT,Stop
+    Stop=True
+
+_runtime_init.append(StartLog)
+_runtime_cleanup.append(StopLog)
+]]></xhtml:p>
+  </globals>
+  <init>
+    <xhtml:p><![CDATA[]]></xhtml:p>
+  </init>
+  <cleanup>
+    <xhtml:p><![CDATA[]]></xhtml:p>
+  </cleanup>
+  <start>
+    <xhtml:p><![CDATA[]]></xhtml:p>
+  </start>
+  <stop>
+    <xhtml:p><![CDATA[]]></xhtml:p>
+  </stop>
+</PyFile>

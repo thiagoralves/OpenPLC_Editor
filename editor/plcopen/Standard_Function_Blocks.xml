@@ -1,0 +1,1469 @@
+<?xml version='1.0' encoding='utf-8'?>
+<project xmlns:ns1="http://www.plcopen.org/xml/tc6_0201" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.plcopen.org/xml/tc6_0201">
+  <fileHeader companyName="Beremiz" productName="Standard Function Blocks Library" productVersion="1.0" creationDateTime="2013-09-09T09:56:11"/>
+  <contentHeader name="Standard Funtion Blocks" author="Laurent Bessard" modificationDateTime="2013-09-09T10:58:13">
+    <coordinateInfo>
+      <fbd>
+        <scaling x="0" y="0"/>
+      </fbd>
+      <ld>
+        <scaling x="0" y="0"/>
+      </ld>
+      <sfc>
+        <scaling x="0" y="0"/>
+      </sfc>
+    </coordinateInfo>
+  </contentHeader>
+  <types>
+    <dataTypes/>
+    <pous>
+      <pou name="SR" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="S1">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="R">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="Q1">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+          </outputVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[Q1 := S1 OR ((NOT R) AND Q1);]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[The SR bistable is a latch where the Set dominates.]]></xhtml:p>
+        </documentation>
+      </pou>
+      <pou name="RS" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="S">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="R1">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="Q1">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+          </outputVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[Q1 := (NOT R1) AND (S OR Q1);]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[The RS bistable is a latch where the Reset dominates.]]></xhtml:p>
+        </documentation>
+      </pou>
+      <pou name="SEMA" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="CLAIM">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="RELEASE">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="BUSY">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+          </outputVars>
+          <localVars>
+            <variable name="Q_INTERNAL">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+          </localVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[Q_INTERNAL := CLAIM OR ( Q_INTERNAL AND (NOT RELEASE));
+BUSY := Q_INTERNAL;]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[The semaphore provides a mechanism to allow software elements mutually exclusive access to certain resources.]]></xhtml:p>
+        </documentation>
+      </pou>
+      <pou name="R_TRIG" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="CLK">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="Q">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+          </outputVars>
+          <localVars retain="true">
+            <variable name="M">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+          </localVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[Q := CLK AND NOT M;
+M := CLK;]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[The output produces a single pulse when a rising edge is detected.]]></xhtml:p>
+        </documentation>
+      </pou>
+      <pou name="F_TRIG" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="CLK">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="Q">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+          </outputVars>
+          <localVars retain="true">
+            <variable name="M">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+          </localVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[Q := NOT CLK AND NOT M;
+M := NOT CLK;]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[The output produces a single pulse when a falling edge is detected.]]></xhtml:p>
+        </documentation>
+      </pou>
+      <pou name="CTU" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="CU">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="R">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="PV">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="Q">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="CV">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+          </outputVars>
+          <localVars>
+            <variable name="CU_T">
+              <type>
+                <derived name="R_TRIG"/>
+              </type>
+            </variable>
+          </localVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[CU_T(CU);
+IF R THEN CV := 0;
+ELSIF CU_T.Q AND (CV < PV)
+  THEN CV := CV+1;
+END_IF;
+Q := (CV >= PV);]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[The up-counter can be used to signal when a count has reached a maximum value.]]></xhtml:p>
+        </documentation>
+      </pou>
+      <pou name="CTU_DINT" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="CU">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="R">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="PV">
+              <type>
+                <DINT/>
+              </type>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="Q">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="CV">
+              <type>
+                <DINT/>
+              </type>
+            </variable>
+          </outputVars>
+          <localVars>
+            <variable name="CU_T">
+              <type>
+                <derived name="R_TRIG"/>
+              </type>
+            </variable>
+          </localVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[CU_T(CU);
+IF R THEN CV := 0;
+ELSIF CU_T.Q AND (CV < PV)
+  THEN CV := CV+1;
+END_IF;
+Q := (CV >= PV);]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[The up-counter can be used to signal when a count has reached a maximum value.]]></xhtml:p>
+        </documentation>
+      </pou>
+      <pou name="CTU_LINT" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="CU">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="R">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="PV">
+              <type>
+                <LINT/>
+              </type>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="Q">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="CV">
+              <type>
+                <LINT/>
+              </type>
+            </variable>
+          </outputVars>
+          <localVars>
+            <variable name="CU_T">
+              <type>
+                <derived name="R_TRIG"/>
+              </type>
+            </variable>
+          </localVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[CU_T(CU);
+IF R THEN CV := 0;
+ELSIF CU_T.Q AND (CV < PV)
+  THEN CV := CV+1;
+END_IF;
+Q := (CV >= PV);]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[The up-counter can be used to signal when a count has reached a maximum value.]]></xhtml:p>
+        </documentation>
+      </pou>
+      <pou name="CTU_UDINT" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="CU">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="R">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="PV">
+              <type>
+                <UDINT/>
+              </type>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="Q">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="CV">
+              <type>
+                <UDINT/>
+              </type>
+            </variable>
+          </outputVars>
+          <localVars>
+            <variable name="CU_T">
+              <type>
+                <derived name="R_TRIG"/>
+              </type>
+            </variable>
+          </localVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[CU_T(CU);
+IF R THEN CV := 0;
+ELSIF CU_T.Q AND (CV < PV)
+  THEN CV := CV+1;
+END_IF;
+Q := (CV >= PV);]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[The up-counter can be used to signal when a count has reached a maximum value.]]></xhtml:p>
+        </documentation>
+      </pou>
+      <pou name="CTU_ULINT" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="CU">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="R">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="PV">
+              <type>
+                <ULINT/>
+              </type>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="Q">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="CV">
+              <type>
+                <ULINT/>
+              </type>
+            </variable>
+          </outputVars>
+          <localVars>
+            <variable name="CU_T">
+              <type>
+                <derived name="R_TRIG"/>
+              </type>
+            </variable>
+          </localVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[CU_T(CU);
+IF R THEN CV := 0;
+ELSIF CU_T.Q AND (CV < PV)
+  THEN CV := CV+1;
+END_IF;
+Q := (CV >= PV);]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[The up-counter can be used to signal when a count has reached a maximum value.]]></xhtml:p>
+        </documentation>
+      </pou>
+      <pou name="CTD" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="CD">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="LD">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="PV">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="Q">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="CV">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+          </outputVars>
+          <localVars>
+            <variable name="CD_T">
+              <type>
+                <derived name="R_TRIG"/>
+              </type>
+            </variable>
+          </localVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[CD_T(CD);
+IF LD THEN CV := PV;
+ELSIF CD_T.Q AND (CV > 0)
+  THEN CV := CV-1;
+END_IF;
+Q := (CV <= 0);]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[The down-counter can be used to signal when a count has reached zero, on counting down from a preset value.]]></xhtml:p>
+        </documentation>
+      </pou>
+      <pou name="CTD_DINT" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="CD">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="LD">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="PV">
+              <type>
+                <DINT/>
+              </type>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="Q">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="CV">
+              <type>
+                <DINT/>
+              </type>
+            </variable>
+          </outputVars>
+          <localVars>
+            <variable name="CD_T">
+              <type>
+                <derived name="R_TRIG"/>
+              </type>
+            </variable>
+          </localVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[CD_T(CD);
+IF LD THEN CV := PV;
+ELSIF CD_T.Q AND (CV > 0)
+  THEN CV := CV-1;
+END_IF;
+Q := (CV <= 0);]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[The down-counter can be used to signal when a count has reached zero, on counting down from a preset value.]]></xhtml:p>
+        </documentation>
+      </pou>
+      <pou name="CTD_LINT" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="CD">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="LD">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="PV">
+              <type>
+                <LINT/>
+              </type>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="Q">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="CV">
+              <type>
+                <LINT/>
+              </type>
+            </variable>
+          </outputVars>
+          <localVars>
+            <variable name="CD_T">
+              <type>
+                <derived name="R_TRIG"/>
+              </type>
+            </variable>
+          </localVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[CD_T(CD);
+IF LD THEN CV := PV;
+ELSIF CD_T.Q AND (CV > 0)
+  THEN CV := CV-1;
+END_IF;
+Q := (CV <= 0);]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[The down-counter can be used to signal when a count has reached zero, on counting down from a preset value.]]></xhtml:p>
+        </documentation>
+      </pou>
+      <pou name="CTD_UDINT" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="CD">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="LD">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="PV">
+              <type>
+                <UDINT/>
+              </type>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="Q">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="CV">
+              <type>
+                <UDINT/>
+              </type>
+            </variable>
+          </outputVars>
+          <localVars>
+            <variable name="CD_T">
+              <type>
+                <derived name="R_TRIG"/>
+              </type>
+            </variable>
+          </localVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[CD_T(CD);
+IF LD THEN CV := PV;
+ELSIF CD_T.Q AND (CV > 0)
+  THEN CV := CV-1;
+END_IF;
+Q := (CV <= 0);]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[The down-counter can be used to signal when a count has reached zero, on counting down from a preset value.]]></xhtml:p>
+        </documentation>
+      </pou>
+      <pou name="CTD_ULINT" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="CD">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="LD">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="PV">
+              <type>
+                <ULINT/>
+              </type>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="Q">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="CV">
+              <type>
+                <ULINT/>
+              </type>
+            </variable>
+          </outputVars>
+          <localVars>
+            <variable name="CD_T">
+              <type>
+                <derived name="R_TRIG"/>
+              </type>
+            </variable>
+          </localVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[CD_T(CD);
+IF LD THEN CV := PV;
+ELSIF CD_T.Q AND (CV > 0)
+  THEN CV := CV-1;
+END_IF;
+Q := (CV <= 0);]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[The down-counter can be used to signal when a count has reached zero, on counting down from a preset value.]]></xhtml:p>
+        </documentation>
+      </pou>
+      <pou name="CTUD" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="CU">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="CD">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="R">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="LD">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="PV">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="QU">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="QD">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="CV">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+            <variable name="CD_T">
+              <type>
+                <derived name="R_TRIG"/>
+              </type>
+            </variable>
+            <variable name="CU_T">
+              <type>
+                <derived name="R_TRIG"/>
+              </type>
+            </variable>
+          </outputVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[CD_T(CD);
+CU_T(CU);
+IF R THEN CV := 0;
+ELSIF LD THEN CV := PV;
+ELSE
+  IF NOT (CU_T.Q AND CD_T.Q) THEN
+    IF CU_T.Q AND (CV < PV)
+    THEN CV := CV+1;
+    ELSIF CD_T.Q AND (CV > 0)
+    THEN CV := CV-1;
+    END_IF;
+  END_IF;
+END_IF;
+QU := (CV >= PV);
+QD := (CV <= 0);]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[The up-down counter has two inputs CU and CD. It can be used to both count up on one input and down on the other.]]></xhtml:p>
+        </documentation>
+      </pou>
+      <pou name="CTUD_DINT" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="CU">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="CD">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="R">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="LD">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="PV">
+              <type>
+                <DINT/>
+              </type>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="QU">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="QD">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="CV">
+              <type>
+                <DINT/>
+              </type>
+            </variable>
+            <variable name="CD_T">
+              <type>
+                <derived name="R_TRIG"/>
+              </type>
+            </variable>
+            <variable name="CU_T">
+              <type>
+                <derived name="R_TRIG"/>
+              </type>
+            </variable>
+          </outputVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[CD_T(CD);
+CU_T(CU);
+IF R THEN CV := 0;
+ELSIF LD THEN CV := PV;
+ELSE
+  IF NOT (CU_T.Q AND CD_T.Q) THEN
+    IF CU_T.Q AND (CV < PV)
+    THEN CV := CV+1;
+    ELSIF CD_T.Q AND (CV > 0)
+    THEN CV := CV-1;
+    END_IF;
+  END_IF;
+END_IF;
+QU := (CV >= PV);
+QD := (CV <= 0);]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[The up-down counter has two inputs CU and CD. It can be used to both count up on one input and down on the other.]]></xhtml:p>
+        </documentation>
+      </pou>
+      <pou name="CTUD_LINT" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="CU">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="CD">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="R">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="LD">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="PV">
+              <type>
+                <LINT/>
+              </type>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="QU">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="QD">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="CV">
+              <type>
+                <LINT/>
+              </type>
+            </variable>
+            <variable name="CD_T">
+              <type>
+                <derived name="R_TRIG"/>
+              </type>
+            </variable>
+            <variable name="CU_T">
+              <type>
+                <derived name="R_TRIG"/>
+              </type>
+            </variable>
+          </outputVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[CD_T(CD);
+CU_T(CU);
+IF R THEN CV := 0;
+ELSIF LD THEN CV := PV;
+ELSE
+  IF NOT (CU_T.Q AND CD_T.Q) THEN
+    IF CU_T.Q AND (CV < PV)
+    THEN CV := CV+1;
+    ELSIF CD_T.Q AND (CV > 0)
+    THEN CV := CV-1;
+    END_IF;
+  END_IF;
+END_IF;
+QU := (CV >= PV);
+QD := (CV <= 0);]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[The up-down counter has two inputs CU and CD. It can be used to both count up on one input and down on the other.]]></xhtml:p>
+        </documentation>
+      </pou>
+      <pou name="CTUD_UDINT" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="CU">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="CD">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="R">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="LD">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="PV">
+              <type>
+                <UDINT/>
+              </type>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="QU">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="QD">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="CV">
+              <type>
+                <UDINT/>
+              </type>
+            </variable>
+            <variable name="CD_T">
+              <type>
+                <derived name="R_TRIG"/>
+              </type>
+            </variable>
+            <variable name="CU_T">
+              <type>
+                <derived name="R_TRIG"/>
+              </type>
+            </variable>
+          </outputVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[CD_T(CD);
+CU_T(CU);
+IF R THEN CV := 0;
+ELSIF LD THEN CV := PV;
+ELSE
+  IF NOT (CU_T.Q AND CD_T.Q) THEN
+    IF CU_T.Q AND (CV < PV)
+    THEN CV := CV+1;
+    ELSIF CD_T.Q AND (CV > 0)
+    THEN CV := CV-1;
+    END_IF;
+  END_IF;
+END_IF;
+QU := (CV >= PV);
+QD := (CV <= 0);]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[The up-down counter has two inputs CU and CD. It can be used to both count up on one input and down on the other.]]></xhtml:p>
+        </documentation>
+      </pou>
+      <pou name="CTUD_ULINT" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="CU">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="CD">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="R">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="LD">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="PV">
+              <type>
+                <ULINT/>
+              </type>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="QU">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="QD">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="CV">
+              <type>
+                <ULINT/>
+              </type>
+            </variable>
+            <variable name="CD_T">
+              <type>
+                <derived name="R_TRIG"/>
+              </type>
+            </variable>
+            <variable name="CU_T">
+              <type>
+                <derived name="R_TRIG"/>
+              </type>
+            </variable>
+          </outputVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[CD_T(CD);
+CU_T(CU);
+IF R THEN CV := 0;
+ELSIF LD THEN CV := PV;
+ELSE
+  IF NOT (CU_T.Q AND CD_T.Q) THEN
+    IF CU_T.Q AND (CV < PV)
+    THEN CV := CV+1;
+    ELSIF CD_T.Q AND (CV > 0)
+    THEN CV := CV-1;
+    END_IF;
+  END_IF;
+END_IF;
+QU := (CV >= PV);
+QD := (CV <= 0);]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[The up-down counter has two inputs CU and CD. It can be used to both count up on one input and down on the other.]]></xhtml:p>
+        </documentation>
+      </pou>
+      <pou name="TP" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="IN">
+              <type>
+                <BOOL/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[first input parameter]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="PT">
+              <type>
+                <TIME/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[second input parameter]]></xhtml:p>
+              </documentation>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="Q">
+              <type>
+                <BOOL/>
+              </type>
+              <initialValue>
+                <simpleValue value="FALSE"/>
+              </initialValue>
+              <documentation>
+                <xhtml:p><![CDATA[first output parameter]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="ET">
+              <type>
+                <TIME/>
+              </type>
+              <initialValue>
+                <simpleValue value="T#0s"/>
+              </initialValue>
+              <documentation>
+                <xhtml:p><![CDATA[second output parameter]]></xhtml:p>
+              </documentation>
+            </variable>
+          </outputVars>
+          <localVars>
+            <variable name="STATE">
+              <type>
+                <SINT/>
+              </type>
+              <initialValue>
+                <simpleValue value="0"/>
+              </initialValue>
+              <documentation>
+                <xhtml:p><![CDATA[internal state: 0-reset, 1-counting, 2-set]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="PREV_IN">
+              <type>
+                <BOOL/>
+              </type>
+              <initialValue>
+                <simpleValue value="FALSE"/>
+              </initialValue>
+            </variable>
+            <variable name="CURRENT_TIME">
+              <type>
+                <TIME/>
+              </type>
+            </variable>
+            <variable name="START_TIME">
+              <type>
+                <TIME/>
+              </type>
+            </variable>
+          </localVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[{__SET_VAR(data__->,CURRENT_TIME,,__CURRENT_TIME)}
+
+IF ((STATE = 0) AND NOT(PREV_IN) AND IN)   (* found rising edge on IN *)
+THEN
+  (* start timer... *)
+  STATE := 1;
+  Q := TRUE;
+  START_TIME := CURRENT_TIME;
+
+ELSIF (STATE = 1)
+THEN
+  IF ((START_TIME + PT) <= CURRENT_TIME)
+  THEN
+    STATE := 2;
+    Q := FALSE;
+    ET := PT;
+  ELSE
+    ET := CURRENT_TIME - START_TIME;
+  END_IF;
+END_IF;
+
+IF ((STATE = 2) AND NOT(IN))
+THEN
+  ET := T#0s;
+  STATE := 0;
+END_IF;
+
+PREV_IN := IN;
+]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[The pulse timer can be used to generate output pulses of a given time duration.]]></xhtml:p>
+        </documentation>
+      </pou>
+      <pou name="TON" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="IN">
+              <type>
+                <BOOL/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[first input parameter]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="PT">
+              <type>
+                <TIME/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[second input parameter]]></xhtml:p>
+              </documentation>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="Q">
+              <type>
+                <BOOL/>
+              </type>
+              <initialValue>
+                <simpleValue value="FALSE"/>
+              </initialValue>
+              <documentation>
+                <xhtml:p><![CDATA[first output parameter]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="ET">
+              <type>
+                <TIME/>
+              </type>
+              <initialValue>
+                <simpleValue value="T#0s"/>
+              </initialValue>
+              <documentation>
+                <xhtml:p><![CDATA[second output parameter]]></xhtml:p>
+              </documentation>
+            </variable>
+          </outputVars>
+          <localVars>
+            <variable name="STATE">
+              <type>
+                <SINT/>
+              </type>
+              <initialValue>
+                <simpleValue value="0"/>
+              </initialValue>
+              <documentation>
+                <xhtml:p><![CDATA[internal state: 0-reset, 1-counting, 2-set]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="PREV_IN">
+              <type>
+                <BOOL/>
+              </type>
+              <initialValue>
+                <simpleValue value="FALSE"/>
+              </initialValue>
+            </variable>
+            <variable name="CURRENT_TIME">
+              <type>
+                <TIME/>
+              </type>
+            </variable>
+            <variable name="START_TIME">
+              <type>
+                <TIME/>
+              </type>
+            </variable>
+          </localVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[{__SET_VAR(data__->,CURRENT_TIME,,__CURRENT_TIME)}
+
+IF ((STATE = 0) AND NOT(PREV_IN) AND IN)   (* found rising edge on IN *)
+THEN
+  (* start timer... *)
+  STATE := 1;
+  Q := FALSE;
+  START_TIME := CURRENT_TIME;
+
+ELSE
+  (* STATE is 1 or 2 !! *)
+  IF (NOT(IN))
+  THEN
+    ET := T#0s;
+    Q := FALSE;
+    STATE := 0;
+
+  ELSIF (STATE = 1)
+  THEN
+    IF ((START_TIME + PT) <= CURRENT_TIME)
+    THEN
+      STATE := 2;
+      Q := TRUE;
+      ET := PT;
+    ELSE
+      ET := CURRENT_TIME - START_TIME;
+    END_IF;
+  END_IF;
+
+END_IF;
+
+PREV_IN := IN;
+]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[The on-delay timer can be used to delay setting an output true, for fixed period after an input becomes true.]]></xhtml:p>
+        </documentation>
+      </pou>
+      <pou name="TOF" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="IN">
+              <type>
+                <BOOL/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[first input parameter]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="PT">
+              <type>
+                <TIME/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[second input parameter]]></xhtml:p>
+              </documentation>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="Q">
+              <type>
+                <BOOL/>
+              </type>
+              <initialValue>
+                <simpleValue value="FALSE"/>
+              </initialValue>
+              <documentation>
+                <xhtml:p><![CDATA[first output parameter]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="ET">
+              <type>
+                <TIME/>
+              </type>
+              <initialValue>
+                <simpleValue value="T#0s"/>
+              </initialValue>
+              <documentation>
+                <xhtml:p><![CDATA[second output parameter]]></xhtml:p>
+              </documentation>
+            </variable>
+          </outputVars>
+          <localVars>
+            <variable name="STATE">
+              <type>
+                <SINT/>
+              </type>
+              <initialValue>
+                <simpleValue value="0"/>
+              </initialValue>
+              <documentation>
+                <xhtml:p><![CDATA[internal state: 0-reset, 1-counting, 2-set]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="PREV_IN">
+              <type>
+                <BOOL/>
+              </type>
+              <initialValue>
+                <simpleValue value="FALSE"/>
+              </initialValue>
+            </variable>
+            <variable name="CURRENT_TIME">
+              <type>
+                <TIME/>
+              </type>
+            </variable>
+            <variable name="START_TIME">
+              <type>
+                <TIME/>
+              </type>
+            </variable>
+          </localVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[{__SET_VAR(data__->,CURRENT_TIME,,__CURRENT_TIME)}
+
+IF ((STATE = 0) AND PREV_IN AND NOT(IN))   (* found falling edge on IN *)
+THEN
+  (* start timer... *)
+  STATE := 1;
+  START_TIME := CURRENT_TIME;
+
+ELSE
+  (* STATE is 1 or 2 !! *)
+  IF (IN)
+  THEN
+    ET := T#0s;
+    STATE := 0;
+
+  ELSIF (STATE = 1)
+  THEN
+    IF ((START_TIME + PT) <= CURRENT_TIME)
+    THEN
+      STATE := 2;
+      ET := PT;
+    ELSE
+      ET := CURRENT_TIME - START_TIME;
+    END_IF;
+  END_IF;
+
+END_IF;
+
+Q := IN OR (STATE = 1);
+PREV_IN := IN;
+]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[The off-delay timer can be used to delay setting an output false, for fixed period after input goes false.]]></xhtml:p>
+        </documentation>
+      </pou>
+    </pous>
+  </types>
+  <instances>
+    <configurations/>
+  </instances>
+</project>

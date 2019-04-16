@@ -1,0 +1,257 @@
+1000 (Device Type): 12E
+1001 (Error Register): 0
+1005 (SYNC COB ID): 40000080
+1006 (Communication / Cycle Period): C350
+1016 (Consumer Heartbeat Time):
+1016 01 (Consumer Heartbeat Time): 4005DC
+1018 (Identity):
+1018 01 (Vendor ID): 0
+1018 02 (Product Code): 0
+1018 03 (Revision Number): 0
+1018 04 (Serial Number): 0
+1280 (Client SDO 1 Parameter):
+1280 01 (COB ID Client to Server (Transmit SDO)): 640
+1280 02 (COB ID Server to Client (Receive SDO)): 5C0
+1280 03 (Node ID of the SDO Server): 40
+1400 (Receive PDO 1 Parameter):
+1400 01 (COB ID used by PDO): 1C0
+1400 02 (Transmission Type): 1
+1400 03 (Inhibit Time): 0
+1400 04 (Compatibility Entry): 0
+1400 05 (Event Timer): 0
+1401 (Receive PDO 2 Parameter):
+1401 01 (COB ID used by PDO): 2C0
+1401 02 (Transmission Type): 1
+1401 03 (Inhibit Time): 0
+1401 04 (Compatibility Entry): 0
+1401 05 (Event Timer): 0
+1402 (Receive PDO 3 Parameter):
+1402 01 (COB ID used by PDO): 182
+1402 02 (Transmission Type): 1
+1402 03 (Inhibit Time): 0
+1402 04 (Compatibility Entry): 0
+1402 05 (Event Timer): 0
+1403 (Receive PDO 4 Parameter):
+1403 01 (COB ID used by PDO): 183
+1403 02 (Transmission Type): 1
+1403 03 (Inhibit Time): 0
+1403 04 (Compatibility Entry): 0
+1403 05 (Event Timer): 0
+1404 (Receive PDO 5 Parameter):
+1404 01 (COB ID used by PDO): 181
+1404 02 (Transmission Type): 1
+1404 03 (Inhibit Time): 0
+1404 04 (Compatibility Entry): 0
+1404 05 (Event Timer): 0
+1600 (Receive PDO 1 Mapping):
+1600 01 (PDO 1 Mapping for an application object 1): 22400108
+1600 02 (PDO 1 Mapping for an application object 2): 0
+1601 (Receive PDO 2 Mapping):
+1601 01 (PDO 2 Mapping for an application object 1): 20000310
+1601 02 (PDO 2 Mapping for an application object 2): 23400110
+1601 03 (PDO 2 Mapping for an application object 3): 23400210
+1601 04 (PDO 2 Mapping for an application object 4): 20000310
+1602 (Receive PDO 3 Mapping):
+1602 01 (PDO 3 Mapping for an application object 1): 24400120
+1602 02 (PDO 3 Mapping for an application object 2): 24400220
+1603 (Receive PDO 4 Mapping):
+1603 01 (PDO 4 Mapping for an application object 1): 24400320
+1604 (Receive PDO 5 Mapping):
+1604 01 (PDO 5 Mapping for an application object 1): 22400208
+1604 02 (PDO 5 Mapping for an application object 2): 24400420
+1800 (Transmit PDO 1 Parameter):
+1800 01 (COB ID used by PDO): {True:"$NODEID+0x%X80"%(base+1),False:0x80000000}[base<4]
+1800 02 (Transmission Type): 0
+1800 03 (Inhibit Time): 0
+1800 04 (Compatibility Entry): 0
+1800 05 (Event Timer): 0
+1801 (Transmit PDO 2 Parameter):
+1801 01 (COB ID used by PDO): 340
+1801 02 (Transmission Type): 1
+1801 03 (Inhibit Time): 0
+1801 04 (Compatibility Entry): 0
+1801 05 (Event Timer): 0
+1A00 (Transmit PDO 1 Mapping):
+1A00 01 (PDO 1 Mapping for a process data variable 1): 10010008
+1A01 (Transmit PDO 2 Mapping):
+1A01 01 (PDO 2 Mapping for a process data variable 1): 43400110
+1A01 02 (PDO 2 Mapping for a process data variable 2): 20000310
+1A01 03 (PDO 2 Mapping for a process data variable 3): 20000310
+1A01 04 (PDO 2 Mapping for a process data variable 4): 20000310
+1F22 (Concise DCF):
+1F22 01 (Concise DCF for Node 1): 
+1F22 02 (Concise DCF for Node 2): 
+1F22 03 (Concise DCF for Node 3): 
+1F22 04 (Concise DCF for Node 4): 
+1F22 05 (Concise DCF for Node 5): 
+1F22 06 (Concise DCF for Node 6): 
+1F22 07 (Concise DCF for Node 7): 
+1F22 08 (Concise DCF for Node 8): 
+1F22 09 (Concise DCF for Node 9): 
+1F22 0A (Concise DCF for Node 10): 
+1F22 0B (Concise DCF for Node 11): 
+1F22 0C (Concise DCF for Node 12): 
+1F22 0D (Concise DCF for Node 13): 
+1F22 0E (Concise DCF for Node 14): 
+1F22 0F (Concise DCF for Node 15): 
+1F22 10 (Concise DCF for Node 16): 
+1F22 11 (Concise DCF for Node 17): 
+1F22 12 (Concise DCF for Node 18): 
+1F22 13 (Concise DCF for Node 19): 
+1F22 14 (Concise DCF for Node 20): 
+1F22 15 (Concise DCF for Node 21): 
+1F22 16 (Concise DCF for Node 22): 
+1F22 17 (Concise DCF for Node 23): 
+1F22 18 (Concise DCF for Node 24): 
+1F22 19 (Concise DCF for Node 25): 
+1F22 1A (Concise DCF for Node 26): 
+1F22 1B (Concise DCF for Node 27): 
+1F22 1C (Concise DCF for Node 28): 
+1F22 1D (Concise DCF for Node 29): 
+1F22 1E (Concise DCF for Node 30): 
+1F22 1F (Concise DCF for Node 31): 
+1F22 20 (Concise DCF for Node 32): 
+1F22 21 (Concise DCF for Node 33): 
+1F22 22 (Concise DCF for Node 34): 
+1F22 23 (Concise DCF for Node 35): 
+1F22 24 (Concise DCF for Node 36): 
+1F22 25 (Concise DCF for Node 37): 
+1F22 26 (Concise DCF for Node 38): 
+1F22 27 (Concise DCF for Node 39): 
+1F22 28 (Concise DCF for Node 40): 
+1F22 29 (Concise DCF for Node 41): 
+1F22 2A (Concise DCF for Node 42): 
+1F22 2B (Concise DCF for Node 43): 
+1F22 2C (Concise DCF for Node 44): 
+1F22 2D (Concise DCF for Node 45): 
+1F22 2E (Concise DCF for Node 46): 
+1F22 2F (Concise DCF for Node 47): 
+1F22 30 (Concise DCF for Node 48): 
+1F22 31 (Concise DCF for Node 49): 
+1F22 32 (Concise DCF for Node 50): 
+1F22 33 (Concise DCF for Node 51): 
+1F22 34 (Concise DCF for Node 52): 
+1F22 35 (Concise DCF for Node 53): 
+1F22 36 (Concise DCF for Node 54): 
+1F22 37 (Concise DCF for Node 55): 
+1F22 38 (Concise DCF for Node 56): 
+1F22 39 (Concise DCF for Node 57): 
+1F22 3A (Concise DCF for Node 58): 
+1F22 3B (Concise DCF for Node 59): 
+1F22 3C (Concise DCF for Node 60): 
+1F22 3D (Concise DCF for Node 61): 
+1F22 3E (Concise DCF for Node 62): 
+1F22 3F (Concise DCF for Node 63): 
+1F22 40 (Concise DCF for Node 64): 23 arg defined
+1F22 40, arg 1: 1800 01 00000004 800001C0
+1F22 40, arg 2: 1800 02 00000001 01
+1F22 40, arg 3: 1800 01 00000004 000001C0
+1F22 40, arg 4: 1801 01 00000004 800002C0
+1F22 40, arg 5: 1801 02 00000001 01
+1F22 40, arg 6: 1801 01 00000004 000002C0
+1F22 40, arg 7: 1401 01 00000004 80000340
+1F22 40, arg 8: 1401 02 00000001 01
+1F22 40, arg 9: 1401 01 00000004 00000340
+1F22 40, arg 10: 1804 01 00000004 80000181
+1F22 40, arg 11: 1804 02 00000001 01
+1F22 40, arg 12: 1804 01 00000004 00000181
+1F22 40, arg 13: 1A04 01 00000004 60020108
+1F22 40, arg 14: 1A04 02 00000004 64260120
+1F22 40, arg 15: 1805 01 00000004 80000182
+1F22 40, arg 16: 1805 02 00000001 01
+1F22 40, arg 17: 1805 01 00000004 00000182
+1F22 40, arg 18: 1A05 01 00000004 64260220
+1F22 40, arg 19: 1A05 02 00000004 64260320
+1F22 40, arg 20: 1806 01 00000004 80000183
+1F22 40, arg 21: 1806 02 00000001 01
+1F22 40, arg 22: 1806 01 00000004 00000183
+1F22 40, arg 23: 1A06 01 00000004 64260420
+1F22 41 (Concise DCF for Node 65): 
+1F22 42 (Concise DCF for Node 66): 
+1F22 43 (Concise DCF for Node 67): 
+1F22 44 (Concise DCF for Node 68): 
+1F22 45 (Concise DCF for Node 69): 
+1F22 46 (Concise DCF for Node 70): 
+1F22 47 (Concise DCF for Node 71): 
+1F22 48 (Concise DCF for Node 72): 
+1F22 49 (Concise DCF for Node 73): 
+1F22 4A (Concise DCF for Node 74): 
+1F22 4B (Concise DCF for Node 75): 
+1F22 4C (Concise DCF for Node 76): 
+1F22 4D (Concise DCF for Node 77): 
+1F22 4E (Concise DCF for Node 78): 
+1F22 4F (Concise DCF for Node 79): 
+1F22 50 (Concise DCF for Node 80): 
+1F22 51 (Concise DCF for Node 81): 
+1F22 52 (Concise DCF for Node 82): 
+1F22 53 (Concise DCF for Node 83): 
+1F22 54 (Concise DCF for Node 84): 
+1F22 55 (Concise DCF for Node 85): 
+1F22 56 (Concise DCF for Node 86): 
+1F22 57 (Concise DCF for Node 87): 
+1F22 58 (Concise DCF for Node 88): 
+1F22 59 (Concise DCF for Node 89): 
+1F22 5A (Concise DCF for Node 90): 
+1F22 5B (Concise DCF for Node 91): 
+1F22 5C (Concise DCF for Node 92): 
+1F22 5D (Concise DCF for Node 93): 
+1F22 5E (Concise DCF for Node 94): 
+1F22 5F (Concise DCF for Node 95): 
+1F22 60 (Concise DCF for Node 96): 
+1F22 61 (Concise DCF for Node 97): 
+1F22 62 (Concise DCF for Node 98): 
+1F22 63 (Concise DCF for Node 99): 
+1F22 64 (Concise DCF for Node 100): 
+1F22 65 (Concise DCF for Node 101): 
+1F22 66 (Concise DCF for Node 102): 
+1F22 67 (Concise DCF for Node 103): 
+1F22 68 (Concise DCF for Node 104): 
+1F22 69 (Concise DCF for Node 105): 
+1F22 6A (Concise DCF for Node 106): 
+1F22 6B (Concise DCF for Node 107): 
+1F22 6C (Concise DCF for Node 108): 
+1F22 6D (Concise DCF for Node 109): 
+1F22 6E (Concise DCF for Node 110): 
+1F22 6F (Concise DCF for Node 111): 
+1F22 70 (Concise DCF for Node 112): 
+1F22 71 (Concise DCF for Node 113): 
+1F22 72 (Concise DCF for Node 114): 
+1F22 73 (Concise DCF for Node 115): 
+1F22 74 (Concise DCF for Node 116): 
+1F22 75 (Concise DCF for Node 117): 
+1F22 76 (Concise DCF for Node 118): 
+1F22 77 (Concise DCF for Node 119): 
+1F22 78 (Concise DCF for Node 120): 
+1F22 79 (Concise DCF for Node 121): 
+1F22 7A (Concise DCF for Node 122): 
+1F22 7B (Concise DCF for Node 123): 
+1F22 7C (Concise DCF for Node 124): 
+1F22 7D (Concise DCF for Node 125): 
+1F22 7E (Concise DCF for Node 126): 
+1F22 7F (Concise DCF for Node 127): 
+2000 (Read Inputs): 0
+2240 (beremiz__IB0_1_64):
+2240 01 (24576_1): 0
+2240 02 (24578_1): 0
+2340 (beremiz__IW0_1_64):
+2340 01 (25601_2): 0
+2340 02 (25601_3): 0
+2440 (beremiz__ID0_1_64):
+2440 01 (25638_2): 0
+2440 02 (25638_3): 0
+2440 03 (25638_4): 0
+2440 04 (25638_1): 0
+4340 (beremiz__QW0_1_64):
+4340 01 (25617_1): 0
+
+********POINTERS*********
+{(4096, 0): '__ID0_1_4096_0',
+ (8768, 1): '__IB0_1_64_24576_1',
+ (8768, 2): '__IB0_1_64_24578_1',
+ (9024, 1): '__IW0_1_64_25601_2',
+ (9024, 2): '__IW0_1_64_25601_3',
+ (9280, 1): '__ID0_1_64_25638_2',
+ (9280, 2): '__ID0_1_64_25638_3',
+ (9280, 3): '__ID0_1_64_25638_4',
+ (9280, 4): '__ID0_1_64_25638_1',
+ (17216, 1): '__QW0_1_64_25617_1'}

@@ -1,0 +1,202 @@
+(dp0
+S'BV_Obj'
+p1
+(lp2
+sS'AV_Obj'
+p3
+(lp4
+(dp5
+S'loc'
+p6
+S'MD0_2'
+p7
+sS'Description'
+p8
+S''
+p9
+sS'Unit ID'
+p10
+I19
+sS'Object Identifier'
+p11
+I0
+sS'Ctype'
+p12
+S'float'
+p13
+sS'BACnetObjTypeID'
+p14
+I2
+sS'Settable'
+p15
+S'Y'
+p16
+sS'Engineering Units'
+p17
+V(Energy) kilowatt-hours (19)
+p18
+sS'Object Name'
+p19
+VEnergyCounter
+p20
+sasS'AO_Obj'
+p21
+(lp22
+(dp23
+g6
+S'QD0_1'
+p24
+sg8
+V
+p25
+sS'Unit ID'
+p26
+I62
+sS'Object Identifier'
+p27
+V0
+p28
+sg12
+g13
+sg14
+I1
+sg15
+g16
+sS'Object Name'
+p29
+VTemperatureSetPoint
+p30
+sS'Engineering Units'
+p31
+V(Temperature) degrees-celsius (62)
+p32
+sasS'MSI_Obj'
+p33
+(lp34
+sS'BO_Obj'
+p35
+(lp36
+(dp37
+g6
+S'QX0_4'
+p38
+sg8
+g9
+sS'Object Identifier'
+p39
+I2
+sg12
+S'uint8_t'
+p40
+sg14
+I4
+sg15
+g16
+sS'Object Name'
+p41
+VBlockClimateControl
+p42
+sasS'MSO_Obj'
+p43
+(lp44
+sS'EDEfile_parm'
+p45
+(dp46
+S'next_EDE_file_version'
+p47
+I1
+ssS'BI_Obj'
+p48
+(lp49
+(dp50
+g6
+S'IX0_3'
+p51
+sg8
+g9
+sS'Object Identifier'
+p52
+I0
+sg12
+g40
+sg14
+I3
+sg15
+S'N'
+p53
+sS'Object Name'
+p54
+VHeater
+p55
+sa(dp56
+g6
+g51
+sg8
+g9
+sg52
+I1
+sg12
+g40
+sg14
+I3
+sg15
+g53
+sg54
+VCooler
+p57
+sasS'AI_Obj'
+p58
+(lp59
+(dp60
+g6
+S'ID0_0'
+p61
+sg8
+VCurrent termperature in Beremiz lab
+p62
+sS'Unit ID'
+p63
+I62
+sS'Object Identifier'
+p64
+I0
+sg12
+g13
+sg14
+I0
+sg15
+g53
+sS'Engineering Units'
+p65
+V(Temperature) degrees-celsius (62)
+p66
+sS'Object Name'
+p67
+VTemperature
+p68
+sa(dp69
+g6
+g61
+sg8
+VCurrent humidity in Beremiz lab
+p70
+sg63
+I29
+sg64
+I1
+sg12
+g13
+sg14
+I0
+sg15
+g53
+sg67
+VHumidity
+p71
+sg65
+V(Humidity) percent-relative-humidity (29)
+p72
+sasS'MSV_Obj'
+p73
+(lp74
+s.

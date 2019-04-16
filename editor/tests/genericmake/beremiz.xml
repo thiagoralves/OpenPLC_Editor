@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<BeremizRoot xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <TargetType>
+    <Generic Command="make -C %(buildpath)s -f ../project_files/Makefile all BEREMIZSRC=%(src)s BEREMIZCFLAGS=%(cflags)s MD5=%(md5)s USE_BEREMIZ=1 FROM_BEREMIZ=1"/>
+  </TargetType>
+  <Libraries Enable_Native_Library="false" Enable_Python_Library="false" Enable_SVGUI_Library="false"/>
+</BeremizRoot>

@@ -1,0 +1,60 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) is 21st century inquisition
+# This file is distributed under the same license as the Beremiz package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Beremiz 1.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-09-08 00:41\n"
+"PO-Revision-Date: 2012-09-07 11:18+0100\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: French\n"
+"X-Poedit-Country: FRANCE\n"
+"X-Poedit-SourceCharset: utf-8\n"
+
+# b82e66796943449ea9e01b02ddcd12ca
+#: ../../overview.rst:2
+msgid "Project overview"
+msgstr "Vue d'ensemble sur le projet"
+
+# 32289df91d6b4cdeb2c54604118bfc69
+#: ../../overview.rst:4
+msgid ""
+"In order to target the widest possible range of programmable devices and "
+"keep efficient, Beremiz use C code as an intermediate language."
+msgstr ""
+"Dans le but de viser la plus grande variété de dispositifs programmables "
+"tout en restant efficace, Beremiz utilise le C comme langage intermédiaire."
+
+# 6abccf881e4e478987befa2e9ce5a9ce
+#: ../../overview.rst:6
+msgid ""
+"To be executed, C needs to be compiled. `GCC <http://gcc.gnu.org>`_ serve "
+"that purpose perfectly."
+msgstr ""
+"Afin de pouvoir être exécuté le C doit être compilé. Le `GCC <http://gcc.gnu."
+"org>`_ rempli cette fonction parfaitement. "
+
+# 5057a1dfe63a475981bad9028c8e3be8
+#: ../../overview.rst:8
+msgid ""
+"PLC program is expressed in languages defined in IEC-61131, including "
+"graphical languages. Thanks to PLCopen TC2, those graphical languages have a "
+"standardised representation, in XML."
+msgstr ""
+"Les programmes destinés au automates programmables sont exprimés dans les "
+"langages définis par la norme IEC-61131, incluant des langages graphiques. "
+"Thanks to PLCopen TC2, those graphical languages have a standardised "
+"representation, in XML."
+
+# a6318fafe7b948a2b59e153b23de51f2
+#: ../../overview.rst:10
+msgid "To be continued."
+msgstr ""

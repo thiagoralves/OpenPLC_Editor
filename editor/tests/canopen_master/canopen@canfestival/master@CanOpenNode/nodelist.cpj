@@ -1,0 +1,7 @@
+[TOPOLOGY]
+NetName=None
+Nodes=0x01
+Node2Present=0x01
+Node2Name=SlaveNode
+Node2DCFName=Slave_0_0.eds
+EDSBaseName=eds

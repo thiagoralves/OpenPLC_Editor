@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <xsd:element name="Python">
+    <xsd:complexType>
+      <xsd:annotation>
+        <xsd:documentation>Formatted text according to parts of XHTML 1.1</xsd:documentation>
+      </xsd:annotation>
+      <xsd:sequence>
+        <xsd:any namespace="http://www.w3.org/1999/xhtml" processContents="lax"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>

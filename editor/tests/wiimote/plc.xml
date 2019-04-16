@@ -1,0 +1,252 @@
+<?xml version='1.0' encoding='utf-8'?>
+<project xmlns="http://www.plcopen.org/xml/tc6_0201" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xhtml="http://www.w3.org/1999/xhtml" xsi:schemaLocation="http://www.plcopen.org/xml/tc6_0201">
+  <fileHeader companyName="Beremiz" productName="Beremiz" productVersion="1" creationDateTime="2012-09-12T23:30:19"/>
+  <contentHeader name="Wiimote example" modificationDateTime="2017-06-06T13:10:31">
+    <coordinateInfo>
+      <fbd>
+        <scaling x="5" y="5"/>
+      </fbd>
+      <ld>
+        <scaling x="0" y="0"/>
+      </ld>
+      <sfc>
+        <scaling x="0" y="0"/>
+      </sfc>
+    </coordinateInfo>
+  </contentHeader>
+  <types>
+    <dataTypes/>
+    <pous>
+      <pou name="main" pouType="program">
+        <interface>
+          <localVars>
+            <variable name="x">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+            <variable name="y">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+            <variable name="a">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+            <variable name="b">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+            <variable name="c">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+            <variable name="b1">
+              <type>
+                <WORD/>
+              </type>
+            </variable>
+            <variable name="b0">
+              <type>
+                <WORD/>
+              </type>
+            </variable>
+          </localVars>
+          <externalVars>
+            <variable name="WiiNunchuckStickX">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+            <variable name="WiiNunchuckStickY">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+            <variable name="WiiNunchuckButtons">
+              <type>
+                <WORD/>
+              </type>
+            </variable>
+            <variable name="WiiButtons">
+              <type>
+                <WORD/>
+              </type>
+            </variable>
+            <variable name="WiiNunchuckAccX">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+            <variable name="WiiNunchuckAccY">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+            <variable name="WiiNunchuckAccZ">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+          </externalVars>
+        </interface>
+        <body>
+          <FBD>
+            <outVariable localId="1" height="30" width="20">
+              <position x="345" y="40"/>
+              <connectionPointIn>
+                <relPosition x="0" y="15"/>
+                <connection refLocalId="3">
+                  <position x="345" y="55"/>
+                  <position x="295" y="55"/>
+                </connection>
+              </connectionPointIn>
+              <expression>x</expression>
+            </outVariable>
+            <inVariable localId="3" height="30" width="150">
+              <position x="145" y="40"/>
+              <connectionPointOut>
+                <relPosition x="150" y="15"/>
+              </connectionPointOut>
+              <expression>WiiNunchuckStickX</expression>
+            </inVariable>
+            <inVariable localId="4" height="30" width="150">
+              <position x="145" y="100"/>
+              <connectionPointOut>
+                <relPosition x="150" y="15"/>
+              </connectionPointOut>
+              <expression>WiiNunchuckStickY</expression>
+            </inVariable>
+            <inVariable localId="5" height="30" width="155">
+              <position x="115" y="175"/>
+              <connectionPointOut>
+                <relPosition x="155" y="15"/>
+              </connectionPointOut>
+              <expression>WiiNunchuckButtons</expression>
+            </inVariable>
+            <inVariable localId="6" height="30" width="90">
+              <position x="180" y="225"/>
+              <connectionPointOut>
+                <relPosition x="90" y="15"/>
+              </connectionPointOut>
+              <expression>WiiButtons</expression>
+            </inVariable>
+            <outVariable localId="8" height="30" width="20">
+              <position x="345" y="100"/>
+              <connectionPointIn>
+                <relPosition x="0" y="15"/>
+                <connection refLocalId="4">
+                  <position x="345" y="115"/>
+                  <position x="295" y="115"/>
+                </connection>
+              </connectionPointIn>
+              <expression>y</expression>
+            </outVariable>
+            <outVariable localId="9" height="30" width="30">
+              <position x="345" y="175"/>
+              <connectionPointIn>
+                <relPosition x="0" y="15"/>
+                <connection refLocalId="5">
+                  <position x="345" y="190"/>
+                  <position x="270" y="190"/>
+                </connection>
+              </connectionPointIn>
+              <expression>b1</expression>
+            </outVariable>
+            <outVariable localId="10" height="30" width="30">
+              <position x="345" y="225"/>
+              <connectionPointIn>
+                <relPosition x="0" y="15"/>
+                <connection refLocalId="6">
+                  <position x="345" y="240"/>
+                  <position x="270" y="240"/>
+                </connection>
+              </connectionPointIn>
+              <expression>b0</expression>
+            </outVariable>
+            <inVariable localId="11" height="30" width="135">
+              <position x="135" y="295"/>
+              <connectionPointOut>
+                <relPosition x="135" y="15"/>
+              </connectionPointOut>
+              <expression>WiiNunchuckAccX</expression>
+            </inVariable>
+            <inVariable localId="12" height="30" width="135">
+              <position x="135" y="340"/>
+              <connectionPointOut>
+                <relPosition x="135" y="15"/>
+              </connectionPointOut>
+              <expression>WiiNunchuckAccY</expression>
+            </inVariable>
+            <inVariable localId="13" height="30" width="130">
+              <position x="140" y="385"/>
+              <connectionPointOut>
+                <relPosition x="130" y="15"/>
+              </connectionPointOut>
+              <expression>WiiNunchuckAccZ</expression>
+            </inVariable>
+            <outVariable localId="14" height="30" width="20">
+              <position x="345" y="295"/>
+              <connectionPointIn>
+                <relPosition x="0" y="15"/>
+                <connection refLocalId="11">
+                  <position x="345" y="310"/>
+                  <position x="270" y="310"/>
+                </connection>
+              </connectionPointIn>
+              <expression>a</expression>
+            </outVariable>
+            <outVariable localId="15" height="30" width="20">
+              <position x="345" y="340"/>
+              <connectionPointIn>
+                <relPosition x="0" y="15"/>
+                <connection refLocalId="12">
+                  <position x="345" y="355"/>
+                  <position x="270" y="355"/>
+                </connection>
+              </connectionPointIn>
+              <expression>b</expression>
+            </outVariable>
+            <outVariable localId="16" height="30" width="20">
+              <position x="345" y="385"/>
+              <connectionPointIn>
+                <relPosition x="0" y="15"/>
+                <connection refLocalId="13">
+                  <position x="345" y="400"/>
+                  <position x="270" y="400"/>
+                </connection>
+              </connectionPointIn>
+              <expression>c</expression>
+            </outVariable>
+            <comment localId="17" height="125" width="500">
+              <position x="450" y="30"/>
+              <content>
+                <xhtml:p><![CDATA[This example shows interaction of PLC program with Nintendo Wii Remote controller.
+
+To work this example requires python-cwiid library to be installed.]]></xhtml:p>
+              </content>
+            </comment>
+          </FBD>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[]]></xhtml:p>
+        </documentation>
+      </pou>
+    </pous>
+  </types>
+  <instances>
+    <configurations>
+      <configuration name="config">
+        <resource name="resource1">
+          <task name="tsk1" interval="T#1ms" priority="0">
+            <pouInstance name="inst1" typeName="main"/>
+          </task>
+        </resource>
+      </configuration>
+    </configurations>
+  </instances>
+</project>

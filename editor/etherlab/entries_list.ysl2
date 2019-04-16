@@ -1,0 +1,100 @@
+/*
+
+Stylesheet used to list EtherCat dictionnary entries.
+
+Copyright (C) 2011-2014: Laurent BESSARD
+
+Distributed under the terms of the GNU Lesser General Public License as
+published by the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+See COPYING file for copyrights details.
+
+*/
+
+include yslt.yml2
+estylesheet xmlns:ns="entries_list_ns" 
+            extension-element-prefixes="ns" 
+            exclude-result-prefixes="ns" {
+    
+    param "min_index";
+    param "max_index";
+    
+    template "text()";
+    
+    template "Device" {
+        apply "Profile/Dictionary/Objects/Object";
+        foreach "RxPdo" {
+            call "pdo_entries" with "direction", "'Receive'";
+        }
+        foreach "TxPdo" {
+            call "pdo_entries" with "direction", "'Transmit'";
+        }
+    }
+    
+    template "Object" {
+        variable "index" > «ns:HexDecValue(Index/text())»
+        variable "entry_name" > «ns:EntryName(Name)»
+        choose {
+            when "$index >= $min_index and $index <= $max_index" {
+                variable "datatype_name" > «Type/text()»
+                choose {
+                    when "ancestor::Dictionary/child::DataTypes/DataType[Name/text()=$datatype_name][SubItem]" {
+                        apply "ancestor::Dictionary/child::DataTypes/DataType[Name/text()=$datatype_name][SubItem]" {
+                            with "index" > «$index»
+                            with "entry_name" > «$entry_name»
+                        }
+                    }
+                    otherwise {
+                        variable "subindex" > 0
+                        variable "entry" {
+                            > «ns:AddEntry($index, $subindex, $entry_name, $datatype_name, BitSize/text(), Flags/Access/text(), Flags/PdoMapping/text())»
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    template "DataType" {
+        param "index";
+        param "entry_name";
+        foreach "SubItem" {
+            variable "subindex" > «ns:HexDecValue(SubIdx/text())»
+            variable "subentry_name" > «$entry_name» - «ns:EntryName(DisplayName, Name/text())»
+            variable "entry" {
+                > «ns:AddEntry($index, $subindex, $subentry_name, Type/text(), BitSize/text(), Flags/Access/text(), Flags/PdoMapping/text())»
+            }
+        }
+    }
+    
+    function "pdo_entries" {
+        param "direction";
+        variable "pdo_index" > «ns:HexDecValue(Index/text())»
+        variable "pdo_name" > «ns:EntryName(Name)»
+        foreach "Entry" {
+            variable "index" > «ns:HexDecValue(Index/text())»
+            choose {
+                when "$index >= $min_index and $index <= $max_index" {
+                    variable "subindex" > «ns:HexDecValue(SubIndex/text())»
+                    variable "subentry_name" > «ns:EntryName(Name)»
+                    variable "access" {
+                        choose {
+                            when "$direction='Transmit'" > ro
+                            otherwise > wo
+                        }
+                    }
+                    variable "pdo_mapping" {
+                        choose {
+                            when "$direction='Transmit'" > T
+                            otherwise > R
+                        }
+                    }
+                    variable "entry" {
+                        > «ns:AddEntry($index, $subindex, $subentry_name, DataType/text(), BitLen/text(), $access, $pdo_mapping, $pdo_index, $pdo_name, $direction)»
+                    }
+                }
+            }
+        }
+    }
+}

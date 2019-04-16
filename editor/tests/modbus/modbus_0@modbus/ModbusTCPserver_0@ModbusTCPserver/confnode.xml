@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ModbusServerNode xmlns:xsd="http://www.w3.org/2001/XMLSchema" Local_Port_Number="1502" Local_IP_Address="127.0.0.1"/>

@@ -1,0 +1,268 @@
+include yslt_noindent.yml2
+istylesheet xmlns:ppx="http://www.plcopen.org/xml/tc6_0201"
+            xmlns:xhtml="http://www.w3.org/1999/xhtml"
+            xmlns:ns="beremiz" 
+            extension-element-prefixes="ns" 
+            exclude-result-prefixes="ns" {
+    
+    template "text()";
+    template "text()", mode="var_class";
+    template "text()", mode="var_type";
+    template "text()", mode="var_edit";
+    template "text()", mode="var_debug";
+    
+    variable "project", "ns:GetProject()";
+    
+    variable "stdlib", "ns:GetStdLibs()";
+
+    variable "extensions", "ns:GetExtensions()";
+
+    variable "all_types", "($project | $stdlib | $extensions)/ppx:types";
+    
+    function "add_root" {
+        param "class";
+        param "type";
+        param "edit" > true
+        param "debug" > true
+        value "ns:SetRoot($class, $type, $edit, $debug)";
+    }
+    
+    template "ppx:pou" {
+        call "add_root" {
+            with "class" > «@pouType»
+            with "type" > «@name»
+        }
+        apply "ppx:interface";
+        apply "ppx:actions/ppx:action | ppx:transitions/ppx:transition", mode="variable_list";
+    }
+    
+    template "ppx:action" {
+        call "add_root" {
+            with "class" > action
+        }
+        apply "ancestor::ppx:pou/child::ppx:interface";
+    }
+    
+    template "ppx:transition" {
+        call "add_root" {
+            with "class" > transition
+        }
+        apply "ancestor::ppx:pou/child::ppx:interface";
+    }
+    
+    template "ppx:configuration" {
+        call "add_root" {
+            with "class" > configuration
+            with "debug" > false
+        }
+        apply "ppx:resource", mode="variable_list";
+        apply "ppx:globalVars";
+    }
+    
+    template "ppx:resource" {
+        call "add_root" {
+            with "class" > resource
+            with "debug" > false
+        }
+        apply "ppx:pouInstance | ppx:task/ppx:pouInstance",  mode="variable_list";
+        apply "ppx:globalVars";
+    }
+    
+    function "variables_infos" {
+        param "var_class";
+        foreach "ppx:variable" {
+            variable "class" {
+                apply "ppx:type", mode="var_class" {
+                    with "default_class" > «$var_class»
+                }
+            }
+            variable "type" {
+                apply"ppx:type", mode="var_type";
+            }
+            variable "edit" {
+                apply "ppx:type", mode="var_edit";
+            }
+            variable "debug" {
+                apply "ppx:type", mode="var_debug";
+            }
+            value "ns:AddVariable(@name, $class, $type, $edit, $debug)";
+        }
+    }
+    
+    template "ppx:localVars" {
+        call "variables_infos" {
+            with "var_class" > Local
+        }
+    }
+    
+    template "ppx:globalVars" {
+        call "variables_infos" {
+            with "var_class" > Global
+        }
+    }
+    
+    template "ppx:externalVars" {
+        call "variables_infos" {
+            with "var_class" > External
+        }
+    }
+    
+    template "ppx:tempVars" {
+        call "variables_infos" {
+            with "var_class" > Temp
+        }
+    }
+    
+    template "ppx:inputVars" {
+        call "variables_infos" {
+            with "var_class" > Input
+        }
+    }
+    
+    template "ppx:outputVars" {
+        call "variables_infos" {
+            with "var_class" > Output
+        }
+    }
+    
+    template "ppx:inOutVars" {
+        call "variables_infos" {
+            with "var_class" > InOut
+        }
+    }
+    
+    function "add_variable" {
+        param "name";
+        param "class";
+        param "type";
+        param "edit" > true
+        param "debug" > true
+        value "ns:AddVariable($name, $class, $type, $edit, $debug)";
+    }
+    
+    template "ppx:action", mode="variable_list" {
+        call "add_variable" {
+            with "name" > «@name»
+            with "class" > action
+        }
+    }
+    
+    template "ppx:transition", mode="variable_list" {
+        call "add_variable" {
+            with "name" > «@name»
+            with "class" > transition
+        }
+    }
+    
+    template "ppx:resource", mode="variable_list" {
+        call "add_variable" {
+            with "name" > «@name»
+            with "class" > resource
+            with "debug" > false
+        } 
+    }
+    
+    template "ppx:pouInstance", mode="variable_list" {
+        call "add_variable" {
+            with "name" > «@name»
+            with "class" > program
+            with "type" > «@typeName»
+        }
+    }
+    
+    template "*[self::ppx:type or self::ppx:baseType]/ppx:derived", mode="var_class" {
+        param "default_class";
+        variable "type_name", "@name";
+        variable "pou_infos", "$all_types/ppx:pous/ppx:pou[@name=$type_name]";
+        choose {
+            when "$pou_infos" {
+                apply "$pou_infos", mode="var_class";
+            }
+            otherwise {
+                value "$default_class"
+            }
+        }
+    }
+    
+    template "ppx:pou", mode="var_class" {
+        value "@pouType";
+    }
+    
+    template "*[self::ppx:type or self::ppx:baseType]/*" mode="var_class" {
+        param "default_class";
+        value "$default_class";
+    }
+  
+    template "*[self::ppx:type or self::ppx:baseType]/ppx:derived", mode="var_type" {
+        > «@name»
+    }
+    
+    template "*[self::ppx:type or self::ppx:baseType]/ppx:array", mode="var_type" {
+        > ARRAY [
+        foreach "ppx:dimension" {
+            > «@lower»..«@upper»
+        }
+        > ] OF 
+        apply "ppx:baseType", mode="var_type";
+    }
+    
+    template "*[self::ppx:type or self::ppx:baseType]/ppx:string", mode="var_type" {
+        > STRING
+    }
+  
+    template "*[self::ppx:type or self::ppx:baseType]/ppx:wstring", mode="var_type" {
+        > WSTRING
+    }
+  
+    template "*[self::ppx:type or self::ppx:baseType]/*", mode="var_type" {
+        > «local-name()»
+    }
+    
+    template "*[self::ppx:type or self::ppx:baseType]/ppx:derived", mode="var_edit" {
+        variable "type_name", "@name";
+        variable "pou_infos", "$project/ppx:types/ppx:pous/ppx:pou[@name=$type_name]";
+        choose {
+            when "$pou_infos" > true
+            otherwise > false
+        }
+    }
+    
+    template "*[self::ppx:type or self::ppx:baseType]/ppx:array", mode="var_edit" {
+        apply "ppx:baseType", mode="var_edit";
+    }
+    
+    template "*[self::ppx:type or self::ppx:baseType]/*", mode="var_edit" {
+        > false
+    }
+    
+    template "*[self::ppx:type or self::ppx:baseType]/ppx:derived", mode="var_debug" {
+        variable "type_name", "@name";
+        variable "datatype_infos", """ \
+            $project/ppx:types/ppx:pous/ppx:pou[@name=$type_name] | \
+            $all_types/ppx:dataTypes/ppx:dataType[@name=$type_name] \
+        """;
+        choose {
+            when "$datatype_infos" {
+                apply "$datatype_infos", mode="var_debug";
+            }
+            otherwise > false
+        }
+    }
+    
+    template "ppx:pou", mode="var_debug" {
+        > true
+    }
+    
+    template "*[self::ppx:type or self::ppx:baseType]/ppx:array", mode="var_debug" {
+        > false
+    }
+    
+    template "*[self::ppx:type or self::ppx:baseType]/ppx:struct", mode="var_debug" {
+        > false
+    }
+    
+    template "*[self::ppx:type or self::ppx:baseType]/*", mode="var_debug" {
+        > true
+    }
+    
+}

@@ -1,0 +1,79 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) is 21st century inquisition
+# This file is distributed under the same license as the Beremiz package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Beremiz 1.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-09-08 00:41\n"
+"PO-Revision-Date: 2012-09-07 14:32+0100\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: French\n"
+"X-Poedit-Country: FRANCE\n"
+"X-Poedit-SourceCharset: utf-8\n"
+
+# 344fd0acb601413ab6ca95d448467f30
+#: ../../standards.rst:2
+msgid "IEC 61131-3"
+msgstr "CEI 61131-3"
+
+# 805a294642fa45d6bde054a5cbaebff4
+#: ../../standards.rst:4
+msgid ""
+"IEC-61131 is a normative document provided by the standards organization IEC "
+"(International Electrotechnical Commission) and describing a standard for "
+"implementing programmable controllers."
+msgstr ""
+"La CEI 61131 est une norme industrielle de la Commission électrotechnique "
+"internationale (CEI) définissant des langages de programmation à utiliser "
+"pour les automates programmables."
+
+# 39146aa0d8a64bec958bbf6f03efc336
+#: ../../standards.rst:9
+msgid ""
+"The part 3 of this document (commonly named IEC 61131-3) specifies syntax "
+"and semantics for programming language for programmable controllers. Beremiz "
+"implements all the languages described in this document."
+msgstr ""
+"La troisième partie de ce document, appelé CEI 61131-3, spécifie la syntaxe "
+"et la sémantique des langages de programmation des automates. Beremiz "
+"implémente l'ensemble des langages décrits dans ce document."
+
+# 02dd6ad924064d3db0b12c72bce36f8c
+#: ../../standards.rst:14
+msgid "http://www.iec.eu"
+msgstr "http://www.iec.eu"
+
+# 876bae27356140f997ac52f76f873976
+#: ../../standards.rst:17
+msgid "PLCopen TC6"
+msgstr "PLCopen TC6"
+
+# 0af4d2fd04ff43de81c06498a0c43180
+#: ../../standards.rst:19
+msgid ""
+"PLCopen is a vendor- and product-independent worldwide association defining "
+"international standards for various topics related to control programming. "
+"For this purpose, PLCopen has 6 technical committees."
+msgstr ""
+
+# 2dcfeef2c4f344bca696fbd36f0bcf3e
+#: ../../standards.rst:24
+msgid ""
+"The goal of the sixth committee (TC6) is to define a standard file format, "
+"based on XML, for exchanging programmables controllers programmed using IEC "
+"61131-3 languages. Beremiz uses this file format for saving the PLC programs "
+"of projects."
+msgstr ""
+
+# 69d997c95b6b4a728b1129c0ec49ed94
+#: ../../standards.rst:30
+msgid "http://www.plcopen.org"
+msgstr "http://www.plcopen.org"

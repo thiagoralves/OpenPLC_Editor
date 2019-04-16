@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='utf-8'?>
+<CFile xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <includes>
+    <xhtml:p><![CDATA[
+]]></xhtml:p>
+  </includes>
+  <variables>
+    <variable name="TestInput" type="SINT" initial="0"/>
+    <variable name="TestOutput" type="SINT"/>
+  </variables>
+  <globals>
+    <xhtml:p><![CDATA[
+volatile long Lock=0;
+volatile char PtoC=1,CtoP=2;
+
+extern long AtomicCompareExchange(long*,long, long);
+extern char *PLC_ID;
+
+int Simple_C_Call(int val){
+  return val+1;
+}
+
+int Python_to_C_Call(char toC, char *fromC){
+  /* Code called by python should never touch to 
+     variables modified by PLC thread directly
+
+     AtomicCompareExchange comes from 
+     beremiz' runtime implementation */
+
+  int res = 0;
+  if(!AtomicCompareExchange((long*)&Lock, 0, 1)){
+    PtoC=toC;
+    *fromC=CtoP;
+    AtomicCompareExchange((long*)&Lock, 1, 0);
+    res=1;
+  }
+  printf("C code called by Python: toC %d fromC %d\n",toC,*fromC);
+  printf("PLC_ID id %s\n",PLC_ID);
+  return res;
+}
+
+int PLC_C_Call(char fromPLC, char *toPLC){
+  /* PLC also have to be realy carefull not to 
+     conflict with asynchronous python access */
+  if(!AtomicCompareExchange((long*)&Lock, 0, 1)){
+      CtoP = fromPLC;
+      *toPLC = PtoC;
+      AtomicCompareExchange((long*)&Lock, 1, 0);
+      return 1;
+  }
+  return 0;
+}
+]]></xhtml:p>
+  </globals>
+  <initFunction>
+    <xhtml:p><![CDATA[
+]]></xhtml:p>
+  </initFunction>
+  <cleanUpFunction>
+    <xhtml:p><![CDATA[
+]]></xhtml:p>
+  </cleanUpFunction>
+  <retrieveFunction>
+    <xhtml:p><![CDATA[
+]]></xhtml:p>
+  </retrieveFunction>
+  <publishFunction>
+    <xhtml:p><![CDATA[
+if(!AtomicCompareExchange((long*)&Lock, 0, 1)){
+    TestInput = CtoP + PtoC + TestOutput;
+    AtomicCompareExchange((long*)&Lock, 1, 0);
+}
+]]></xhtml:p>
+  </publishFunction>
+</CFile>

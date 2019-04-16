@@ -1,0 +1,18 @@
+image: skvorl/beremiz-requirements
+
+pipelines:
+  default:
+    - parallel:
+        - step:
+            name: Codestyle checks
+            script:
+              - ln -s /CanFestival-3 $BITBUCKET_CLONE_DIR/../CanFestival-3
+              - /usr/bin/python --version
+              - ./tests/tools/check_source.sh
+        - step:
+            name: Application tests
+            max-time: 10
+            script:
+              - ln -s /CanFestival-3 $BITBUCKET_CLONE_DIR/../CanFestival-3
+              - ./tests/tools/run_python_tests.sh
+    

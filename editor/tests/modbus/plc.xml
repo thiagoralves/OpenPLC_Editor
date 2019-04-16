@@ -1,0 +1,314 @@
+<?xml version='1.0' encoding='utf-8'?>
+<project xmlns:ns1="http://www.plcopen.org/xml/tc6_0201" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.plcopen.org/xml/tc6_0201">
+  <fileHeader companyName="Beremiz" productName="Beremiz" productVersion="1" creationDateTime="2018-07-27T13:19:12"/>
+  <contentHeader name="Modbus" modificationDateTime="2018-07-27T15:43:56">
+    <coordinateInfo>
+      <fbd>
+        <scaling x="0" y="0"/>
+      </fbd>
+      <ld>
+        <scaling x="0" y="0"/>
+      </ld>
+      <sfc>
+        <scaling x="0" y="0"/>
+      </sfc>
+    </coordinateInfo>
+  </contentHeader>
+  <types>
+    <dataTypes/>
+    <pous>
+      <pou name="program0" pouType="program">
+        <interface>
+          <localVars>
+            <variable name="Counter">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+            <variable name="CounterReadBack">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+          </localVars>
+          <localVars>
+            <variable name="MasterWriteToReg0" address="%QW0.0.0.0">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+            <variable name="MasterReadFromReg1" address="%IW0.0.1.0">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+            <variable name="SlaveHoldReg0" address="%IW0.1.0.0">
+              <type>
+                <WORD/>
+              </type>
+            </variable>
+            <variable name="SlaveInputReg0" address="%QW0.1.1.0">
+              <type>
+                <WORD/>
+              </type>
+            </variable>
+          </localVars>
+          <localVars>
+            <variable name="CTU0">
+              <type>
+                <derived name="CTU"/>
+              </type>
+            </variable>
+            <variable name="Generator0">
+              <type>
+                <derived name="Generator"/>
+              </type>
+            </variable>
+          </localVars>
+        </interface>
+        <body>
+          <FBD>
+            <comment localId="4" height="109" width="350">
+              <position x="102" y="438"/>
+              <content>
+                <xhtml:p><![CDATA[Modbus TCP Master writes counter value to one holding register on Modbus TCP Slave and reads it back from other input register.]]></xhtml:p>
+              </content>
+            </comment>
+            <comment localId="3" height="407" width="680">
+              <position x="21" y="15"/>
+              <content>
+                <xhtml:p><![CDATA[This examples shows how to work with Modbus extension. It uses Modbus TCP, but the same functions are available for Modbus RTU as well. Buth protocols are supported.
+
+Modbus extensions requires native Modbus RTU/TCP library to be installed nearby Beremiz.
+Following directory structure is expected:
+<Parent directory>
+  "beremiz"
+  "Modbus"
+
+If Modbus library is installed elsewhere, then place corresponding paths
+in CFLAGS/LDFLAGS in project settings.
+
+For GNU/Linux to install Modbus library in parent directory run following commands:
+$ hg clone https://bitbucket.org/mjsousa/modbus Modbus
+$ cd Modbus
+$ make
+
+After that Modbus extension is ready to be used in Beremiz projects.]]></xhtml:p>
+              </content>
+            </comment>
+            <block localId="5" typeName="CTU" instanceName="CTU0" executionOrderId="0" height="80" width="52">
+              <position x="346" y="605"/>
+              <inputVariables>
+                <variable formalParameter="CU" edge="rising">
+                  <connectionPointIn>
+                    <relPosition x="0" y="30"/>
+                    <connection refLocalId="6" formalParameter="OUT">
+                      <position x="346" y="635"/>
+                      <position x="303" y="635"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="R">
+                  <connectionPointIn>
+                    <relPosition x="0" y="50"/>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="PV">
+                  <connectionPointIn>
+                    <relPosition x="0" y="70"/>
+                    <connection refLocalId="7">
+                      <position x="346" y="675"/>
+                      <position x="324" y="675"/>
+                      <position x="324" y="703"/>
+                      <position x="302" y="703"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="Q">
+                  <connectionPointOut>
+                    <relPosition x="52" y="30"/>
+                  </connectionPointOut>
+                </variable>
+                <variable formalParameter="CV">
+                  <connectionPointOut>
+                    <relPosition x="52" y="50"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <block localId="6" typeName="Generator" instanceName="Generator0" executionOrderId="0" height="60" width="79">
+              <position x="224" y="605"/>
+              <inputVariables>
+                <variable formalParameter="PON">
+                  <connectionPointIn>
+                    <relPosition x="0" y="30"/>
+                    <connection refLocalId="1">
+                      <position x="224" y="635"/>
+                      <position x="154" y="635"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="POFF">
+                  <connectionPointIn>
+                    <relPosition x="0" y="50"/>
+                    <connection refLocalId="1">
+                      <position x="224" y="655"/>
+                      <position x="189" y="655"/>
+                      <position x="189" y="635"/>
+                      <position x="154" y="635"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="79" y="30"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="1" executionOrderId="0" height="30" width="138" negated="false">
+              <position x="16" y="620"/>
+              <connectionPointOut>
+                <relPosition x="138" y="15"/>
+              </connectionPointOut>
+              <expression>T#1s</expression>
+            </inVariable>
+            <inVariable localId="7" executionOrderId="0" height="30" width="138" negated="false">
+              <position x="164" y="688"/>
+              <connectionPointOut>
+                <relPosition x="138" y="15"/>
+              </connectionPointOut>
+              <expression>32767</expression>
+            </inVariable>
+            <inOutVariable localId="2" executionOrderId="0" height="30" width="138" negatedOut="false" negatedIn="false">
+              <position x="544" y="640"/>
+              <connectionPointIn>
+                <relPosition x="0" y="15"/>
+                <connection refLocalId="5" formalParameter="CV">
+                  <position x="544" y="655"/>
+                  <position x="398" y="655"/>
+                </connection>
+              </connectionPointIn>
+              <connectionPointOut>
+                <relPosition x="138" y="15"/>
+              </connectionPointOut>
+              <expression>Counter</expression>
+            </inOutVariable>
+            <outVariable localId="8" executionOrderId="0" height="30" width="138" negated="false">
+              <position x="762" y="640"/>
+              <connectionPointIn>
+                <relPosition x="0" y="15"/>
+                <connection refLocalId="2">
+                  <position x="762" y="655"/>
+                  <position x="682" y="655"/>
+                </connection>
+              </connectionPointIn>
+              <expression>MasterWriteToReg0</expression>
+            </outVariable>
+            <inVariable localId="9" executionOrderId="0" height="30" width="152" negated="false">
+              <position x="81" y="747"/>
+              <connectionPointOut>
+                <relPosition x="152" y="15"/>
+              </connectionPointOut>
+              <expression>MasterReadFromReg1</expression>
+            </inVariable>
+            <outVariable localId="10" executionOrderId="0" height="30" width="137" negated="false">
+              <position x="547" y="747"/>
+              <connectionPointIn>
+                <relPosition x="0" y="15"/>
+                <connection refLocalId="9">
+                  <position x="547" y="762"/>
+                  <position x="233" y="762"/>
+                </connection>
+              </connectionPointIn>
+              <expression>CounterReadBack</expression>
+            </outVariable>
+            <comment localId="11" height="109" width="350">
+              <position x="85" y="825"/>
+              <content>
+                <xhtml:p><![CDATA[Modbus TCP Slave just copies received register value from holding register to input register.]]></xhtml:p>
+              </content>
+            </comment>
+            <inVariable localId="12" executionOrderId="0" height="30" width="152" negated="false">
+              <position x="82" y="970"/>
+              <connectionPointOut>
+                <relPosition x="152" y="15"/>
+              </connectionPointOut>
+              <expression>SlaveHoldReg0</expression>
+            </inVariable>
+            <outVariable localId="13" executionOrderId="0" height="30" width="123" negated="false">
+              <position x="548" y="970"/>
+              <connectionPointIn>
+                <relPosition x="0" y="15"/>
+                <connection refLocalId="12">
+                  <position x="548" y="985"/>
+                  <position x="234" y="985"/>
+                </connection>
+              </connectionPointIn>
+              <expression>SlaveInputReg0</expression>
+            </outVariable>
+          </FBD>
+        </body>
+      </pou>
+      <pou name="Generator" pouType="functionBlock">
+        <interface>
+          <outputVars>
+            <variable name="OUT">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+          </outputVars>
+          <inputVars>
+            <variable name="PON">
+              <type>
+                <TIME/>
+              </type>
+            </variable>
+            <variable name="POFF">
+              <type>
+                <TIME/>
+              </type>
+            </variable>
+          </inputVars>
+          <localVars>
+            <variable name="T1">
+              <type>
+                <derived name="TON"/>
+              </type>
+            </variable>
+            <variable name="T2">
+              <type>
+                <derived name="TOF"/>
+              </type>
+            </variable>
+          </localVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[T1( IN := NOT T2.Q, PT := POFF);
+T2( IN := T1.Q,     PT := PON);
+OUT := T2.Q;]]></xhtml:p>
+          </ST>
+        </body>
+      </pou>
+    </pous>
+  </types>
+  <instances>
+    <configurations>
+      <configuration name="config">
+        <resource name="resource1">
+          <task name="task0" priority="0" interval="T#20ms">
+            <pouInstance name="instance0" typeName="program0"/>
+          </task>
+        </resource>
+      </configuration>
+    </configurations>
+  </instances>
+</project>

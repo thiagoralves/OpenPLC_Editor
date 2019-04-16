@@ -1,0 +1,224 @@
+include yslt_noindent.yml2
+istylesheet xmlns:ppx="http://www.plcopen.org/xml/tc6_0201"
+            xmlns:xhtml="http://www.w3.org/1999/xhtml"
+            xmlns:ns="beremiz" 
+            extension-element-prefixes="ns" 
+            exclude-result-prefixes="ns" {
+    
+    param "tree";
+    
+    template "text()";
+    
+    variable "project", "ns:GetProject()";
+    
+    variable "stdlib", "ns:GetStdLibs()";
+
+    variable "extensions", "ns:GetExtensions()";
+
+    variable "all_types", "($project | $stdlib | $extensions)/ppx:types";
+
+    template "ppx:configuration" {
+        apply "ppx:globalVars";
+    }
+    
+    template "ppx:resource" {
+        apply "ppx:globalVars";
+    }
+    
+    template "ppx:pou" {
+        apply "ppx:interface/*";
+    }
+    
+    template "ppx:returnType" {
+        value "ns:AddTree()";
+        apply ".", mode="var_type";
+    }
+    
+    function "variables_infos" {
+        param "var_class";
+        variable "var_option" {
+            choose {
+                when "@constant='true' or @constant='1'" > Constant
+                when "@retain='true' or @retain='1'" > Retain
+                when "@nonretain='true' or @nonretain='1'" > Non-Retain
+            }
+        }
+        foreach "ppx:variable" {
+            variable "initial_value" {
+                apply "ppx:initialValue";
+            }
+            variable "edit" {
+                choose {
+                    when "$var_class='Global' or $var_class='External'" > true
+                    otherwise {
+                        apply "ppx:type", mode="var_edit";
+                    }
+                }
+            }
+            value "ns:AddTree()";
+            apply "ppx:type", mode="var_type";
+            value "ns:AddVariable(@name, $var_class, $var_option, @address, $initial_value, $edit, ppx:documentation/xhtml:p/text())";
+        }
+    }
+    
+    template "ppx:localVars" {
+        call "variables_infos" {
+            with "var_class" > Local
+        }
+    }
+    
+    template "ppx:globalVars" {
+        call "variables_infos" {
+            with "var_class" > Global
+        }
+    }
+    
+    template "ppx:externalVars" {
+        call "variables_infos" {
+            with "var_class" > External
+        }
+    }
+    
+    template "ppx:tempVars" {
+        call "variables_infos" {
+            with "var_class" > Temp
+        }
+    }
+    
+    template "ppx:inputVars" {
+        call "variables_infos" {
+            with "var_class" > Input
+        }
+    }
+    
+    template "ppx:outputVars" {
+        call "variables_infos" {
+            with "var_class" > Output
+        }
+    }
+    
+    template "ppx:inOutVars" {
+        call "variables_infos" {
+            with "var_class" > InOut
+        }
+    }
+    
+    template "ppx:pou", mode="var_type" {
+        apply "ppx:interface/*[self::ppx:inputVars or self::ppx:inOutVars or self::ppx:outputVars]/ppx:variable", mode="var_type";
+    }
+    
+    template "ppx:variable", mode="var_type" {
+        variable "name" > «@name»
+        value "ns:AddTree()";
+        apply "ppx:type", mode="var_type";
+        value "ns:AddVarToTree($name)";
+    }
+    
+    template "ppx:dataType", mode="var_type" {
+        apply "ppx:baseType", mode="var_type";
+    }
+    
+    template "*[self::ppx:type or self::ppx:baseType or self::ppx:returnType]/ppx:struct", mode="var_type" {
+        apply "ppx:variable", mode="var_type";
+    }
+    
+    template "*[self::ppx:type or self::ppx:baseType or self::ppx:returnType]/ppx:derived", mode="var_type" {
+        variable "type_name" > «@name»
+        choose {
+            when "$tree='True'" {
+                apply """$all_types/ppx:pous/ppx:pou[@name=$type_name] | \
+                         $all_types/ppx:dataTypes/ppx:dataType[@name=$type_name]""", mode="var_type";
+            }
+        }
+        value "ns:SetType($type_name)";
+    }
+     
+    template "*[self::ppx:type or self::ppx:baseType or self::ppx:returnType]/ppx:array", mode="var_type" {
+        apply "ppx:baseType", mode="var_type";
+        foreach "ppx:dimension" {
+            variable "lower" > «@lower»
+            variable "upper" > «@upper»
+            value "ns:AddDimension($lower, $upper)";
+        }
+    }
+    
+    template "*[self::ppx:type or self::ppx:baseType or self::ppx:returnType]/ppx:string", mode="var_type" {
+        variable "name" > STRING
+        value "ns:SetType($name)";
+    }
+    
+    template "*[self::ppx:type or self::ppx:baseType or self::ppx:returnType]/ppx:wstring", mode="var_type" {
+        variable "name" > WSTRING
+        value "ns:SetType($name)";
+    }
+    
+    template "*[self::ppx:type or self::ppx:baseType or self::ppx:returnType]/*", mode="var_type" {
+        variable "name" > «local-name()»
+        value "ns:SetType($name)";
+    }
+    
+    template "*[self::ppx:type or self::ppx:baseType or self::ppx:returnType]/ppx:derived", mode="var_edit" {
+        variable "type_name" > «@name»
+        variable "pou_infos", "$all_types/ppx:pous/ppx:pou[@name=$type_name]";
+        choose {
+            when "$pou_infos != ''" > false
+            otherwise > true
+        }
+    }
+    
+    template "*[self::ppx:type or self::ppx:baseType or self::ppx:returnType]/*", mode="var_edit" {
+        > true
+    }
+    
+    template "ppx:value" {
+        choose {
+            when "@repetitionValue" {
+                > «@repetitionValue»(
+                apply;
+                > )
+            }
+            when "@member" {
+                 > «@member» := 
+                 apply;
+            }
+            otherwise {
+                apply;
+            }
+        }
+    }
+    
+    template "ppx:simpleValue" {
+        > «@value»
+    }
+    
+    function "complex_type_value" {
+        param "start_bracket";
+        param "end_bracket";
+        > «$start_bracket»
+        foreach "ppx:value" {
+            apply ".";
+            choose {
+                when "position()!=last()" > , 
+            }
+        }
+        > «$end_bracket»
+    }
+    
+    template "ppx:arrayValue" {
+        call "complex_type_value" {
+            with "start_bracket" > [
+            with "end_bracket" > ]
+        }
+    }
+    
+    template "ppx:structValue" {
+        call "complex_type_value" {
+            with "start_bracket" > (
+            with "end_bracket" > )
+        }
+    }
+
+}
+
+    
+    

@@ -1,0 +1,522 @@
+<?xml version='1.0' encoding='utf-8'?>
+<project xmlns:ns1="http://www.plcopen.org/xml/tc6_0201" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.plcopen.org/xml/tc6_0201">
+  <fileHeader companyName="Beremiz" productName="Additional Function Blocks Library" productVersion="1.0" creationDateTime="2013-09-09T09:56:11"/>
+  <contentHeader name="Standard Funtion Blocks" author="Laurent Bessard" modificationDateTime="2013-09-10T22:45:31">
+    <coordinateInfo>
+      <fbd>
+        <scaling x="0" y="0"/>
+      </fbd>
+      <ld>
+        <scaling x="0" y="0"/>
+      </ld>
+      <sfc>
+        <scaling x="0" y="0"/>
+      </sfc>
+    </coordinateInfo>
+  </contentHeader>
+  <types>
+    <dataTypes/>
+    <pous>
+      <pou name="RTC" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="IN">
+              <type>
+                <BOOL/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[0 - current time, 1 - load time from PDT]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="PDT">
+              <type>
+                <DT/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[Preset datetime]]></xhtml:p>
+              </documentation>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="Q">
+              <type>
+                <BOOL/>
+              </type>
+              <initialValue>
+                <simpleValue value="FALSE"/>
+              </initialValue>
+              <documentation>
+                <xhtml:p><![CDATA[Copy of IN]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="CDT">
+              <type>
+                <DT/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[Datetime, current or relative to PDT]]></xhtml:p>
+              </documentation>
+            </variable>
+          </outputVars>
+          <localVars>
+            <variable name="PREV_IN">
+              <type>
+                <BOOL/>
+              </type>
+              <initialValue>
+                <simpleValue value="FALSE"/>
+              </initialValue>
+            </variable>
+            <variable name="OFFSET">
+              <type>
+                <TIME/>
+              </type>
+            </variable>
+            <variable name="CURRENT_TIME">
+              <type>
+                <DT/>
+              </type>
+            </variable>
+          </localVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[{__SET_VAR(data__->,CURRENT_TIME,,__CURRENT_TIME)}
+
+ IF IN
+ THEN
+   IF NOT PREV_IN
+   THEN
+       OFFSET := PDT - CURRENT_TIME;
+   END_IF;
+
+   (* PDT + time since PDT was loaded *)
+   CDT := CURRENT_TIME + OFFSET;
+ ELSE
+   CDT := CURRENT_TIME;
+ END_IF;
+
+ Q := IN;
+ PREV_IN := IN;
+]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[The real time clock has many uses including time stamping, setting dates and times of day in batch reports, in alarm messages and so on.]]></xhtml:p>
+        </documentation>
+      </pou>
+      <pou name="INTEGRAL" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="RUN">
+              <type>
+                <BOOL/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[1 = integrate, 0 = hold]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="R1">
+              <type>
+                <BOOL/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[Overriding reset]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="XIN">
+              <type>
+                <REAL/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[Input variable]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="X0">
+              <type>
+                <REAL/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[Initial value]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="CYCLE">
+              <type>
+                <TIME/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[Sampling period]]></xhtml:p>
+              </documentation>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="Q">
+              <type>
+                <BOOL/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[NOT R1]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="XOUT">
+              <type>
+                <REAL/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[Integrated output]]></xhtml:p>
+              </documentation>
+            </variable>
+          </outputVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[Q := NOT R1 ;
+IF R1 THEN XOUT := X0;
+ELSIF RUN THEN XOUT := XOUT + XIN * TIME_TO_REAL(CYCLE);
+END_IF;]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[The integral function block integrates the value of input XIN over time.]]></xhtml:p>
+        </documentation>
+      </pou>
+      <pou name="DERIVATIVE" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="RUN">
+              <type>
+                <BOOL/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[0 = reset]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="XIN">
+              <type>
+                <REAL/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[Input to be differentiated]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="CYCLE">
+              <type>
+                <TIME/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[Sampling period]]></xhtml:p>
+              </documentation>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="XOUT">
+              <type>
+                <REAL/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[Differentiated output]]></xhtml:p>
+              </documentation>
+            </variable>
+          </outputVars>
+          <localVars>
+            <variable name="X1">
+              <type>
+                <REAL/>
+              </type>
+            </variable>
+            <variable name="X2">
+              <type>
+                <REAL/>
+              </type>
+            </variable>
+            <variable name="X3">
+              <type>
+                <REAL/>
+              </type>
+            </variable>
+          </localVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[IF RUN THEN
+  XOUT := (3.0 * (XIN - X3) + X1 - X2)
+          / (10.0 * TIME_TO_REAL(CYCLE));
+  X3 := X2;
+  X2 := X1;
+  X1 := XIN;
+ELSE 
+  XOUT := 0.0;
+  X1 := XIN;
+  X2 := XIN;
+  X3 := XIN;
+END_IF;]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[The derivative function block produces an output XOUT proportional to the rate of change of the input XIN.]]></xhtml:p>
+        </documentation>
+      </pou>
+      <pou name="PID" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="AUTO">
+              <type>
+                <BOOL/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[0 - manual , 1 - automatic]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="PV">
+              <type>
+                <REAL/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[Process variable]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="SP">
+              <type>
+                <REAL/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[Set point]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="X0">
+              <type>
+                <REAL/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[Manual output adjustment - Typically from transfer station]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="KP">
+              <type>
+                <REAL/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[Proportionality constant]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="TR">
+              <type>
+                <REAL/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[Reset time]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="TD">
+              <type>
+                <REAL/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[Derivative time constant]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="CYCLE">
+              <type>
+                <TIME/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[Sampling period]]></xhtml:p>
+              </documentation>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="XOUT">
+              <type>
+                <REAL/>
+              </type>
+            </variable>
+          </outputVars>
+          <localVars>
+            <variable name="ERROR">
+              <type>
+                <REAL/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[PV - SP]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="ITERM">
+              <type>
+                <derived name="INTEGRAL"/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[FB for integral term]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="DTERM">
+              <type>
+                <derived name="DERIVATIVE"/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[FB for derivative term]]></xhtml:p>
+              </documentation>
+            </variable>
+          </localVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[ERROR := PV - SP ;
+(*** Adjust ITERM so that XOUT := X0 when AUTO = 0 ***)
+ITERM(RUN := AUTO, R1 := NOT AUTO, XIN := ERROR,
+      X0 := TR * (X0 - ERROR), CYCLE := CYCLE);
+DTERM(RUN := AUTO, XIN := ERROR, CYCLE := CYCLE);
+XOUT := KP * (ERROR + ITERM.XOUT/TR + DTERM.XOUT*TD);]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[The PID (proportional, Integral, Derivative) function block provides the classical three term controller for closed loop control.]]></xhtml:p>
+        </documentation>
+      </pou>
+      <pou name="RAMP" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="RUN">
+              <type>
+                <BOOL/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[0 - track X0, 1 - ramp to/track X1]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="X0">
+              <type>
+                <REAL/>
+              </type>
+            </variable>
+            <variable name="X1">
+              <type>
+                <REAL/>
+              </type>
+            </variable>
+            <variable name="TR">
+              <type>
+                <TIME/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[Ramp duration]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="CYCLE">
+              <type>
+                <TIME/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[Sampling period]]></xhtml:p>
+              </documentation>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="BUSY">
+              <type>
+                <BOOL/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[BUSY = 1 during ramping period]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="XOUT">
+              <type>
+                <REAL/>
+              </type>
+              <initialValue>
+                <simpleValue value="0.0"/>
+              </initialValue>
+            </variable>
+          </outputVars>
+          <localVars>
+            <variable name="XI">
+              <type>
+                <REAL/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[Initial value]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="T">
+              <type>
+                <TIME/>
+              </type>
+              <initialValue>
+                <simpleValue value="T#0s"/>
+              </initialValue>
+              <documentation>
+                <xhtml:p><![CDATA[Elapsed time of ramp]]></xhtml:p>
+              </documentation>
+            </variable>
+          </localVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[BUSY := RUN ;
+IF RUN THEN
+  IF T >= TR THEN 
+    BUSY := 0;
+    XOUT := X1;
+  ELSE XOUT := XI + (X1-XI) * TIME_TO_REAL(T)
+                            / TIME_TO_REAL(TR);
+    T := T + CYCLE;
+  END_IF;
+ELSE
+  XOUT := X0;
+  XI := X0;
+  T := T#0s;
+END_IF;]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[The RAMP function block is modelled on example given in the standard.]]></xhtml:p>
+        </documentation>
+      </pou>
+      <pou name="HYSTERESIS" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="XIN1">
+              <type>
+                <REAL/>
+              </type>
+            </variable>
+            <variable name="XIN2">
+              <type>
+                <REAL/>
+              </type>
+            </variable>
+            <variable name="EPS">
+              <type>
+                <REAL/>
+              </type>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="Q">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+          </outputVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[IF Q THEN
+  IF XIN1 < (XIN2 - EPS) THEN 
+    Q := 0;
+  END_IF;
+ELSIF XIN1 > (XIN2 + EPS) THEN
+  Q := 1;
+END_IF;]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[The hysteresis function block provides a hysteresis boolean output driven by the difference of two floating point (REAL) inputs XIN1 and XIN2.]]></xhtml:p>
+        </documentation>
+      </pou>
+    </pous>
+  </types>
+  <instances>
+    <configurations/>
+  </instances>
+</project>
