@@ -36,6 +36,7 @@ import wx.lib.buttons
 import matplotlib
 matplotlib.use('WX')   # noqa
 import matplotlib.pyplot
+from matplotlib.backends.backend_wxagg import _convert_agg_to_wx_bitmap
 
 from editors.DebugViewer import DebugViewer
 from util.BitmapLibrary import GetBitmap
@@ -522,14 +523,32 @@ class DebugVariablePanel(wx.Panel, DebugViewer):
 
     def RefreshView(self):
         """Triggers EVT_PAINT event to refresh UI"""
-        self.Refresh()
+        #self.Refresh()
+        self.DrawView()
 
     def DrawView(self):
         """
         Redraw elements.
         Method is used by EVT_PAINT handler.
         """
-
+        width, height = self.GraphicsWindow.GetVirtualSize()
+        bitmap = wx.EmptyBitmap(width, height)
+        dc = wx.BufferedDC(wx.ClientDC(self.GraphicsWindow), bitmap)
+        dc.Clear()
+        dc.BeginDrawing()
+        if self.DraggingAxesPanel is not None:
+            destBBox = self.DraggingAxesBoundingBox
+            srcBBox = self.DraggingAxesPanel.GetAxesBoundingBox()
+            
+            srcBmp = _convert_agg_to_wx_bitmap(self.DraggingAxesPanel.get_renderer(), None)
+            srcDC = wx.MemoryDC()
+            srcDC.SelectObject(srcBmp)
+                
+            dc.Blit(destBBox.x, destBBox.y, 
+                    int(destBBox.width), int(destBBox.height), 
+                    srcDC, srcBBox.x, srcBBox.y)
+        dc.EndDrawing()
+        
         self.RefreshCanvasPosition()
 
         if not self.Fixed or self.Force:

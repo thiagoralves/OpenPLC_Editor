@@ -48,7 +48,7 @@ from dialogs import *
 from editors.DebugViewer import DebugViewer, REFRESH_PERIOD
 from editors.EditorPanel import EditorPanel
 
-from controls.DebugVariablePanel.DebugVariableItem import DebugVariableItem
+#from controls.DebugVariablePanel.DebugVariableItem import DebugVariableItem
 
 SCROLLBAR_UNIT = 10
 WINDOW_BORDER = 10
@@ -1582,8 +1582,8 @@ class Viewer(EditorPanel, DebugViewer):
 
         def ForceVariableFunction(event):
             if iec_type is not None:
-                item = DebugVariableItem(self, iec_path, False)
-                dialog = ForceVariableDialog(self, iec_type, str(item.GetValue()))
+                #item = DebugVariableItem(self, iec_path, False)
+                dialog = ForceVariableDialog(self, iec_type, "0")
                 #dialog = ForceVariableDialog(self.ParentWindow, iec_type, str(item.GetValue()))
                 if dialog.ShowModal() == wx.ID_OK:
                     self.ParentWindow.AddDebugVariable(iec_path)
@@ -1638,7 +1638,7 @@ class Viewer(EditorPanel, DebugViewer):
             self.Editor.PopupMenu(menu)
             menu.Destroy()
         
-        #This is probably a variable
+        #This still could be a variable or a coil
         else:
             if isinstance(self.SelectedElement, FBD_Variable):
                 instance_path = self.GetInstancePath(True)
@@ -1646,6 +1646,21 @@ class Viewer(EditorPanel, DebugViewer):
                 menu = wx.Menu(title='')
                 item = menu.Append(wx.ID_ANY, help='', kind=wx.ITEM_NORMAL, text=_("Force value"))
                 self.Bind(wx.EVT_MENU, self.GetForceVariableMenuFunction(iec_path.upper(), self.SelectedElement), item)
+                ritem = menu.Append(wx.ID_ANY, help='', kind=wx.ITEM_NORMAL, text=_("Release value"))
+                self.Bind(wx.EVT_MENU, self.GetReleaseVariableMenuFunction(iec_path.upper()), ritem)
+                if self.Editor.HasCapture():
+                    self.Editor.ReleaseMouse()
+                self.Editor.PopupMenu(menu)
+                menu.Destroy()
+                
+            if isinstance(self.SelectedElement, LD_Coil):
+                instance_path = self.GetInstancePath(True)
+                iec_path = "%s.%s" % (instance_path, self.SelectedElement.GetName())
+                menu = wx.Menu(title='')
+                true_item = menu.Append(wx.ID_ANY, help='', kind=wx.ITEM_NORMAL, text="Force True")
+                self.Bind(wx.EVT_MENU, self.GetForceBoolFunction(iec_path.upper(), True), true_item)
+                false_item = menu.Append(wx.ID_ANY, help='', kind=wx.ITEM_NORMAL, text="Force False")
+                self.Bind(wx.EVT_MENU, self.GetForceBoolFunction(iec_path.upper(), False), false_item)
                 ritem = menu.Append(wx.ID_ANY, help='', kind=wx.ITEM_NORMAL, text=_("Release value"))
                 self.Bind(wx.EVT_MENU, self.GetReleaseVariableMenuFunction(iec_path.upper()), ritem)
                 if self.Editor.HasCapture():

@@ -252,7 +252,8 @@ class BlockPreviewDialog(wx.Dialog):
 
     def RefreshPreview(self):
         """Triggers EVT_PAINT event to refresh UI"""
-        self.Refresh()
+        #self.Refresh()
+        self.DrawPreview()
 
     def DrawPreview(self):
         """

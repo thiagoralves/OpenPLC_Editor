@@ -336,7 +336,7 @@ class PouInstanceVariablesPanel(wx.Panel):
                 instance_path = instance_path[0:pos]
             var_path = "%s.%s" % (instance_path, infos.name)
             if var_class in ITEMS_VARIABLE:
-                self.ParentWindow.AddDebugVariable(var_path, force=True)
+                self.ParentWindow.AddDebugVariable(var_path.upper(), force=True)
             elif var_class == ITEM_TRANSITION:
                 self.ParentWindow.OpenDebugViewer(
                     var_class,
@@ -361,8 +361,8 @@ class PouInstanceVariablesPanel(wx.Panel):
         if self.InstanceChoice.GetSelection() != -1:
             if infos.var_class in ITEMS_VARIABLE:
                 self.ParentWindow.AddDebugVariable(
-                    "%s.%s" % (self.InstanceChoice.GetStringSelection(),
-                               infos.name),
+                    "%s.%s" % (self.InstanceChoice.GetStringSelection().upper(),
+                               infos.name.upper()),
                     force=True,
                     graph=True)
 
