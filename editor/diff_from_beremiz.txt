@@ -1,0 +1,20 @@
+Files changed from main Beremiz repo:
+
+ - BeremizIDE.py:
+Change PATH variable to include mingw
+
+ - ProjectController.py
+New toolbar buttons
+Run function modified to clean, build, connect, transfer and run
+Default scaling changed for new projects
+
+ - features.py
+Removed unused features
+
+ - Viewer.py
+Added force menu to FBD variables
+
+ - version.py
+Changed version information
+
+Also, images folder was changed with new icons and logos.
