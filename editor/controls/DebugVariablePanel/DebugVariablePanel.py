@@ -523,31 +523,34 @@ class DebugVariablePanel(wx.Panel, DebugViewer):
 
     def RefreshView(self):
         """Triggers EVT_PAINT event to refresh UI"""
-        #self.Refresh()
-        self.DrawView()
+        if os.name == 'nt':
+            self.DrawView()
+        else:
+            self.Refresh()
 
     def DrawView(self):
         """
         Redraw elements.
         Method is used by EVT_PAINT handler.
         """
-        width, height = self.GraphicsWindow.GetVirtualSize()
-        bitmap = wx.EmptyBitmap(width, height)
-        dc = wx.BufferedDC(wx.ClientDC(self.GraphicsWindow), bitmap)
-        dc.Clear()
-        dc.BeginDrawing()
-        if self.DraggingAxesPanel is not None:
-            destBBox = self.DraggingAxesBoundingBox
-            srcBBox = self.DraggingAxesPanel.GetAxesBoundingBox()
-            
-            srcBmp = _convert_agg_to_wx_bitmap(self.DraggingAxesPanel.get_renderer(), None)
-            srcDC = wx.MemoryDC()
-            srcDC.SelectObject(srcBmp)
+        if os.name == 'nt':
+            width, height = self.GraphicsWindow.GetVirtualSize()
+            bitmap = wx.EmptyBitmap(width, height)
+            dc = wx.BufferedDC(wx.ClientDC(self.GraphicsWindow), bitmap)
+            dc.Clear()
+            dc.BeginDrawing()
+            if self.DraggingAxesPanel is not None:
+                destBBox = self.DraggingAxesBoundingBox
+                srcBBox = self.DraggingAxesPanel.GetAxesBoundingBox()
                 
-            dc.Blit(destBBox.x, destBBox.y, 
-                    int(destBBox.width), int(destBBox.height), 
-                    srcDC, srcBBox.x, srcBBox.y)
-        dc.EndDrawing()
+                srcBmp = _convert_agg_to_wx_bitmap(self.DraggingAxesPanel.get_renderer(), None)
+                srcDC = wx.MemoryDC()
+                srcDC.SelectObject(srcBmp)
+                    
+                dc.Blit(destBBox.x, destBBox.y, 
+                        int(destBBox.width), int(destBBox.height), 
+                        srcDC, srcBBox.x, srcBBox.y)
+            dc.EndDrawing()
         
         self.RefreshCanvasPosition()
 
