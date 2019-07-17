@@ -764,6 +764,8 @@ class ProjectController(ConfigTreeNode, PLCControler):
                 a = line.split("AT %")
                 b = a[1].split(":")
                 modified_program += a[0] + ":" + b[1]
+                if(len(b) > 2):
+                    modified_program += ":" + b[2]
             else:
                 modified_program += line
 
