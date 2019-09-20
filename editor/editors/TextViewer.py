@@ -846,6 +846,16 @@ class TextViewer(EditorPanel):
         self.Controler.SetEditedElementText(self.TagName, self.GetText())
         self.ResetSearchResults()
 
+    def cleanupForAutocomplete(self, word):
+        idxBegin = word.find('[')
+        if idxBegin < 0:
+            return word
+        mtch = re.match('([^\[]+)\[[\d\[\]]+\]', word)
+        if mtch is not None:
+            word = mtch.group(1)
+        # print("CLEANUP returning word: %s" % word)
+        return word
+
     def OnKeyDown(self, event):
         key = event.GetKeyCode()
         if self.Controler is not None:
@@ -868,6 +878,7 @@ class TextViewer(EditorPanel):
 
                 words = lineText.split(" ")
                 words = [word for i, word in enumerate(words) if word != '' or i == len(words) - 1]
+                #words = [self.cleanupForAutocomplete(w) for w in words]
 
                 kw = []
 
@@ -884,11 +895,33 @@ class TextViewer(EditorPanel):
                 else:
                     kw = self.Keywords + self.Variables.keys() + self.Functions.keys()
                 if len(kw) > 0:
-                    if len(words[-1]) > 0:
-                        kw = [keyword for keyword in kw if keyword.startswith(words[-1])]
+                    target_word = words[-1]
+                    struct_els = target_word.split('.')
+                    #print('VARS %s' % str(self.Variables))
+                    if len(struct_els) < 2:
+                        target_word = self.cleanupForAutocomplete(target_word)
+                    else:
+                        # we have a dot-separated value -- i.e. some structured instance
+                        # we will drill down the tree to find relevant elements
+                        var_ctx = self.Variables
+                        i = 0
+                        while i < (len(struct_els) - 1) and var_ctx is not None:
+                            cur_level_word = self.cleanupForAutocomplete(struct_els[i])
+                            if len(cur_level_word) and cur_level_word.upper() in var_ctx:
+                                var_ctx = var_ctx[cur_level_word.upper()]
+                            i += 1
+                        kw = var_ctx.keys()
+                        if struct_els[-1].upper() == struct_els[-1]: 
+                            target_word = self.cleanupForAutocomplete(struct_els[-1]).upper()
+                        else:
+                            target_word = self.cleanupForAutocomplete(struct_els[-1]).lower()
+                            kw = [keyword.lower() for keyword in kw]
+                    if len(target_word) > 0:
+                        kw = [keyword for keyword in kw if keyword.startswith(target_word)]
                     kw.sort()
-                    self.Editor.AutoCompSetIgnoreCase(True)
-                    self.Editor.AutoCompShow(len(words[-1]), " ".join(kw))
+                    if len(kw):
+                        self.Editor.AutoCompSetIgnoreCase(True)
+                        self.Editor.AutoCompShow(len(target_word), " ".join(kw))
                 key_handled = True
             elif key == wx.WXK_RETURN or key == wx.WXK_NUMPAD_ENTER:
                 if self.TextSyntax in ["ST", "ALL"]:
