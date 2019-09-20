@@ -884,11 +884,28 @@ class TextViewer(EditorPanel):
                 else:
                     kw = self.Keywords + self.Variables.keys() + self.Functions.keys()
                 if len(kw) > 0:
+                    struct_els = words[-1].split('.')
+                    if len(struct_els) > 1:
+                        # we have a dot-separated value -- i.e. some structured instance
+                        # we will drill down the tree to find relevant elements
+                        var_ctx = self.Variables
+                        i = 0
+                        while i < (len(struct_els) - 1) and var_ctx is not None:
+                            if len(struct_els[i]) and struct_els[i].upper() in var_ctx:
+                                var_ctx = var_ctx[struct_els[i].upper()]
+                            i += 1
+                        kw = var_ctx.keys()
+                        if struct_els[-1].upper() == struct_els[-1]: 
+                            words[-1] = struct_els[-1].upper()
+                        else:
+                            words[-1] = struct_els[-1].lower()
+                            kw = [keyword.lower() for keyword in kw]
                     if len(words[-1]) > 0:
                         kw = [keyword for keyword in kw if keyword.startswith(words[-1])]
                     kw.sort()
-                    self.Editor.AutoCompSetIgnoreCase(True)
-                    self.Editor.AutoCompShow(len(words[-1]), " ".join(kw))
+                    if len(kw):
+                        self.Editor.AutoCompSetIgnoreCase(True)
+                        self.Editor.AutoCompShow(len(words[-1]), " ".join(kw))
                 key_handled = True
             elif key == wx.WXK_RETURN or key == wx.WXK_NUMPAD_ENTER:
                 if self.TextSyntax in ["ST", "ALL"]:
