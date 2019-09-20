@@ -85,13 +85,13 @@ def GetAboutDialogInfo():
     info.Description = _("Open Source IDE for the OpenPLC Runtime, compliant with "
                          "the IEC 61131-3 international standard.\n\nBased on PLCOpen Editor and Beremiz by Andrey Skvortsov, Sergey Surkov, Edouard Tisserant and Laurent Bessard.")
 
-    info.Developers = ("Thiago Alves <thiagoralves@gmail.com>")
-    """info.Developers = (
+    #info.Developers = "Thiago Alves <thiagoralves@gmail.com>"
+    info.Developers = (
         "Thiago Alves <thiagoralves@gmail.com>",
         "Andrey Skvortsov <andrej.skvortzov@gmail.com>",
         "Sergey Surkov <surkov.sv@summatechnology.ru>",
         "Edouard Tisserant <edouard.tisserant@gmail.com>",
-        "Laurent Bessard <laurent.bessard@gmail.com>")"""
+        "Laurent Bessard <laurent.bessard@gmail.com>")
 
     info.License = (
         '\n This program is free software; you can redistribute it and/or\n'
@@ -217,6 +217,7 @@ def GetAboutDialogInfo():
 
 
 app_version = "1.0"
-rev = GetAppRevision()
+#rev = GetAppRevision()
+rev = "Release: 2019-09-20"
 if rev is not None:
-    app_version = app_version + "-" + rev.rstrip()
+    app_version = app_version + "\n" + rev.rstrip()
