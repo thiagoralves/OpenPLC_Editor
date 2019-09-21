@@ -146,7 +146,7 @@ class PLCControler(object):
     # Create a new PLCControler
     def __init__(self):
         self.LastNewIndex = 0
-        self.SortAlphaNumeric = False 
+        self.SortAlphaNumeric = False
         self.Reset()
         self.InstancesPathCollector = InstancesPathCollector(self)
         self.POUVariablesCollector = POUVariablesCollector(self)
@@ -1230,6 +1230,9 @@ class PLCControler(object):
                          if (name is None or
                              len(self.GetInstanceList(pou, name, debug)) == 0)]
             })
+            if self.SortAlphaNumeric:
+                self._sortByNameAttributeInPlace(blocktypes[-1]["list"])
+
             return blocktypes
         return self.TotalTypes
 
@@ -1284,6 +1287,8 @@ class PLCControler(object):
                 for datatype in project.getdataTypes(name)
                 if ((not only_locatables or self.IsLocatableDataType(datatype, debug)) and
                     (name is None or len(self.GetInstanceList(datatype, name, debug)) == 0))])
+            if self.SortAlphaNumeric and not basetypes:
+                datatypes.sort()
         if confnodetypes:
             for category in self.GetConfNodeDataTypes(name, only_locatables):
                 datatypes.extend(category["list"])
