@@ -146,12 +146,16 @@ class PLCControler(object):
     # Create a new PLCControler
     def __init__(self):
         self.LastNewIndex = 0
+        self.SortAlphaNumeric = False
         self.Reset()
         self.InstancesPathCollector = InstancesPathCollector(self)
         self.POUVariablesCollector = POUVariablesCollector(self)
         self.InstanceTagnameCollector = InstanceTagnameCollector(self)
         self.BlockInstanceCollector = BlockInstanceCollector(self)
         self.VariableInfoCollector = VariableInfoCollector(self)
+
+    def setSortAlphaNumeric(self, setOn):
+        self.SortAlphaNumeric = setOn
 
     # Reset PLCControler internal variables
     def Reset(self):
@@ -293,6 +297,13 @@ class PLCControler(object):
             return properties
         return None
 
+    def _sortByNameAttributeInPlace(self, alist, reverse=False):
+        if not self.SortAlphaNumeric:
+            return
+        if not len(alist):
+            return
+        alist.sort(key=lambda x: x["name"], reverse=reverse)
+
     # Return project informations
     def GetProjectInfos(self, debug=False):
         project = self.GetProject(debug)
@@ -305,6 +316,7 @@ class PLCControler(object):
                     "type": ITEM_DATATYPE,
                     "tagname": ComputeDataTypeName(datatype.getname()),
                     "values": []})
+            self._sortByNameAttributeInPlace(datatypes["values"])
             pou_types = {
                 "function": {
                     "name":   FUNCTIONS,
@@ -347,7 +359,9 @@ class PLCControler(object):
                 if pou_type in pou_types:
                     pou_infos["values"] = pou_values
                     pou_types[pou_type]["values"].append(pou_infos)
+
             configurations = {"name": CONFIGURATIONS, "type": ITEM_CONFIGURATIONS, "values": []}
+            
             for config in project.getconfigurations():
                 config_name = config.getname()
                 config_infos = {
@@ -366,6 +380,12 @@ class PLCControler(object):
                     resources["values"].append(resource_infos)
                 config_infos["values"] = [resources]
                 configurations["values"].append(config_infos)
+
+
+            for ptype in pou_types:
+                if "values" in pou_types[ptype]:
+                    self._sortByNameAttributeInPlace(pou_types[ptype]["values"])
+
             infos["values"] = [datatypes, pou_types["function"], pou_types["functionBlock"],
                                pou_types["program"], configurations]
             return infos
@@ -1210,6 +1230,9 @@ class PLCControler(object):
                          if (name is None or
                              len(self.GetInstanceList(pou, name, debug)) == 0)]
             })
+            if self.SortAlphaNumeric:
+                self._sortByNameAttributeInPlace(blocktypes[-1]["list"])
+
             return blocktypes
         return self.TotalTypes
 
@@ -1264,6 +1287,8 @@ class PLCControler(object):
                 for datatype in project.getdataTypes(name)
                 if ((not only_locatables or self.IsLocatableDataType(datatype, debug)) and
                     (name is None or len(self.GetInstanceList(datatype, name, debug)) == 0))])
+            if self.SortAlphaNumeric and not basetypes:
+                datatypes.sort()
         if confnodetypes:
             for category in self.GetConfNodeDataTypes(name, only_locatables):
                 datatypes.extend(category["list"])
