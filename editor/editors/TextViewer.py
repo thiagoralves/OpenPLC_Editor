@@ -850,7 +850,7 @@ class TextViewer(EditorPanel):
         idxBegin = word.find('[')
         if idxBegin < 0:
             return word
-        mtch = re.match('([^\[]+)\[[\d\[\]]+\]', word)
+        mtch = re.match('([^\[]+)(\[[^\]]+\])+', word)
         if mtch is not None:
             word = mtch.group(1)
         # print("CLEANUP returning word: %s" % word)
