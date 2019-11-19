@@ -5,7 +5,7 @@ echo ""
 echo "[INSTALLING DEPENDENCIES]"
 sudo apt-get -y -qq update
 sudo apt-get -y -qq install build-essential pkg-config bison flex autoconf automake libtool make git libssl-dev python2.7 python-pip python-wxgtk3.0
-pip2 install future zeroconf==0.19.1 numpy matplotlib==2.0.2 lxml pyro sslpsk
+pip2 install future zeroconf==0.19.1 numpy==1.16.5 matplotlib==2.0.2 lxml pyro sslpsk
 echo ""
 echo "[COMPILING MATIEC]"
 cd matiec
