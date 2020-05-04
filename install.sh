@@ -8,6 +8,8 @@ sudo apt-get -y -qq install curl build-essential pkg-config bison flex autoconf 
 curl https://bootstrap.pypa.io/get-pip.py --output get-pip.py
 sudo python2 get-pip.py
 sudo apt-get -y -qq install python2-dev
+#Fix for Debian Buster
+sudo apt-get -y -qq install libpng libfreetype6-dev
 pip2 install future zeroconf==0.19.1 numpy==1.16.5 matplotlib==2.0.2 lxml pyro sslpsk
 echo ""
 echo "[COMPILING MATIEC]"
