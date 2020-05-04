@@ -4,7 +4,10 @@ echo "Please be patient. This may take a couple minutes..."
 echo ""
 echo "[INSTALLING DEPENDENCIES]"
 sudo apt-get -y -qq update
-sudo apt-get -y -qq install build-essential pkg-config bison flex autoconf automake libtool make git libssl-dev python2.7 python-pip python-wxgtk3.0
+sudo apt-get -y -qq install curl build-essential pkg-config bison flex autoconf automake libtool make git libssl-dev python2 python-wxgtk3.0
+curl https://bootstrap.pypa.io/get-pip.py --output get-pip.py
+sudo python2 get-pip.py
+sudo apt-get -y -qq install python2-dev
 pip2 install future zeroconf==0.19.1 numpy==1.16.5 matplotlib==2.0.2 lxml pyro sslpsk
 echo ""
 echo "[COMPILING MATIEC]"
