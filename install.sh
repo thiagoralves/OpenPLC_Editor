@@ -4,10 +4,21 @@ echo "Please be patient. This may take a couple minutes..."
 echo ""
 echo "[INSTALLING DEPENDENCIES]"
 sudo apt-get -y -qq update
-sudo apt-get -y -qq install curl build-essential pkg-config bison flex autoconf automake libtool make git libssl-dev python2 python-wxgtk3.0
-curl https://bootstrap.pypa.io/get-pip.py --output get-pip.py
-sudo python2 get-pip.py
+#Main packages
+sudo apt-get -y -qq install curl build-essential pkg-config bison flex autoconf automake libtool make git libssl-dev python-wxgtk3.0
+#Python 2. Some distros call it python2, some others call it python2.7. Try instaling both
+sudo apt-get -y -qq install python2
+sudo apt-get -y -qq install python2.7
+#For Python sslpsk
+sudo apt-get -y -qq install libssl-dev
+#For Python lxml
+sudo apt-get -y -qq install libxml2-dev libxslt1-dev
+#Fixes python.h include issues
 sudo apt-get -y -qq install python2-dev
+sudo apt-get -y -qq install python2.7-dev
+#Get pip manually
+curl https://bootstrap.pypa.io/get-pip.py --output get-pip.py
+sudo python2.7 get-pip.py
 #Fix for Debian Buster
 sudo apt-get -y -qq install libpng libfreetype6-dev
 pip2 install future zeroconf==0.19.1 numpy==1.16.5 matplotlib==2.0.2 lxml pyro sslpsk
