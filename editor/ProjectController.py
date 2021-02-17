@@ -148,7 +148,7 @@ class Iec2CSettings(object):
 
     def findSupportedOptions(self):
         buildcmd = "\"%s\" -h" % (self.getCmd())
-        options = ["-f", "-l", "-p"]
+        options = ["-f", "-l", "-p", "-r", "-R", "-a"]
 
         buildopt = ""
         try:
