@@ -5,10 +5,20 @@ echo ""
 echo "[INSTALLING DEPENDENCIES]"
 sudo apt-get -y -qq update
 #Main packages
-sudo apt-get -y -qq install curl build-essential pkg-config bison flex autoconf automake libtool make git libssl-dev python-wxgtk3.0
+sudo apt-get -y -qq install curl build-essential pkg-config bison flex autoconf automake libtool make git libssl-dev
 #Python 2. Some distros call it python2, some others call it python2.7. Try instaling both
 sudo apt-get -y -qq install python2
 sudo apt-get -y -qq install python2.7
+#Trying to install python-wxgtk3.0. If it fails, summon manual install
+sudo apt-get -y -qq install python-wxgtk3.0
+if [ $? -ne 0 ]
+then
+  #Manual install
+  echo "Manually installing python-wxgtk3.0..."
+  sudo apt-get -y -qq install python libwxbase3.0-0v5 libwxgtk3.0-gtk3-0v5
+  sudo dpkg -i ./wxpython/python-wxversion_3.0.2.0+dfsg-8_all.deb
+  sudo dpkg -i ./wxpython/python-wxgtk3.0_3.0.2.0+dfsg-8_amd64.deb
+fi
 #For Python sslpsk
 sudo apt-get -y -qq install libssl-dev
 #For Python lxml
@@ -33,8 +43,8 @@ echo "[FINALIZING]"
 cd ..
 WORKING_DIR=$(pwd)
 echo -e "#!/bin/bash\n\
-cd \"$WORKING_DIR/editor\"\n\
-python2.7 Beremiz.py" > openplc_editor.sh
+cd \"$WORKING_DIR\"\n\
+python2.7 ./editor/Beremiz.py" > openplc_editor.sh
 chmod +x ./openplc_editor.sh
 cd ~/.local/share/applications
 echo -e "[Desktop Entry]\n\
