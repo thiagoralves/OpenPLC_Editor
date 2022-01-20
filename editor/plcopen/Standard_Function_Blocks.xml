@@ -178,8 +178,8 @@ M := CLK;]]></xhtml:p>
         </interface>
         <body>
           <ST>
-            <xhtml:p><![CDATA[Q := NOT CLK AND M;
-M := CLK;]]></xhtml:p>
+            <xhtml:p><![CDATA[Q := NOT CLK AND NOT M;
+M := NOT CLK;]]></xhtml:p>
           </ST>
         </body>
         <documentation>

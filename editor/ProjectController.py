@@ -56,7 +56,7 @@ from editors.FileManagementPanel import FileManagementPanel
 from editors.ProjectNodeEditor import ProjectNodeEditor
 from editors.IECCodeViewer import IECCodeViewer
 from editors.DebugViewer import DebugViewer, REFRESH_PERIOD
-from dialogs import UriEditor, IDManager
+from dialogs import UriEditor, IDManager, ArduinoUploadDialog
 from PLCControler import PLCControler
 from plcopen.structures import IEC_KEYWORDS
 from plcopen.types_enums import ComputeConfigurationResourceName, ITEM_CONFNODE
@@ -148,7 +148,7 @@ class Iec2CSettings(object):
 
     def findSupportedOptions(self):
         buildcmd = "\"%s\" -h" % (self.getCmd())
-        options = ["-f", "-l", "-p", "-r", "-R", "-a"]
+        options = ["-f", "-l", "-p"]
 
         buildopt = ""
         try:
@@ -1461,7 +1461,8 @@ class ProjectController(ConfigTreeNode, PLCControler):
         "_Disconnect": False,
         "_showIECcode": False,
         "_showIDManager": False,
-        "_generateOpenPLC": True
+        "_generateOpenPLC": True,
+        "_generateArduino": True
     }
 
     MethodsFromStatus = {
@@ -1470,13 +1471,15 @@ class ProjectController(ConfigTreeNode, PLCControler):
                                  "_Transfer": False,
                                  "_Connect": False,
                                  "_Disconnect": False,
-                                 "_generateOpenPLC": True},
+                                 "_generateOpenPLC": True,
+                                 "_generateArduino": True},
         PlcStatus.Stopped:      {"_Run": True,
                                  "_Stop": False,
                                  "_Transfer": False,
                                  "_Connect": False,
                                  "_Disconnect": False,
-                                 "_generateOpenPLC": True},
+                                 "_generateOpenPLC": True,
+                                 "_generateArduino": True},
         PlcStatus.Empty:        {"_Transfer": True,
                                  "_Connect": False,
                                  "_Disconnect": True},
@@ -2015,6 +2018,15 @@ class ProjectController(ConfigTreeNode, PLCControler):
                 except:
                     self.logger.write_error('It was not possible to save the generated program\n')
 
+    def _generateArduino(self):
+        self._Clean()
+        if (self._Build() is True):
+            f = open(self._getIECgeneratedcodepath(), 'r')
+            program = f.read()
+            f.close()
+            dialog = ArduinoUploadDialog.ArduinoUploadDialog(self.AppFrame, program)
+            dialog.ShowModal()
+
     StatusMethods = [
         {
             "bitmap":    "Build",
@@ -2085,6 +2097,13 @@ class ProjectController(ConfigTreeNode, PLCControler):
             "name":    _("Generate Program"),
             "tooltip": _("Generate program for OpenPLC Runtime"),
             "method":   "_generateOpenPLC",
+            "shown":      True,
+        },
+        {
+            "bitmap":    "arduino",
+            "name":    _("Upload Arduino"),
+            "tooltip": _("Upload program to Arduino Board"),
+            "method":   "_generateArduino",
             "shown":      True,
         },
     ]

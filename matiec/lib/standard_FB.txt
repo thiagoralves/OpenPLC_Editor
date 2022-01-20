@@ -43,6 +43,8 @@
 
 (* Not in the standard, but useful nonetheless. *)
 {#include "sema.txt" }
+{#include "arduino.txt" }
+{#include "p1am.txt" }
 
 
 {enable code generation}
