@@ -81,9 +81,9 @@ class ModbusSerial : public Modbus {
         bool send(byte* frame);
 
         bool config(HardwareSerial* port, long baud, int txPin);
-        #if (!defined(__AVR) && !defined(BOARD_ESP8266) && !defined(BOARD_ESP32)) || defined(__AVR_ATmega32U4__)
-        bool config(Serial_* port, long baud, int txPin=-1);
-        #endif
+        //#if (!defined(__AVR) && !defined(BOARD_ESP8266) && !defined(BOARD_ESP32)) || defined(__AVR_ATmega32U4__)
+        //bool config(Serial_* port, long baud, int txPin=-1);
+        //#endif
         
         #ifdef MBTCP
         void config(uint8_t *mac);
