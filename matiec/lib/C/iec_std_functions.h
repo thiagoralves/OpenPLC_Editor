@@ -500,7 +500,7 @@ static inline TYPENAME fname(EN_ENO_PARAMS UINT param_count, TYPENAME op1, ...){
   va_start (ap, op1);         /* Initialize the argument list.  */\
   \
   for (i = 0; i < param_count - 1; i++){\
-    op1 = op1 OP va_arg (ap, VA_ARGS_##TYPENAME);\
+    op1 = op1 OP (TYPENAME)va_arg (ap, VA_ARGS_##TYPENAME);\
   }\
   \
   va_end (ap);                  /* Clean up.  */\

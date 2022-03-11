@@ -2,12 +2,12 @@
 #define MBSERIAL_IFACE Serial
 #define MBSERIAL_BAUD 115200
 #define MBTCP_MAC 0xDE, 0xAD, 0xBE, 0xEF, 0xDE, 0xAD
-#define MBTCP_IP 192,168,0,192
-#define MBTCP_DNS 192,168,0,1
-#define MBTCP_GATEWAY 192,168,0,1
+#define MBTCP_IP 
+#define MBTCP_DNS 
+#define MBTCP_GATEWAY 
 #define MBTCP_SUBNET 255,255,255,0
-#define MBTCP_SSID "Alves-Net"
-#define MBTCP_PWD "palmdev1"
+#define MBTCP_SSID ""
+#define MBTCP_PWD ""
 #define MBSERIAL
 #define MODBUS_ENABLED
 

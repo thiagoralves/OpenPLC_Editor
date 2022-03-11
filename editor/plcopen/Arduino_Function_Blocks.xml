@@ -273,11 +273,11 @@
           <xhtml:p><![CDATA[Add a BOOL variable to sync with the Arduino Cloud. VAR_NAME must have the same name as the variable set up in the Arduino IoT Cloud]]></xhtml:p>
         </documentation>
       </pou>
-      <pou name="CLOUD_ADD_INT" pouType="functionBlock">
+      <pou name="CLOUD_ADD_DINT" pouType="functionBlock">
         <interface>
           <inputVars>
             <variable name="VAR_NAME"><type><string/></type></variable>
-            <variable name="INT_VAR"><type><INT/></type></variable>
+            <variable name="DINT_VAR"><type><DINT/></type></variable>
           </inputVars>
         </interface>
         <body>
@@ -286,7 +286,7 @@
           </ST>
         </body>
         <documentation>
-          <xhtml:p><![CDATA[Add an INT variable to sync with the Arduino Cloud. VAR_NAME must have the same name as the variable set up in the Arduino IoT Cloud]]></xhtml:p>
+          <xhtml:p><![CDATA[Add an DINT variable (Arduino int) to sync with the Arduino Cloud. VAR_NAME must have the same name as the variable set up in the Arduino IoT Cloud]]></xhtml:p>
         </documentation>
       </pou>
       <pou name="CLOUD_ADD_REAL" pouType="functionBlock">
@@ -302,7 +302,7 @@
           </ST>
         </body>
         <documentation>
-          <xhtml:p><![CDATA[Add a REAL variable to sync with the Arduino Cloud. VAR_NAME must have the same name as the variable set up in the Arduino IoT Cloud]]></xhtml:p>
+          <xhtml:p><![CDATA[Add a REAL variable (Arduino float) to sync with the Arduino Cloud. VAR_NAME must have the same name as the variable set up in the Arduino IoT Cloud]]></xhtml:p>
         </documentation>
       </pou>
       <pou name="CLOUD_BEGIN" pouType="functionBlock">
@@ -319,7 +319,7 @@
           </ST>
         </body>
         <documentation>
-          <xhtml:p><![CDATA[Setup and initialize Arduino Cloud communication. All variables (properties) must have been added before this block is called.]]></xhtml:p>
+          <xhtml:p><![CDATA[Setup and initialize Arduino Cloud communication. Must be called before adding any variables (properties).]]></xhtml:p>
         </documentation>
       </pou>
     </pous>

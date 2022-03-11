@@ -360,6 +360,8 @@ class ArduinoUploadDialog(wx.Dialog):
             define_file += '#define USE_DS18B20_BLOCK\n'
         if (self.plc_program.find('P1AM_INIT;') > 0):
             define_file += '#define USE_P1AM_BLOCKS\n'
+        if (self.plc_program.find('CLOUD_BEGIN;') > 0):
+            define_file += '#define USE_CLOUD_BLOCKS\n'
 
         #Write file to disk
         if (os.name == 'nt'):

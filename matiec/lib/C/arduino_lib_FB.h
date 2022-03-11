@@ -84,19 +84,19 @@ typedef struct {
   __DECLARE_VAR(BOOL,EN)
   __DECLARE_VAR(BOOL,ENO)
   __DECLARE_VAR(STRING,VAR_NAME)
-  __DECLARE_VAR(BOOL,INT_VAR)
+  __DECLARE_VAR(DINT,DINT_VAR)
   __DECLARE_VAR(BOOL,SUCCESS)
 
   // FB private variables - TEMP, private and located variables
 
-} CLOUD_ADD_INT;
+} CLOUD_ADD_DINT;
 
 typedef struct {
   // FB Interface - IN, OUT, IN_OUT variables
   __DECLARE_VAR(BOOL,EN)
   __DECLARE_VAR(BOOL,ENO)
   __DECLARE_VAR(STRING,VAR_NAME)
-  __DECLARE_VAR(BOOL,REAL_VAR)
+  __DECLARE_VAR(REAL,REAL_VAR)
   __DECLARE_VAR(BOOL,SUCCESS)
 
   // FB private variables - TEMP, private and located variables
@@ -301,16 +301,16 @@ __end:
   return;
 } // CLOUD_ADD_BOOL_body__()
 
-static void CLOUD_ADD_INT_init__(CLOUD_ADD_INT *data__, BOOL retain) {
+static void CLOUD_ADD_DINT_init__(CLOUD_ADD_DINT *data__, BOOL retain) {
   __INIT_VAR(data__->EN,__BOOL_LITERAL(TRUE),retain)
   __INIT_VAR(data__->ENO,__BOOL_LITERAL(TRUE),retain)
   __INIT_VAR(data__->VAR_NAME,__STRING_LITERAL(1,"\0"),retain)
-  __INIT_VAR(data__->INT_VAR,0,retain)
+  __INIT_VAR(data__->DINT_VAR,0,retain)
   __INIT_VAR(data__->SUCCESS,__BOOL_LITERAL(FALSE),retain)
 }
 
 // Code part
-static void CLOUD_ADD_INT_body__(CLOUD_ADD_INT *data__) {
+static void CLOUD_ADD_DINT_body__(CLOUD_ADD_DINT *data__) {
   // Control execution
   if (!__GET_VAR(data__->EN)) {
     __SET_VAR(data__->,ENO,,__BOOL_LITERAL(FALSE));

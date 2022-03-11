@@ -46,9 +46,13 @@ void cycleDelay()
     //just wait until it is time to start a new cycle
     while(timer_ms > millis())
     {
-		#ifdef MODBUS_ENABLED
-		modbus.task();
-		#endif
+        #ifdef MODBUS_ENABLED
+        //Only run Modbus task if we have at least 1ms gap until the next cycle
+        if (timer_ms - millis() >= 1)
+        {
+            syncModbusBuffers();
+        }
+        #endif
 	}
     //noInterrupts();
     timer_ms += scan_cycle; //set timer for the next scan cycle

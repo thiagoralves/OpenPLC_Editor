@@ -84,6 +84,7 @@ typedef struct {
   __DECLARE_VAR(STRING,VAR_NAME)
   __DECLARE_VAR(BOOL,BOOL_VAR)
   __DECLARE_VAR(BOOL,SUCCESS)
+  int internal_int; //needed to convert IEC BOOL to c++ bool
 
   // FB private variables - TEMP, private and located variables
 
@@ -94,19 +95,19 @@ typedef struct {
   __DECLARE_VAR(BOOL,EN)
   __DECLARE_VAR(BOOL,ENO)
   __DECLARE_VAR(STRING,VAR_NAME)
-  __DECLARE_VAR(BOOL,INT_VAR)
+  __DECLARE_VAR(DINT,DINT_VAR)
   __DECLARE_VAR(BOOL,SUCCESS)
 
   // FB private variables - TEMP, private and located variables
 
-} CLOUD_ADD_INT;
+} CLOUD_ADD_DINT;
 
 typedef struct {
   // FB Interface - IN, OUT, IN_OUT variables
   __DECLARE_VAR(BOOL,EN)
   __DECLARE_VAR(BOOL,ENO)
   __DECLARE_VAR(STRING,VAR_NAME)
-  __DECLARE_VAR(BOOL,REAL_VAR)
+  __DECLARE_VAR(REAL,REAL_VAR)
   __DECLARE_VAR(BOOL,SUCCESS)
 
   // FB private variables - TEMP, private and located variables
@@ -315,9 +316,10 @@ __end:
 ************************************************************************/
 //definition of external functions
 void cloud_begin(char *, char *, char *);
-void cloud_add_bool(char *, char *);
+void cloud_add_bool(char *, int *);
 void cloud_add_int(char *, int *);
 void cloud_add_float(char *, float *);
+void cloud_update();
 
 static void CLOUD_ADD_BOOL_init__(CLOUD_ADD_BOOL *data__, BOOL retain) {
   __INIT_VAR(data__->EN,__BOOL_LITERAL(TRUE),retain)
@@ -338,9 +340,19 @@ static void CLOUD_ADD_BOOL_body__(CLOUD_ADD_BOOL *data__) {
     __SET_VAR(data__->,ENO,,__BOOL_LITERAL(TRUE));
   }
   
+  //Workaround since apparently data__->internal_int = (int)(__GET_VAR(data__->BOOL_VAR)) does not work for some reason
+  if (__GET_VAR(data__->BOOL_VAR))
+  {
+      data__->internal_int = 1;
+  }
+  else
+  {
+      data__->internal_int = 0;
+  }
+  
   if (!__GET_VAR(data__->SUCCESS))
   {
-    cloud_add_bool(__GET_VAR(data__->VAR_NAME).body, &__GET_VAR(data__->BOOL_VAR));
+    cloud_add_bool(__GET_VAR(data__->VAR_NAME).body, &data__->internal_int);
     __SET_VAR(data__->,SUCCESS,,1);
   }
   
@@ -350,16 +362,16 @@ __end:
   return;
 } // CLOUD_ADD_BOOL_body__()
 
-static void CLOUD_ADD_INT_init__(CLOUD_ADD_INT *data__, BOOL retain) {
+static void CLOUD_ADD_DINT_init__(CLOUD_ADD_DINT *data__, BOOL retain) {
   __INIT_VAR(data__->EN,__BOOL_LITERAL(TRUE),retain)
   __INIT_VAR(data__->ENO,__BOOL_LITERAL(TRUE),retain)
   __INIT_VAR(data__->VAR_NAME,__STRING_LITERAL(1,"\0"),retain)
-  __INIT_VAR(data__->INT_VAR,0,retain)
+  __INIT_VAR(data__->DINT_VAR,0,retain)
   __INIT_VAR(data__->SUCCESS,__BOOL_LITERAL(FALSE),retain)
 }
 
 // Code part
-static void CLOUD_ADD_INT_body__(CLOUD_ADD_INT *data__) {
+static void CLOUD_ADD_DINT_body__(CLOUD_ADD_DINT *data__) {
   // Control execution
   if (!__GET_VAR(data__->EN)) {
     __SET_VAR(data__->,ENO,,__BOOL_LITERAL(FALSE));
@@ -371,7 +383,7 @@ static void CLOUD_ADD_INT_body__(CLOUD_ADD_INT *data__) {
   
   if (!__GET_VAR(data__->SUCCESS))
   {
-    cloud_add_int(__GET_VAR(data__->VAR_NAME).body, &__GET_VAR(data__->INT_VAR));
+    cloud_add_int(__GET_VAR(data__->VAR_NAME).body, &data__->DINT_VAR);
     __SET_VAR(data__->,SUCCESS,,1);
   }
   
@@ -379,7 +391,7 @@ static void CLOUD_ADD_INT_body__(CLOUD_ADD_INT *data__) {
 
 __end:
   return;
-} // CLOUD_ADD_INT_body__()
+} // CLOUD_ADD_DINT_body__()
 
 static void CLOUD_ADD_REAL_init__(CLOUD_ADD_REAL *data__, BOOL retain) {
   __INIT_VAR(data__->EN,__BOOL_LITERAL(TRUE),retain)
@@ -402,7 +414,7 @@ static void CLOUD_ADD_REAL_body__(CLOUD_ADD_REAL *data__) {
   
   if (!__GET_VAR(data__->SUCCESS))
   {
-    cloud_add_float(__GET_VAR(data__->VAR_NAME).body, &__GET_VAR(data__->REAL_VAR));
+    cloud_add_float(__GET_VAR(data__->VAR_NAME).body, &data__->REAL_VAR);
     __SET_VAR(data__->,SUCCESS,,1);
   }
   
@@ -436,6 +448,10 @@ static void CLOUD_BEGIN_body__(CLOUD_BEGIN *data__) {
   {
     cloud_begin(__GET_VAR(data__->THING_ID).body, __GET_VAR(data__->SSID).body, __GET_VAR(data__->PASS).body);
     __SET_VAR(data__->,SUCCESS,,1);
+  }
+  else
+  {
+    cloud_update();
   }
   
   goto __end;

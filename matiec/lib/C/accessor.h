@@ -125,7 +125,7 @@
 #define __SET_VAR(prefix, name, suffix, new_value)\
 	if (!(prefix name.flags & __IEC_FORCE_FLAG)) prefix name.value suffix = new_value
 #define __SET_EXTERNAL(prefix, name, suffix, new_value)\
-	{extern IEC_BYTE __IS_GLOBAL_##name##_FORCED();\
+	{extern IEC_BYTE __IS_GLOBAL_##name##_FORCED(void);\
     if (!(prefix name.flags & __IEC_FORCE_FLAG || __IS_GLOBAL_##name##_FORCED()))\
 		(*(prefix name.value)) suffix = new_value;}
 #define __SET_EXTERNAL_FB(prefix, name, suffix, new_value)\

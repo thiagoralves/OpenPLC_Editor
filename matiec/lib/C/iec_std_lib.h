@@ -246,7 +246,7 @@ static inline IEC_TIMESPEC __time_to_timespec(int sign, double mseconds, double 
 
 
 /* NOTE: The following function was turned into a macro, so it could be used to initialize the initial value of TOD (TIME_OF_DAY) variables */
-/* NOTE: many (but not all) of the same comments made regarding __time_to_timespec() are also valid here, so go and read those comments too!
+/* NOTE: many (but not all) of the same comments made regarding __time_to_timespec() are also valid here, so go and read those comments too!*/
 /*
 static inline IEC_TIMESPEC __tod_to_timespec(double seconds, double minutes, double hours) {
   IEC_TIMESPEC ts;
