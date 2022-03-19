@@ -49,8 +49,9 @@ python2.7 ./editor/Beremiz.py" > openplc_editor.sh
 chmod +x ./openplc_editor.sh
 cd ~/.local/share/applications
 echo -e "[Desktop Entry]\n\
-Name=OpenPLC Editor v1.0\n\
+Name=OpenPLC Editor\n\
+Categories=Development;\n\
 Exec=\"$WORKING_DIR/openplc_editor.sh\"\n\
-Icon=\"$WORKING_DIR/editor/images/brz.ico\"\n\
+Icon=$WORKING_DIR/editor/images/brz.png\n\
 Type=Application\n\
 Terminal=false" > OpenPLC_Editor.desktop
