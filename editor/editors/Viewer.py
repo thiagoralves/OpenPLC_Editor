@@ -2668,6 +2668,7 @@ class Viewer(EditorPanel, DebugViewer):
             dialog = ConnectionDialog(self.ParentWindow, self.Controler, self.TagName)
             dialog.SetPreviewFont(self.GetFont())
             dialog.SetMinElementSize((bbox.width, bbox.height))
+            dialog.RefreshPreview()
             values = (dialog.GetValues()
                       if dialog.ShowModal() == wx.ID_OK
                       else None)
