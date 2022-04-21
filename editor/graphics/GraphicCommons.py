@@ -293,16 +293,18 @@ class Graphic_Element(ToolTipProducer):
         return {}
 
     def FindNearestConnector(self, position, connectors):
-        distances = []
+        min_distance = None
+
         for connector in connectors:
             connector_pos = connector.GetRelPosition()
-            distances.append((sqrt((self.Pos.x + connector_pos.x - position.x) ** 2 +
-                                   (self.Pos.y + connector_pos.y - position.y) ** 2),
-                              connector))
-        distances.sort()
-        if len(distances) > 0:
-            return distances[0][1]
-        return None
+            dis = sqrt((self.Pos.x + connector_pos.x - position.x) ** 2 +
+                       (self.Pos.y + connector_pos.y - position.y) ** 2)
+
+            if min_distance is None or dis < min_distance[0]:
+                min_distance = (dis, connector)
+
+        return min_distance[1] if min_distance is not None else None
+
 
     def IsOfType(self, type, reference):
         return self.Parent.IsOfType(type, reference)
