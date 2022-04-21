@@ -24,16 +24,16 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
+# from __future__ import absolute_import
+
 import os
 import re
 from builtins import str as text
 
 import util.paths as paths
-from xmlclass import GenerateParserFromXSD
-
 from CodeFileTreeNode import CodeFile
 from py_ext.PythonEditor import PythonEditor
+from xmlclass import GenerateParserFromXSD
 
 
 class PythonFileCTNMixin(CodeFile):
@@ -110,7 +110,7 @@ class PythonFileCTNMixin(CodeFile):
                 if var.getonchange() else None
 
         pyextname = self.CTNName()
-        varinfos = map(
+        varinfos = list(map(
             lambda variable: {
                 "name": variable.getname(),
                 "desc": repr(variable.getdesc()),
@@ -123,7 +123,7 @@ class PythonFileCTNMixin(CodeFile):
                 "initial": repr(variable.getinitial()),
                 "pyextname": pyextname
             },
-            self.CodeFile.variables.variable)
+            self.CodeFile.variables.variable))
         # python side PLC global variables access stub
         globalstubs = "\n".join([
             """\
@@ -192,7 +192,7 @@ del __ext_name__
         # write generated content to python file
         runtimefile_path = os.path.join(buildpath,
                                         "runtime_%s.py" % location_str)
-        runtimefile = open(runtimefile_path, 'w')
+        runtimefile = open(runtimefile_path, 'w', encoding='utf-8')
         runtimefile.write(PyFileContent.encode('utf-8'))
         runtimefile.close()
 
@@ -308,7 +308,7 @@ void __publish_%(location_str)s(void){
 """ % loc_dict
 
         Gen_PyCfile_path = os.path.join(buildpath, "PyCFile_%s.c" % location_str)
-        pycfile = open(Gen_PyCfile_path, 'w')
+        pycfile = open(Gen_PyCfile_path, 'w', encoding='utf-8')
         pycfile.write(PyCFileContent)
         pycfile.close()
 
@@ -318,4 +318,4 @@ void __publish_%(location_str)s(void){
         return ([(Gen_PyCfile_path, matiec_CFLAGS)],
                 "",
                 True,
-                ("runtime_%s.py" % location_str, open(runtimefile_path, "rb")))
+                ("runtime_%s.py" % location_str, open(runtimefile_path, "rb"))), []

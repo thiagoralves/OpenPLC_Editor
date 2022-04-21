@@ -27,10 +27,15 @@
 
 
 from __future__ import absolute_import
-from os import listdir, path
-from connectors.ConnectorBase import ConnectorBase
 
-connectors_packages = ["PYRO", "WAMP"]
+import sys
+
+from connectors.ConnectorBase import ConnectorBase
+from util import paths
+
+_base_path = paths.AbsDir(__file__)
+sys.path.append(_base_path)
+connectors_packages = ["PYRO", "WAMP", "HTTP"]
 
 
 def _GetLocalConnectorClassFactory(name):
@@ -66,7 +71,7 @@ def ConnectorFactory(uri, confnodesroot):
     or None if cannot connect to URI
     """
     _scheme = uri.split("://")[0].upper()
-
+    if _scheme == "NONE": _scheme = "WAMP"
     # commented code to enable for MDNS:// support
     # _scheme, location = uri.split("://")
     # _scheme = _scheme.upper()

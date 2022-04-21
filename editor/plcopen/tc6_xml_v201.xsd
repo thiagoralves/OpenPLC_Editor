@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema xmlns:ppx="http://www.plcopen.org/xml/tc6_0201" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:ns1="http://www.plcopen.org/xml/tc6.xsd" targetNamespace="http://www.plcopen.org/xml/tc6_0201" elementFormDefault="qualified" attributeFormDefault="unqualified">
+<xsd:schema xmlns:ppx="http://www.plcopen.org/xml/tc6_0201" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://www.plcopen.org/xml/tc6_0201" elementFormDefault="qualified"
+            attributeFormDefault="unqualified">
 	<xsd:element name="project">
 		<xsd:annotation>
 			<xsd:documentation>The complete project</xsd:documentation>
@@ -35,8 +37,10 @@
 												<xsd:sequence>
 													<xsd:element name="scaling">
 														<xsd:complexType>
-															<xsd:attribute name="x" type="xsd:decimal" use="required"/>
-															<xsd:attribute name="y" type="xsd:decimal" use="required"/>
+                                                            <xsd:attribute name="x" type="xsd:decimal" use="optional"
+                                                                           default="10"/>
+                                                            <xsd:attribute name="y" type="xsd:decimal" use="optional"
+                                                                           default="10"/>
 														</xsd:complexType>
 													</xsd:element>
 												</xsd:sequence>
@@ -47,8 +51,10 @@
 												<xsd:sequence>
 													<xsd:element name="scaling">
 														<xsd:complexType>
-															<xsd:attribute name="x" type="xsd:decimal" use="required"/>
-															<xsd:attribute name="y" type="xsd:decimal" use="required"/>
+                                                            <xsd:attribute name="x" type="xsd:decimal" use="optional"
+                                                                           default="10"/>
+                                                            <xsd:attribute name="y" type="xsd:decimal" use="optional"
+                                                                           default="10"/>
 														</xsd:complexType>
 													</xsd:element>
 												</xsd:sequence>
@@ -59,8 +65,10 @@
 												<xsd:sequence>
 													<xsd:element name="scaling">
 														<xsd:complexType>
-															<xsd:attribute name="x" type="xsd:decimal" use="required"/>
-															<xsd:attribute name="y" type="xsd:decimal" use="required"/>
+                                                            <xsd:attribute name="x" type="xsd:decimal" use="optional"
+                                                                           default="10"/>
+                                                            <xsd:attribute name="y" type="xsd:decimal" use="optional"
+                                                                           default="10"/>
 														</xsd:complexType>
 													</xsd:element>
 												</xsd:sequence>

@@ -26,12 +26,8 @@
 from __future__ import absolute_import
 from __future__ import division
 
-import wx
-
 from editors.Viewer import *
 from graphics.SFC_Objects import *
-from graphics.GraphicCommons import SELECTION_DIVERGENCE, \
-    SELECTION_CONVERGENCE, SIMULTANEOUS_DIVERGENCE, SIMULTANEOUS_CONVERGENCE, EAST, NORTH, WEST, SOUTH
 
 SFC_Objects = (SFC_Step, SFC_ActionBlock, SFC_Transition, SFC_Divergence, SFC_Jump)
 
@@ -101,7 +97,7 @@ class SFC_Viewer(Viewer):
 
     def CreateTransition(self, connector, next=None):
         previous = connector.GetParentBlock()
-        id = self.GetNewId()
+        id = self.GetNewIdRef()
         transition = SFC_Transition(self, "reference", "", 0, id)
         pos = connector.GetPosition(False)
         transition.SetPosition(pos.x, pos.y + SFC_WIRE_MIN_SIZE)
@@ -151,7 +147,7 @@ class SFC_Viewer(Viewer):
 
     def CreateStep(self, name, connector, next=None):
         previous = connector.GetParentBlock()
-        id = self.GetNewId()
+        id = self.GetNewIdRef()
         step = SFC_Step(self, name, False, id)
         if next:
             step.AddOutput()
@@ -449,7 +445,7 @@ class SFC_Viewer(Viewer):
         dialog.SetVariables(self.Controler.GetEditedElementInterfaceVars(self.TagName, debug=self.Debug))
         dialog.SetStepNames([block.GetName() for block in self.Blocks if isinstance(block, SFC_Step)])
         if dialog.ShowModal() == wx.ID_OK:
-            id = self.GetNewId()
+            id = self.GetNewIdRef()
             name = dialog.GetValue()
             step = SFC_Step(self, name, True, id)
             min_width, min_height = step.GetMinSize()
@@ -532,7 +528,7 @@ class SFC_Viewer(Viewer):
                     self.RefreshStepModel(self.SelectedElement)
                     connectors = self.SelectedElement.GetConnectors()
                     pos = connectors["action"].GetPosition(False)
-                    id = self.GetNewId()
+                    id = self.GetNewIdRef()
                     actionblock = SFC_ActionBlock(self, [], id)
                     actionblock.SetPosition(pos.x + SFC_WIRE_MIN_SIZE, pos.y - SFC_STEP_DEFAULT_SIZE[1] // 2)
                     actionblock_connector = actionblock.GetConnector()
@@ -580,7 +576,7 @@ class SFC_Viewer(Viewer):
                             next = None
                     else:
                         return
-                    id = self.GetNewId()
+                    id = self.GetNewIdRef()
                     divergence = SFC_Divergence(self, SELECTION_DIVERGENCE, value["number"], id)
                     pos = previous.GetPosition(False)
                     previous_block = previous.GetParentBlock()
@@ -638,7 +634,7 @@ class SFC_Viewer(Viewer):
                         previous = transition_connectors["output"]
                     else:
                         return
-                    id = self.GetNewId()
+                    id = self.GetNewIdRef()
                     divergence = SFC_Divergence(self, SIMULTANEOUS_DIVERGENCE, value["number"], id)
                     pos = previous.GetPosition(False)
                     previous_block = previous.GetParentBlock()

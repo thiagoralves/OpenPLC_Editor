@@ -23,7 +23,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
+# from __future__ import absolute_import
+
 import os
 import re
 import traceback
@@ -31,13 +32,12 @@ from builtins import str as text
 from copy import deepcopy
 
 from lxml import etree
-from xmlclass import GenerateParserFromXSDstring
 
-from PLCControler import UndoBuffer
 from ConfigTreeNode import XSDSchemaErrorMessage
-
-from plcopen.plcopen import TestTextElement
+from PLCControler import UndoBuffer
 from editors.CodeFileEditor import GetSectionsText
+from plcopen.plcopen import TestTextElement
+from xmlclass import GenerateParserFromXSDstring
 
 CODEFILE_XSD = """<?xml version="1.0" encoding="ISO-8859-1" ?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
@@ -190,12 +190,12 @@ class CodeFile(object):
     def OnCTNSave(self, from_project_path=None):
         filepath = self.CodeFileName()
 
-        xmlfile = open(filepath, "w")
+        xmlfile = open(filepath, "w", encoding='utf-8')
         xmlfile.write(etree.tostring(
             self.CodeFile,
             pretty_print=True,
             xml_declaration=True,
-            encoding='utf-8'))
+            encoding='utf-8').decode())
         xmlfile.close()
 
         self.MarkCodeFileAsSaved()

@@ -24,9 +24,11 @@
 
 
 from __future__ import absolute_import
+
 import wx
 
-from controls import ProjectPropertiesPanel, VariablePanel
+from controls import ProjectPropertiesPanel
+from controls.VariablePanel import VariablePanel
 from editors.ConfTreeNodeEditor import ConfTreeNodeEditor
 from plcopen.types_enums import ComputeConfigurationName
 
@@ -60,7 +62,7 @@ class ProjectNodeEditor(ConfTreeNodeEditor):
         ConfTreeNodeEditor.__init__(self, parent, controler, window, tagname)
 
         buttons_sizer = self.GenerateMethodButtonSizer()
-        self.MainSizer.InsertSizer(0, buttons_sizer, 0, border=5, flag=wx.ALL)
+        self.MainSizer.Insert(0, buttons_sizer, 0, border=5, flag=wx.ALL)
         self.MainSizer.Layout()
 
         self.VariableEditor = self.VariableEditorPanel

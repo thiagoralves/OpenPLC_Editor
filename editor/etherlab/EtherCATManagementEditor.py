@@ -9,23 +9,24 @@
 
 from __future__ import absolute_import
 from __future__ import division
+
 import os
 import string
 from xml.dom import minidom
 
 import wx
-import wx.grid
 import wx.gizmos
+import wx.grid
 import wx.lib.buttons
 
 # --------------------------------------------------------------------
 from controls import CustomGrid, CustomTable
 from runtime import PlcStatus
-# --------------------------------------------------------------------
-
-# ------------ for register management ---------------
-
 from util.TranslationCatalogs import NoTranslate
+
+
+# --------------------------------------------------------------------
+# ------------ for register management ---------------
 # -------------------------------------------------------------
 
 
@@ -149,7 +150,7 @@ class SlaveStatePanelClass(wx.Panel):
         for button_name, button_id, button_label, button_tooltipstring, event_method, sub_item in buttons:
             self.ButtonDic[button_name] = wx.Button(self, id=button_id, label=_(button_label))
             self.ButtonDic[button_name].Bind(wx.EVT_BUTTON, event_method)
-            self.ButtonDic[button_name].SetToolTipString(button_tooltipstring)
+            self.ButtonDic[button_name].SetToolTip(button_tooltipstring)
             self.SizerDic["SlaveState_up_sizer"].Add(self.ButtonDic[button_name])
             for statictext_name, statictext_label, textctrl_name in sub_item:
                 self.StaticTextDic[statictext_name] = wx.StaticText(self, label=_(statictext_label))
@@ -162,7 +163,7 @@ class SlaveStatePanelClass(wx.Panel):
                 ("StopTimerButton", "Stop State Monitoring", "Slave State Update Stop", self.CurrentStateThreadStop)]:
             self.ButtonDic[button_name] = wx.Button(self, label=_(button_label))
             self.ButtonDic[button_name].Bind(wx.EVT_BUTTON, event_method)
-            self.ButtonDic[button_name].SetToolTipString(button_tooltipstring)
+            self.ButtonDic[button_name].SetToolTip(button_tooltipstring)
             self.SizerDic["SlaveState_down_sizer"].Add(self.ButtonDic[button_name])
 
         self.SizerDic["SlaveState_sizer"].AddMany([self.SizerDic["SlaveState_up_sizer"],
@@ -958,7 +959,7 @@ class SlaveSiiSmartView(wx.Panel):
         # Config Data: EEPROM Size, PDI Type, Device Emulation
         # Find PDI Type in pdiType dictionary
         cnt_pdi_type = self.Controler.CommonMethod.SmartViewInfosFromXML["pdi_type"]
-        for i in self.PDIType.keys():
+        for i in list(self.PDIType.keys()):
             if cnt_pdi_type == i:
                 cnt_pdi_type = self.PDIType[i][0]
                 break
@@ -1038,7 +1039,7 @@ class SlaveSiiSmartView(wx.Panel):
         eeprom_size = str((int(self.GetWordAddressData(sii_dict.get('Size'), 10))+1)//8*1024)
         # Find PDI Type in pdiType dictionary
         cnt_pdi_type = int(self.GetWordAddressData(sii_dict.get('PDIControl'), 16).split('x')[1][2:4], 16)
-        for i in self.PDIType.keys():
+        for i in list(self.PDIType.keys()):
             if cnt_pdi_type == i:
                 cnt_pdi_type = self.PDIType[i][0]
                 break
@@ -1515,7 +1516,7 @@ class RegisterAccessPanel(wx.Panel):
                                                   ("pdi", "type", self.PDIType),
                                                   ("fmmu", "number", self.FMMUNumber),
                                                   ("sm", "number", self.SMNumber)]:
-                        if property in register.attributes.keys():
+                        if property in list(register.attributes.keys()):
                             if type == "type":
                                 if register.attributes[property].value == value:
                                     self.GetRegisterInfo(reg_info_tree, register)
@@ -1562,7 +1563,7 @@ class RegisterAccessPanel(wx.Panel):
                                                       ("pdi", "type", self.PDIType),
                                                       ("fmmu", "number", self.FMMUNumber),
                                                       ("sm", "number", self.SMNumber)]:
-                            if property in detail.attributes.keys():
+                            if property in list(detail.attributes.keys()):
                                 if type == "type":
                                     if detail.attributes[property].value == value:
                                         self.GetRegisterDetailInfo(reg_info_tree, reg_index, detail)
@@ -2097,7 +2098,7 @@ class MasterStatePanelClass(wx.Panel):
             self.TextCtrl[key] = wx.TextCtrl(self, size=wx.Size(130, 24), style=wx.TE_READONLY)
             self.MasterStateSizer['innerMasterState'].AddMany([self.StaticText[key], self.TextCtrl[key]])
 
-        self.MasterStateSizer['masterState'].AddSizer(self.MasterStateSizer['innerMasterState'])
+        self.MasterStateSizer['masterState'].Add(self.MasterStateSizer['innerMasterState'])
 
         # ----------------------- Ethernet Network Card Information ---------------------------------------
         for key, label in [
@@ -2110,7 +2111,7 @@ class MasterStatePanelClass(wx.Panel):
             self.TextCtrl[key] = wx.TextCtrl(self, size=wx.Size(130, 24), style=wx.TE_READONLY)
             self.MasterStateSizer['innerDeviceInfo'].AddMany([self.StaticText[key], self.TextCtrl[key]])
 
-        self.MasterStateSizer['deviceInfo'].AddSizer(self.MasterStateSizer['innerDeviceInfo'])
+        self.MasterStateSizer['deviceInfo'].Add(self.MasterStateSizer['innerDeviceInfo'])
 
         # ----------------------- Network Frame Information -----------------------------------------------
         for key, label in [
@@ -2125,7 +2126,7 @@ class MasterStatePanelClass(wx.Panel):
                 self.TextCtrl[key][index] = wx.TextCtrl(self, size=wx.Size(130, 24), style=wx.TE_READONLY)
                 self.MasterStateSizer['innerFrameInfo'].Add(self.TextCtrl[key][index])
 
-        self.MasterStateSizer['frameInfo'].AddSizer(self.MasterStateSizer['innerFrameInfo'])
+        self.MasterStateSizer['frameInfo'].Add(self.MasterStateSizer['innerFrameInfo'])
 
         # --------------------------------- Main Sizer ----------------------------------------------------
         for key, sub, in [
@@ -2134,10 +2135,10 @@ class MasterStatePanelClass(wx.Panel):
                 ('innerMain', ['innerTopHalf', 'innerBottomHalf'])
         ]:
             for key2 in sub:
-                self.MasterStateSizer[key].AddSizer(self.MasterStateSizer[key2])
+                self.MasterStateSizer[key].Add(self.MasterStateSizer[key2])
 
-        self.MasterStateSizer['main'].AddSizer(self.UpdateButton)
-        self.MasterStateSizer['main'].AddSizer(self.MasterStateSizer['innerMain'])
+        self.MasterStateSizer['main'].Add(self.UpdateButton)
+        self.MasterStateSizer['main'].Add(self.MasterStateSizer['innerMain'])
 
         self.SetSizer(self.MasterStateSizer['main'])
 

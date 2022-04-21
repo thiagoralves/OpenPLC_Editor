@@ -24,15 +24,14 @@
 
 
 from __future__ import absolute_import
-from functools import reduce
 
-import wx
-import wx.lib.buttons
 import wx.lib.agw.customtreectrl as CT
+import wx.lib.buttons
 
 from PLCControler import *
-from util.BitmapLibrary import GetBitmap
+from graphics.GraphicCommons import *
 from plcopen.types_enums import GetElementType
+from util.BitmapLibrary import GetBitmap
 
 
 def GenerateName(infos):
@@ -53,22 +52,22 @@ def GenerateName(infos):
 [
     ID_SEARCHRESULTPANEL, ID_SEARCHRESULTPANELHEADERLABEL,
     ID_SEARCHRESULTPANELSEARCHRESULTSTREE, ID_SEARCHRESULTPANELRESETBUTTON,
-] = [wx.NewId() for _init_ctrls in range(4)]
+] = [wx.NewIdRef() for _init_ctrls in range(4)]
 
 
 class SearchResultPanel(wx.Panel):
 
     def _init_coll_MainSizer_Items(self, parent):
-        parent.AddSizer(self.HeaderSizer, 0, border=0, flag=wx.GROW)
-        parent.AddWindow(self.SearchResultsTree, 1, border=0, flag=wx.GROW)
+        parent.Add(self.HeaderSizer, 0, border=0, flag=wx.GROW)
+        parent.Add(self.SearchResultsTree, 1, border=0, flag=wx.GROW)
 
     def _init_coll_MainSizer_Growables(self, parent):
         parent.AddGrowableCol(0)
         parent.AddGrowableRow(1)
 
     def _init_coll_HeaderSizer_Items(self, parent):
-        parent.AddWindow(self.HeaderLabel, 1, border=5, flag=wx.LEFT | wx.RIGHT | wx.ALIGN_CENTER_VERTICAL)
-        parent.AddWindow(self.ResetButton, 0, border=0, flag=0)
+        parent.Add(self.HeaderLabel, 1, border=5, flag=wx.LEFT | wx.RIGHT | wx.ALIGN_CENTER_VERTICAL)
+        parent.Add(self.ResetButton, 0, border=0, flag=0)
 
     def _init_coll_HeaderSizer_Growables(self, parent):
         parent.AddGrowableCol(0)
@@ -100,7 +99,7 @@ class SearchResultPanel(wx.Panel):
         self.ResetButton = wx.lib.buttons.GenBitmapButton(
             self, bitmap=GetBitmap("reset"),
             size=wx.Size(28, 28), style=wx.NO_BORDER)
-        self.ResetButton.SetToolTipString(_("Reset search result"))
+        self.ResetButton.SetToolTip(_("Reset search result"))
         self.Bind(wx.EVT_BUTTON, self.OnResetButton, self.ResetButton)
 
         self._init_sizers()
@@ -121,17 +120,17 @@ class SearchResultPanel(wx.Panel):
 
         # Icons for other items
         for imgname, itemtype in [
-                # editables
-                ("PROJECT",        ITEM_PROJECT),
-                ("TRANSITION",     ITEM_TRANSITION),
-                ("ACTION",         ITEM_ACTION),
-                ("CONFIGURATION",  ITEM_CONFIGURATION),
-                ("RESOURCE",       ITEM_RESOURCE),
-                ("DATATYPE",       ITEM_DATATYPE),
-                ("ACTION",         "action_block"),
-                ("IL",             "IL"),
-                ("ST",             "ST"),
-                ("FILE",           ITEM_CONFNODE)]:
+            # editables
+            ("PROJECT", ITEM_PROJECT),
+            ("TRANSITION", ITEM_TRANSITION),
+            ("ACTION", ITEM_ACTION),
+            ("CONFIGURATION", ITEM_CONFIGURATION),
+            ("RESOURCE", ITEM_RESOURCE),
+            ("DATATYPE", ITEM_DATATYPE),
+            ("ACTION", "action_block"),
+            ("IL", "IL"),
+            ("ST", "ST"),
+            ("FILE", ITEM_CONFNODE)]:
             self.TreeImageDict[itemtype] = self.TreeImageList.Add(GetBitmap(imgname))
 
         for itemtype in ["function", "functionBlock", "program",
@@ -204,7 +203,7 @@ class SearchResultPanel(wx.Panel):
                 children = element_infos.setdefault("children", [])
                 for infos, start, end, text in results:
                     if len(words) == 1:  # CTN match
-                        child_name = {"body": str(start[0])+":",
+                        child_name = {"body": str(start[0]) + ":",
                                       "var_inout": _("Variable:")}[infos[1]]
                         child_type = {"body": ITEM_CONFNODE,
                                       "var_inout": "var_inout"}[infos[1]]
@@ -269,12 +268,14 @@ class SearchResultPanel(wx.Panel):
         def OnTextCtrlClick(event):
             self.SearchResultsTree.SelectItem(item)
             event.Skip()
+
         return OnTextCtrlClick
 
     def GetTextCtrlDClickFunction(self, item):
         def OnTextCtrlDClick(event):
             self.ShowSearchResults(item)
             event.Skip()
+
         return OnTextCtrlDClick
 
     def GenerateSearchResultsTreeBranch(self, root, infos):
@@ -284,12 +285,13 @@ class SearchResultPanel(wx.Panel):
             item_name = infos["name"]
 
         self.SearchResultsTree.SetItemText(root, item_name)
-        self.SearchResultsTree.SetPyData(root, infos["data"])
+        self.SearchResultsTree.SetItemData(root, infos["data"])
         self.SearchResultsTree.SetItemBackgroundColour(root, wx.WHITE)
         self.SearchResultsTree.SetItemTextColour(root, wx.BLACK)
         if infos["type"] is not None:
             if infos["type"] == ITEM_POU:
-                self.SearchResultsTree.SetItemImage(root, self.TreeImageDict[self.ParentWindow.Controler.GetPouType(infos["name"])])
+                self.SearchResultsTree.SetItemImage(root, self.TreeImageDict[
+                    self.ParentWindow.Controler.GetPouType(infos["name"])])
             else:
                 self.SearchResultsTree.SetItemImage(root, self.TreeImageDict[infos["type"]])
 
@@ -299,9 +301,10 @@ class SearchResultPanel(wx.Panel):
             start, end = infos["data"][1:3]
             text_lines = infos["text"].splitlines()
             start_idx = start[1]
-            end_idx = reduce(lambda x, y: x + y, map(lambda x: len(x) + 1, text_lines[:end[0] - start[0]]), end[1] + 1)
+            end_idx = reduce(lambda x, y: x + y,
+                             list(map(lambda x: len(x) + 1, text_lines[:end[0] - start[0]])), end[1] + 1)
             style = wx.TextAttr(wx.BLACK, wx.Colour(206, 204, 247))
-        elif infos["type"] is not None and infos["matches"] > 1:
+        elif infos["type"] is not None and infos["matches"] and infos["matches"] > 1:
             text = _("(%d matches)") % infos["matches"]
             start_idx, end_idx = 0, len(text)
             style = wx.TextAttr(wx.Colour(0, 127, 174))
@@ -313,7 +316,7 @@ class SearchResultPanel(wx.Panel):
             text_ctrl = wx.TextCtrl(id=-1, parent=self.SearchResultsTree, pos=wx.Point(0, 0),
                                     value=text, style=text_ctrl_style)
             width, height = text_ctrl.GetTextExtent(text)
-            text_ctrl.SetClientSize(wx.Size(width + 1, height))
+            text_ctrl.SetClientSize(wx.Size(width * 2, height))
             text_ctrl.SetBackgroundColour(self.SearchResultsTree.GetBackgroundColour())
             text_ctrl.Bind(wx.EVT_LEFT_DOWN, self.GetTextCtrlClickFunction(root))
             text_ctrl.Bind(wx.EVT_LEFT_DCLICK, self.GetTextCtrlDClickFunction(root))
@@ -330,7 +333,7 @@ class SearchResultPanel(wx.Panel):
             item, root_cookie = self.SearchResultsTree.GetNextChild(root, root_cookie)
 
     def ShowSearchResults(self, item):
-        data = self.SearchResultsTree.GetPyData(item)
+        data = self.SearchResultsTree.GetItemData(item)
         if isinstance(data, tuple):
             search_results = [data]
         else:

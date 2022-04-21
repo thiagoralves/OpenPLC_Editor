@@ -43,12 +43,12 @@
      pagecolor="#ffffff"
      id="base"
      showgrid="false"
-     inkscape:zoom="16"
-     inkscape:cx="754.13513"
-     inkscape:cy="907.03479"
+     inkscape:zoom="5.6568543"
+     inkscape:cx="766.02087"
+     inkscape:cy="916.07252"
      inkscape:window-x="0"
      inkscape:window-y="24"
-     inkscape:current-layer="svg2"
+     inkscape:current-layer="g10453"
      showguides="true"
      inkscape:guide-bbox="true"
      inkscape:window-maximized="1"
@@ -87442,6 +87442,27 @@
        r="111.6605"
        gradientTransform="matrix(0.95160132,-0.01357563,0.01391374,0.97645493,3.8528826,4.1473681)"
        gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       id="linearGradient10435"
+       y2="24.944"
+       xlink:href="#radialGradient2553-7-9"
+       gradientUnits="userSpaceOnUse"
+       x2="25.701"
+       gradientTransform="scale(0.89256,1.1204)"
+       y1="51.917"
+       x1="68.289001"
+       inkscape:collect="always" />
+    <linearGradient
+       id="linearGradient7925">
+      <stop
+         id="stop7926"
+         style="stop-color:#d0d0d0"
+         offset="0" />
+      <stop
+         id="stop7927"
+         style="stop-color:#a6a3a3"
+         offset="1" />
+    </linearGradient>
   </defs>
   <g
      id="g19063"
@@ -89948,7 +89969,7 @@
        id="tspan16268"
        x="73.295929"
        y="121.52582"
-       style="font-size:12.76095104px;line-height:1.25">%% editIECrawcode editWXGLADE editPYTHONcode EditCfile Transfer Connect Disconnect Debug IDManager %%</tspan></text>
+       style="font-size:12.76095104px;line-height:1.25">%% editIECrawcode editWXGLADE editPYTHONcode EditCfile Transfer Connect Disconnect Debug IDManager Repair %%</tspan></text>
   <rect
      width="24"
      height="24"
@@ -93341,12 +93362,21 @@
        id="path18654"
        inkscape:connector-curvature="0" />
   </g>
+  <g
+     id="g10453"
+     transform="matrix(0.27063582,0.04354624,-0.04354624,0.27063582,790.21268,127.46614)">
+    <path
+       id="path1683"
+       style="fill:url(#linearGradient10435);stroke:#606060;stroke-width:1.25;stroke-linecap:round;stroke-linejoin:round;fill-opacity:1.0"
+       inkscape:connector-curvature="0"
+       d="m 64.661,6.0611 c -4.831,1.9764 -8.619,6.2529 -9.679,11.757 -0.673,3.493 -0.092,6.917 1.339,9.901 -3.895,8.12 -19.113,29.069 -26.331,36.587 -6.581,0.93 -12.171,5.856 -13.497,12.74 -1.006,5.227 0.712,10.321 4.096,13.932 l 2.098,-10.894 c 0.523,-2.72 3.135,-4.488 5.855,-3.964 l 7.917,1.525 c 2.72,0.523 4.488,3.135 3.964,5.855 l -2.186,11.354 c 4.83,-1.977 8.619,-6.253 9.679,-11.757 0.842,-4.372 -0.202,-8.667 -2.544,-12.074 5.389,-9.026 18.947,-28.336 26.036,-34.225 7.218,-0.328 13.571,-5.527 14.996,-12.929 1.007,-5.228 -0.711,-10.321 -4.095,-13.932 l -2.098,10.894 c -0.524,2.72 -3.135,4.488 -5.855,3.964 l -7.917,-1.525 c -2.721,-0.524 -4.489,-3.135 -3.965,-5.855 l 2.187,-11.354 z" />
+  </g>
   <rect
      inkscape:label="#rect16270"
-     style="display:inline;overflow:visible;visibility:visible;fill:#000000;fill-opacity:0;fill-rule:evenodd;stroke:#6e6e6e;stroke-width:0.1;marker:none;enable-background:accumulate;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
-     id="rect19460"
+     style="display:inline;overflow:visible;visibility:visible;fill:#000000;fill-opacity:0;fill-rule:evenodd;stroke:none;stroke-width:1;marker:none;enable-background:accumulate"
+     id="Repair"
      y="131.36218"
-     x="730"
+     x="790"
      height="24"
      width="24" />
 </svg>

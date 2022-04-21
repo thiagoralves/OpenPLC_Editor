@@ -24,7 +24,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
+# from __future__ import absolute_import
 import wx
 
 from plcopen.structures import TestIdentifier, IEC_KEYWORDS
@@ -58,34 +58,34 @@ class PouDialog(wx.Dialog):
 
         infos_sizer = wx.FlexGridSizer(cols=2, hgap=5, rows=3, vgap=15)
         infos_sizer.AddGrowableCol(1)
-        main_sizer.AddSizer(infos_sizer, border=20,
-                            flag=wx.GROW | wx.TOP | wx.LEFT | wx.RIGHT)
+        main_sizer.Add(infos_sizer, border=20,
+                       flag=wx.GROW | wx.TOP | wx.LEFT | wx.RIGHT)
 
         pouname_label = wx.StaticText(self, label=_('POU Name:'))
-        infos_sizer.AddWindow(pouname_label, border=4,
-                              flag=wx.ALIGN_CENTER_VERTICAL | wx.TOP)
+        infos_sizer.Add(pouname_label, border=4,
+                        flag=wx.ALIGN_CENTER_VERTICAL | wx.TOP)
 
         self.PouName = wx.TextCtrl(self)
-        infos_sizer.AddWindow(self.PouName, flag=wx.GROW)
+        infos_sizer.Add(self.PouName, flag=wx.GROW)
 
         poutype_label = wx.StaticText(self, label=_('POU Type:'))
-        infos_sizer.AddWindow(poutype_label, border=4,
-                              flag=wx.ALIGN_CENTER_VERTICAL | wx.TOP)
+        infos_sizer.Add(poutype_label, border=4,
+                        flag=wx.ALIGN_CENTER_VERTICAL | wx.TOP)
 
         self.PouType = wx.ComboBox(self, style=wx.CB_READONLY)
         self.Bind(wx.EVT_COMBOBOX, self.OnTypeChanged, self.PouType)
-        infos_sizer.AddWindow(self.PouType, flag=wx.GROW)
+        infos_sizer.Add(self.PouType, flag=wx.GROW)
 
         language_label = wx.StaticText(self, label=_('Language:'))
-        infos_sizer.AddWindow(language_label, border=4,
-                              flag=wx.ALIGN_CENTER_VERTICAL | wx.TOP)
+        infos_sizer.Add(language_label, border=4,
+                        flag=wx.ALIGN_CENTER_VERTICAL | wx.TOP)
 
         self.Language = wx.ComboBox(self, style=wx.CB_READONLY)
-        infos_sizer.AddWindow(self.Language, flag=wx.GROW)
+        infos_sizer.Add(self.Language, flag=wx.GROW)
 
         button_sizer = self.CreateButtonSizer(wx.OK | wx.CANCEL | wx.CENTRE)
-        self.Bind(wx.EVT_BUTTON, self.OnOK, button_sizer.GetAffirmativeButton())
-        main_sizer.AddSizer(button_sizer, border=20,
+        # self.Bind(wx.EVT_BUTTON, self.OnOK, button_sizer.GetAffirmativeButton())
+        main_sizer.Add(button_sizer, border=20,
                             flag=wx.ALIGN_RIGHT | wx.BOTTOM | wx.LEFT | wx.RIGHT)
 
         self.SetSizer(main_sizer)

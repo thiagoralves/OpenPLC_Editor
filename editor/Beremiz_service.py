@@ -24,24 +24,27 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
+# from __future__ import absolute_import
 from __future__ import print_function
+
+import getopt
 import os
 import sys
-import getopt
 import threading
-from threading import Thread, Semaphore, Lock, currentThread
 from builtins import str as text
+from threading import Thread, Semaphore, Lock, currentThread
+
 from past.builtins import execfile
 from six.moves import builtins
 
 import runtime
-from runtime.PyroServer import PyroServer
-from runtime.xenomai import TryPreloadXenomai
+import util.paths as paths
 from runtime import LogMessageAndException
 from runtime import PlcStatus
+from runtime import default_evaluator
+from runtime.PyroServer import PyroServer
 from runtime.Stunnel import ensurePSK
-import util.paths as paths
+from runtime.xenomai import TryPreloadXenomai
 
 
 def version():
@@ -384,14 +387,6 @@ if not os.path.isdir(WorkingDir):
     os.mkdir(WorkingDir)
 
 
-def default_evaluator(tocall, *args, **kwargs):
-    try:
-        res = (tocall(*args, **kwargs), None)
-    except Exception:
-        res = (None, sys.exc_info())
-    return res
-
-
 if enabletwisted:
     import warnings
     with warnings.catch_warnings():
@@ -539,7 +534,8 @@ if havetwisted:
 pyro_thread_started = Lock()
 pyro_thread_started.acquire()
 pyro_thread = Thread(target=pyroserver.PyroLoop,
-                     kwargs=dict(when_ready=pyro_thread_started.release))
+                     kwargs=dict(when_ready=pyro_thread_started.release),
+                     name="PyroThread")
 pyro_thread.start()
 
 # Wait for pyro thread to be effective
@@ -564,7 +560,7 @@ if havetwisted or havewx:
     else:
         ui_thread_target = app.MainLoop
 
-    ui_thread = Thread(target=ui_thread_target)
+    ui_thread = Thread(target=ui_thread_target, name="UIThread")
     ui_thread.start()
 
     # This order ui loop to unblock main thread when ready.
@@ -588,9 +584,17 @@ except KeyboardInterrupt:
     pass
 
 pyroserver.Quit()
+pyro_thread.join()
 
 plcobj = runtime.GetPLCObjectSingleton()
 plcobj.StopPLC()
 plcobj.UnLoadPLC()
+
+if havetwisted:
+    reactor.stop()
+    ui_thread.join()
+elif havewx:
+    app.ExitMainLoop()
+    ui_thread.join()
 
 sys.exit(0)

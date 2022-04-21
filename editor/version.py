@@ -23,21 +23,25 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 
-from __future__ import absolute_import
+# from __future__ import absolute_import
 from __future__ import unicode_literals
 
-import subprocess
 import os
+import subprocess
 
 import util.paths as paths
 
 
 def GetCommunityHelpMsg():
     return _(
-        "The best place to ask questions about OpenPLC Runtime\n"
-        "and OpenPLC Editor is in the project's official forum:\n"
+        "The best place to ask questions about Beremiz/PLCOpenEditor\n"
+        "is project's mailing list: beremiz-devel@lists.sourceforge.net\n"
         "\n"
-        "https://openplc.discussion.community/\n"
+        "This is the main community support channel.\n"
+        "For posting it is required to be subscribed to the mailing list.\n"
+        "\n"
+        "You can subscribe to the list here:\n"
+        "https://lists.sourceforge.net/lists/listinfo/beremiz-devel"
     )
 
 
@@ -46,11 +50,18 @@ def GetAppRevision():
     app_dir = paths.AbsDir(__file__)
     try:
         pipe = subprocess.Popen(
-            ["hg", "id", "-i"],
+            ["git", "pull"],
             stdout=subprocess.PIPE,
-            cwd=app_dir
+            cwd=app_dir, shell=True
         )
-        rev = pipe.communicate()[0]
+        pipe = subprocess.Popen(
+            ["git", "rev-parse", "--abbrev-ref", "HEAD"],
+            stdout=subprocess.PIPE,
+            cwd=app_dir, shell=True
+        )
+        rev = pipe.communicate()
+        rev = rev[0]
+        rev = rev.decode()
         if pipe.returncode != 0:
             rev = None
     except Exception:
@@ -69,25 +80,23 @@ def GetAppRevision():
 
 def GetAboutDialogInfo():
     import wx
-    info = wx.AboutDialogInfo()
+    info = wx.adv.AboutDialogInfo()
 
-    info.Name = "OpenPLC Editor"
+    info.Name = "Beremiz"
     info.Version = app_version
 
     info.Copyright = ""
-    info.Copyright += "(C) 2019 Thiago Alves"
-    #info.Copyright += "(C) 2016-2018 Andrey Skvortsov\n"
-    #info.Copyright += "(C) 2008-2018 Eduard Tisserant\n"
-    #info.Copyright += "(C) 2008-2015 Laurent Bessard"
+    info.Copyright += "(C) 2016-2018 Andrey Skvortsov\n"
+    info.Copyright += "(C) 2008-2018 Eduard Tisserant\n"
+    info.Copyright += "(C) 2008-2015 Laurent Bessard"
 
-    info.WebSite = ("http://www.openplcproject.com", "openplcproject.com")
+    info.WebSite = ("http://beremiz.org", "beremiz.org")
 
-    info.Description = _("Open Source IDE for the OpenPLC Runtime, compliant with "
-                         "the IEC 61131-3 international standard.\n\nBased on PLCOpen Editor and Beremiz by Andrey Skvortsov, Sergey Surkov, Edouard Tisserant and Laurent Bessard.")
+    info.Description = _("Open Source framework for automation, "
+                         "implemented IEC 61131 IDE with constantly growing set of extensions "
+                         "and flexible PLC runtime.")
 
-    #info.Developers = "Thiago Alves <thiagoralves@gmail.com>"
     info.Developers = (
-        "Thiago Alves <thiagoralves@gmail.com>",
         "Andrey Skvortsov <andrej.skvortzov@gmail.com>",
         "Sergey Surkov <surkov.sv@summatechnology.ru>",
         "Edouard Tisserant <edouard.tisserant@gmail.com>",
@@ -133,6 +142,7 @@ def GetAboutDialogInfo():
         "  Yiwei Yan <523136664@qq.com>, 2018",
         "  Ji Wang <2485567515@qq.com>, 2019",
         "  珂 曾 <15627997@qq.com>, 2019",
+        "  Gastonfeng<gastonfeng@gmail.com>, 2019",
         "",
 
         "Dutch (Netherlands)",
@@ -216,8 +226,7 @@ def GetAboutDialogInfo():
     return info
 
 
-app_version = "1.3.1"
-#rev = GetAppRevision()
-rev = "Release: 2022-03-11"
+app_version = "1.2"
+rev = GetAppRevision()
 if rev is not None:
-    app_version = app_version + "\n" + rev.rstrip()
+    app_version = app_version + "-" + rev.rstrip()

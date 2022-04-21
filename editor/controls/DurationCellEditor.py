@@ -24,19 +24,19 @@
 
 
 from __future__ import absolute_import
+
 import wx
+import wx.grid
 
-from dialogs.DurationEditorDialog import DurationEditorDialog
 
-
-class DurationCellControl(wx.PyControl):
+class DurationCellControl(wx.Control):
 
     '''
     Custom cell editor control with a text box and a button that launches
     the DurationEditorDialog.
     '''
     def __init__(self, parent):
-        wx.PyControl.__init__(self, parent)
+        wx.Control.__init__(self, parent)
 
         main_sizer = wx.FlexGridSizer(cols=2, hgap=0, rows=1, vgap=0)
         main_sizer.AddGrowableCol(0)
@@ -46,12 +46,12 @@ class DurationCellControl(wx.PyControl):
         self.Duration = wx.TextCtrl(self, size=wx.Size(0, -1),
                                     style=wx.TE_PROCESS_ENTER)
         self.Duration.Bind(wx.EVT_KEY_DOWN, self.OnDurationChar)
-        main_sizer.AddWindow(self.Duration, flag=wx.GROW)
+        main_sizer.Add(self.Duration, flag=wx.GROW)
 
         # create browse button
         self.EditButton = wx.Button(self, label='...', size=wx.Size(30, -1))
         self.Bind(wx.EVT_BUTTON, self.OnEditButtonClick, self.EditButton)
-        main_sizer.AddWindow(self.EditButton, flag=wx.GROW)
+        main_sizer.Add(self.EditButton, flag=wx.GROW)
 
         self.Bind(wx.EVT_SIZE, self.OnSize)
 
@@ -70,6 +70,7 @@ class DurationCellControl(wx.PyControl):
         self.Layout()
 
     def OnEditButtonClick(self, event):
+        from dialogs.DurationEditorDialog import DurationEditorDialog
         # pop up the Duration Editor dialog
         dialog = DurationEditorDialog(self)
         dialog.SetDuration(self.Duration.GetValue())
@@ -98,12 +99,12 @@ class DurationCellControl(wx.PyControl):
         self.Duration.SetFocus()
 
 
-class DurationCellEditor(wx.grid.PyGridCellEditor):
+class DurationCellEditor(wx.grid.GridCellEditor):
     '''
     Grid cell editor that uses DurationCellControl to display an edit button.
     '''
     def __init__(self, table, colname):
-        wx.grid.PyGridCellEditor.__init__(self)
+        wx.grid.GridCellEditor.__init__(self)
 
         self.Table = table
         self.Colname = colname
@@ -139,9 +140,9 @@ class DurationCellEditor(wx.grid.PyGridCellEditor):
             return self.EndEditInternal(row, col, grid, oldval)
 
     def SetSize(self, rect):
-        self.CellControl.SetDimensions(rect.x + 1, rect.y,
-                                       rect.width, rect.height,
-                                       wx.SIZE_ALLOW_MINUS_ONE)
+        self.CellControl.SetSize(rect.x + 1, rect.y,
+                                 rect.width, rect.height,
+                                 wx.SIZE_ALLOW_MINUS_ONE)
 
     def Clone(self):
         return DurationCellEditor(self.Table, self.Colname)

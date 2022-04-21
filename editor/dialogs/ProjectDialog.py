@@ -24,7 +24,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
+# from __future__ import absolute_import
 import wx
 
 from controls.ProjectPropertiesPanel import ProjectPropertiesPanel
@@ -42,12 +42,12 @@ class ProjectDialog(wx.Dialog):
 
         self.ProjectProperties = ProjectPropertiesPanel(
             self, enable_required=enable_required, scrolling=False)
-        main_sizer.AddWindow(self.ProjectProperties, flag=wx.GROW)
+        main_sizer.Add(self.ProjectProperties, flag=wx.GROW)
 
         self.ButtonSizer = self.CreateButtonSizer(wx.OK | wx.CANCEL | wx.CENTRE)
-        self.Bind(wx.EVT_BUTTON, self.OnOK,
-                  self.ButtonSizer.GetAffirmativeButton())
-        main_sizer.AddSizer(self.ButtonSizer, border=20,
+        # self.Bind(wx.EVT_BUTTON, self.OnOK,
+        #           self.ButtonSizer.GetAffirmativeButton())
+        main_sizer.Add(self.ButtonSizer, border=20,
                             flag=wx.ALIGN_RIGHT | wx.BOTTOM | wx.LEFT | wx.RIGHT)
 
         self.SetSizer(main_sizer)

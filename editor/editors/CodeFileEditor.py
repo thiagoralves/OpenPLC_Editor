@@ -25,24 +25,25 @@
 
 from __future__ import absolute_import
 from __future__ import division
+
 import re
 from builtins import str as text
 
 import wx
 import wx.grid
-import wx.stc as stc
 import wx.lib.buttons
-from six.moves import xrange
+import wx.stc as stc
 
-
-from plcopen.plcopen import TestTextElement
-from plcopen.structures import TestIdentifier, IEC_KEYWORDS, DefaultType
 from controls import CustomGrid, CustomTable
 from controls.CustomStyledTextCtrl import CustomStyledTextCtrl, faces, GetCursorPos, NAVIGATION_KEYS
 from editors.ConfTreeNodeEditor import ConfTreeNodeEditor
+from graphics.GraphicCommons import ERROR_HIGHLIGHT, SEARCH_RESULT_HIGHLIGHT, REFRESH_HIGHLIGHT_PERIOD
+from plcopen.plcopen import TestTextElement
+from plcopen.structures import TestIdentifier, IEC_KEYWORDS, DefaultType
 from util.BitmapLibrary import GetBitmap
 from util.TranslationCatalogs import NoTranslate
-from graphics.GraphicCommons import ERROR_HIGHLIGHT, SEARCH_RESULT_HIGHLIGHT, REFRESH_HIGHLIGHT_PERIOD
+
+# from six.moves import xrange
 
 
 [STC_CODE_ERROR, STC_CODE_SEARCH_RESULT,
@@ -285,7 +286,7 @@ class CodeEditor(CustomStyledTextCtrl):
     def RefreshSectionStyling(self):
         self.Colourise(0, -1)
 
-        for line in xrange(self.GetLineCount()):
+        for line in range(self.GetLineCount()):
             self.SetLineState(line, 0)
 
         doc_end_pos = self.GetLength()
@@ -355,7 +356,7 @@ class CodeEditor(CustomStyledTextCtrl):
 
                 keywords = self.KEYWORDS + [var["Name"]
                                             for var in self.Controler.GetVariables()]
-                keywords.sort()
+                sorted(keywords)
                 self.AutoCompShow(0, " ".join(keywords))
         else:
             event.Skip()
@@ -629,8 +630,8 @@ class VariablesTable(CustomTable):
         super(VariablesTable, self).__init__(*args, **kwargs)
         self.columnTypes = dict(self.__defaultColumnType)
         if my_columns is not None:
-            for key in my_columns.keys():
-                if key in self.columnTypes.keys():
+            for key in list(my_columns.keys()):
+                if key in list(self.columnTypes.keys()):
                     self.columnTypes[key] = my_columns[key]
 
     def GetValue(self, row, col):
@@ -678,7 +679,7 @@ class VariablesEditor(wx.Panel):
         main_sizer.AddGrowableRow(0)
 
         controls_sizer = wx.BoxSizer(wx.VERTICAL)
-        main_sizer.AddSizer(controls_sizer, border=5, flag=wx.ALL)
+        main_sizer.Add(controls_sizer, border=5, flag=wx.ALL)
 
         for name, bitmap, help in [
                 ("AddVariableButton", "add_element", _("Add variable")),
@@ -687,15 +688,15 @@ class VariablesEditor(wx.Panel):
                 ("DownVariableButton", "down", _("Move variable down"))]:
             button = wx.lib.buttons.GenBitmapButton(self, bitmap=GetBitmap(bitmap),
                                                     size=wx.Size(28, 28), style=wx.NO_BORDER)
-            button.SetToolTipString(help)
+            button.SetToolTip(help)
             setattr(self, name, button)
-            controls_sizer.AddWindow(button, border=5, flag=wx.BOTTOM)
+            controls_sizer.Add(button, border=5, flag=wx.BOTTOM)
 
         self.VariablesGrid = CustomGrid(self, style=wx.VSCROLL)
-        self.VariablesGrid.Bind(wx.grid.EVT_GRID_CELL_CHANGE, self.OnVariablesGridCellChange)
+        self.VariablesGrid.Bind(wx.grid.EVT_GRID_CELL_CHANGED, self.OnVariablesGridCellChange)
         self.VariablesGrid.Bind(wx.grid.EVT_GRID_CELL_LEFT_CLICK, self.OnVariablesGridCellLeftClick)
         self.VariablesGrid.Bind(wx.grid.EVT_GRID_EDITOR_SHOWN, self.OnVariablesGridEditorShown)
-        main_sizer.AddWindow(self.VariablesGrid, flag=wx.GROW)
+        main_sizer.Add(self.VariablesGrid, flag=wx.GROW)
 
         self.SetSizer(main_sizer)
 
@@ -784,8 +785,8 @@ class VariablesEditor(wx.Panel):
         self.Table.ResetView(self.VariablesGrid)
         self.VariablesGrid.RefreshButtons()
 
-    def DoGetBestSize(self):
-        return self.ParentWindow.GetPanelBestSize()
+    # def DoGetBestSize(self):
+    #     return self.ParentWindow.GetPanelBestSize()
 
     def ShowErrorMessage(self, message):
         dialog = wx.MessageDialog(self, message, _("Error"), wx.OK | wx.ICON_ERROR)
@@ -826,19 +827,19 @@ class VariablesEditor(wx.Panel):
             type_menu = wx.Menu(title='')
             base_menu = wx.Menu(title='')
             for base_type in self.Controler.GetBaseTypes():
-                new_id = wx.NewId()
-                base_menu.Append(help='', id=new_id, kind=wx.ITEM_NORMAL, text=base_type)
+                new_id = wx.NewIdRef()
+                base_menu.Append(helpString='', id=new_id, kind=wx.ITEM_NORMAL, text=base_type)
                 self.Bind(wx.EVT_MENU, self.GetVariableTypeFunction(base_type), id=new_id)
-            type_menu.AppendMenu(wx.NewId(), "Base Types", base_menu)
+            type_menu.Append(wx.NewIdRef(), "Base Types", base_menu)
             datatype_menu = wx.Menu(title='')
             for datatype in self.Controler.GetDataTypes():
-                new_id = wx.NewId()
-                datatype_menu.Append(help='', id=new_id, kind=wx.ITEM_NORMAL, text=datatype)
+                new_id = wx.NewIdRef()
+                datatype_menu.Append(helpString='', id=new_id, kind=wx.ITEM_NORMAL, text=datatype)
                 self.Bind(wx.EVT_MENU, self.GetVariableTypeFunction(datatype), id=new_id)
-            type_menu.AppendMenu(wx.NewId(), "User Data Types", datatype_menu)
+            type_menu.Append(wx.NewIdRef(), "User Data Types", datatype_menu)
             rect = self.VariablesGrid.BlockToDeviceRect((row, col), (row, col))
 
-            self.VariablesGrid.PopupMenuXY(type_menu, rect.x + rect.width, rect.y + self.VariablesGrid.GetColLabelSize())
+            self.VariablesGrid.PopupMenu(type_menu, rect.x + rect.width, rect.y + self.VariablesGrid.GetColLabelSize())
             type_menu.Destroy()
             event.Veto()
         else:

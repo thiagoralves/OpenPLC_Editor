@@ -24,12 +24,14 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
+# from __future__ import absolute_import
+
 import wx
 
-from graphics.GraphicCommons import CONNECTOR, CONTINUATION
-from graphics.FBD_Objects import FBD_Connector
 from dialogs.BlockPreviewDialog import BlockPreviewDialog
+from graphics.FBD_Objects import FBD_Connector
+from graphics.GraphicCommons import CONNECTOR, CONTINUATION
+
 
 # -------------------------------------------------------------------------------
 #                       Set Connection Parameters Dialog
@@ -59,7 +61,7 @@ class ConnectionDialog(BlockPreviewDialog):
 
         # Create label for connection type
         type_label = wx.StaticText(self, label=_('Type:'))
-        self.LeftGridSizer.AddWindow(type_label, flag=wx.GROW)
+        self.LeftGridSizer.Add(type_label, flag=wx.GROW)
 
         # Create radio buttons for selecting connection type
         self.TypeRadioButtons = {}
@@ -70,39 +72,39 @@ class ConnectionDialog(BlockPreviewDialog):
                                           style=(wx.RB_GROUP if first else 0))
             radio_button.SetValue(first)
             self.Bind(wx.EVT_RADIOBUTTON, self.OnTypeChanged, radio_button)
-            self.LeftGridSizer.AddWindow(radio_button, flag=wx.GROW)
+            self.LeftGridSizer.Add(radio_button, flag=wx.GROW)
             self.TypeRadioButtons[type] = radio_button
             first = False
 
         # Create label for connection name
         name_label = wx.StaticText(self, label=_('Name:'))
-        self.LeftGridSizer.AddWindow(name_label, flag=wx.GROW)
+        self.LeftGridSizer.Add(name_label, flag=wx.GROW)
 
         # Create text control for defining connection name
         self.ConnectionName = wx.TextCtrl(self)
         self.ConnectionName.SetMinSize(wx.Size(200, -1))
         self.Bind(wx.EVT_TEXT, self.OnNameChanged, self.ConnectionName)
-        self.LeftGridSizer.AddWindow(self.ConnectionName, flag=wx.GROW)
+        self.LeftGridSizer.Add(self.ConnectionName, flag=wx.GROW)
 
         # Add preview panel and associated label to sizers
         self.Preview.SetMinSize(wx.Size(-1, 100))
-        self.LeftGridSizer.AddWindow(self.PreviewLabel, flag=wx.GROW)
-        self.LeftGridSizer.AddWindow(self.Preview, flag=wx.GROW)
+        self.LeftGridSizer.Add(self.PreviewLabel, flag=wx.GROW)
+        self.LeftGridSizer.Add(self.Preview, flag=wx.GROW)
 
         # Add buttons sizer to sizers
-        self.MainSizer.AddSizer(
+        self.MainSizer.Add(
             self.ButtonSizer, border=20,
             flag=wx.ALIGN_RIGHT | wx.BOTTOM | wx.LEFT | wx.RIGHT)
-        self.ColumnSizer.RemoveSizer(self.RightGridSizer)
+        self.ColumnSizer.Remove(self.RightGridSizer)
 
         # Add button for applying connection name modification to all connection
         # of POU
         if apply_button:
             self.ApplyToAllButton = wx.Button(self, label=_("Propagate Name"))
-            self.ApplyToAllButton.SetToolTipString(
+            self.ApplyToAllButton.SetToolTip(
                 _("Apply name modification to all continuations with the same name"))
             self.Bind(wx.EVT_BUTTON, self.OnApplyToAll, self.ApplyToAllButton)
-            self.ButtonSizer.AddWindow(self.ApplyToAllButton, flag=wx.LEFT)
+            self.ButtonSizer.Add(self.ApplyToAllButton, flag=wx.LEFT)
         else:
             self.ConnectionName.ChangeValue(
                 controller.GenerateNewName(
@@ -210,7 +212,7 @@ class ConnectionDialog(BlockPreviewDialog):
         self.RefreshPreview()
         event.Skip()
 
-    def RefreshPreview(self):
+    def DrawPreview(self):
         """
         Refresh preview panel of graphic element
         Override BlockPreviewDialog function
@@ -221,4 +223,4 @@ class ConnectionDialog(BlockPreviewDialog):
                                      self.ConnectionName.GetValue())
 
         # Call BlockPreviewDialog function
-        BlockPreviewDialog.RefreshPreview(self)
+        BlockPreviewDialog.DrawPreview(self)

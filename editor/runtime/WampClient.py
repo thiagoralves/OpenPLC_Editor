@@ -22,23 +22,25 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 
-from __future__ import absolute_import
+# from __future__ import absolute_import
 from __future__ import print_function
-import time
+
 import json
 import os
 import re
-from builtins import str as text
+import time
+
+import formless
 from autobahn.twisted import wamp
 from autobahn.twisted.websocket import WampWebSocketClientFactory, connectWS
 from autobahn.wamp import types, auth
 from autobahn.wamp.serializer import MsgPackSerializer
+from formless import annotate, webform
+from nevow import tags, url, static
+from six import text_type as text
 from twisted.internet.protocol import ReconnectingClientFactory
 from twisted.python.components import registerAdapter
 
-from formless import annotate, webform
-import formless
-from nevow import tags, url, static
 from runtime import GetPLCObjectSingleton
 
 mandatoryConfigItems = ["ID", "active", "realm", "url"]
@@ -61,6 +63,7 @@ ExposedCalls = [
     ("AppendChunkToBlob", {}),
     ("PurgeBlobs", {}),
     ("NewPLC", {}),
+    ("RepairPLC", {}),
     ("MatchMD5", {}),
     ("SetTraceVariablesList", {}),
     ("GetTraceVariables", {}),

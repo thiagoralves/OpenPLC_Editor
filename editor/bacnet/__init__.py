@@ -23,6 +23,6 @@
 # used in safety-critical situations without a full and competent review.
 
 
-from __future__ import absolute_import
+# from __future__ import absolute_import
 
 from bacnet.bacnet import *

@@ -22,26 +22,28 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 
-from __future__ import absolute_import
-from threading import Thread, Lock, Semaphore, Event
+import _ctypes
 import ctypes
+import hashlib
 import os
+import shutil
 import sys
 import traceback
-import shutil
-from time import time
-import hashlib
-from tempfile import mkstemp
 from functools import wraps, partial
-from six.moves import xrange
-from past.builtins import execfile
-import _ctypes
+from tempfile import mkstemp
+# from __future__ import absolute_import
+from threading import Thread, Lock, Event, Condition
+from time import time
 
-from runtime.typemapping import TypeTranslator
-from runtime.loglevels import LogLevelsDefault, LogLevelsCount
-from runtime.Stunnel import getPSKID
-from runtime import PlcStatus
+from past.builtins import execfile
+from six.moves import xrange
+
 from runtime import MainWorker
+from runtime import PlcStatus
+from runtime import default_evaluator
+from runtime.Stunnel import getPSKID
+from runtime.loglevels import LogLevelsDefault, LogLevelsCount
+from runtime.typemapping import TypeTranslator
 
 if os.name in ("nt", "ce"):
     dlopen = _ctypes.LoadLibrary
@@ -108,9 +110,9 @@ class PLCObject(object):
             self.CurrentPLCFilename = open(
                 self._GetMD5FileName(),
                 "r").read().strip() + lib_ext
-            if self.LoadPLC():
-                self.PLCStatus = PlcStatus.Stopped
-                if autostart:
+            self.PLCStatus = PlcStatus.Stopped
+            if autostart:
+                if self.LoadPLC():
                     self.StartPLC()
                     return
         except Exception:
@@ -319,13 +321,16 @@ class PLCObject(object):
 
         return False
 
-    def PythonRuntimeCall(self, methodname):
+    def PythonRuntimeCall(self, methodname, use_evaluator=True):
         """
         Calls init, start, stop or cleanup method provided by
         runtime python files, loaded when new PLC uploaded
         """
         for method in self.python_runtime_vars.get("_runtime_%s" % methodname, []):
-            _res, exp = self.evaluator(method)
+            if use_evaluator:
+                _res, exp = self.evaluator(method)
+            else:
+                _res, exp = default_evaluator(method)
             if exp is not None:
                 self.LogMessage(0, '\n'.join(traceback.format_exception(*exp)))
 
@@ -379,17 +384,24 @@ class PLCObject(object):
             self.LogMessage(0, traceback.format_exc())
             raise
 
-        self.PythonRuntimeCall("init")
+        self.PythonRuntimeCall("init", use_evaluator=False)
+
+        self.PythonThreadCondLock = Lock()
+        self.PythonThreadCond = Condition(self.PythonThreadCondLock)
+        self.PythonThreadCmd = "Wait"
+        self.PythonThread = Thread(target=self.PythonThreadProc, name="PLCPythonThread")
+        self.PythonThread.start()
 
     # used internaly
     def PythonRuntimeCleanup(self):
         if self.python_runtime_vars is not None:
-            self.PythonRuntimeCall("cleanup")
+            self.PythonThreadCommand("Finish")
+            self.PythonThread.join()
+            self.PythonRuntimeCall("cleanup", use_evaluator=False)
 
         self.python_runtime_vars = None
 
-    def PythonThreadProc(self):
-        self.StartSem.release()
+    def PythonThreadLoop(self):
         res, cmd, blkid = "None", "None", ctypes.c_void_p()
         compile_cache = {}
         while True:
@@ -415,42 +427,73 @@ class PLCObject(object):
                 res = "#EXCEPTION : "+str(e)
                 self.LogMessage(1, ('PyEval@0x%x(Code="%s") Exception "%s"') % (FBID, cmd, str(e)))
 
+    def PythonThreadProc(self):
+        while True:
+            self.PythonThreadCondLock.acquire()
+            cmd = self.PythonThreadCmd
+            while cmd == "Wait":
+                self.PythonThreadCond.wait()
+                cmd = self.PythonThreadCmd
+                self.PythonThreadCmd = "Wait"
+            self.PythonThreadCondLock.release()
+
+            if cmd == "Activate":
+                self.PythonRuntimeCall("start")
+                self.PythonThreadLoop()
+                self.PythonRuntimeCall("stop")
+            else:  # "Finish"
+                break
+
+    def PythonThreadCommand(self, cmd):
+        self.PythonThreadCondLock.acquire()
+        self.PythonThreadCmd = cmd
+        self.PythonThreadCond.notify()
+        self.PythonThreadCondLock.release()
+
     @RunInMain
     def StartPLC(self):
+
+        def fail(msg):
+            self.LogMessage(0, msg)
+            self.PLCStatus = PlcStatus.Broken
+            self.StatusChange()
+
+        if self.PLClibraryHandle is None:
+            if not self.LoadPLC():
+                fail(_("Problem starting PLC : can't load PLC"))
+
         if self.CurrentPLCFilename is not None and self.PLCStatus == PlcStatus.Stopped:
             c_argv = ctypes.c_char_p * len(self.argv)
             res = self._startPLC(len(self.argv), c_argv(*self.argv))
             if res == 0:
                 self.PLCStatus = PlcStatus.Started
                 self.StatusChange()
-                self.PythonRuntimeCall("start")
-                self.StartSem = Semaphore(0)
-                self.PythonThread = Thread(target=self.PythonThreadProc)
-                self.PythonThread.start()
-                self.StartSem.acquire()
+                self.PythonThreadCommand("Activate")
                 self.LogMessage("PLC started")
             else:
-                self.LogMessage(0, _("Problem starting PLC : error %d" % res))
-                self.PLCStatus = PlcStatus.Broken
-                self.StatusChange()
+                fail(_("Problem starting PLC : error %d" % res))
 
     @RunInMain
     def StopPLC(self):
         if self.PLCStatus == PlcStatus.Started:
             self.LogMessage("PLC stopped")
             self._stopPLC()
-            self.PythonThread.join()
             self.PLCStatus = PlcStatus.Stopped
             self.StatusChange()
-            self.PythonRuntimeCall("stop")
             if self.TraceThread is not None:
                 self.TraceThread.join()
                 self.TraceThread = None
             return True
         return False
 
-    @RunInMain
     def GetPLCstatus(self):
+        try:
+            return self._GetPLCstatus()
+        except EOFError:
+            return (PlcStatus.Disconnected, None)
+
+    @RunInMain
+    def _GetPLCstatus(self):
         return self.PLCStatus, map(self.GetLogCount, xrange(LogLevelsCount))
 
     @RunInMain
@@ -502,31 +545,52 @@ class PLCObject(object):
         os.close(fobj)
         shutil.move(path, newpath)
 
+    def _extra_files_log_path(self):
+        return os.path.join(self.workingdir, "extra_files.txt")
+
+    def RepairPLC(self):
+        self.PurgePLC()
+        MainWorker.quit()
+
+    @RunInMain
+    def PurgePLC(self):
+
+        extra_files_log = self._extra_files_log_path()
+
+        old_PLC_filename = os.path.join(self.workingdir, self.CurrentPLCFilename) \
+            if self.CurrentPLCFilename is not None \
+            else None
+
+        allfiles = [extra_files_log, old_PLC_filename, self._GetMD5FileName()]
+
+        try:
+            allfiles.append(open(extra_files_log, "rt").readlines())
+        except Exception:
+            pass
+
+        for filename in allfiles:
+            try:
+                os.remove(os.path.join(self.workingdir, filename.strip()))
+            except Exception:
+                pass
+
+        self.PLCStatus = PlcStatus.Empty
+
+        # TODO: PLCObject restart
+
     @RunInMain
     def NewPLC(self, md5sum, plc_object, extrafiles):
         if self.PLCStatus in [PlcStatus.Stopped, PlcStatus.Empty, PlcStatus.Broken]:
             NewFileName = md5sum + lib_ext
-            extra_files_log = os.path.join(self.workingdir, "extra_files.txt")
+            extra_files_log = self._extra_files_log_path()
 
-            old_PLC_filename = os.path.join(self.workingdir, self.CurrentPLCFilename) \
-                if self.CurrentPLCFilename is not None \
-                else None
             new_PLC_filename = os.path.join(self.workingdir, NewFileName)
 
             self.UnLoadPLC()
 
-            self.LogMessage("NewPLC (%s)" % md5sum)
-            self.PLCStatus = PlcStatus.Empty
+            self.PurgePLC()
 
-            try:
-                os.remove(old_PLC_filename)
-                for filename in open(extra_files_log, "rt").readlines() + [extra_files_log]:
-                    try:
-                        os.remove(os.path.join(self.workingdir, filename.strip()))
-                    except Exception:
-                        pass
-            except Exception:
-                pass
+            self.LogMessage("NewPLC (%s)" % md5sum)
 
             try:
                 # Create new PLC file
@@ -596,7 +660,7 @@ class PLCObject(object):
     def _TracesSwap(self):
         self.LastSwapTrace = time()
         if self.TraceThread is None and self.PLCStatus == PlcStatus.Started:
-            self.TraceThread = Thread(target=self.TraceThreadProc)
+            self.TraceThread = Thread(target=self.TraceThreadProc, name="PLCTrace")
             self.TraceThread.start()
         self.TraceLock.acquire()
         Traces = self.Traces

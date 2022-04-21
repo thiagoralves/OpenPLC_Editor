@@ -25,6 +25,7 @@
 
 from __future__ import absolute_import
 from __future__ import division
+
 import wx
 import wx.lib.agw.customtreectrl as CT
 
@@ -120,9 +121,9 @@ class CustomTree(CT.CustomTreeCtrl):
             _item, flags = self.HitTest(pos)
 
             bitmap_rect = self.GetBitmapRect()
-            if ((bitmap_rect.InsideXY(pos.x, pos.y) or
+            if ((bitmap_rect.Contains(pos.x, pos.y) or
                  flags & wx.TREE_HITTEST_NOWHERE) and self.AddMenu is not None):
-                wx.CallAfter(self.PopupMenuXY, self.AddMenu, pos.x, pos.y)
+                wx.CallAfter(self.PopupMenu, self.AddMenu, pos.x, pos.y)
         event.Skip()
 
     def OnEraseBackground(self, event):

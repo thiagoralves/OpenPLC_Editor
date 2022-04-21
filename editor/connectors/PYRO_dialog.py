@@ -9,14 +9,13 @@ from itertools import repeat, islice, chain
 
 from connectors.SchemeEditor import SchemeEditor
 
-
 model = [('host', _("Host:")),
          ('port', _("Port:"))]
 
 # (scheme, model, secure)
 models = [("LOCAL", [], False), ("PYRO", model, False), ("PYROS", model, True)]
 
-Schemes = list(zip(*models)[0])
+Schemes = list(zip(*models))[0]
 
 _PerSchemeConf = {sch: (mod, sec) for sch, mod, sec in models}
 
@@ -40,8 +39,9 @@ class PYRO_dialog(SchemeEditor):
             template = "{host}"
             if fields['port']:
                 template += ":{port}"
-            if fields['ID']:
-                template += "#{ID}"
+            if self.EnableIDSelector:
+                if fields['ID']:
+                    template += "#{ID}"
 
             return template.format(**fields)
         return ''

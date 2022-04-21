@@ -24,12 +24,13 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
+# from __future__ import absolute_import
 import wx
 
+from dialogs.BlockPreviewDialog import BlockPreviewDialog
 from graphics.GraphicCommons import LEFTRAIL, RIGHTRAIL
 from graphics.LD_Objects import LD_PowerRail
-from dialogs.BlockPreviewDialog import BlockPreviewDialog
+
 
 # -------------------------------------------------------------------------------
 #                    Set Ladder Power Rail Parameters Dialog
@@ -56,7 +57,7 @@ class LDPowerRailDialog(BlockPreviewDialog):
 
         # Create label for connection type
         type_label = wx.StaticText(self, label=_('Type:'))
-        self.LeftGridSizer.AddWindow(type_label, flag=wx.GROW)
+        self.LeftGridSizer.Add(type_label, flag=wx.GROW)
 
         # Create radio buttons for selecting power rail type
         self.TypeRadioButtons = {}
@@ -67,27 +68,27 @@ class LDPowerRailDialog(BlockPreviewDialog):
                                           style=(wx.RB_GROUP if first else 0))
             radio_button.SetValue(first)
             self.Bind(wx.EVT_RADIOBUTTON, self.OnTypeChanged, radio_button)
-            self.LeftGridSizer.AddWindow(radio_button, flag=wx.GROW)
+            self.LeftGridSizer.Add(radio_button, flag=wx.GROW)
             self.TypeRadioButtons[type] = radio_button
             first = False
 
         # Create label for power rail pin number
         pin_number_label = wx.StaticText(self, label=_('Pin number:'))
-        self.LeftGridSizer.AddWindow(pin_number_label, flag=wx.GROW)
+        self.LeftGridSizer.Add(pin_number_label, flag=wx.GROW)
 
         # Create spin control for defining power rail pin number
         self.PinNumber = wx.SpinCtrl(self, min=1, max=50,
                                      style=wx.SP_ARROW_KEYS)
         self.PinNumber.SetValue(1)
         self.Bind(wx.EVT_SPINCTRL, self.OnPinNumberChanged, self.PinNumber)
-        self.LeftGridSizer.AddWindow(self.PinNumber, flag=wx.GROW)
+        self.LeftGridSizer.Add(self.PinNumber, flag=wx.GROW)
 
         # Add preview panel and associated label to sizers
-        self.RightGridSizer.AddWindow(self.PreviewLabel, flag=wx.GROW)
-        self.RightGridSizer.AddWindow(self.Preview, flag=wx.GROW)
+        self.RightGridSizer.Add(self.PreviewLabel, flag=wx.GROW)
+        self.RightGridSizer.Add(self.Preview, flag=wx.GROW)
 
         # Add buttons sizer to sizers
-        self.MainSizer.AddSizer(
+        self.MainSizer.Add(
             self.ButtonSizer, border=20,
             flag=wx.ALIGN_RIGHT | wx.BOTTOM | wx.LEFT | wx.RIGHT)
         self.Fit()

@@ -23,19 +23,19 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
-from __future__ import print_function
+# from __future__ import absolute_import
+# from __future__ import print_function
 import os
 import sys
-import unittest
 import time
-
-import six
-import pytest
-import wx
-import ddt
+import unittest
 
 import conftest
+import ddt
+# import six
+import pytest
+import wx
+
 import Beremiz
 import PLCOpenEditor
 
@@ -75,12 +75,12 @@ class UserApplicationTest(unittest.TestCase):
             exc_type = self.exc_info[0]
             exc_value = self.exc_info[1]
             exc_traceback = self.exc_info[2]
-            six.reraise(exc_type, exc_value, exc_traceback)
+            raise (exc_type, exc_value, exc_traceback)
 
     def ProcessEvents(self):
         for dummy in range(0, 30):
             self.CheckForErrors()
-            wx.Yield()
+            wx.GetApp().Yield()
             time.sleep(0.01)
 
 
@@ -96,13 +96,14 @@ class BeremizApplicationTest(UserApplicationTest):
         self.app.handle_exception = sys.excepthook
         self.app.PreStart()
         self.ProcessEvents()
+        self.app.AppStart()
         self.app.frame.Show()
         self.ProcessEvents()
         self.app.frame.ShowFullScreen(True)
         self.ProcessEvents()
 
     def FinishApp(self):
-        wx.CallAfter(self.app.frame.Close)
+        wx.CallAfter(self.app.frame.Destroy)
         self.app.MainLoop()
         time.sleep(1)
         self.app = None

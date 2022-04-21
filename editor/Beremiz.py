@@ -23,12 +23,13 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
+# from __future__ import absolute_import
 from __future__ import print_function
+
+import getopt
 import os
 import sys
-import getopt
-from past.builtins import execfile
+import traceback
 
 import wx
 from wx.lib.agw.advancedsplash import AdvancedSplash, AS_NOTIMEOUT, AS_CENTER_ON_SCREEN
@@ -206,7 +207,9 @@ class BeremizIDELauncher(object):
             self.ShowUI()
         except (KeyboardInterrupt, SystemExit):
             raise
-        except Exception:
+        except Exception as e:
+            print(e)
+            print(traceback.print_exc())
             if self.handle_exception is not None:
                 self.handle_exception(*sys.exc_info(), exit=True)
             else:

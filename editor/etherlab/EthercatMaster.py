@@ -10,21 +10,19 @@
 # See COPYING file for copyrights details.
 
 from __future__ import absolute_import
+
 import os
 from copy import deepcopy
 from functools import reduce
-from lxml import etree
 
 import wx
+from lxml import etree
 
-from xmlclass import *
-
-from PLCControler import UndoBuffer, LOCATION_VAR_INPUT, LOCATION_VAR_OUTPUT
 from ConfigTreeNode import ConfigTreeNode
-from dialogs import BrowseValuesLibraryDialog
 from IDEFrame import TITLE, FILEMENU, PROJECTTREE
+from PLCControler import UndoBuffer, LOCATION_VAR_INPUT, LOCATION_VAR_OUTPUT
 from POULibrary import POULibrary
-
+from dialogs import BrowseValuesLibraryDialog
 from etherlab.ConfigEditor import MasterEditor
 from etherlab.EthercatCFileGenerator import _EthercatCFileGenerator
 from etherlab.EthercatSlave import \
@@ -34,6 +32,7 @@ from etherlab.EthercatSlave import \
     TYPECONVERSION, \
     VARCLASSCONVERSION, \
     _CommonSlave
+from xmlclass import *
 
 try:
     from etherlab.EthercatCIA402Slave import _EthercatCIA402SlaveCTN
@@ -90,7 +89,7 @@ class EtherlabLibrary(POULibrary):
         etherlab_ext_file.close()
 
         Gen_etherlabfile_path = os.path.join(buildpath, "etherlab_ext.c")
-        ethelabfile = open(Gen_etherlabfile_path, 'w')
+        ethelabfile = open(Gen_etherlabfile_path, 'w', encoding='utf-8')
         ethelabfile.write(etherlab_ext_code)
         ethelabfile.close()
 
@@ -107,8 +106,8 @@ EtherCATConfigParser = GenerateParserFromXSD(os.path.join(os.path.dirname(__file
 
 def sort_commands(x, y):
     if x["Index"] == y["Index"]:
-        return cmp(x["Subindex"], y["Subindex"])
-    return cmp(x["Index"], y["Index"])
+        return operator.eq(x["Subindex"], y["Subindex"])
+    return operator.eq(x["Index"], y["Index"])
 
 
 cls = EtherCATConfigParser.GetElementClass("Slave", "Config")
@@ -351,7 +350,7 @@ class _EthercatCTN(object):
         for slave in self.Config.getConfig().getSlave():
             if self.FilterSlave(slave, vendor, slave_pos, slave_profile):
                 slaves.append(slave.getInfo().getPhysAddr())
-        slaves.sort()
+        sorted(slaves)
         return slaves
 
     def GetSlave(self, slave_pos):
@@ -366,7 +365,7 @@ class _EthercatCTN(object):
         for slave in self.Config.getConfig().getSlave():
             if self.FilterSlave(slave, vendor, slave_pos, slave_profile):
                 commands.append((slave.getInfo().getPhysAddr(), slave.getStartupCommands()))
-        commands.sort()
+        sorted(commands)
         return reduce(lambda x, y: x + y[1], commands, [])
 
     def AppendStartupCommand(self, command_infos):
@@ -586,7 +585,7 @@ class _EthercatCTN(object):
         if device is not None:
             entries = device.GetEntriesList(limits)
             entries_list = entries.items()
-            entries_list.sort()
+            sorted(entries_list)
             entries = []
             current_index = None
             current_entry = {}
@@ -658,7 +657,7 @@ class _EthercatCTN(object):
                         sync_managers.append(LOCATION_VAR_INPUT)
 
                 entries = device.GetEntriesList().items()
-                entries.sort()
+                sorted(entries)
                 for (index, subindex), entry in entries:
                     var_size = self.GetSizeOfType(entry["Type"])
                     if var_size is not None:
@@ -689,7 +688,7 @@ class _EthercatCTN(object):
     def OnCTNSave(self, from_project_path=None):
         config_filepath = self.ConfigFileName()
 
-        config_xmlfile = open(config_filepath, "w")
+        config_xmlfile = open(config_filepath, "w", encoding='utf-8')
         config_xmlfile.write(etree.tostring(
             self.Config,
             pretty_print=True,
@@ -699,7 +698,7 @@ class _EthercatCTN(object):
 
         process_filepath = self.ProcessVariablesFileName()
 
-        process_xmlfile = open(process_filepath, "w")
+        process_xmlfile = open(process_filepath, "w", encoding='utf-8')
         process_xmlfile.write(etree.tostring(
             self.ProcessVariables,
             pretty_print=True,
@@ -784,7 +783,7 @@ class _EthercatCTN(object):
                 self.FileGenerator.DeclareVariable(
                     slave_pos, loc[1], loc[2], location["IEC_TYPE"], location["DIR"], location["NAME"])
 
-        return [], "", False
+        return [], "", False, []
 
 # -------------------------------------------------------------------------------
 #                      Current Buffering Management Functions

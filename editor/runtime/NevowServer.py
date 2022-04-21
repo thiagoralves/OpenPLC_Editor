@@ -23,18 +23,20 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 
-from __future__ import absolute_import
+# from __future__ import absolute_import
 from __future__ import print_function
+
 import os
 import platform as platform_module
-from zope.interface import implements
+
+from formless import annotate
+from formless import configurable
+from formless import webform
 from nevow import appserver, inevow, tags, loaders, athena, url, rend
 from nevow.page import renderer
 from nevow.static import File
-from formless import annotate
-from formless import webform
-from formless import configurable
 from twisted.internet import reactor
+from zope.interface import implements
 
 import util.paths as paths
 from runtime.loglevels import LogLevels, LogLevelsDict

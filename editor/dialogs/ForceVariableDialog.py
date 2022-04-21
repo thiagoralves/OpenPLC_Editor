@@ -22,9 +22,9 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
-import re
 import datetime
+# from __future__ import absolute_import
+import re
 from builtins import str as text
 
 import wx
@@ -46,6 +46,7 @@ def gen_get_function(f):
             return f(v)
         except Exception:
             return None
+
     return get_function
 
 
@@ -57,6 +58,7 @@ def gen_get_string(delimiter):
         if result is not None:
             return result.group(1)
         return None
+
     return get_string
 
 
@@ -70,9 +72,12 @@ MINUTE = 60 * SECOND
 HOUR = 60 * MINUTE
 DAY = 24 * HOUR
 
-IEC_TIME_MODEL = re.compile(r"(?:(?:T|TIME)#)?(-)?(?:(%(float)s)D_?)?(?:(%(float)s)H_?)?(?:(%(float)s)M(?!S)_?)?(?:(%(float)s)S_?)?(?:(%(float)s)MS)?$" % {"float": r"[0-9]+(?:\.[0-9]+)?"})
+IEC_TIME_MODEL = re.compile(
+    r"(?:(?:T|TIME)#)?(-)?(?:(%(float)s)D_?)?(?:(%(float)s)H_?)?(?:(%(float)s)M(?!S)_?)?(?:(%(float)s)S_?)?(?:(%(float)s)MS)?$" % {
+        "float": r"[0-9]+(?:\.[0-9]+)?"})
 IEC_DATE_MODEL = re.compile(r"(?:(?:D|DATE)#)?([0-9]{4})-([0-9]{2})-([0-9]{2})$")
-IEC_DATETIME_MODEL = re.compile(r"(?:(?:DT|DATE_AND_TIME)#)?([0-9]{4})-([0-9]{2})-([0-9]{2})-([0-9]{2}):([0-9]{2}):([0-9]{2}(?:\.[0-9]+)?)$")
+IEC_DATETIME_MODEL = re.compile(
+    r"(?:(?:DT|DATE_AND_TIME)#)?([0-9]{4})-([0-9]{2})-([0-9]{2})-([0-9]{2}):([0-9]{2}):([0-9]{2}(?:\.[0-9]+)?)$")
 IEC_TIMEOFDAY_MODEL = re.compile(r"(?:(?:TOD|TIME_OF_DAY)#)?([0-9]{2}):([0-9]{2}):([0-9]{2}(?:\.[0-9]+)?)$")
 
 
@@ -119,7 +124,8 @@ def getdatetime(v):
     if result is not None:
         year, month, day, hours, minutes, seconds = result.groups()
         try:
-            date = datetime.datetime(int(year), int(month), int(day), int(hours), int(minutes), int(float(seconds)), int((float(seconds) * SECOND) % SECOND))
+            date = datetime.datetime(int(year), int(month), int(day), int(hours), int(minutes), int(float(seconds)),
+                                     int((float(seconds) * SECOND) % SECOND))
         except ValueError:
             return None
         base_date = datetime.datetime(1970, 1, 1)
@@ -164,6 +170,7 @@ GetTypeValue = {"BOOL": lambda x: {"TRUE": True, "FALSE": False, "0": False, "1"
                 "DT": getdatetime,
                 "TOD": gettimeofday}
 
+
 # -------------------------------------------------------------------------------
 #                            Force Variable Dialog
 # -------------------------------------------------------------------------------
@@ -189,8 +196,8 @@ class ForceVariableDialog(wx.Dialog):
         info_sizer = wx.BoxSizer(wx.VERTICAL)
 
         message_label = wx.StaticText(self, label=_("Forcing Variable Value"))
-        info_sizer.AddWindow(message_label, border=10,
-                             flag=wx.ALIGN_LEFT | wx.GROW | wx.TOP | wx.LEFT | wx.RIGHT)
+        info_sizer.Add(message_label, border=10,
+                       flag=wx.ALIGN_LEFT | wx.GROW | wx.TOP | wx.LEFT | wx.RIGHT)
 
         if GetTypeValue[self.IEC_Type] in [getinteger, getfloat]:
             self.InitCtrlNumber(info_sizer, defaultValue)
@@ -201,8 +208,8 @@ class ForceVariableDialog(wx.Dialog):
         self.GetEnteredValue = self.GetValueDefault
 
         button_sizer = self.CreateButtonSizer(wx.OK | wx.CANCEL | wx.CENTRE)
-        self.Bind(wx.EVT_BUTTON, self.OnOK, button_sizer.GetAffirmativeButton())
-        info_sizer.AddSizer(button_sizer, border=10, flag=wx.ALIGN_RIGHT | wx.ALL)
+        # self.Bind(wx.EVT_BUTTON, self.OnOK, button_sizer.GetAffirmativeButton())
+        info_sizer.Add(button_sizer, border=10, flag=wx.ALIGN_RIGHT | wx.ALL)
 
         self.SetSizer(info_sizer)
         self.Fit()
@@ -216,8 +223,8 @@ class ForceVariableDialog(wx.Dialog):
         """Add simple text control to change variable of any type"""
         self.ValueCtrl = wx.TextCtrl(self)
         self.ValueCtrl.SetValue(defaultValue)
-        info_sizer.AddWindow(self.ValueCtrl, border=10, proportion=1,
-                             flag=wx.ALIGN_LEFT | wx.GROW | wx.TOP | wx.LEFT | wx.RIGHT)
+        info_sizer.Add(self.ValueCtrl, border=10, proportion=1,
+                       flag=wx.ALIGN_LEFT | wx.GROW | wx.TOP | wx.LEFT | wx.RIGHT)
 
     def GetValueDefault(self):
         """
@@ -235,11 +242,11 @@ class ForceVariableDialog(wx.Dialog):
         sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.InitCtrlDefault(sizer, defaultValue)
         self.SpinButtonCtrl = wx.SpinButton(self, style=wx.HORIZONTAL | wx.SP_WRAP)
-        sizer.AddWindow(self.SpinButtonCtrl, border=10,
-                        flag=wx.ALIGN_LEFT | wx.GROW | wx.TOP | wx.LEFT | wx.RIGHT | wx.EXPAND)
+        sizer.Add(self.SpinButtonCtrl, border=10,
+                  flag=wx.ALIGN_LEFT | wx.GROW | wx.TOP | wx.LEFT | wx.RIGHT | wx.EXPAND)
         self.Bind(wx.EVT_SPIN_UP, self.SpinButtonChanged)
         self.Bind(wx.EVT_SPIN_DOWN, self.SpinButtonChanged)
-        info_sizer.AddWindow(sizer, proportion=1, flag=wx.EXPAND)
+        info_sizer.Add(sizer, proportion=1, flag=wx.EXPAND)
 
     def SpinButtonChanged(self, evt):
         """Increment/decrement variable value"""
@@ -257,12 +264,22 @@ class ForceVariableDialog(wx.Dialog):
     def InitCtrlBool(self, info_sizer, defaultValue):
         """Add button to change value of boolean variable"""
         self.ValueCtrl = wx.ToggleButton(self, label=_("Toggle value"))
+        self.ValueCtrl.Bind(wx.EVT_TOGGLEBUTTON, self.onToggle)
         value = GetTypeValue[self.IEC_Type](defaultValue)
         if value is not None:
             self.ValueCtrl.SetValue(value)
 
-        info_sizer.AddWindow(self.ValueCtrl, border=10,
-                             flag=wx.ALIGN_LEFT | wx.GROW | wx.TOP | wx.LEFT | wx.RIGHT | wx.GROW)
+        info_sizer.Add(self.ValueCtrl, border=10,
+                       flag=wx.ALIGN_LEFT | wx.GROW | wx.TOP | wx.LEFT | wx.RIGHT | wx.GROW)
+        self.onToggle(None)
+
+    def onToggle(self, event):
+        if self.ValueCtrl.GetValue() == True:
+            self.ValueCtrl.SetLabel("True")
+            self.ValueCtrl.SetBackgroundColour(wx.GREEN)
+        else:
+            self.ValueCtrl.SetLabel("False")
+            self.ValueCtrl.SetBackgroundColour(wx.LIGHT_GREY)
 
     def OnOK(self, event):
         """

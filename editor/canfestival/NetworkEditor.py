@@ -23,32 +23,33 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from __future__ import absolute_import
-import wx
 
+import wx
 from networkeditortemplate import NetworkEditorTemplate
+
 from editors.ConfTreeNodeEditor import ConfTreeNodeEditor
 
 [
     ID_NETWORKEDITOR,
-] = [wx.NewId() for _init_ctrls in range(1)]
+] = [wx.NewIdRef() for _init_ctrls in range(1)]
 
 [
     ID_NETWORKEDITORCONFNODEMENUADDSLAVE,
     ID_NETWORKEDITORCONFNODEMENUREMOVESLAVE,
     ID_NETWORKEDITORCONFNODEMENUMASTER,
-] = [wx.NewId() for _init_coll_ConfNodeMenu_Items in range(3)]
+] = [wx.NewIdRef() for _init_coll_ConfNodeMenu_Items in range(3)]
 
 [
     ID_NETWORKEDITORMASTERMENUNODEINFOS, ID_NETWORKEDITORMASTERMENUDS301PROFILE,
     ID_NETWORKEDITORMASTERMENUDS302PROFILE, ID_NETWORKEDITORMASTERMENUDSOTHERPROFILE,
     ID_NETWORKEDITORMASTERMENUADD,
-] = [wx.NewId() for _init_coll_MasterMenu_Items in range(5)]
+] = [wx.NewIdRef() for _init_coll_MasterMenu_Items in range(5)]
 
 [
     ID_NETWORKEDITORADDMENUSDOSERVER, ID_NETWORKEDITORADDMENUSDOCLIENT,
     ID_NETWORKEDITORADDMENUPDOTRANSMIT, ID_NETWORKEDITORADDMENUPDORECEIVE,
     ID_NETWORKEDITORADDMENUMAPVARIABLE, ID_NETWORKEDITORADDMENUUSERTYPE,
-] = [wx.NewId() for _init_coll_AddMenu_Items in range(6)]
+] = [wx.NewIdRef() for _init_coll_AddMenu_Items in range(6)]
 
 
 class NetworkEditor(ConfTreeNodeEditor, NetworkEditorTemplate):
@@ -68,7 +69,7 @@ class NetworkEditor(ConfTreeNodeEditor, NetworkEditorTemplate):
         main_sizer.AddGrowableCol(0)
         main_sizer.AddGrowableRow(0)
 
-        main_sizer.AddWindow(self.NetworkNodes, 0, border=5, flag=wx.GROW | wx.ALL)
+        main_sizer.Add(self.NetworkNodes, 0, border=5, flag=wx.GROW | wx.ALL)
 
         self.NetworkEditor.SetSizer(main_sizer)
 
@@ -97,7 +98,7 @@ class NetworkEditor(ConfTreeNodeEditor, NetworkEditorTemplate):
             other_profile_text = _("%s Profile") % profile
             add_menu.append((wx.ITEM_SEPARATOR, None))
             for text, _indexes in self.Manager.GetCurrentSpecificMenu():
-                add_menu.append((wx.ITEM_NORMAL, (text, wx.NewId(), '', self.GetProfileCallBack(text))))
+                add_menu.append((wx.ITEM_NORMAL, (text, wx.NewIdRef(), '', self.GetProfileCallBack(text))))
         else:
             other_profile_text = _('Other Profile')
 

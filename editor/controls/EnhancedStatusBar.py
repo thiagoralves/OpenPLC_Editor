@@ -57,6 +57,7 @@ Latest Revision before Latest Revision before Latest Revision: 31 May 2005, 23.1
 
 from __future__ import absolute_import
 from __future__ import division
+
 import wx
 
 # Horizontal Alignment Constants
@@ -85,7 +86,7 @@ class EnhancedStatusBarItem(object):
 
 class EnhancedStatusBar(wx.StatusBar):
 
-    def __init__(self, parent, id=wx.ID_ANY, style=wx.ST_SIZEGRIP,
+    def __init__(self, parent, id=wx.ID_ANY, style=0,
                  name="EnhancedStatusBar"):
         """Default Class Constructor.
 
@@ -100,7 +101,7 @@ class EnhancedStatusBar(wx.StatusBar):
         self._curPos = 0
         self._parent = parent
 
-        wx.EVT_SIZE(self, self.OnSize)
+        self.Bind(wx.EVT_SIZE, self.OnSize)
         wx.CallAfter(self.OnSize, None)
 
     def OnSize(self, event):

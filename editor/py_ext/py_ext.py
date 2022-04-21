@@ -24,11 +24,13 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
+# from __future__ import absolute_import
+
 import os
+
+import util.paths as paths
 from POULibrary import POULibrary
 from py_ext.PythonFileCTNMixin import PythonFileCTNMixin
-import util.paths as paths
 
 
 class PythonLibrary(POULibrary):
@@ -53,7 +55,7 @@ class PythonLibrary(POULibrary):
             "python_eval_fb_count": python_eval_fb_count}
 
         Gen_Pythonfile_path = os.path.join(buildpath, "py_ext.c")
-        pythonfile = open(Gen_Pythonfile_path, 'w')
+        pythonfile = open(Gen_Pythonfile_path, 'w', encoding='utf-8')
         pythonfile.write(plc_python_code)
         pythonfile.close()
 

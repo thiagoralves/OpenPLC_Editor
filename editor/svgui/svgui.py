@@ -24,17 +24,17 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
+# from __future__ import absolute_import
 import os
 import shutil
 
 import wx
-from svgui.pyjs import translate
 
 import util.paths as paths
 from POULibrary import POULibrary
 from docutil import open_svg
 from py_ext import PythonFileCTNMixin
+from svgui.pyjs import translate
 
 
 class SVGUILibrary(POULibrary):
@@ -100,7 +100,7 @@ class SVGUI(PythonFileCTNMixin):
         svguiserverfile.close()
 
         svguilibpath = os.path.join(self._getBuildPath(), "svguilib.js")
-        svguilibfile = open(svguilibpath, 'w')
+        svguilibfile = open(svguilibpath, 'w', encoding='utf-8')
         fpath = paths.AbsDir(__file__)
         svguilibfile.write(translate(os.path.join(fpath, "pyjs", "lib", "sys.py"), "sys"))
         svguilibfile.write(open(os.path.join(fpath, "pyjs", "lib", "_pyjs.js"), 'r').read())
@@ -114,7 +114,7 @@ class SVGUI(PythonFileCTNMixin):
         res += (("svguilib.js", open(svguilibpath, "rb")),)
 
         runtimefile_path = os.path.join(buildpath, "runtime_%s.py" % location_str)
-        runtimefile = open(runtimefile_path, 'w')
+        runtimefile = open(runtimefile_path, 'w', encoding='utf-8')
         runtimefile.write(svguiservercode % {"svgfile": "gui.svg"})
         runtimefile.write("""
 def _runtime_%(location)s_start():
@@ -128,7 +128,7 @@ def _runtime_%(location)s_stop():
                "jsmodules": str(jsmodules)})
         runtimefile.close()
 
-        res += (("runtime_%s.py" % location_str, open(runtimefile_path, "rb")),)
+        res += (("runtime_%s.py" % location_str, open(runtimefile_path, "rb")),), []
 
         return res
 

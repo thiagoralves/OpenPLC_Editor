@@ -2,7 +2,7 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the Beremiz package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 # Translators:
 # Andrey Skvortsov <andrej.skvortzov@gmail.com>, 2017
 # Tango_Wu <wuyangtang@live.com>, 2017
@@ -10,21 +10,22 @@
 # frank guan <gpfrank@163.com>, 2019
 # ji wang <2485567515@qq.com>, 2019
 # 珂 曾 <15627997@qq.com>, 2019
-# 
-#, fuzzy
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: Beremiz\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-10-03 14:20+0300\n"
-"PO-Revision-Date: 2017-06-13 13:14+0000\n"
+"PO-Revision-Date: 2019-11-04 01:10+0800\n"
 "Last-Translator: 珂 曾 <15627997@qq.com>, 2019\n"
-"Language-Team: Chinese (China) (https://www.transifex.com/beremiz/teams/75746/zh_CN/)\n"
+"Language-Team: Chinese (China) (https://www.transifex.com/beremiz/teams/75746/"
+"zh_CN/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: zh_CN\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.2.3\n"
 
 #: ../util/ExceptionHandler.py:58
 #, python-format
@@ -73,26 +74,26 @@ msgstr "   输出"
 
 #: ../controls/VariablePanel.py:88
 msgid "   Temp"
-msgstr "临时"
+msgstr " 临时"
 
 #: ../etherlab/etherlab.py:301
 #, python-format
 msgid " (rev. %s)"
-msgstr "(版本.%s)"
+msgstr " (版本.%s)"
 
 #: ../etherlab/CommonEtherCATFunction.py:1599
 msgid " Warning..."
-msgstr "警报..."
+msgstr " 警告..."
 
 #: ../dialogs/PouTransitionDialog.py:100 ../dialogs/ProjectDialog.py:72
 #: ../dialogs/PouActionDialog.py:99 ../dialogs/PouDialog.py:157
 #, python-format
 msgid " and %s"
-msgstr "和 %s"
+msgstr " 和 %s"
 
 #: ../ProjectController.py:1236
 msgid " generation failed !\n"
-msgstr "生成失败！\n"
+msgstr " 生成失败！\n"
 
 #: ../plcopen/plcopen.py:1029
 #, python-format
@@ -112,7 +113,7 @@ msgstr "\"%s\" POU不存在！！！"
 #: ../editors/Viewer.py:288
 #, python-format
 msgid "\"%s\" can't use itself!"
-msgstr "\"%s\" 不能自己使用！"
+msgstr "\"%s\" 不能使用自己！"
 
 #: ../IDEFrame.py:1705 ../IDEFrame.py:1724
 #, python-format
@@ -183,14 +184,13 @@ msgstr "\"%s\"不是有效标识符！"
 #: ../IDEFrame.py:2454
 #, python-format
 msgid "\"%s\" is used by one or more POUs. Do you wish to continue?"
-msgstr "\"%s\"被一个或多个程序组织单元使用，你确定要继续吗？ "
+msgstr "\"%s\"被一个或多个程序组织单元使用，你确定要继续吗?"
 
 #: ../dialogs/BlockPreviewDialog.py:213 ../dialogs/PouDialog.py:166
 #: ../editors/Viewer.py:302 ../editors/Viewer.py:359 ../editors/Viewer.py:389
-#: ../editors/Viewer.py:411 ../editors/TextViewer.py:268
-#: ../editors/TextViewer.py:297 ../editors/TextViewer.py:351
-#: ../editors/TextViewer.py:374 ../controls/VariablePanel.py:363
-#: ../IDEFrame.py:1664
+#: ../editors/Viewer.py:411 ../editors/TextViewer.py:268 ../editors/TextViewer.py:297
+#: ../editors/TextViewer.py:351 ../editors/TextViewer.py:374
+#: ../controls/VariablePanel.py:363 ../IDEFrame.py:1664
 #, python-format
 msgid "\"%s\" pou already exists!"
 msgstr "\"%s\"编程组织单元已经存在！"
@@ -222,7 +222,7 @@ msgstr ""
 #: ../PLCGenerator.py:1182
 #, python-brace-format
 msgid "\"{a1}\" function cancelled in \"{a2}\" POU: No input connected"
-msgstr "\"{a1}\" 功能 被取消在 \"{a2}\" POU：没有输入被连接"
+msgstr "\"{a1}\" 功能取消在 \"{a2}\" POU：没有输入连接"
 
 #: ../editors/Viewer.py:292
 #, python-brace-format
@@ -287,15 +287,13 @@ msgstr "%s POUs"
 msgid "%s Profile"
 msgstr "%s Profile"
 
-#: ../plcopen/plcopen.py:1901 ../plcopen/plcopen.py:1908
-#: ../plcopen/plcopen.py:1921 ../plcopen/plcopen.py:1929
-#: ../plcopen/plcopen.py:1939 ../plcopen/plcopen.py:1950
+#: ../plcopen/plcopen.py:1901 ../plcopen/plcopen.py:1908 ../plcopen/plcopen.py:1921
+#: ../plcopen/plcopen.py:1929 ../plcopen/plcopen.py:1939 ../plcopen/plcopen.py:1950
 #, python-format
 msgid "%s body don't have instances!"
 msgstr "%s 未包含实例！"
 
-#: ../plcopen/plcopen.py:1957 ../plcopen/plcopen.py:1964
-#: ../plcopen/plcopen.py:1971
+#: ../plcopen/plcopen.py:1957 ../plcopen/plcopen.py:1964 ../plcopen/plcopen.py:1971
 #, python-format
 msgid "%s body don't have text!"
 msgstr "%s 未包含文本！"
@@ -420,8 +418,8 @@ msgstr "1s"
 #: ../IDEFrame.py:1732
 #, python-format
 msgid ""
-"A POU has an element named \"%s\". This could cause a conflict. Do you wish "
-"to continue?"
+"A POU has an element named \"%s\". This could cause a conflict. Do you wish to "
+"continue?"
 msgstr "一个编程组织单元的成员被命名为\"%s\"。这可能会产生冲突。你希望继续吗？"
 
 #: ../dialogs/SFCStepNameDialog.py:58 ../dialogs/PouTransitionDialog.py:109
@@ -473,7 +471,7 @@ msgstr "动作"
 
 #: ../editors/Viewer.py:656 ../editors/Viewer.py:2429
 msgid "Action Block"
-msgstr "动作控制功能块"
+msgstr "动作块"
 
 #: ../dialogs/PouActionDialog.py:89
 msgid "Action Name"
@@ -551,7 +549,7 @@ msgstr "添加源"
 
 #: ../IDEFrame.py:1930 ../IDEFrame.py:1973
 msgid "Add Transition"
-msgstr "添加跃迁"
+msgstr "添加转换"
 
 #: ../editors/Viewer.py:599
 msgid "Add Wire Segment"
@@ -559,15 +557,15 @@ msgstr "添加布线段"
 
 #: ../editors/SFCViewer.py:447
 msgid "Add a new initial step"
-msgstr "新建一个初始步骤"
+msgstr "新建一个初始步"
 
 #: ../editors/Viewer.py:2790 ../editors/SFCViewer.py:784
 msgid "Add a new jump"
-msgstr "新建一个跳跃"
+msgstr "新建一个跳转"
 
 #: ../editors/SFCViewer.py:469
 msgid "Add a new step"
-msgstr "添加一个新步骤"
+msgstr "添加一个新步"
 
 #: ../features.py:24
 msgid "Add a simple WxGlade based GUI."
@@ -603,7 +601,7 @@ msgstr "添加从站"
 
 #: ../etherlab/ConfigEditor.py:679
 msgid "Add startup service variable"
-msgstr "添加启动服务变量 "
+msgstr "添加启动服务变量"
 
 #: ../editors/ResourceEditor.py:250
 msgid "Add task"
@@ -620,17 +618,17 @@ msgid ""
 "for mapping needed location variables\n"
 "(1 if possible)"
 msgstr ""
-"为了映射必需的位置变量，\n"
+"为了映射必需的定位变量，\n"
 "在默认配置里添加一个未被定义的PDO。\n"
 "（如果可能的话为1）"
 
 #: ../plcopen/iec_std.csv:33
 msgid "Addition"
-msgstr "加法"
+msgstr "附加"
 
 #: ../plcopen/definitions.py:51
 msgid "Additional function blocks"
-msgstr "附加功能类型"
+msgstr "附加功能块"
 
 #: ../editors/Viewer.py:672
 msgid "Adjust Block Size"
@@ -640,12 +638,10 @@ msgstr "调整块尺寸"
 msgid "Alignment"
 msgstr "对准"
 
-#: ../dialogs/BrowseLocationsDialog.py:42
-#: ../dialogs/BrowseLocationsDialog.py:50
-#: ../dialogs/BrowseLocationsDialog.py:151
-#: ../dialogs/BrowseLocationsDialog.py:154 ../etherlab/ConfigEditor.py:65
-#: ../etherlab/ConfigEditor.py:853 ../controls/LogViewer.py:307
-#: ../controls/VariablePanel.py:85
+#: ../dialogs/BrowseLocationsDialog.py:42 ../dialogs/BrowseLocationsDialog.py:50
+#: ../dialogs/BrowseLocationsDialog.py:151 ../dialogs/BrowseLocationsDialog.py:154
+#: ../etherlab/ConfigEditor.py:65 ../etherlab/ConfigEditor.py:853
+#: ../controls/LogViewer.py:307 ../controls/VariablePanel.py:85
 msgid "All"
 msgstr "所有"
 
@@ -669,7 +665,7 @@ msgstr "相同名称的实例已经存在！"
 #: ../etherlab/ConfigEditor.py:975
 #, python-format
 msgid "An variable named \"%s\" already exists!"
-msgstr "变量名\"%s\"已经存在"
+msgstr "变量名\"%s\"已经存在!"
 
 #: ../bacnet/BacnetSlaveEditor.py:935
 msgid "Analog Input Objects"
@@ -681,7 +677,7 @@ msgstr "模拟输出对象"
 
 #: ../bacnet/BacnetSlaveEditor.py:933
 msgid "Analog Value Objects"
-msgstr "模拟价值对象"
+msgstr "模拟量对象"
 
 #: ../dialogs/ConnectionDialog.py:103
 msgid "Apply name modification to all continuations with the same name"
@@ -706,7 +702,7 @@ msgstr "运算"
 #: ../editors/DataTypeEditor.py:60 ../editors/DataTypeEditor.py:649
 #: ../controls/VariablePanel.py:883
 msgid "Array"
-msgstr "阵列的"
+msgstr "数组"
 
 #: ../plcopen/iec_std.csv:39
 msgid "Assignment"
@@ -743,7 +739,7 @@ msgstr "Bacnet 支持"
 #: ../canfestival/config_utils.py:365 ../canfestival/config_utils.py:672
 #, python-format
 msgid "Bad location size : %s"
-msgstr "不好的位置大小：%s"
+msgstr "定位大小错误：%s"
 
 #: ../dialogs/ArrayTypeDialog.py:57 ../editors/DataTypeEditor.py:183
 #: ../editors/DataTypeEditor.py:213 ../editors/DataTypeEditor.py:307
@@ -820,7 +816,7 @@ msgstr "底部"
 
 #: ../runtime/PlcStatus.py:11
 msgid "Broken"
-msgstr "损坏"
+msgstr "断开"
 
 #: ../dialogs/BrowseValuesLibraryDialog.py:40
 #, python-format
@@ -866,7 +862,7 @@ msgstr "C编译失败。\n"
 #: ../targets/toolchain_gcc.py:199
 #, python-format
 msgid "C compilation of %s failed.\n"
-msgstr " %s 的C编译失败。\n"
+msgstr "%s 的C编译失败。\n"
 
 #: ../features.py:22
 msgid "C extension"
@@ -892,14 +888,14 @@ msgstr "CANOpen 支持"
 msgid "CIA402 nodes"
 msgstr "CIA402节点"
 
-#: ../plcopen/plcopen.py:1839 ../plcopen/plcopen.py:1853
-#: ../plcopen/plcopen.py:1878 ../plcopen/plcopen.py:1894
+#: ../plcopen/plcopen.py:1839 ../plcopen/plcopen.py:1853 ../plcopen/plcopen.py:1878
+#: ../plcopen/plcopen.py:1894
 msgid "Can only generate execution order on FBD networks!"
-msgstr "在功能块网络，只能生成执行命令！"
+msgstr "在功能块网络，只能生成执行顺序！"
 
 #: ../controls/VariablePanel.py:290
 msgid "Can only give a location to local or global variables"
-msgstr "只能影响本地或全局变量的位置"
+msgstr "只能影响本地或全局变量的定位"
 
 #: ../PLCOpenEditor.py:318
 #, python-format
@@ -908,7 +904,7 @@ msgstr "这个编程生成文件失败 %s！"
 
 #: ../controls/VariablePanel.py:288
 msgid "Can't give a location to a function block instance"
-msgstr "不能影响功能块实例的位置"
+msgstr "不能确定功能块实例的定位"
 
 #: ../PLCOpenEditor.py:363
 #, python-format
@@ -940,8 +936,7 @@ msgstr "无法打开／解析 VARIABLES.csv！\n"
 #: ../canfestival/config_utils.py:400
 #, python-brace-format
 msgid ""
-"Cannot set bit offset for non bool '{a1}' variable "
-"(ID:{a2},Idx:{a3},sIdx:{a4}))"
+"Cannot set bit offset for non bool '{a1}' variable (ID:{a2},Idx:{a3},sIdx:{a4}))"
 msgstr "不能设置位偏移对于非布尔 '{a1}' 变量 (ID:{a2},Idx:{a3},sIdx:{a4}))"
 
 #: ../ProjectController.py:1842
@@ -993,8 +988,8 @@ msgstr "选择一个二进制文件"
 msgid "Choose a directory to save project"
 msgstr "选择一个目录保存项目"
 
-#: ../canfestival/canfestival.py:171 ../bacnet/bacnet.py:434
-#: ../PLCOpenEditor.py:276 ../PLCOpenEditor.py:308 ../PLCOpenEditor.py:357
+#: ../canfestival/canfestival.py:171 ../bacnet/bacnet.py:434 ../PLCOpenEditor.py:276
+#: ../PLCOpenEditor.py:308 ../PLCOpenEditor.py:357
 msgid "Choose a file"
 msgstr "选择一个文件"
 
@@ -1009,7 +1004,7 @@ msgstr "这对 %s选择一个值："
 
 #: ../Beremiz_service.py:346
 msgid "Choose a working directory "
-msgstr "选择一个工作目录"
+msgstr "选择一个工作目录 "
 
 #: ../etherlab/ConfigEditor.py:1234
 msgid "Choose an XML file"
@@ -1045,7 +1040,7 @@ msgstr "清除"
 
 #: ../controls/LogViewer.py:327
 msgid "Clean log messages"
-msgstr "清楚记录信息"
+msgstr "清除记录信息"
 
 #: ../ProjectController.py:1905
 msgid "Clean project build folder"
@@ -1057,11 +1052,11 @@ msgstr "清除构建目录\n"
 
 #: ../IDEFrame.py:439
 msgid "Clear Errors"
-msgstr "清楚错误"
+msgstr "清除错误"
 
 #: ../editors/Viewer.py:683
 msgid "Clear Execution Order"
-msgstr "清空执行命令"
+msgstr "清空执行顺序"
 
 #: ../dialogs/SearchInProjectDialog.py:107 ../dialogs/FindInPouDialog.py:112
 #: ../etherlab/ConfigEditor.py:1361
@@ -1330,7 +1325,7 @@ msgstr "新建一个动作"
 
 #: ../IDEFrame.py:313
 msgid "Create a new action block"
-msgstr "新建一个动作控制功能块"
+msgstr "新建动作块"
 
 #: ../IDEFrame.py:262 ../IDEFrame.py:292 ../IDEFrame.py:325
 msgid "Create a new block"
@@ -1354,7 +1349,7 @@ msgstr "新建一个连接"
 
 #: ../IDEFrame.py:283 ../IDEFrame.py:334
 msgid "Create a new contact"
-msgstr "新建一个接触点"
+msgstr "新建一个触点"
 
 #: ../IDEFrame.py:316
 msgid "Create a new divergence"
@@ -1366,11 +1361,11 @@ msgstr "新建一个发散或者收敛"
 
 #: ../IDEFrame.py:304
 msgid "Create a new initial step"
-msgstr "新建一个初始步骤"
+msgstr "新建一个初始步"
 
 #: ../IDEFrame.py:319
 msgid "Create a new jump"
-msgstr "新建一个跳跃"
+msgstr "新建一个跳转"
 
 #: ../IDEFrame.py:274 ../IDEFrame.py:331
 msgid "Create a new power rail"
@@ -1378,7 +1373,7 @@ msgstr "新建一个电源导轨"
 
 #: ../IDEFrame.py:277
 msgid "Create a new rung"
-msgstr "新建一个梯级"
+msgstr "新建梯级"
 
 #: ../IDEFrame.py:307
 msgid "Create a new step"
@@ -1386,7 +1381,7 @@ msgstr "新建一个步骤"
 
 #: ../dialogs/PouTransitionDialog.py:45 ../IDEFrame.py:310
 msgid "Create a new transition"
-msgstr "新建一个跃迁"
+msgstr "新建一个转换"
 
 #: ../IDEFrame.py:259 ../IDEFrame.py:289 ../IDEFrame.py:322
 msgid "Create a new variable"
@@ -1402,7 +1397,7 @@ msgstr "关于作者"
 
 #: ../runtime/WampClient.py:400
 msgid "Current status"
-msgstr " 当前状态"
+msgstr "当前状态"
 
 #: ../Beremiz_service.py:437
 msgid "Current working directory :"
@@ -1420,11 +1415,9 @@ msgstr "剪切"
 msgid "Cyclic"
 msgstr "循环"
 
-#: ../plcopen/iec_std.csv:42 ../plcopen/iec_std.csv:44
-#: ../plcopen/iec_std.csv:46 ../plcopen/iec_std.csv:50
-#: ../plcopen/iec_std.csv:52 ../plcopen/iec_std.csv:54
-#: ../plcopen/iec_std.csv:56 ../plcopen/iec_std.csv:58
-#: ../plcopen/iec_std.csv:60
+#: ../plcopen/iec_std.csv:42 ../plcopen/iec_std.csv:44 ../plcopen/iec_std.csv:46
+#: ../plcopen/iec_std.csv:50 ../plcopen/iec_std.csv:52 ../plcopen/iec_std.csv:54
+#: ../plcopen/iec_std.csv:56 ../plcopen/iec_std.csv:58 ../plcopen/iec_std.csv:60
 msgid "DEPRECATED"
 msgstr "DEPRECATED"
 
@@ -1442,7 +1435,7 @@ msgstr "数据类型"
 
 #: ../plcopen/types_enums.py:76
 msgid "Data Types"
-msgstr "数据类型 "
+msgstr "数据类型"
 
 #: ../plcopen/iec_std.csv:16
 msgid "Data type conversion"
@@ -1452,8 +1445,8 @@ msgstr "日期类型转换"
 msgid "Date addition"
 msgstr "日期加法"
 
-#: ../plcopen/iec_std.csv:56 ../plcopen/iec_std.csv:57
-#: ../plcopen/iec_std.csv:58 ../plcopen/iec_std.csv:59
+#: ../plcopen/iec_std.csv:56 ../plcopen/iec_std.csv:57 ../plcopen/iec_std.csv:58
+#: ../plcopen/iec_std.csv:59
 msgid "Date and time subtraction"
 msgstr "日期和时间减法"
 
@@ -1467,7 +1460,7 @@ msgstr "日："
 
 #: ../ProjectController.py:1809
 msgid "Debug does not match PLC - stop/transfert/start to re-enable\n"
-msgstr "调试部匹配PLC  -  停止/传输/启动 来新启用\n"
+msgstr "PLC不匹配  -  执行停止/传输/启动重新启用\n"
 
 #: ../controls/PouInstanceVariablesPanel.py:144
 msgid "Debug instance"
@@ -1503,7 +1496,7 @@ msgstr "默认尺寸"
 #: ../etherlab/EthercatCFileGenerator.py:174
 #, python-format
 msgid "Definition conflict for location \"%s\""
-msgstr "位置“%s”定义冲突"
+msgstr "定位“%s”定义冲突"
 
 #: ../BeremizIDE.py:1001 ../editors/Viewer.py:673 ../IDEFrame.py:2010
 msgid "Delete"
@@ -1661,7 +1654,7 @@ msgstr "编辑项目"
 
 #: ../editors/Viewer.py:3058
 msgid "Edit jump target"
-msgstr "编辑跳跃目标"
+msgstr "编辑跳转目标"
 
 #: ../ProjectController.py:1956
 msgid "Edit raw IEC code added to code generated by PLCGenerator"
@@ -1673,7 +1666,7 @@ msgstr "编辑步骤名称"
 
 #: ../dialogs/SFCTransitionDialog.py:53
 msgid "Edit transition"
-msgstr "编辑跃迁"
+msgstr "编辑转换"
 
 #: ../IDEFrame.py:638
 msgid "Editor ToolBar"
@@ -1705,16 +1698,15 @@ msgstr "使能WAMP连接"
 
 #: ../Beremiz_service.py:354
 msgid "Enter a name "
-msgstr "输入一个名字"
+msgstr "输入一个名字 "
 
 #: ../Beremiz_service.py:339
 msgid "Enter a port number "
-msgstr "输入一个端口号"
+msgstr "输入一个端口号 "
 
 #: ../etherlab/EtherCATManagementEditor.py:627
 msgid ""
-"Enter hex or dec value (if enter dec value, it automatically conversed hex "
-"value)"
+"Enter hex or dec value (if enter dec value, it automatically conversed hex value)"
 msgstr "输入十六进制或十进制数值（如果输入十进制数值，它会自动转换为十六进制数值）"
 
 #: ../etherlab/EtherCATManagementEditor.py:1964
@@ -1732,7 +1724,7 @@ msgstr "通过SDO不能写入口"
 #: ../etherlab/EthercatCFileGenerator.py:569
 #, python-brace-format
 msgid "Entry index 0x{a1:.4x}, subindex 0x{a2:.2x} not mapped for device {a3}"
-msgstr "入口索引 0x{a1:.4x}, 子索引 0x{a2:.2x} 不能映射到设备 {a3} "
+msgstr "入口索引 0x{a1:.4x}, 子索引 0x{a2:.2x} 不能映射到设备 {a3}"
 
 #: ../editors/DataTypeEditor.py:60
 msgid "Enumerated"
@@ -1742,22 +1734,19 @@ msgstr "列举的"
 msgid "Equal to"
 msgstr "等于"
 
-#: ../dialogs/ForceVariableDialog.py:213
-#: ../dialogs/SearchInProjectDialog.py:172 ../dialogs/SFCStepNameDialog.py:64
-#: ../dialogs/DurationEditorDialog.py:125
-#: ../dialogs/DurationEditorDialog.py:172
-#: ../dialogs/PouTransitionDialog.py:113 ../dialogs/BlockPreviewDialog.py:237
-#: ../dialogs/ProjectDialog.py:78 ../dialogs/ArrayTypeDialog.py:114
-#: ../dialogs/PouNameDialog.py:58 ../dialogs/BrowseLocationsDialog.py:228
-#: ../dialogs/BrowseValuesLibraryDialog.py:87
+#: ../dialogs/ForceVariableDialog.py:213 ../dialogs/SearchInProjectDialog.py:172
+#: ../dialogs/SFCStepNameDialog.py:64 ../dialogs/DurationEditorDialog.py:125
+#: ../dialogs/DurationEditorDialog.py:172 ../dialogs/PouTransitionDialog.py:113
+#: ../dialogs/BlockPreviewDialog.py:237 ../dialogs/ProjectDialog.py:78
+#: ../dialogs/ArrayTypeDialog.py:114 ../dialogs/PouNameDialog.py:58
+#: ../dialogs/BrowseLocationsDialog.py:228 ../dialogs/BrowseValuesLibraryDialog.py:87
 #: ../dialogs/PouActionDialog.py:112 ../dialogs/PouDialog.py:178
-#: ../PLCOpenEditor.py:319 ../PLCOpenEditor.py:324
-#: ../etherlab/ConfigEditor.py:458 ../etherlab/ConfigEditor.py:510
-#: ../etherlab/ConfigEditor.py:981 ../etherlab/ConfigEditor.py:1047
-#: ../etherlab/ConfigEditor.py:1246 ../etherlab/ConfigEditor.py:1314
-#: ../etherlab/EthercatMaster.py:463 ../editors/ResourceEditor.py:468
-#: ../editors/Viewer.py:467 ../editors/LDViewer.py:677
-#: ../editors/LDViewer.py:893 ../editors/LDViewer.py:897
+#: ../PLCOpenEditor.py:319 ../PLCOpenEditor.py:324 ../etherlab/ConfigEditor.py:458
+#: ../etherlab/ConfigEditor.py:510 ../etherlab/ConfigEditor.py:981
+#: ../etherlab/ConfigEditor.py:1047 ../etherlab/ConfigEditor.py:1246
+#: ../etherlab/ConfigEditor.py:1314 ../etherlab/EthercatMaster.py:463
+#: ../editors/ResourceEditor.py:468 ../editors/Viewer.py:467
+#: ../editors/LDViewer.py:677 ../editors/LDViewer.py:893 ../editors/LDViewer.py:897
 #: ../editors/DataTypeEditor.py:566 ../editors/DataTypeEditor.py:571
 #: ../editors/DataTypeEditor.py:590 ../editors/DataTypeEditor.py:759
 #: ../editors/DataTypeEditor.py:766 ../editors/TextViewer.py:390
@@ -1769,15 +1758,14 @@ msgstr "等于"
 #: ../controls/DebugVariablePanel/DebugVariableGraphicViewer.py:227
 #: ../controls/VariablePanel.py:430 ../controls/VariablePanel.py:784
 #: ../util/ExceptionHandler.py:70 ../IDEFrame.py:1049 ../IDEFrame.py:1667
-#: ../IDEFrame.py:1708 ../IDEFrame.py:1713 ../IDEFrame.py:1727
-#: ../IDEFrame.py:1732 ../Beremiz_service.py:234
+#: ../IDEFrame.py:1708 ../IDEFrame.py:1713 ../IDEFrame.py:1727 ../IDEFrame.py:1732
+#: ../Beremiz_service.py:234
 msgid "Error"
 msgstr "错误"
 
 #: ../ProjectController.py:848
 msgid ""
-"Error : At least one configuration and one resource must be declared in PLC "
-"!\n"
+"Error : At least one configuration and one resource must be declared in PLC !\n"
 msgstr "错误：在PLC中，必须申明至少一个配置和一个资源！\n"
 
 #: ../ProjectController.py:838
@@ -1809,8 +1797,7 @@ msgstr "错误：BACnet 服务器 '{a1}.x: {a2}'包含多重对象ID的对象。
 #: ../bacnet/bacnet.py:573
 #, python-brace-format
 msgid ""
-"Error: BACnet server '{a1}.x:{a2}' contains objects with duplicate object "
-"names.\n"
+"Error: BACnet server '{a1}.x:{a2}' contains objects with duplicate object names.\n"
 msgstr "错误：BACnet 服务器 '{a1}.x: {a2}'包含多重对象名称的对象。\n"
 
 #: ../canfestival/canfestival.py:179 ../bacnet/bacnet.py:444
@@ -1819,9 +1806,7 @@ msgstr "错误：导出从站失败\n"
 
 #: ../modbus/modbus.py:601
 #, python-brace-format
-msgid ""
-"Error: Modbus/IP Servers %{a1}.x and %{a2}.x use the same port number "
-"{a3}.\n"
+msgid "Error: Modbus/IP Servers %{a1}.x and %{a2}.x use the same port number {a3}.\n"
 msgstr "错误: Modbus/IP 服务器 %{a1}.x 和 %{a2}.x 使用相同的端口号 {a3}.\n"
 
 #: ../canfestival/canfestival.py:388
@@ -1859,7 +1844,7 @@ msgstr "执行控制："
 
 #: ../dialogs/FBDVariableDialog.py:85 ../dialogs/FBDBlockDialog.py:111
 msgid "Execution Order:"
-msgstr "执行命令："
+msgstr "执行顺序："
 
 #: ../features.py:25
 msgid "Experimental web based HMI"
@@ -1899,12 +1884,12 @@ msgstr "外部的"
 
 #: ../ProjectController.py:866
 msgid "Extracting Located Variables...\n"
-msgstr "正在提取位置变量......\n"
+msgstr "正在提取定位变量......\n"
 
 #: ../dialogs/PouTransitionDialog.py:40 ../dialogs/PouActionDialog.py:36
 #: ../dialogs/PouDialog.py:128 ../controls/ProjectPropertiesPanel.py:161
 msgid "FBD"
-msgstr "功能块图"
+msgstr "功能块图-FBD"
 
 #: ../ProjectController.py:1855
 msgid "Failed : Must build before transfer.\n"
@@ -1957,7 +1942,7 @@ msgstr "查找前一个"
 
 #: ../plcopen/iec_std.csv:90
 msgid "Find position"
-msgstr "查找位置"
+msgstr "查找定位"
 
 #: ../dialogs/FindInPouDialog.py:58
 msgid "Find:"
@@ -2001,10 +1986,9 @@ msgstr "功能"
 
 #: ../IDEFrame.py:357
 msgid "Function &Block"
-msgstr "功能 &块"
+msgstr "功能&块"
 
-#: ../dialogs/SearchInProjectDialog.py:41 ../IDEFrame.py:1796
-#: ../IDEFrame.py:1989
+#: ../dialogs/SearchInProjectDialog.py:41 ../IDEFrame.py:1796 ../IDEFrame.py:1989
 msgid "Function Block"
 msgstr "功能块"
 
@@ -2039,7 +2023,7 @@ msgstr "生成软PLC IEC-61131 ST/IL/SFC 代码......\n"
 
 #: ../controls/VariablePanel.py:88
 msgid "Global"
-msgstr "全球的"
+msgstr "全局"
 
 #: ../controls/DebugVariablePanel/DebugVariablePanel.py:242
 msgid "Go to current value"
@@ -2071,7 +2055,7 @@ msgstr "高度："
 
 #: ../editors/FileManagementPanel.py:88
 msgid "Home Directory:"
-msgstr "主目录"
+msgstr "主目录:"
 
 #: ../controls/ProjectPropertiesPanel.py:168
 msgid "Horizontal:"
@@ -2088,7 +2072,7 @@ msgstr "ID"
 #: ../dialogs/PouTransitionDialog.py:40 ../dialogs/PouActionDialog.py:36
 #: ../dialogs/PouDialog.py:128
 msgid "IL"
-msgstr "指令表编程语言"
+msgstr "指令表-IL"
 
 #: ../dialogs/DiscoveryDialog.py:91
 msgid "IP"
@@ -2127,17 +2111,17 @@ msgstr "不活动"
 #: ../controls/VariablePanel.py:299
 #, python-brace-format
 msgid "Incompatible data types between \"{a1}\" and \"{a2}\""
-msgstr " \"{a1}\" 和 \"{a2}\" 数据类型不相容"
+msgstr "\"{a1}\" 和 \"{a2}\" 数据类型不相容"
 
 #: ../controls/VariablePanel.py:305
 #, python-format
 msgid "Incompatible size of data between \"%s\" and \"BOOL\""
-msgstr " \"%s\" 和  \"BOOL\" 数据尺寸不相容"
+msgstr "\"%s\" 和  \"BOOL\" 数据尺寸不相容"
 
 #: ../controls/VariablePanel.py:309
 #, python-brace-format
 msgid "Incompatible size of data between \"{a1}\" and \"{a2}\""
-msgstr " \"{a1}\" 和 \"{a2}\" 数据尺寸不相容"
+msgstr "\"{a1}\" 和 \"{a2}\" 数据尺寸不相容"
 
 #: ../etherlab/ConfigEditor.py:48 ../etherlab/ConfigEditor.py:465
 msgid "Index"
@@ -2297,12 +2281,12 @@ msgstr "跳转"
 #: ../dialogs/PouTransitionDialog.py:40 ../dialogs/PouActionDialog.py:36
 #: ../dialogs/PouDialog.py:128 ../controls/ProjectPropertiesPanel.py:161
 msgid "LD"
-msgstr "梯级图"
+msgstr "梯形图-LD"
 
 #: ../editors/LDViewer.py:221 ../editors/LDViewer.py:240
 #, python-format
 msgid "Ladder element with id %d is on more than one rung."
-msgstr "有id的梯形元素 %d  不止在一个梯级上。"
+msgstr "梯形元素id=%d超过一个梯级."
 
 #: ../dialogs/PouTransitionDialog.py:92 ../dialogs/PouActionDialog.py:91
 #: ../dialogs/PouDialog.py:148
@@ -2380,7 +2364,7 @@ msgstr "本地服务探索失败！\n"
 
 #: ../controls/VariablePanel.py:62
 msgid "Location"
-msgstr "位置"
+msgstr "定位"
 
 #: ../dialogs/BrowseLocationsDialog.py:78
 msgid "Locations available:"
@@ -2413,7 +2397,7 @@ msgstr ""
 
 #: ../features.py:18
 msgid "Map located variables over CANopen"
-msgstr "通过CANopen映射位置变量"
+msgstr "通过CANopen映射定位变量"
 
 #: ../features.py:20
 msgid "Map located variables over EtherCAT"
@@ -2434,7 +2418,7 @@ msgstr "主机状态"
 #: ../ConfigTreeNode.py:544
 #, python-brace-format
 msgid "Max count ({a1}) reached for this confnode of type {a2} "
-msgstr "最大计数 ({a1}) 达到了对于类型 {a2} 这个confnode"
+msgstr "最大计数 ({a1}) 达到了对于类型 {a2} 这个confnode "
 
 #: ../etherlab/etherlab.py:173
 msgid "Max entries by PDO"
@@ -2511,7 +2495,7 @@ msgstr "改动："
 #: ../etherlab/ConfigEditor.py:1313
 #, python-format
 msgid "Module %s must be an integer!"
-msgstr "模块%s必需为一个整形数值"
+msgstr "模块%s必需为一个整形数值!"
 
 #: ../etherlab/ConfigEditor.py:1376
 msgid "Modules Library"
@@ -2524,8 +2508,8 @@ msgstr "模块库："
 #: ../PLCGenerator.py:795 ../PLCGenerator.py:1318
 #, python-brace-format
 msgid ""
-"More than one connector found corresponding to \"{a1}\" continuation in "
-"\"{a2}\" POU"
+"More than one connector found corresponding to \"{a1}\" continuation in \"{a2}\" "
+"POU"
 msgstr "多个连接器发现对应在 \"{a2}\" POU中 \"{a1}\" 延续"
 
 #: ../dialogs/ActionBlockDialog.py:146
@@ -2616,7 +2600,7 @@ msgstr "我的计算机："
 
 #: ../dialogs/DiscoveryDialog.py:89
 msgid "NAME"
-msgstr "NAME"
+msgstr "名称"
 
 #: ../etherlab/EtherCATManagementEditor.py:37 ../etherlab/ConfigEditor.py:48
 #: ../etherlab/ConfigEditor.py:343 ../etherlab/ConfigEditor.py:1167
@@ -2697,7 +2681,7 @@ msgid ""
 "Coming soon."
 msgstr ""
 "没有文件可用。\n"
-"稍候"
+"稍候."
 
 #: ../PLCGenerator.py:841
 #, python-format
@@ -2717,8 +2701,7 @@ msgstr "对%s没有更多空闲的有效PDO索引！"
 #: ../PLCGenerator.py:1281
 #, python-brace-format
 msgid ""
-"No output {a1} variable found in block {a2} in POU {a3}. Connection must be "
-"broken"
+"No output {a1} variable found in block {a2} in POU {a3}. Connection must be broken"
 msgstr "无输出{a1}变量发现在 {a3} POU的 {a2} 块。 连接必须断开"
 
 #: ../controls/SearchResultPanel.py:175
@@ -2834,9 +2817,9 @@ msgstr "打开 Inkscape"
 
 #: ../version.py:88
 msgid ""
-"Open Source framework for automation, implemented IEC 61131 IDE with "
-"constantly growing set of extensions and flexible PLC runtime."
-msgstr "开源自动化框架，实现不断增长的扩展集和弹性的PLC运行时的IEC 61131-3 IDE"
+"Open Source framework for automation, implemented IEC 61131 IDE with constantly "
+"growing set of extensions and flexible PLC runtime."
+msgstr "开源自动化框架，实现不断增长的扩展集和弹性的PLC运行时的IEC 61131-3 IDE."
 
 #: ../ProjectController.py:1962
 msgid "Open a file explorer to manage project files"
@@ -2872,9 +2855,8 @@ msgstr "输出"
 
 #: ../etherlab/EthercatCFileGenerator.py:170
 #, python-brace-format
-msgid ""
-"Output variables can't be defined with different locations ({a1} and {a2})"
-msgstr "输出变量不能定义在不同的位置({a1} and {a2})"
+msgid "Output variables can't be defined with different locations ({a1} and {a2})"
+msgstr "输出变量不能定义在不同的定位({a1} and {a2})"
 
 #: ../canfestival/SlaveEditor.py:67 ../canfestival/NetworkEditor.py:91
 msgid "PDO Receive"
@@ -2915,7 +2897,7 @@ msgstr "PLC 没有被启动。"
 #: ../etherlab/EtherCATManagementEditor.py:2160
 #: ../etherlab/CommonEtherCATFunction.py:1589
 msgid "PLC not connected!"
-msgstr "PLC未连接"
+msgstr "PLC未连接!"
 
 #: ../PLCOpenEditor.py:180 ../PLCOpenEditor.py:293
 #, python-brace-format
@@ -2942,7 +2924,7 @@ msgid ""
 msgstr ""
 "PLCOpenEditor是Beremiz项目的一部分。\n"
 "\n"
-"Beremiz是一个"
+"Beremiz是一个 "
 
 #: ../dialogs/DiscoveryDialog.py:92
 msgid "PORT"
@@ -3011,8 +2993,7 @@ msgstr "插脚数："
 msgid "Platform"
 msgstr "平台"
 
-#: ../editors/Viewer.py:2791 ../editors/Viewer.py:3059
-#: ../editors/SFCViewer.py:785
+#: ../editors/Viewer.py:2791 ../editors/Viewer.py:3059 ../editors/SFCViewer.py:785
 msgid "Please choose a target"
 msgstr "请选择一个目标"
 
@@ -3113,8 +3094,7 @@ msgstr "产品版本"
 msgid "Product Version (required):"
 msgstr "产品版本（必填）："
 
-#: ../dialogs/SearchInProjectDialog.py:42 ../IDEFrame.py:1795
-#: ../IDEFrame.py:1992
+#: ../dialogs/SearchInProjectDialog.py:42 ../IDEFrame.py:1795 ../IDEFrame.py:1992
 msgid "Program"
 msgstr "程序"
 
@@ -3342,7 +3322,7 @@ msgstr "重置"
 
 #: ../editors/Viewer.py:684
 msgid "Reset Execution Order"
-msgstr "重置执行命令"
+msgstr "重置执行顺序"
 
 #: ../IDEFrame.py:459
 msgid "Reset Perspective"
@@ -3410,7 +3390,7 @@ msgstr "SDO服务器"
 
 #: ../dialogs/PouDialog.py:128 ../controls/ProjectPropertiesPanel.py:161
 msgid "SFC"
-msgstr "顺序功能图"
+msgstr "顺序功能图-SFC"
 
 #: ../PLCGenerator.py:1482
 #, python-brace-format
@@ -3425,7 +3405,7 @@ msgstr "在POU \"%s\" 中 SFC 移动必须被连接。"
 #: ../dialogs/PouTransitionDialog.py:40 ../dialogs/PouActionDialog.py:36
 #: ../dialogs/PouDialog.py:128
 msgid "ST"
-msgstr "结构化文本"
+msgstr "结构化文本-ST"
 
 #: ../PLCOpenEditor.py:308
 msgid "ST files (*.st)|*.st|All files|*.*"
@@ -3455,7 +3435,7 @@ msgstr "另存为"
 #: ../etherlab/EtherCATManagementEditor.py:941
 #: ../etherlab/EtherCATManagementEditor.py:1289
 msgid "Save as..."
-msgstr "另存为"
+msgstr "另存为..."
 
 #: ../ProjectController.py:546
 msgid "Save path is the same as path of a project! \n"
@@ -3474,8 +3454,7 @@ msgstr "范围"
 msgid "Search"
 msgstr "搜索"
 
-#: ../dialogs/SearchInProjectDialog.py:49 ../IDEFrame.py:387
-#: ../IDEFrame.py:431
+#: ../dialogs/SearchInProjectDialog.py:49 ../IDEFrame.py:387 ../IDEFrame.py:431
 msgid "Search in Project"
 msgstr "在项目中搜索"
 
@@ -3596,8 +3575,7 @@ msgstr "源代码没有变化，不需要构建.\n"
 #: ../PLCGenerator.py:404
 #, python-brace-format
 msgid ""
-"Source signal has to be defined for single task '{a1}' in resource "
-"'{a2}.{a3}'."
+"Source signal has to be defined for single task '{a1}' in resource '{a2}.{a3}'."
 msgstr "源信号必须被定义对于一个单独任务 '{a1}' 在资源 '{a2}.{a3}'."
 
 #: ../plcopen/iec_std.csv:23
@@ -3703,7 +3681,7 @@ msgstr "正切"
 
 #: ../editors/ResourceEditor.py:94
 msgid "Task"
-msgstr "任务 "
+msgstr "任务"
 
 #: ../editors/ResourceEditor.py:246
 msgid "Tasks:"
@@ -3711,7 +3689,7 @@ msgstr "任务："
 
 #: ../controls/VariablePanel.py:88
 msgid "Temp"
-msgstr "缓冲"
+msgstr "临时"
 
 #: ../version.py:37
 msgid ""
@@ -3766,8 +3744,7 @@ msgstr "文件已被改动。你希望保存吗？"
 #: ../IDEFrame.py:1708 ../IDEFrame.py:1727
 #, python-format
 msgid ""
-"There is a POU named \"%s\". This could cause a conflict. Do you wish to "
-"continue?"
+"There is a POU named \"%s\". This could cause a conflict. Do you wish to continue?"
 msgstr "一个编程组织单元被命名为\"%s\"。这可能会产生冲突。你希望继续吗？"
 
 #: ../IDEFrame.py:1146
@@ -3776,7 +3753,7 @@ msgid ""
 "Perhaps your current printer is not set correctly?"
 msgstr ""
 "打印出现问题。\n"
-"请检查你当前打印机设置。"
+"请检查你当前打印机设置?"
 
 #: ../editors/LDViewer.py:902
 msgid "This option isn't available yet!"
@@ -3815,8 +3792,8 @@ msgstr "时间减法"
 msgid "Time-of-day addition"
 msgstr "日期时间加法"
 
-#: ../plcopen/iec_std.csv:52 ../plcopen/iec_std.csv:53
-#: ../plcopen/iec_std.csv:54 ../plcopen/iec_std.csv:55
+#: ../plcopen/iec_std.csv:52 ../plcopen/iec_std.csv:53 ../plcopen/iec_std.csv:54
+#: ../plcopen/iec_std.csv:55
 msgid "Time-of-day subtraction"
 msgstr "日期时间减法"
 
@@ -3826,7 +3803,7 @@ msgstr "切换全屏模式"
 
 #: ../dialogs/ForceVariableDialog.py:188
 msgid "Toggle value"
-msgstr "触发值"
+msgstr "反相"
 
 #: ../editors/Viewer.py:587
 msgid "Top"
@@ -3848,16 +3825,15 @@ msgstr "传输成功\n"
 msgid "Transfer failed\n"
 msgstr "传输失败\n"
 
-#: ../editors/Viewer.py:655 ../editors/Viewer.py:2428
-#: ../editors/Viewer.py:2455
+#: ../editors/Viewer.py:655 ../editors/Viewer.py:2428 ../editors/Viewer.py:2455
 msgid "Transition"
 msgstr "转换"
 
 #: ../PLCGenerator.py:1613
 #, python-format
 msgid ""
-"Transition \"%s\" body must contain an output variable or coil referring to "
-"its name"
+"Transition \"%s\" body must contain an output variable or coil referring to its "
+"name"
 msgstr "转换 \"%s\" 体必须包含一个输出变量或圈指的是它的名字"
 
 #: ../dialogs/PouTransitionDialog.py:90
@@ -3876,8 +3852,7 @@ msgstr "转换的内容 \"{a1}\" 没有连接到下一步在 \"{a2}\" POU"
 #: ../PLCGenerator.py:1695
 #, python-brace-format
 msgid ""
-"Transition with content \"{a1}\" not connected to a previous step in "
-"\"{a2}\" POU"
+"Transition with content \"{a1}\" not connected to a previous step in \"{a2}\" POU"
 msgstr "转换的内容 \"{a1}\" 没有连接到前一步在 \"{a2}\" POU"
 
 #: ../plcopen/plcopen.py:1526
@@ -3914,7 +3889,7 @@ msgstr "类型和派生"
 #: ../canfestival/config_utils.py:359 ../canfestival/config_utils.py:666
 #, python-format
 msgid "Type conflict for location \"%s\""
-msgstr "位置的冲突类型 \"%s\""
+msgstr "定位的冲突类型 \"%s\""
 
 #: ../plcopen/iec_std.csv:16
 msgid "Type conversion"
@@ -3927,7 +3902,7 @@ msgstr "类型信息："
 #: ../etherlab/EthercatCFileGenerator.py:76
 #, python-format
 msgid "Type of location \"%s\" not yet supported!"
-msgstr "位置\"%s\"类型不再支持！"
+msgstr "定位\"%s\"类型不再支持！"
 
 #: ../dialogs/BrowseLocationsDialog.py:52
 msgid "Type strict"
@@ -3983,7 +3958,7 @@ msgstr "未定义块类型 \"{a1}\" 在 \"{a2}\" POU中"
 #: ../PLCGenerator.py:261
 #, python-format
 msgid "Undefined pou type \"%s\""
-msgstr "未定义的pou类型"
+msgstr "未定义的pou类型“%s”"
 
 #: ../IDEFrame.py:368 ../IDEFrame.py:424
 msgid "Undo"
@@ -4023,7 +3998,7 @@ msgstr "更新"
 
 #: ../runtime/WampClient.py:380
 msgid "Upload:"
-msgstr "上传"
+msgstr "上传:"
 
 #: ../editors/DataTypeEditor.py:646 ../controls/VariablePanel.py:852
 msgid "User Data Types"
@@ -4059,7 +4034,7 @@ msgstr "变量Drop"
 #: ../etherlab/ConfigEditor.py:70
 #, python-format
 msgid "Variable Index: #x%4.4X"
-msgstr "变量索引：#x%4.4X "
+msgstr "变量索引：#x%4.4X"
 
 #: ../dialogs/FBDVariableDialog.py:58
 msgid "Variable Properties"
@@ -4123,7 +4098,7 @@ msgstr "WAMP 客户端连接到 :"
 
 #: ../Beremiz_service.py:628
 msgid "WAMP client startup failed. "
-msgstr "WAMP客户端启动失败。"
+msgstr "WAMP客户端启动失败. "
 
 #: ../runtime/WampClient.py:206
 msgid "WAMP configuration error : missing '{}' parameter."
@@ -4183,12 +4158,12 @@ msgstr "警告"
 #: ../etherlab/EthercatCFileGenerator.py:405
 #: ../etherlab/EthercatCFileGenerator.py:571
 msgid "Warning: "
-msgstr "警告"
+msgstr "警告: "
 
 #: ../wxglade_hmi/wxglade_hmi.py:166
 msgid ""
-"Warning: WxGlade HMI has no object with name identical to extension name, "
-"and no python code is provided in start section to create object.\n"
+"Warning: WxGlade HMI has no object with name identical to extension name, and no "
+"python code is provided in start section to create object.\n"
 msgstr ""
 
 #: ../ProjectController.py:756
@@ -4219,13 +4194,13 @@ msgstr "出自"
 #: ../etherlab/EthercatCFileGenerator.py:499
 #, python-format
 msgid "Wrong direction for location \"%s\"!"
-msgstr "位置“%s”有错误定向！"
+msgstr "定位“%s”方向错误！"
 
 #: ../etherlab/EthercatCFileGenerator.py:400
 #: ../etherlab/EthercatCFileGenerator.py:487
 #, python-format
 msgid "Wrong type for location \"%s\"!"
-msgstr "位置“%s”有错误类型！"
+msgstr "定位“%s”类型错误！"
 
 #: ../features.py:24
 msgid "WxGlade GUI"
@@ -4241,7 +4216,7 @@ msgstr "您只能输入十六进制或十进制值"
 
 #: ../etherlab/EtherCATManagementEditor.py:1999
 msgid "You can't modify it. This register is read-only or it's not connected."
-msgstr "您不能定义它，他是只读或者并未连接"
+msgstr "不能修改，寄存器只读或未连接."
 
 #: ../etherlab/EtherCATManagementEditor.py:648
 msgid "You cannot SDO download this state"
@@ -4277,8 +4252,7 @@ msgstr ""
 
 #: ../editors/LDViewer.py:897
 msgid ""
-"You must select the block or group of blocks around which a branch should be"
-" added!"
+"You must select the block or group of blocks around which a branch should be added!"
 msgstr "你必须选择一个块或块的组围绕着需被添加的分支！"
 
 #: ../editors/LDViewer.py:677
@@ -4375,7 +4349,7 @@ msgstr "更新"
 
 #: ../Beremiz.py:167
 msgid "update info unavailable."
-msgstr "更新信息不存在"
+msgstr "更新信息不存在."
 
 #: ../PLCOpenEditor.py:315
 #, python-format
@@ -4473,7 +4447,7 @@ msgid "CFLAGS"
 msgstr "CFLAGS"
 
 msgid "Linker"
-msgstr "链接 "
+msgstr "链接"
 
 msgid "LDFLAGS"
 msgstr "LDFLAGS"
@@ -4491,7 +4465,7 @@ msgid "SlaveID"
 msgstr "从站ID"
 
 msgid "Nr_of_Channels"
-msgstr "通道号"
+msgstr "通道数量"
 
 msgid "Start_Address"
 msgstr "起始地址"
@@ -4569,7 +4543,7 @@ msgid "WriteTo"
 msgstr "写入"
 
 msgid "BaseParams"
-msgstr "基本参照 "
+msgstr "基本参数"
 
 msgid "IEC_Channel"
 msgstr "IEC_频道"
@@ -4587,7 +4561,7 @@ msgid "Libraries"
 msgstr "库"
 
 msgid "URI_location"
-msgstr "URI_位置"
+msgstr "URI_定位"
 
 msgid "Disable_Extensions"
 msgstr "禁止_扩展"
@@ -4633,9 +4607,10 @@ msgid "Datetime, current or relative to PDT"
 msgstr "日期时间，当前的或者PDT相对的"
 
 msgid ""
-"The real time clock has many uses including time stamping, setting dates and"
-" times of day in batch reports, in alarm messages and so on."
-msgstr "实时时钟大量用于包含时间戳，设置在批处理报告，报警信息等中的日期和日中的时间，"
+"The real time clock has many uses including time stamping, setting dates and times "
+"of day in batch reports, in alarm messages and so on."
+msgstr ""
+"实时时钟大量用于包含时间戳，设置在批处理报告，报警信息等中的日期和日中的时间."
 
 msgid "1 = integrate, 0 = hold"
 msgstr "1 = 积分， 0 = 保持"
@@ -4658,9 +4633,8 @@ msgstr "NOT R1"
 msgid "Integrated output"
 msgstr "积分输出"
 
-msgid ""
-"The integral function block integrates the value of input XIN over time."
-msgstr "积分功能块集成了一段时间输入XIN的值"
+msgid "The integral function block integrates the value of input XIN over time."
+msgstr "积分功能块累积一段时间输入XIN的值."
 
 msgid "0 = reset"
 msgstr "0 = 复位"
@@ -4672,8 +4646,8 @@ msgid "Differentiated output"
 msgstr "微分输出"
 
 msgid ""
-"The derivative function block produces an output XOUT proportional to the "
-"rate of change of the input XIN."
+"The derivative function block produces an output XOUT proportional to the rate of "
+"change of the input XIN."
 msgstr "微分功能块处理一个输出XOUT 比例于输入XIN的变化率."
 
 msgid "0 - manual , 1 - automatic"
@@ -4707,8 +4681,8 @@ msgid "FB for derivative term"
 msgstr "微分项的FB"
 
 msgid ""
-"The PID (proportional, Integral, Derivative) function block provides the "
-"classical three term controller for closed loop control."
+"The PID (proportional, Integral, Derivative) function block provides the classical "
+"three term controller for closed loop control."
 msgstr "PID（比例，积分，微分）功能块提供经典的三项控制器，实现闭环控制。"
 
 msgid "0 - track X0, 1 - ramp to/track X1"
@@ -4724,22 +4698,22 @@ msgid "Elapsed time of ramp"
 msgstr "斜坡经过时间"
 
 msgid "The RAMP function block is modelled on example given in the standard."
-msgstr "（RAMP）斜坡功能块是根据标准中给出的示例建模的。"
+msgstr "（RAMP）斜率功能块是根据标准中给出的示例建模的。"
 
 msgid ""
-"The hysteresis function block provides a hysteresis boolean output driven by"
-" the difference of two floating point (REAL) inputs XIN1 and XIN2."
+"The hysteresis function block provides a hysteresis boolean output driven by the "
+"difference of two floating point (REAL) inputs XIN1 and XIN2."
 msgstr "迟滞功能块提供一个两个差异的浮点（实数）输入XIN1和XIN2驱动的迟滞布尔输出。"
 
 msgid "The SR bistable is a latch where the Set dominates."
-msgstr "SR双稳态是一个置位有限锁存器"
+msgstr "SR双稳态是一个置位有限锁存器."
 
 msgid "The RS bistable is a latch where the Reset dominates."
-msgstr "RS双稳态是一个复位优先锁存器"
+msgstr "RS双稳态是一个复位优先锁存器."
 
 msgid ""
-"The semaphore provides a mechanism to allow software elements mutually "
-"exclusive access to certain resources."
+"The semaphore provides a mechanism to allow software elements mutually exclusive "
+"access to certain resources."
 msgstr "信号量提供一种机制，允许软件元素互斥排他的访问某一资源。"
 
 msgid "The output produces a single pulse when a rising edge is detected."
@@ -4749,18 +4723,17 @@ msgid "The output produces a single pulse when a falling edge is detected."
 msgstr "当检测到下降沿时，输出产生一个单独的脉冲。"
 
 msgid ""
-"The up-counter can be used to signal when a count has reached a maximum "
-"value."
+"The up-counter can be used to signal when a count has reached a maximum value."
 msgstr "当计数值达到最大值时，加计数器能被用来产生信号。"
 
 msgid ""
-"The down-counter can be used to signal when a count has reached zero, on "
-"counting down from a preset value."
+"The down-counter can be used to signal when a count has reached zero, on counting "
+"down from a preset value."
 msgstr "当计数值从一个预设值减到0，减计数器能被用来产生信号。"
 
 msgid ""
-"The up-down counter has two inputs CU and CD. It can be used to both count "
-"up on one input and down on the other."
+"The up-down counter has two inputs CU and CD. It can be used to both count up on "
+"one input and down on the other."
 msgstr "加减计数器有2个输入CU和CD，能被用来同时在一个输入上加计数在另一个上减计数。"
 
 msgid "first input parameter"
@@ -4779,16 +4752,17 @@ msgid "internal state: 0-reset, 1-counting, 2-set"
 msgstr "内部状态：0-复位， 1-计数，2-设置"
 
 msgid ""
-"The pulse timer can be used to generate output pulses of a given time "
-"duration."
-msgstr "脉冲定时器能够被用来产生给定持续时间的输出脉冲"
+"The pulse timer can be used to generate output pulses of a given time duration."
+msgstr "脉冲定时器能够被用来产生给定持续时间的输出脉冲."
 
 msgid ""
-"The on-delay timer can be used to delay setting an output true, for fixed "
-"period after an input becomes true."
-msgstr "接通延迟定时器能被用来延迟设置一个输出为TRUE，当输入为TRUE时，经过固定的时间，"
+"The on-delay timer can be used to delay setting an output true, for fixed period "
+"after an input becomes true."
+msgstr ""
+"接通延迟定时器能被用来延迟设置一个输出为TRUE，当输入为TRUE时，经过固定的时间."
 
 msgid ""
-"The off-delay timer can be used to delay setting an output false, for fixed "
-"period after input goes false."
-msgstr "断开延迟定时器能被用来延迟设置一个输出为FALSE，当输入到FALSE后经过一个固定的时间。"
+"The off-delay timer can be used to delay setting an output false, for fixed period "
+"after input goes false."
+msgstr ""
+"断开延迟定时器能被用来延迟设置一个输出为FALSE，当输入到FALSE后经过一个固定的时间。"

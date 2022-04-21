@@ -14,14 +14,11 @@
 # limitations under the License.
 #
 # pylint: disable=no-absolute-import,bad-python3-import
-
-from __future__ import print_function
-import sys
-import compiler
-from compiler import ast
-import os
+import ast
 import copy
-from builtins import str as text
+import os
+import sys
+
 from past.builtins import basestring
 from six.moves import cStringIO
 
@@ -134,7 +131,7 @@ def escapejs(value):
 
 def uuprefix(name, leave_alone=0):
     name = name.split(".")
-    name = name[:leave_alone] + map(lambda x: "__%s" % x, name[leave_alone:])
+    name = name[:leave_alone] + list(map(lambda x: "__%s" % x, name[leave_alone:]))
     return '.'.join(name)
 
 

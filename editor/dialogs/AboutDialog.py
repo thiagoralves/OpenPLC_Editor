@@ -30,11 +30,10 @@
 This module contains classes extended from wx.Dialog used by the GUI.
 """
 
-
-from __future__ import absolute_import
+# from __future__ import absolute_import
 import os
+
 import wx
-from wx.lib.agw.hyperlink import HyperLinkCtrl
 
 
 class AboutDialog(wx.Dialog):
@@ -52,7 +51,7 @@ class AboutDialog(wx.Dialog):
 
         image = None
         if self.info.Icon:
-            bitmap = wx.BitmapFromIcon(self.info.Icon)
+            bitmap = wx.Bitmap(self.info.Icon)
             image = wx.StaticBitmap(self, bitmap=bitmap)
 
         name = wx.StaticText(self, label="%s %s" % (info.Name, info.Version))

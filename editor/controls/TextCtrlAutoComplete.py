@@ -24,7 +24,9 @@
 
 
 from __future__ import absolute_import
-from six.moves import cPickle
+
+import pickle
+
 import wx
 
 MAX_ITEM_COUNT = 10
@@ -97,7 +99,7 @@ class PopupWithListbox(wx.PopupWindow):
         parent_rect = wx.Rect(0, -parent_size[1], parent_size[0], parent_size[1])
         if selected != wx.NOT_FOUND:
             wx.CallAfter(self.Parent.SetValueFromSelected, self.ListBox.GetString(selected))
-        elif parent_rect.InsideXY(event.GetX(), event.GetY()):
+        elif parent_rect.Contains(event.GetX(), event.GetY()):
             result, x, y = self.Parent.HitTest(wx.Point(event.GetX(), event.GetY() + parent_size[1]))
             if result != wx.TE_HT_UNKNOWN:
                 self.Parent.SetInsertionPoint(self.Parent.XYToPosition(x, y))
@@ -198,10 +200,13 @@ class TextCtrlAutoComplete(wx.TextCtrl):
     def OnControlChanged(self, event):
         res = self.GetValue()
         config = wx.ConfigBase.Get()
-        listentries = cPickle.loads(str(config.Read(self.element_path, cPickle.dumps([]))))
+        det = pickle.dumps([], 0)
+        val = config.Read(self.element_path, det)
+        val = val.encode()
+        listentries = pickle.loads(val)
         if res and res not in listentries:
             listentries = (listentries + [res])[-MAX_ITEM_COUNT:]
-            config.Write(self.element_path, cPickle.dumps(listentries))
+            config.Write(self.element_path, pickle.dumps(listentries, 0))
             config.Flush()
             self.SetChoices(listentries)
         self.DismissListBox()

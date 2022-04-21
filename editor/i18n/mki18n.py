@@ -79,14 +79,15 @@ You can get the gettext tools from the following sites:
 # -------------
 #
 
-from __future__ import absolute_import
+# from __future__ import absolute_import
 from __future__ import print_function
-import os
-import sys
-import re
-from builtins import str as text
-import wx
 
+import os
+import re
+import sys
+from builtins import str as text
+
+import wx
 
 # -----------------------------------------------------------------------------
 # Global variables
@@ -229,7 +230,7 @@ def makePO(applicationDirectoryPath,  applicationDomain=None, verbose=0):
 
     languageDict = getSupportedLanguageDict(applicationName)
 
-    for langCode in languageDict.keys():
+    for langCode in list(languageDict.keys()):
         if langCode == 'en':
             pass
         else:
@@ -254,7 +255,7 @@ def catPO(applicationDirectoryPath, listOf_extraPo, applicationDomain=None, targ
 
     languageDict = getSupportedLanguageDict(applicationName)
 
-    for langCode in languageDict.keys():
+    for langCode in list(languageDict.keys()):
         if langCode == 'en':
             pass
         else:
@@ -308,7 +309,7 @@ def makeMO(applicationDirectoryPath, targetDir='./locale', applicationDomain=Non
 
     languageDict = getSupportedLanguageDict(applicationName)
 
-    for langCode in languageDict.keys():
+    for langCode in list(languageDict.keys()):
         if (langCode == 'en') and (forceEnglish == 0):
             pass
         else:

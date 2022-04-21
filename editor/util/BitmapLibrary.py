@@ -23,7 +23,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
+# from __future__ import absolute_import
+
 import os
 
 import wx
@@ -71,7 +72,7 @@ def GetBitmap(bmp_name1, bmp_name2=None, size=None):
             height = max(bmp1.GetHeight(), bmp2.GetHeight())
 
             # Create bitmap with both icons
-            bmp = wx.EmptyBitmap(width, height)
+            bmp = wx.Bitmap(width, height)
             dc = wx.MemoryDC()
             dc.SelectObject(bmp)
             dc.Clear()

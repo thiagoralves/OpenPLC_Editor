@@ -23,11 +23,12 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from __future__ import absolute_import
+# from __future__ import absolute_import
 import wx
 
-from graphics.SFC_Objects import SFC_Transition
 from dialogs.BlockPreviewDialog import BlockPreviewDialog
+from graphics.SFC_Objects import SFC_Transition
+
 
 # -------------------------------------------------------------------------------
 #                        Set Transition Parameters Dialog
@@ -57,7 +58,7 @@ class SFCTransitionDialog(BlockPreviewDialog):
 
         # Create label for transition type
         type_label = wx.StaticText(self, label=_('Type:'))
-        self.LeftGridSizer.AddWindow(type_label, flag=wx.GROW)
+        self.LeftGridSizer.Add(type_label, flag=wx.GROW)
 
         # Create combo box for selecting reference value
         reference = wx.ComboBox(self, style=wx.CB_READONLY)
@@ -80,28 +81,28 @@ class SFCTransitionDialog(BlockPreviewDialog):
                                           style=(wx.RB_GROUP if first else 0))
             radio_button.SetValue(first)
             self.Bind(wx.EVT_RADIOBUTTON, self.OnTypeChanged, radio_button)
-            self.LeftGridSizer.AddWindow(radio_button, flag=wx.GROW)
+            self.LeftGridSizer.Add(radio_button, flag=wx.GROW)
             if control is not None:
                 control.Enable(first)
-                self.LeftGridSizer.AddWindow(control, flag=wx.GROW)
+                self.LeftGridSizer.Add(control, flag=wx.GROW)
             self.TypeRadioButtons[type] = (radio_button, control)
             first = False
 
         # Create label for transition priority
         priority_label = wx.StaticText(self, label=_('Priority:'))
-        self.LeftGridSizer.AddWindow(priority_label, flag=wx.GROW)
+        self.LeftGridSizer.Add(priority_label, flag=wx.GROW)
 
         # Create spin control for defining priority value
         self.Priority = wx.SpinCtrl(self, min=0, style=wx.SP_ARROW_KEYS)
         self.Bind(wx.EVT_TEXT, self.OnPriorityChanged, self.Priority)
-        self.LeftGridSizer.AddWindow(self.Priority, flag=wx.GROW)
+        self.LeftGridSizer.Add(self.Priority, flag=wx.GROW)
 
         # Add preview panel and associated label to sizers
-        self.RightGridSizer.AddWindow(self.PreviewLabel, flag=wx.GROW)
-        self.RightGridSizer.AddWindow(self.Preview, flag=wx.GROW)
+        self.RightGridSizer.Add(self.PreviewLabel, flag=wx.GROW)
+        self.RightGridSizer.Add(self.Preview, flag=wx.GROW)
 
         # Add buttons sizer to sizers
-        self.MainSizer.AddSizer(
+        self.MainSizer.Add(
             self.ButtonSizer, border=20,
             flag=wx.ALIGN_RIGHT | wx.BOTTOM | wx.LEFT | wx.RIGHT)
 
@@ -117,7 +118,7 @@ class SFCTransitionDialog(BlockPreviewDialog):
         """
         # Go through radio buttons and return type and value associated to the
         # one that is selected
-        for type, (radio, control) in self.TypeRadioButtons.iteritems():
+        for type, (radio, control) in self.TypeRadioButtons.items():
             if radio.GetValue():
                 if isinstance(control, wx.ComboBox):
                     return type, control.GetStringSelection()
@@ -144,7 +145,7 @@ class SFCTransitionDialog(BlockPreviewDialog):
 
             # Parameter is SFC transition type
             elif name == "type":
-                for type, (radio, control) in self.TypeRadioButtons.iteritems():
+                for type, (radio, control) in self.TypeRadioButtons.items():
                     radio.SetValue(type == value)
                     if control is not None:
                         # Enable associated control to type and set value
@@ -197,7 +198,7 @@ class SFCTransitionDialog(BlockPreviewDialog):
         @param event: wx.RadioButtonEvent
         """
         # Refresh sensibility of control associated to transition types
-        for _type, (radio, control) in self.TypeRadioButtons.iteritems():
+        for _type, (radio, control) in self.TypeRadioButtons.items():
             if control is not None:
                 control.Enable(radio.GetValue())
 
@@ -229,7 +230,7 @@ class SFCTransitionDialog(BlockPreviewDialog):
         self.RefreshPreview()
         event.Skip()
 
-    def RefreshPreview(self):
+    def DrawPreview(self):
         """
         Refresh preview panel of graphic element
         Override BlockPreviewDialog function
@@ -240,4 +241,4 @@ class SFCTransitionDialog(BlockPreviewDialog):
         self.Element.SetPriority(self.Priority.GetValue())
 
         # Call BlockPreviewDialog function
-        BlockPreviewDialog.RefreshPreview(self)
+        BlockPreviewDialog.DrawPreview(self)
