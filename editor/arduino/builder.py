@@ -10,7 +10,7 @@ import json
 global compiler_logs
 compiler_logs = ''
 
-def build(st_file, platform, port, txtCtrl, update_subsystem):
+def build(st_file, platform, source_file, port, txtCtrl, update_subsystem):
     global compiler_logs
     compiler_logs = ''
     if (os.path.exists("editor/arduino/bin/iec2c") or os.path.exists("editor/arduino/bin/iec2c.exe")):
@@ -320,6 +320,7 @@ void updateTime()
         source_path = 'editor/arduino/src/hal/'
         destination = 'editor/arduino/src/arduino.cpp'
 
+    """
     if platform == 'arduino:avr:uno' or platform == 'arduino:avr:leonardo' or platform == 'arduino:samd:arduino_zero_native' or platform == 'arduino:samd:arduino_zero_edbg':
         source_file = 'uno_leonardo_nano_micro_zero.cpp'
     elif platform == 'arduino:avr:nano' or platform == 'arduino:avr:micro':
@@ -341,6 +342,13 @@ void updateTime()
         source_file = 'esp8266.cpp'
     elif platform == 'esp32:esp32:esp32' or platform == 'esp32:esp32:esp32s2' or platform == 'esp32:esp32:esp32c3':
         source_file = 'esp32.cpp'
+    elif platform == 'esp32:esp32:esp32escope':
+        platform = 'esp32:esp32:esp32'
+        source_file = 'esp32_escope.cpp'
+    elif platform == 'esp32:esp32:esp32esim':
+        platform = 'esp32:esp32:esp32'
+        source_file = 'esp32_esim.cpp'
+    """
 
     shutil.copyfile(source_path + source_file, destination)
 
@@ -389,6 +397,10 @@ void updateTime()
     #compiler_logs += compilation.read()
     #wx.CallAfter(txtCtrl.SetValue, compiler_logs)
     #wx.CallAfter(txtCtrl.SetInsertionPoint, -1)
+
+    compiler_logs += '\nCOMPILATION START: '
+    compiler_logs += platform
+    compiler_logs += '\n'
 
     if (os.name == 'nt'):
         compilation = subprocess.Popen(['editor\\arduino\\bin\\arduino-cli-w32', 'compile', '-v', '--libraries=editor\\arduino', '--build-property', 'compiler.c.extra_flags="-Ieditor\\arduino\\src\\lib"', '--build-property', 'compiler.cpp.extra_flags="-Ieditor\\arduino\\src\\lib"', '--export-binaries', '-b', platform, 'editor\\arduino\\examples\\Baremetal\\Baremetal.ino'], creationflags = 0x08000000, stdout = subprocess.PIPE, stderr = subprocess.PIPE)

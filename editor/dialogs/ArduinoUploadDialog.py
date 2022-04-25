@@ -13,11 +13,11 @@ import time
 import os
 import json
 import time
+import glob
 
 # -------------------------------------------------------------------------------
 #                            Arduino Upload Dialog
 # -------------------------------------------------------------------------------
-
 
 class ArduinoUploadDialog(wx.Dialog):
     """Dialog to configure upload parameters"""
@@ -37,6 +37,13 @@ class ArduinoUploadDialog(wx.Dialog):
         else:
             wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Upload to Arduino Board", pos = wx.DefaultPosition, size = wx.Size( 480,780 ), style = wx.DEFAULT_DIALOG_STYLE )
 
+        # load Hals automatically and initialize the board_type_comboChoices
+        self.loadHals()
+        board_type_comboChoices = []
+        for board in self.hals:
+            board_type_comboChoices.append(board)
+        board_type_comboChoices.sort()
+
         self.SetSizeHintsSz( wx.Size( -1,-1 ), wx.DefaultSize )
 
         bSizer2 = wx.BoxSizer( wx.VERTICAL )
@@ -49,7 +56,6 @@ class ArduinoUploadDialog(wx.Dialog):
         self.board_type_lbl.Wrap( -1 )
         fgSizer1.Add( self.board_type_lbl, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 10 )
 
-        board_type_comboChoices = [ u"P1AM-100", u"Uno", u"Nano", u"Leonardo", u"Micro",  u"Mega", u"ESP8266 NodeMCU", u"ESP8266 D1-mini", u"ESP32", u"ESP32-S2", u"ESP32-C3", u"Nano Every", u"Nano 33 IoT", u"Nano 33 BLE", u"Nano RP2040 Connect", u"Mkr Zero", u"Mkr WiFi", u"Due (native USB port)", u"Due (programming port)", u"Zero (native USB port)", u"Zero (programming port)", u"Portenta Machine Control"]
         self.board_type_combo = wx.ComboBox( self, wx.ID_ANY, u"Uno", wx.DefaultPosition, wx.Size( 300,-1 ), board_type_comboChoices, wx.CB_READONLY )
         self.board_type_combo.SetSelection( 0 )
         fgSizer1.Add( self.board_type_combo, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
@@ -62,7 +68,6 @@ class ArduinoUploadDialog(wx.Dialog):
         self.com_port_combo = wx.ComboBox( self, wx.ID_ANY, u"COM1", wx.DefaultPosition, wx.Size( 300,-1 ), com_port_comboChoices, wx.CB_READONLY )
         self.com_port_combo.SetSelection( 0 )
         fgSizer1.Add( self.com_port_combo, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
-
 
         bSizer2.Add( fgSizer1, 0, wx.EXPAND|wx.TOP, 5 )
 
@@ -259,7 +264,14 @@ class ArduinoUploadDialog(wx.Dialog):
         self.EndModal(wx.ID_OK)
 
     def startBuilder(self):
-        board = ''
+
+        # Get platform and source_file from hals
+        board_type = self.board_type_combo.GetValue()
+        platform = self.hals[board_type]['platform']
+        source = self.hals[board_type]['source']
+
+        # replacing these lines
+        """
         if self.board_type_combo.GetValue() == u"P1AM-100":
             board = 'arduino:samd:mkrzero-p1am'
         elif self.board_type_combo.GetValue() == u"Uno":
@@ -284,6 +296,10 @@ class ArduinoUploadDialog(wx.Dialog):
             board = 'esp32:esp32:esp32s2'
         elif self.board_type_combo.GetValue() == u"ESP32-C3":
             board = 'esp32:esp32:esp32c3'
+        elif self.board_type_combo.GetValue() == u"ESP32-EScope":
+            board = 'esp32:esp32:esp32escope'
+        elif self.board_type_combo.GetValue() == u"ESP32-ESim":
+            board = 'esp32:esp32:esp32esim'
         elif self.board_type_combo.GetValue() == u"Nano 33 IoT":
             board = 'arduino:samd:nano_33_iot'
         elif self.board_type_combo.GetValue() == u"Nano 33 BLE":
@@ -304,15 +320,20 @@ class ArduinoUploadDialog(wx.Dialog):
             board = 'arduino:samd:arduino_zero_edbg'
         elif self.board_type_combo.GetValue() == u"Portenta Machine Control":
             board = 'arduino:mbed_portenta:envie_m7'
+        """
 
         self.generateDefinitionsFile()
-        self.saveSettings()
 
-        compiler_thread = threading.Thread(target=builder.build, args=(self.plc_program, board, self.com_port_combo.GetValue(), self.output_text, self.update_subsystem))
+        compiler_thread = threading.Thread(target=builder.build, args=(self.plc_program, platform, source, self.com_port_combo.GetValue(), self.output_text, self.update_subsystem))
         compiler_thread.start()
         compiler_thread.join()
         wx.CallAfter(self.upload_button.Enable, True)
-        wx.CallAfter(self.cancel_button.Enable, True)
+        wx.CallAfter(self.cancel_button.Enable, True)        
+        if (self.update_subsystem):
+            self.update_subsystem = False
+            self.last_update = time.time()
+        self.saveSettings()
+
 
     def OnUpload(self, event):
         self.upload_button.Enable(False)
@@ -346,13 +367,22 @@ class ArduinoUploadDialog(wx.Dialog):
             elif (self.tcp_iface_combo.GetValue() == u'WiFi'):
                 define_file += '#define MBTCP_WIFI\n'
         
+        # Get define from hals
+        if 'define' in self.hals[self.board_type_combo.GetValue()]:
+            define_file += '#define '+ self.hals[self.board_type_combo.GetValue()]['define'] +'\n'
+
+        # replacing these lines        
+        """
         if (self.board_type_combo.GetValue() == u"ESP8266 NodeMCU" or self.board_type_combo.GetValue() == u"ESP8266 D1-mini"):
             define_file += '#define BOARD_ESP8266\n'
         elif (self.board_type_combo.GetValue() == u"ESP32" or self.board_type_combo.GetValue() == u"ESP32-S2" or self.board_type_combo.GetValue() == u"ESP32-C3"):
             define_file += '#define BOARD_ESP32\n'
+        elif (self.board_type_combo.GetValue() == u"ESP32-EScope" or self.board_type_combo.GetValue() == u"ESP32-ESim"):
+            define_file += '#define BOARD_ESP32\n'
         elif (self.board_type_combo.GetValue() == u"Nano 33 IoT" or self.board_type_combo.GetValue() == u"Mkr WiFi" or self.board_type_combo.GetValue() == u"Nano RP2040 Connect"):
             define_file += '#define BOARD_WIFININA\n'
-        
+        """
+
         define_file += '\n\n//Arduino Libraries\n'
 
         #Generate Arduino Libraries defines
@@ -402,6 +432,7 @@ class ArduinoUploadDialog(wx.Dialog):
         f.flush()
         f.close()
 
+
     def loadSettings(self):
         #read settings from disk
         if (os.name == 'nt'):
@@ -443,3 +474,67 @@ class ArduinoUploadDialog(wx.Dialog):
             wx.CallAfter(self.wifi_pwd_txt.SetValue, settings['pwd'])
 
             wx.CallAfter(self.onUIChange, None)
+    
+    def loadHals(self):
+        # load hals list from json file, or construct it
+        if (os.name == 'nt'):
+            jfile = 'editor\\arduino\\examples\\Baremetal\\hals.json'
+        else:
+            jfile = 'editor/arduino/examples/Baremetal/hals.json'
+        if (os.name == 'nt'):
+            base_path = 'editor\\arduino\\src\hal\\'
+        else:
+            base_path = 'editor/arduino/src/hal/'
+
+        # if updated, read HAL list from json file
+        if self.isHalsUpdated(jfile, base_path):
+            f = open(jfile, 'r')
+            jsonStr = f.read()
+            f.close()
+            self.hals = json.loads(jsonStr)
+            return
+
+        # read HAL configs from disk (many files)
+        # a bit slow ...
+        self.hals = {}
+        for hfile in glob.glob(base_path+'*.hal'):
+            # Read the hal file
+            f = open(hfile, 'r')
+            lines = f.readlines()
+            f.close()
+
+            # prepare the source file
+            head,tail=os.path.split(hfile)
+            sfile = os.path.splitext(tail)[0]+'.cpp'
+
+            # construct the hals configuration
+            for line in lines:
+                if line.strip():
+                    if not line.startswith('#'):
+                        fields = line.split(',')
+                        board = fields[0].strip()
+                        self.hals[board]={}
+                        self.hals[board]['platform'] = fields[1].strip()
+                        self.hals[board]['source']= sfile
+                        if (len(fields) >= 3):
+                            self.hals[board]['define']= fields[2].strip()
+
+        # write hals to json file
+        f = open(jfile, 'w')
+        f.write(json.dumps(self.hals))
+        f.flush()
+        f.close()
+    
+    def isHalsUpdated(self, jfile, hfolder):
+        # return true if the hals.json file is up-to-dated
+        if not os.path.exists(jfile):
+            return False
+        tm1 = os.path.getmtime(jfile)
+        tm2 = os.path.getmtime(hfolder)
+        if tm2 > tm1:
+            return False
+        for hfile in glob.glob(hfolder+'*.hal'):
+            tm2 = os.path.getmtime(hfile)
+            if (tm2 > tm1):
+                return False       
+        return True

@@ -1,6 +1,10 @@
 /*
     Modbus.h - Header for Modbus Base Library
     Copyright (C) 2014 Andre Sarmento Barbosa
+
+  Fixed by Kocil, 2022
+  - define uint16_t IEC_UINT
+  - Change word to IEC_UINT 
 */
 #include <Arduino.h>
 
@@ -11,7 +15,7 @@
 #define MAX_FRAME   128
 //#define USE_HOLDING_REGISTERS_ONLY
 
-typedef unsigned int u_int;
+typedef uint16_t   IEC_UINT;
 
 //Function Codes
 enum {
@@ -41,8 +45,8 @@ enum {
 };
 
 typedef struct TRegister {
-    word address;
-    word value;
+    IEC_UINT address;
+    IEC_UINT value;
     struct TRegister* next;
 } TRegister;
 
@@ -51,23 +55,23 @@ class Modbus {
         TRegister *_regs_head;
         TRegister *_regs_last;
 
-        void readRegisters(word startreg, word numregs);
-        void writeSingleRegister(word reg, word value);
-        void writeMultipleRegisters(byte* frame,word startreg, word numoutputs, byte bytecount);
+        void readRegisters(IEC_UINT startreg, IEC_UINT numregs);
+        void writeSingleRegister(IEC_UINT reg, IEC_UINT value);
+        void writeMultipleRegisters(byte* frame,IEC_UINT startreg, IEC_UINT numoutputs, byte bytecount);
         void exceptionResponse(byte fcode, byte excode);
         #ifndef USE_HOLDING_REGISTERS_ONLY
-            void readCoils(word startreg, word numregs);
-            void readInputStatus(word startreg, word numregs);
-            void readInputRegisters(word startreg, word numregs);
-            void writeSingleCoil(word reg, word status);
-            void writeMultipleCoils(byte* frame,word startreg, word numoutputs, byte bytecount);
+            void readCoils(IEC_UINT startreg, IEC_UINT numregs);
+            void readInputStatus(IEC_UINT startreg, IEC_UINT numregs);
+            void readInputRegisters(IEC_UINT startreg, IEC_UINT numregs);
+            void writeSingleCoil(IEC_UINT reg, IEC_UINT status);
+            void writeMultipleCoils(byte* frame,IEC_UINT startreg, IEC_UINT numoutputs, byte bytecount);
         #endif
 
-        TRegister* searchRegister(word addr);
+        TRegister* searchRegister(IEC_UINT addr);
 
-        void addReg(word address, word value = 0);
-        bool Reg(word address, word value);
-        word Reg(word address);
+        void addReg(IEC_UINT address, IEC_UINT value = 0);
+        bool Reg(IEC_UINT address, IEC_UINT value);
+        IEC_UINT Reg(IEC_UINT address);
 
     protected:
         byte *_frame;
@@ -78,22 +82,22 @@ class Modbus {
     public:
         Modbus();
 
-        void addHreg(word offset, word value = 0);
-        bool Hreg(word offset, word value);
-        word Hreg(word offset);
+        void addHreg(IEC_UINT offset, IEC_UINT value = 0);
+        bool Hreg(IEC_UINT offset, IEC_UINT value);
+        IEC_UINT Hreg(IEC_UINT offset);
 
         #ifndef USE_HOLDING_REGISTERS_ONLY
-            void addCoil(word offset, bool value = false);
-            void addIsts(word offset, bool value = false);
-            void addIreg(word offset, word value = 0);
+            void addCoil(IEC_UINT offset, bool value = false);
+            void addIsts(IEC_UINT offset, bool value = false);
+            void addIreg(IEC_UINT offset, IEC_UINT value = 0);
 
-            bool Coil(word offset, bool value);
-            bool Ists(word offset, bool value);
-            bool Ireg(word offset, word value);
+            bool Coil(IEC_UINT offset, bool value);
+            bool Ists(IEC_UINT offset, bool value);
+            bool Ireg(IEC_UINT offset, IEC_UINT value);
 
-            bool Coil(word offset);
-            bool Ists(word offset);
-            word Ireg(word offset);
+            bool Coil(IEC_UINT offset);
+            bool Ists(IEC_UINT offset);
+            IEC_UINT Ireg(IEC_UINT offset);
         #endif
 };
 
