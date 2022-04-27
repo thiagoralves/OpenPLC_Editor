@@ -1,0 +1,9 @@
+# HAL configuration
+# Format :
+# Board type, FQBN
+Arduino Uno, arduino:avr:uno
+Arduino Nano, arduino:avr:nano
+Arduino Leonardo, arduino:avr:leonardo
+Arduino Micro, arduino:avr:micro
+Arduino Zero (native USB port), arduino:samd:arduino_zero_native
+Arduino Zero (programming port), arduino:samd:arduino_zero_edbg

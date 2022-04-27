@@ -1,0 +1,8 @@
+# HAL configuration
+# Format :
+# Board type, FQBN
+
+Nano Every,               arduino:megaavr:nona4809
+Nano 33 IoT,              arduino:samd:nano_33_iot, BOARD_WIFININA
+Nano 33 BLE,              arduino:mbed_nano:nano33ble
+

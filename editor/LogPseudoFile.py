@@ -73,7 +73,8 @@ class LogPseudoFile(object):
                 if style is None:
                     style = self.black_white
                 if style != self.black_white:
-                    self.output.StartStyling(self.output.GetLength(), 0xff)
+                    #self.output.StartStyling(self.output.GetLength(), 0xff)
+                    style = self.black_white
 
                 # Temporary deactivate read only mode on StyledTextCtrl for
                 # adding text. It seems that text modifications, even

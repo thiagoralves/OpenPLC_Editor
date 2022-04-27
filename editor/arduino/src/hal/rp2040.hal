@@ -1,0 +1,6 @@
+# HAL configuration
+# Format :
+# Board type, FQBN
+
+Nano RP2040 Connect,      arduino:mbed_nano:nanorp2040connect, BOARD_WIFININA
+

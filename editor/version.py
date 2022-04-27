@@ -34,14 +34,10 @@ import util.paths as paths
 
 def GetCommunityHelpMsg():
     return _(
-        "The best place to ask questions about Beremiz/PLCOpenEditor\n"
-        "is project's mailing list: beremiz-devel@lists.sourceforge.net\n"
+        "The best place to ask questions about OpenPLC Runtime\n"
+        "and OpenPLC Editor is in the project's official forum:\n"
         "\n"
-        "This is the main community support channel.\n"
-        "For posting it is required to be subscribed to the mailing list.\n"
-        "\n"
-        "You can subscribe to the list here:\n"
-        "https://lists.sourceforge.net/lists/listinfo/beremiz-devel"
+        "https://openplc.discussion.community/\n"
     )
 
 
@@ -82,26 +78,23 @@ def GetAboutDialogInfo():
     import wx
     info = wx.adv.AboutDialogInfo()
 
-    info.Name = "Beremiz"
+    info.Name = "OpenPLC Editor"
     info.Version = app_version
-
     info.Copyright = ""
-    info.Copyright += "(C) 2016-2018 Andrey Skvortsov\n"
-    info.Copyright += "(C) 2008-2018 Eduard Tisserant\n"
-    info.Copyright += "(C) 2008-2015 Laurent Bessard"
-
-    info.WebSite = ("http://beremiz.org", "beremiz.org")
-
-    info.Description = _("Open Source framework for automation, "
-                         "implemented IEC 61131 IDE with constantly growing set of extensions "
-                         "and flexible PLC runtime.")
-
+    info.Copyright += "(C) 2019 Thiago Alves"
+    #info.Copyright += "(C) 2016-2018 Andrey Skvortsov\n"
+    #info.Copyright += "(C) 2008-2018 Eduard Tisserant\n"
+    #info.Copyright += "(C) 2008-2015 Laurent Bessard"
+    info.WebSite = ("http://www.openplcproject.com", "openplcproject.com")
+    info.Description = _("Open Source IDE for the OpenPLC Runtime, compliant with "
+                         "the IEC 61131-3 international standard.\n\nBased on PLCOpen Editor and Beremiz by Andrey Skvortsov, Sergey Surkov, Edouard Tisserant and Laurent Bessard.")
+    #info.Developers = "Thiago Alves <thiagoralves@gmail.com>"
     info.Developers = (
+        "Thiago Alves <thiagoralves@gmail.com>",
         "Andrey Skvortsov <andrej.skvortzov@gmail.com>",
         "Sergey Surkov <surkov.sv@summatechnology.ru>",
         "Edouard Tisserant <edouard.tisserant@gmail.com>",
         "Laurent Bessard <laurent.bessard@gmail.com>")
-
     info.License = (
         '\n This program is free software; you can redistribute it and/or\n'
         ' modify it under the terms of the GNU General Public License\n'
@@ -125,6 +118,7 @@ def GetAboutDialogInfo():
         with open(license_path) as f:
             info.License += f.read()
 
+    info.IconPath = os.path.join(path, "images", "about_brz_logo.png")
     info.Icon = wx.Icon(os.path.join(path, "images", "about_brz_logo.png"), wx.BITMAP_TYPE_PNG)
 
     info.Translators = (
@@ -226,7 +220,8 @@ def GetAboutDialogInfo():
     return info
 
 
-app_version = "1.2"
-rev = GetAppRevision()
+app_version = "1.3.1 beta"
+#rev = GetAppRevision()
+rev = "Release: 2022-04-27 dev-python3"
 if rev is not None:
-    app_version = app_version + "-" + rev.rstrip()
+    app_version = app_version + "\n" + rev.rstrip()

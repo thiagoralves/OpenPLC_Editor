@@ -279,7 +279,7 @@ class Beremiz(IDEFrame):
             # then we prefix CWD to PATH in order to ensure that
             # commands invoked by build process by default are
             # found here.
-            os.environ["PATH"] = os.getcwd()+';'+os.environ["PATH"]
+            os.environ["PATH"] = os.getcwd()+'\\mingw\\bin;'+os.environ["PATH"]
 
     def __init__(self, parent, projectOpen=None, buildpath=None, ctr=None, debug=True):
         # Add beremiz's icon in top left corner of the frame
@@ -349,7 +349,7 @@ class Beremiz(IDEFrame):
         self.LogConsole.SetFocus()
 
     def RefreshTitle(self):
-        name = _("Beremiz")
+        name = _("OpenPLC Editor")
         if self.CTR is not None:
             projectname = self.CTR.GetProjectName()
             if self.CTR.ProjectTestModified():

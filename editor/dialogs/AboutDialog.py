@@ -32,7 +32,7 @@ This module contains classes extended from wx.Dialog used by the GUI.
 
 # from __future__ import absolute_import
 import os
-
+from wx.lib.agw.hyperlink import HyperLinkCtrl
 import wx
 
 
@@ -50,9 +50,10 @@ class AboutDialog(wx.Dialog):
             self.SetIcon(parent.GetIcon())
 
         image = None
-        if self.info.Icon:
-            bitmap = wx.Bitmap(self.info.Icon)
-            image = wx.StaticBitmap(self, bitmap=bitmap)
+        if self.info.IconPath:
+            img = wx.Image(self.info.IconPath, wx.BITMAP_TYPE_PNG)
+            temp = img.ConvertToBitmap()
+            image = wx.StaticBitmap(self, bitmap=temp)
 
         name = wx.StaticText(self, label="%s %s" % (info.Name, info.Version))
         description = wx.StaticText(self, label=info.Description)
@@ -168,7 +169,7 @@ class LicenseDialog(wx.Dialog):
 
 
 def ShowAboutDialog(parent, info):
-    if os.name == "nt":
+    #if os.name == "nt":
         AboutDialog(parent, info)
-    else:
-        wx.AboutBox(info)
+    #else:
+    #    wx.AboutBox(info)
