@@ -228,6 +228,8 @@ class BrowseLocationsDialog(wx.Dialog):
 
     def GetValues(self):
         selected = self.LocationsTree.GetSelection()
+        if selected.GetID() is None:
+            return None
         infos = self.LocationsTree.GetItemData(selected)
         if not self.do_rename:
             infos["var_name"] = None
