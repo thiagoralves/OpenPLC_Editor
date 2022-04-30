@@ -23,9 +23,6 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
-from __future__ import division
-
 # pylint: disable=wrong-import-position
 import matplotlib
 import wx.lib.buttons

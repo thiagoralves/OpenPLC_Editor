@@ -23,8 +23,6 @@
 # This code is made available on the understanding that it will not be
 # used in safety-critical situations without a full and competent review.
 
-# from __future__ import absolute_import
-
 import os
 import pickle
 from datetime import datetime

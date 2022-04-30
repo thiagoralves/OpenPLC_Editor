@@ -23,8 +23,6 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
-
 import wx
 import wx.grid
 import wx.lib.buttons
@@ -36,9 +34,6 @@ from graphics.GraphicCommons import REFRESH_HIGHLIGHT_PERIOD, ERROR_HIGHLIGHT
 from plcopen.structures import TestIdentifier, IEC_KEYWORDS
 from util.BitmapLibrary import GetBitmap
 from util.TranslationCatalogs import NoTranslate
-
-# from six.moves import xrange
-
 
 # -------------------------------------------------------------------------------
 #                          Configuration Editor class

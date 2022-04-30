@@ -28,9 +28,6 @@ The TLS-PSK adapter that handles SSL connections instead of regular sockets,
 but using Pre Shared Keys instead of Certificates
 """
 
-# from __future__ import absolute_import
-# from __future__ import print_function
-
 import re
 import socket
 import ssl

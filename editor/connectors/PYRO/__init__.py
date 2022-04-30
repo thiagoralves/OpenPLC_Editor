@@ -26,8 +26,6 @@
 import Pyro4
 import Pyro4.core
 import Pyro4.util
-# from __future__ import absolute_import
-# from __future__ import print_function
 import os.path
 from Pyro4.errors import PyroError
 

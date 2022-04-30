@@ -24,7 +24,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
+
 
 import re
 
@@ -39,8 +39,6 @@ from graphics.GraphicCommons import REFRESH_HIGHLIGHT_PERIOD
 from plcopen.structures import IEC_KEYWORDS, TestIdentifier, DefaultType
 from util.BitmapLibrary import GetBitmap
 from util.TranslationCatalogs import NoTranslate
-
-# from six.moves import xrange
 
 # -------------------------------------------------------------------------------
 #                                    Helpers

@@ -24,5 +24,5 @@
 
 from .PythonEditor import PythonEditor
 from .PythonFileCTNMixin import PythonFileCTNMixin
-# from __future__ import absolute_import
+# 
 from .py_ext import *

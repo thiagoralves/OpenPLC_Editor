@@ -22,9 +22,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-
-# from __future__ import absolute_import
-
 import functools
 import operator
 import traceback
@@ -32,8 +29,6 @@ import traceback
 from plcopen import PLCOpenParser
 from plcopen.structures import *
 from plcopen.types_enums import *
-
-# from six.moves import xrange
 
 # Dictionary associating PLCOpen variable categories to the corresponding
 # IEC 61131-3 variable categories

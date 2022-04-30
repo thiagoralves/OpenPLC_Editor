@@ -22,9 +22,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
-
-# from __future__ import absolute_import
-# from __future__ import division
 from time import time as gettime
 
 import matplotlib
@@ -40,7 +37,6 @@ from controls.DebugVariablePanel.DebugVariableViewer import *
 from controls.DebugVariablePanel.GraphButton import GraphButton
 from editors.DebugViewer import REFRESH_PERIOD
 
-# from six.moves import range
 
 
 # Graph variable display type

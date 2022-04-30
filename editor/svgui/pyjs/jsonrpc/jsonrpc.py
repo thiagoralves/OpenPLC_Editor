@@ -1,4 +1,3 @@
-# from __future__ import absolute_import
 import sys
 
 import gluon.contrib.simplejson as simplejson

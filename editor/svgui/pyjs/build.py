@@ -4,8 +4,6 @@
 import os
 import re
 import shutil
-# from __future__ import absolute_import
-# from __future__ import print_function
 import sys
 from hashlib import md5
 from optparse import OptionParser
@@ -13,8 +11,6 @@ from optparse import OptionParser
 from os.path import join, basename, abspath, split, isfile, isdir
 
 from svgui.pyjs import pyjs
-
-# from six.moves import cStringIO
 
 
 usage = """

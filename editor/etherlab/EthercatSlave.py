@@ -9,7 +9,6 @@
 #
 # See COPYING file for copyrights details.
 
-from __future__ import absolute_import
 
 from ConfigTreeNode import ConfigTreeNode
 from PLCControler import LOCATION_CONFNODE, LOCATION_VAR_INPUT, LOCATION_VAR_OUTPUT, LOCATION_VAR_MEMORY

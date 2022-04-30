@@ -23,9 +23,6 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
-from __future__ import division
-
 import wx
 import wx.lib.agw.customtreectrl as CT
 

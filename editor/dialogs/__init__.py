@@ -25,8 +25,6 @@
 
 # Package initialization
 
-# from __future__ import absolute_import
-
 from .ActionBlockDialog import ActionBlockDialog
 from .ArrayTypeDialog import ArrayTypeDialog
 from .BrowseLocationsDialog import BrowseLocationsDialog

@@ -31,8 +31,6 @@ Config Tree Node base class.
 - ... TODO : document
 """
 
-# from __future__ import absolute_import
-
 import os
 import shutil
 import traceback

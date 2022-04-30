@@ -23,13 +23,10 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-# from __future__ import absolute_import
-# from __future__ import division
 
 from .DebugDataConsumer import DebugDataConsumer
 from .GraphicCommons import *
-# from six.moves import range
-from .Graphic_Element import Graphic_Element
+from .Graphic_Element import Connector, Graphic_Element
 
 
 def GetWireSize(block):

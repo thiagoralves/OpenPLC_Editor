@@ -25,9 +25,6 @@
 
 # Package initialisation
 
-
-from __future__ import absolute_import
-
 import sys
 
 from connectors.ConnectorBase import ConnectorBase

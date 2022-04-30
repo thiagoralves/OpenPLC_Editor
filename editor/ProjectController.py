@@ -27,12 +27,9 @@
 Beremiz Project Controller
 """
 
-# from __future__ import absolute_import
-
 import os
 import re
 import shutil
-# from six.moves import xrange
 import socket
 import tempfile
 import time
