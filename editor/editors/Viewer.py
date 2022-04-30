@@ -2569,26 +2569,36 @@ class Viewer(EditorPanel, DebugViewer):
         dialog = FBDBlockDialog(self.ParentWindow, self.Controler, self.TagName)
         dialog.SetPreviewFont(self.GetFont())
         dialog.SetMinElementSize((bbox.width, bbox.height))
-        if dialog.ShowModal() == wx.ID_OK:
-            id = self.GetNewId()
-            values = dialog.GetValues()
-            values.setdefault("name", "")
-            block = FBD_Block(
-                self, values["type"], values["name"], id,
-                values["extension"], values["inputs"],
-                executionControl=values["executionControl"],
-                executionOrder=values["executionOrder"])
-            self.Controler.AddEditedElementBlock(self.TagName, id, values["type"], values.get("name", None))
-            connector = None
-            if wire is not None:
-                for input_connector in block.GetConnectors()["inputs"]:
-                    if input_connector.IsCompatible(
-                            wire.GetStartConnectedType()):
-                        connector = input_connector
-                        break
-            self.AddNewElement(block, bbox, wire, connector)
-            self.RefreshVariablePanel()
-            self.ParentWindow.RefreshPouInstanceVariablesPanel()
+
+        while True:
+            if dialog.ShowModal() == wx.ID_OK:
+                # ignore wrong select item
+                if dialog.Element is None:
+                    continue
+
+                id = self.GetNewId()
+                values = dialog.GetValues()
+                values.setdefault("name", "")
+                block = FBD_Block(
+                    self, values["type"], values["name"], id,
+                    values["extension"], values["inputs"],
+                    executionControl=values["executionControl"],
+                    executionOrder=values["executionOrder"])
+                self.Controler.AddEditedElementBlock(self.TagName, id, values["type"], values.get("name", None))
+                connector = None
+                if wire is not None:
+                    for input_connector in block.GetConnectors()["inputs"]:
+                        if input_connector.IsCompatible(
+                                wire.GetStartConnectedType()):
+                            connector = input_connector
+                            break
+                self.AddNewElement(block, bbox, wire, connector)
+                self.RefreshVariablePanel()
+                self.ParentWindow.RefreshPouInstanceVariablesPanel()
+                break
+            else:
+                break
+
         dialog.Destroy()
 
     def AddNewVariable(self, bbox, exclude_input=False, wire=None):
