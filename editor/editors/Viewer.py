@@ -2189,6 +2189,7 @@ class Viewer(EditorPanel, DebugViewer):
                 else:
                     self.SelectedElement.OnRightDown(event, self.GetLogicalDC(), self.Scaling)
                 self.SelectedElement.Refresh()
+        self.Editor.ReleaseMouse()
         event.Skip()
 
     def OnViewerRightUp(self, event):
