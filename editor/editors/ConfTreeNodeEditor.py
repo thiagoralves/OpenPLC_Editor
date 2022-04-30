@@ -119,7 +119,7 @@ class GenStaticBitmap(wx.StaticBitmap):
 
         bitmap = GetBitmap(bitmapname)
         if bitmap is None:
-            bitmap = wx.Bitmap(0, 0)
+            bitmap = wx.Bitmap()
 
         wx.StaticBitmap.__init__(self, parent, ID,
                                  bitmap,
