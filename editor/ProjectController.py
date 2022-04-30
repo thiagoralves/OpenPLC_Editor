@@ -1584,7 +1584,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
                             self.DebugTicks.append(debug_tick)
 
         buffers, self.DebugValuesBuffers = (self.DebugValuesBuffers,
-                                            [list() for dummy in xrange(len(self.TracedIECPath))])
+                                            [list() for dummy in range(len(self.TracedIECPath))])
 
         ticks, self.DebugTicks = self.DebugTicks, []
 

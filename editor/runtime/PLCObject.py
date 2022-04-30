@@ -493,7 +493,7 @@ class PLCObject(object):
 
     @RunInMain
     def _GetPLCstatus(self):
-        return self.PLCStatus, map(self.GetLogCount, xrange(LogLevelsCount))
+        return self.PLCStatus, map(self.GetLogCount, range(LogLevelsCount))
 
     @RunInMain
     def GetPLCID(self):
