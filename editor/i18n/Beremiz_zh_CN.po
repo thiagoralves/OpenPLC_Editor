@@ -1197,7 +1197,7 @@ msgstr "常量"
 
 #: ../editors/Viewer.py:637 ../editors/Viewer.py:2446
 msgid "Contact"
-msgstr "连接"
+msgstr "触点"
 
 #: ../controls/ProjectPropertiesPanel.py:219
 msgid "Content Description (optional):"
@@ -1225,7 +1225,7 @@ msgstr "转换为日期"
 
 #: ../plcopen/iec_std.csv:20
 msgid "Conversion to time-of-day"
-msgstr "转换为日期时间"
+msgstr "转换为当日时间"
 
 #: ../editors/Viewer.py:698 ../controls/LogViewer.py:713 ../IDEFrame.py:375
 #: ../IDEFrame.py:428
@@ -3790,12 +3790,12 @@ msgstr "时间减法"
 
 #: ../plcopen/iec_std.csv:42 ../plcopen/iec_std.csv:43
 msgid "Time-of-day addition"
-msgstr "日期时间加法"
+msgstr "当日时间加法"
 
 #: ../plcopen/iec_std.csv:52 ../plcopen/iec_std.csv:53 ../plcopen/iec_std.csv:54
 #: ../plcopen/iec_std.csv:55
 msgid "Time-of-day subtraction"
-msgstr "日期时间减法"
+msgstr "当日时间减法"
 
 #: ../IDEFrame.py:432
 msgid "Toggle fullscreen mode"
