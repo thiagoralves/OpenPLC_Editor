@@ -35,7 +35,7 @@ import wx.lib.buttons
 from controls.CustomGrid import CustomGrid
 from controls.CustomTable import CustomTable
 from controls.LocationCellEditor import LocationCellEditor
-from graphics.GraphicCommons import REFRESH_HIGHLIGHT_PERIOD
+from graphics.GraphicCommons import ERROR_HIGHLIGHT, REFRESH_HIGHLIGHT_PERIOD
 from plcopen.VariableInfoCollector import _VariableInfos
 from plcopen.structures import LOCATIONDATATYPES, TestIdentifier, IEC_KEYWORDS, DefaultType
 from util.BitmapLibrary import GetBitmap
