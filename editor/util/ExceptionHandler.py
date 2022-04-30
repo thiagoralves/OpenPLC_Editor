@@ -133,6 +133,10 @@ def AddExceptHook(app_version='[No version]'):
     def handle_exception(e_type, e_value, e_traceback, exit=False):
         traceback.print_exception(e_type, e_value, e_traceback)  # this is very helpful when there's an exception in the rest of this func
         last_tb = get_last_traceback(e_traceback)
+
+        if last_tb is None:
+            return
+
         ex = (last_tb.tb_frame.f_code.co_filename, last_tb.tb_frame.f_lineno)
         if ex not in ignored_exceptions:
             ignored_exceptions.append(ex)
