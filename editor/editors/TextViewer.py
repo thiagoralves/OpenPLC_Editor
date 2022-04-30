@@ -207,7 +207,8 @@ class TextViewer(EditorPanel):
         self.Editor.Colourise(start, end)
 
     def StartStyling(self, pos, mask):
-        self.Editor.StartStyling(pos, mask)
+        # self.Editor.StartStyling(pos, mask)
+        self.Editor.StartStyling(pos)
 
     def SetStyling(self, length, style):
         self.Editor.SetStyling(length, style)
