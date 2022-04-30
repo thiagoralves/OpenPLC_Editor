@@ -35,7 +35,7 @@ import wx.lib.buttons
 from controls.CustomGrid import CustomGrid
 from controls.CustomTable import CustomTable
 from controls.LocationCellEditor import LocationCellEditor
-from graphics.GraphicCommons import ERROR_HIGHLIGHT, REFRESH_HIGHLIGHT_PERIOD
+from graphics.GraphicCommons import ERROR_HIGHLIGHT, HCOLOR, REFRESH_HIGHLIGHT_PERIOD
 from plcopen.VariableInfoCollector import _VariableInfos
 from plcopen.structures import LOCATIONDATATYPES, TestIdentifier, IEC_KEYWORDS, DefaultType
 from util.BitmapLibrary import GetBitmap
@@ -242,7 +242,7 @@ class VariableTable(CustomTable):
                 grid.SetCellRenderer(row, col, renderer)
 
                 if colname == "Location" and LOCATION_MODEL.match(self.GetValueByName(row, colname)) is None:
-                    highlight_colours = ERROR_HIGHLIGHT
+                    highlight_colours = HCOLOR.get(ERROR_HIGHLIGHT[0]), HCOLOR.get(ERROR_HIGHLIGHT[1])
                 else:
                     highlight_colours = row_highlights.get(colname.lower(), [(wx.WHITE, wx.BLACK)])[-1]
                 grid.SetCellBackgroundColour(row, col, highlight_colours[0])
