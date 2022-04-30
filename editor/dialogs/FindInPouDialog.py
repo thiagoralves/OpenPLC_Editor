@@ -118,7 +118,7 @@ class FindInPouDialog(wx.Dialog):
         # optimal size of dialog window
         self.RegExpSyntaxErrMsg = _("Syntax error in regular expression of pattern to search!")
         self.StatusLabel = wx.StaticText(panel, label=self.RegExpSyntaxErrMsg)
-        controls_sizer.Add(self.StatusLabel, flag=wx.ALIGN_CENTER_VERTICAL)
+        controls_sizer.Add(self.StatusLabel, flag=wx.ALIGN_CENTER)
 
         panel.SetSizer(main_sizer)
         main_sizer.Fit(self)
