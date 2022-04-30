@@ -26,6 +26,7 @@
 from __future__ import absolute_import
 
 import wx
+import wx.grid
 
 
 class LocationCellControl(wx.Control):
@@ -213,6 +214,9 @@ class LocationCellEditor(wx.grid.GridCellEditor):
         self.CellControl.SetSize(rect.x + 1, rect.y,
                                  rect.width, rect.height,
                                  wx.SIZE_ALLOW_MINUS_ONE)
+
+    def ApplyEdit(self, row, col, grid):
+        pass
 
     def Clone(self):
         return LocationCellEditor(self.Table, self.Controller)
