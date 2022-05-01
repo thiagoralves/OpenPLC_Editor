@@ -23,8 +23,6 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-# from __future__ import absolute_import
-from __future__ import division
 
 import re
 from functools import reduce
@@ -41,7 +39,6 @@ from graphics.GraphicCommons import ERROR_HIGHLIGHT
 from graphics.GraphicCommons import SEARCH_RESULT_HIGHLIGHT, REFRESH_HIGHLIGHT_PERIOD
 from plcopen.structures import ST_BLOCK_START_KEYWORDS, IEC_BLOCK_START_KEYWORDS, LOCATIONDATATYPES
 
-# from six.moves import range
 
 NEWLINE = "\n"
 NUMBERS = [str(i) for i in range(10)]
@@ -207,7 +204,8 @@ class TextViewer(EditorPanel):
         self.Editor.Colourise(start, end)
 
     def StartStyling(self, pos, mask):
-        self.Editor.StartStyling(pos, mask)
+        # self.Editor.StartStyling(pos, mask)
+        self.Editor.StartStyling(pos)
 
     def SetStyling(self, length, style):
         self.Editor.SetStyling(length, style)

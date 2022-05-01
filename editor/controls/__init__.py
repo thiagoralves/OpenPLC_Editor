@@ -24,8 +24,6 @@
 
 # Package initialization
 
-# from __future__ import absolute_import
-
 from .CustomEditableListBox import CustomEditableListBox
 from .CustomGrid import CustomGrid
 from .CustomIntCtrl import CustomIntCtrl

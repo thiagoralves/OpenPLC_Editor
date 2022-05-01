@@ -25,7 +25,6 @@
 
 import hashlib
 import operator
-# from __future__ import absolute_import
 import os
 import re
 from functools import reduce

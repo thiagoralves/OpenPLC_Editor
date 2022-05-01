@@ -23,15 +23,13 @@
 # used in safety-critical situations without a full and competent review.
 
 
-# from __future__ import absolute_import
+# 
 
 import os
 
 from ConfigTreeNode import ConfigTreeNode
 from PLCControler import LOCATION_CONFNODE, LOCATION_VAR_MEMORY
 from modbus.mb_utils import *
-
-# from six.moves import xrange
 
 base_folder = os.path.split(os.path.dirname(os.path.realpath(__file__)))[0]
 base_folder = os.path.join(base_folder, "..")

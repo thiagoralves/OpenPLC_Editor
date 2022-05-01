@@ -23,8 +23,6 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
-from __future__ import division
 
 from graphics.GraphicCommons import *
 # -------------------------------------------------------------------------------
@@ -33,7 +31,6 @@ from graphics.GraphicCommons import *
 from .Graphic_Element import Graphic_Element, Connector
 
 
-# from six.moves import range
 
 
 def TestConnectorName(name, block_type):

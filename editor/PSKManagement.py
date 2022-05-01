@@ -4,7 +4,6 @@
 # See COPYING file for copyrights details.
 
 import json
-# from __future__ import absolute_import
 import os
 import time
 from zipfile import ZipFile

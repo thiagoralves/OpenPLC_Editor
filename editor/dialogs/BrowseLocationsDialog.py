@@ -23,8 +23,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.#
 
-
-# from __future__ import absolute_import
 import wx
 
 from PLCControler import LOCATION_CONFNODE, LOCATION_MODULE, LOCATION_GROUP, LOCATION_VAR_INPUT, LOCATION_VAR_OUTPUT, \
@@ -228,6 +226,8 @@ class BrowseLocationsDialog(wx.Dialog):
 
     def GetValues(self):
         selected = self.LocationsTree.GetSelection()
+        if selected.GetID() is None:
+            return None
         infos = self.LocationsTree.GetItemData(selected)
         if not self.do_rename:
             infos["var_name"] = None

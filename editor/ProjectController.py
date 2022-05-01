@@ -27,12 +27,9 @@
 Beremiz Project Controller
 """
 
-# from __future__ import absolute_import
-
 import os
 import re
 import shutil
-# from six.moves import xrange
 import socket
 import tempfile
 import time
@@ -1587,7 +1584,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
                             self.DebugTicks.append(debug_tick)
 
         buffers, self.DebugValuesBuffers = (self.DebugValuesBuffers,
-                                            [list() for dummy in xrange(len(self.TracedIECPath))])
+                                            [list() for dummy in range(len(self.TracedIECPath))])
 
         ticks, self.DebugTicks = self.DebugTicks, []
 

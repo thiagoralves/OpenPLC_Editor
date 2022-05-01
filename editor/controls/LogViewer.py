@@ -23,9 +23,6 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
-from __future__ import division
-
 from datetime import datetime
 from time import time as gettime
 from weakref import proxy
@@ -37,8 +34,6 @@ from controls.CustomToolTip import CustomToolTip, TOOLTIP_WAIT_PERIOD
 from editors.DebugViewer import DebugViewer, REFRESH_PERIOD
 from runtime.loglevels import LogLevelsCount, LogLevels
 from util.BitmapLibrary import GetBitmap
-
-# from six.moves import xrange
 
 
 THUMB_SIZE_RATIO = 1. / 8.

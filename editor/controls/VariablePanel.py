@@ -23,9 +23,6 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
-from __future__ import division
-
 import re
 
 import wx
@@ -35,7 +32,7 @@ import wx.lib.buttons
 from controls.CustomGrid import CustomGrid
 from controls.CustomTable import CustomTable
 from controls.LocationCellEditor import LocationCellEditor
-from graphics.GraphicCommons import REFRESH_HIGHLIGHT_PERIOD
+from graphics.GraphicCommons import ERROR_HIGHLIGHT, HCOLOR, REFRESH_HIGHLIGHT_PERIOD
 from plcopen.VariableInfoCollector import _VariableInfos
 from plcopen.structures import LOCATIONDATATYPES, TestIdentifier, IEC_KEYWORDS, DefaultType
 from util.BitmapLibrary import GetBitmap
@@ -43,7 +40,6 @@ from util.TranslationCatalogs import NoTranslate
 
 # from builtins import str as text
 # from six import str
-# from six.moves import range
 
 
 # -------------------------------------------------------------------------------
@@ -242,7 +238,7 @@ class VariableTable(CustomTable):
                 grid.SetCellRenderer(row, col, renderer)
 
                 if colname == "Location" and LOCATION_MODEL.match(self.GetValueByName(row, colname)) is None:
-                    highlight_colours = ERROR_HIGHLIGHT
+                    highlight_colours = HCOLOR.get(ERROR_HIGHLIGHT[0]), HCOLOR.get(ERROR_HIGHLIGHT[1])
                 else:
                     highlight_colours = row_highlights.get(colname.lower(), [(wx.WHITE, wx.BLACK)])[-1]
                 grid.SetCellBackgroundColour(row, col, highlight_colours[0])

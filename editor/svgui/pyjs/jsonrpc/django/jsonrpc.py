@@ -2,7 +2,6 @@
 #   original code: http://trac.pyworks.org/pyjamas/wiki/DjangoWithPyJamas
 #   also from: http://www.pimentech.fr/technologies/outils
 
-# from __future__ import absolute_import
 import datetime
 from builtins import str as text
 

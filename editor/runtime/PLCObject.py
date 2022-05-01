@@ -31,12 +31,11 @@ import sys
 import traceback
 from functools import wraps, partial
 from tempfile import mkstemp
-# from __future__ import absolute_import
+# 
 from threading import Thread, Lock, Event, Condition
 from time import time
 
 from past.builtins import execfile
-from six.moves import xrange
 
 from runtime import MainWorker
 from runtime import PlcStatus
@@ -494,7 +493,7 @@ class PLCObject(object):
 
     @RunInMain
     def _GetPLCstatus(self):
-        return self.PLCStatus, map(self.GetLogCount, xrange(LogLevelsCount))
+        return self.PLCStatus, map(self.GetLogCount, range(LogLevelsCount))
 
     @RunInMain
     def GetPLCID(self):

@@ -79,8 +79,6 @@ You can get the gettext tools from the following sites:
 # -------------
 #
 
-# from __future__ import absolute_import
-from __future__ import print_function
 
 import os
 import re

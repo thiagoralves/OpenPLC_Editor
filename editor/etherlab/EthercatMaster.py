@@ -9,8 +9,6 @@
 #
 # See COPYING file for copyrights details.
 
-from __future__ import absolute_import
-
 import os
 from copy import deepcopy
 from functools import reduce
