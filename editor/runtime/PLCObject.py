@@ -35,14 +35,13 @@ from tempfile import mkstemp
 from threading import Thread, Lock, Event, Condition
 from time import time
 
-from past.builtins import execfile
-
 from runtime import MainWorker
 from runtime import PlcStatus
 from runtime import default_evaluator
 from runtime.Stunnel import getPSKID
 from runtime.loglevels import LogLevelsDefault, LogLevelsCount
 from runtime.typemapping import TypeTranslator
+from util.misc import execfile
 
 if os.name in ("nt", "ce"):
     dlopen = _ctypes.LoadLibrary

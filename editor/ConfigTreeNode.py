@@ -40,10 +40,10 @@ from functools import reduce
 from operator import add
 
 from lxml import etree
-from past.builtins import execfile
 
 from PLCControler import LOCATION_CONFNODE
 from editors.ConfTreeNodeEditor import ConfTreeNodeEditor
+from util.misc import execfile
 from xmlclass import GenerateParserFromXSDstring
 
 _BaseParamsParser = GenerateParserFromXSDstring("""<?xml version="1.0" encoding="ISO-8859-1" ?>

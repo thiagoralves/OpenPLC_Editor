@@ -28,8 +28,8 @@ import sys
 import traceback
 
 import wx
-from past.builtins import execfile
 from wx.lib.agw.advancedsplash import AdvancedSplash, AS_NOTIMEOUT, AS_CENTER_ON_SCREEN
+from util.misc import execfile
 
 import util.paths as paths
 
