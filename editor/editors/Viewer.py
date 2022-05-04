@@ -27,8 +27,6 @@
 from threading import Lock
 from time import time as gettime
 
-from future.builtins import round
-
 from PLCControler import ITEM_VAR_LOCAL, ITEM_POU, ITEM_PROGRAM, ITEM_FUNCTIONBLOCK
 from dialogs import *
 from graphics.FBD_Objects import *

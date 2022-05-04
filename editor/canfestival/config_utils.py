@@ -27,8 +27,6 @@ import getopt
 import os
 import sys
 
-from past.builtins import long
-
 # Translation between IEC types and Can Open types
 IECToCOType = {
     "BOOL":    0x01,
@@ -571,7 +569,7 @@ class ConciseDCFGenerator(object):
                     continue
                 new_index = False
 
-                if isinstance(variable, (int, long)):
+                if isinstance(variable, int):
                     # If variable is an integer then variable is unexpected
                     self.MasterNode.SetEntry(current_idx + 0x200, subindex, self.TrashVariables[variable])
                 else:

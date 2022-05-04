@@ -30,10 +30,6 @@ from math import *
 
 import wx
 
-# from future.builtins import round
-
-
-# from six import str
 # -------------------------------------------------------------------------------
 #                               Common constants
 #
