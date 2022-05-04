@@ -100,10 +100,7 @@ class BeremizIDELauncher(object):
             self.buildpath = args[1]
 
     def CreateApplication(self):
-
-        BeremizAppType = wx.App if wx.VERSION >= (3, 0, 0) else wx.PySimpleApp
-
-        class BeremizApp(BeremizAppType):
+        class BeremizApp(wx.App):
             def OnInit(_self):  # pylint: disable=no-self-argument
                 self.ShowSplashScreen()
                 return True
