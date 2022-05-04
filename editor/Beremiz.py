@@ -110,8 +110,6 @@ class BeremizIDELauncher(object):
 
         self.app = BeremizApp(redirect=self.debug)
         self.app.SetAppName('beremiz')
-        if wx.VERSION < (3, 0, 0):
-            wx.InitAllImageHandlers()
 
     def ShowSplashScreen(self):
         class Splash(AdvancedSplash):
