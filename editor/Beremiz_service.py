@@ -30,10 +30,10 @@ import threading
 from builtins import str as text
 from threading import Thread, Semaphore, Lock, currentThread
 
-from past.builtins import execfile
 import builtins
 
 import runtime
+from util.misc import execfile
 import util.paths as paths
 from runtime import LogMessageAndException
 from runtime import PlcStatus

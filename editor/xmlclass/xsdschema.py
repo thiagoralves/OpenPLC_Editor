@@ -24,11 +24,6 @@
 
 
 from types import FunctionType
-
-from future.builtins import round
-# from six import str
-from past.builtins import long
-
 from xmlclass.xmlclass import *
 
 
@@ -2241,7 +2236,7 @@ XSD_NAMESPACE = {
         "facets": STRING_FACETS,
         "generate": GenerateSimpleTypeXMLText(str),
         "initial": lambda: 0,
-        "check": lambda x: isinstance(x, (int, long))
+        "check": lambda x: isinstance(x, int)
     },
 
     "hexBinary": {
@@ -2251,7 +2246,7 @@ XSD_NAMESPACE = {
         "facets": STRING_FACETS,
         "generate": GenerateSimpleTypeXMLText(lambda x: ("%."+str(int(round(len("%X" % x)/2.)*2))+"X") % x),
         "initial": lambda: 0,
-        "check": lambda x: isinstance(x, (int, long))
+        "check": lambda x: isinstance(x, int)
     },
 
     "integer": {

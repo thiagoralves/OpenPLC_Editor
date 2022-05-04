@@ -28,8 +28,8 @@ import sys
 import traceback
 
 import wx
-from past.builtins import execfile
 from wx.lib.agw.advancedsplash import AdvancedSplash, AS_NOTIMEOUT, AS_CENTER_ON_SCREEN
+from util.misc import execfile
 
 import util.paths as paths
 
@@ -100,18 +100,13 @@ class BeremizIDELauncher(object):
             self.buildpath = args[1]
 
     def CreateApplication(self):
-
-        BeremizAppType = wx.App if wx.VERSION >= (3, 0, 0) else wx.PySimpleApp
-
-        class BeremizApp(BeremizAppType):
+        class BeremizApp(wx.App):
             def OnInit(_self):  # pylint: disable=no-self-argument
                 self.ShowSplashScreen()
                 return True
 
         self.app = BeremizApp(redirect=self.debug)
         self.app.SetAppName('beremiz')
-        if wx.VERSION < (3, 0, 0):
-            wx.InitAllImageHandlers()
 
     def ShowSplashScreen(self):
         class Splash(AdvancedSplash):
