@@ -17,7 +17,7 @@ if [ $? -ne 0 ]; then
     sudo dpkg -i ./wxpython/python3-wxgtk4.0_4.0.7+dfsg-10_amd64.deb
 fi
 
-pip3 install lxml zeroconf pyserial gnosis simplejson pyjamas nevow
+pip3 install lxml matplotlib zeroconf pyserial gnosis simplejson pyjamas nevow
 
 WORKING_DIR=$(pwd)
 echo -e "#!/bin/bash\n\
