@@ -242,7 +242,7 @@ void ModbusSerial::config(uint8_t *mac, IPAddress ip, IPAddress dns, IPAddress g
     //first byte of frame = address
     byte address = frame[0];
     //Last two bytes = crc
-    u_int crc = ((frame[_len - 2] << 8) | frame[_len - 1]);
+    uint16_t crc = ((frame[_len - 2] << 8) | frame[_len - 1]);
 
     //Slave Check
     if (address != 0xFF && address != this->getSlaveId()) {

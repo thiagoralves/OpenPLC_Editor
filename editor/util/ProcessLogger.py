@@ -225,7 +225,7 @@ class ProcessLogger(object):
     def spin(self):
         while not self.finishsem.acquire(blocking=False):
             eventLoop = wx.GUIEventLoop()
-            eventLoop.Dispatch()
+            #eventLoop.Dispatch()
         try:
             return [self.exitcode, "".join([x.decode('gbk', errors='ignore') for x in self.outdata]),
                     "".join([x.decode('gbk', errors='ignore') for x in self.errdata])]
