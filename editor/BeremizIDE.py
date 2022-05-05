@@ -30,6 +30,7 @@ import shutil
 import sys
 import tempfile
 
+import wx
 import wx.lib.buttons
 import wx.lib.statbmp
 import wx.stc
