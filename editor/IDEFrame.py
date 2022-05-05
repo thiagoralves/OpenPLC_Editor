@@ -115,7 +115,7 @@ def DecodeFileSystemPath(path, is_base64=True):
 
 
 def AppendMenu(parent, help, id, kind, text):
-    parent.Append(help=help, id=id, kind=kind, text=text)
+    return parent.Append(help=help, id=id, kind=kind, text=text)
 
 
 [
@@ -434,6 +434,12 @@ class IDEFrame(wx.Frame):
                                (ID_PLCOPENEDITOREDITMENUSEARCHINPROJECT, "find", _(u'Search in Project'), None),
                                (ID_PLCOPENEDITORDISPLAYMENUFULLSCREEN, "fullscreen", _(u'Toggle fullscreen mode'), None)])
 
+    def ToggleSortAlpha(self, evt):
+        if self.Controler is None:
+            return
+        self.Controler.setSortAlphaNumeric(self.alphasortMenuItem.IsChecked())
+        self.RefreshProjectTree()
+    
     def _init_coll_DisplayMenu_Items(self, parent):
         AppendMenu(parent, help='', id=wx.ID_REFRESH,
                    kind=wx.ITEM_NORMAL, text=_(u'Refresh') + '\tCTRL+R')
@@ -463,6 +469,12 @@ class IDEFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnResetPerspective, id=ID_PLCOPENEDITORDISPLAYMENURESETPERSPECTIVE)
 
         self.Bind(wx.EVT_MENU, self.OnRefreshMenu, id=wx.ID_REFRESH)
+        
+        # alpha sort of project items
+        sort_alpha_id = wx.NewId()
+        self.alphasortMenuItem = AppendMenu(parent, help='', id=sort_alpha_id,
+                   kind=wx.ITEM_CHECK, text=_(u'Sort Alpha') )
+        self.Bind(wx.EVT_MENU, self.ToggleSortAlpha, id=sort_alpha_id)
         if self.EnableDebug:
             self.Bind(wx.EVT_MENU, self.OnClearErrorsMenu, id=wx.ID_CLEAR)
 
