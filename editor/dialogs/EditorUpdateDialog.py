@@ -25,7 +25,7 @@ class EditorUpdateDialog(wx.Dialog):
         else:
             wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"OpenPLC Editor Updater", pos = wx.DefaultPosition, size = wx.Size( -1,-1 ), style = wx.DEFAULT_DIALOG_STYLE )
 		
-        self.SetSizeHintsSz( wx.Size( 450,150 ), wx.DefaultSize )
+        self.SetSizeHint( wx.Size( 450,150 ), wx.DefaultSize )
 
         bSizer2 = wx.BoxSizer( wx.VERTICAL )
 
