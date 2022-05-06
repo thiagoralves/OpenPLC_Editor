@@ -132,6 +132,9 @@ class Beremiz(IDEFrame):
         AppendMenu(parent, help='', id=wx.ID_PRINT,
                    kind=wx.ITEM_NORMAL, text=_(u'Print') + '\tCTRL+P')
         parent.AppendSeparator()
+        AppendMenu(parent, help='', id=wx.ID_ANY,
+                   kind=wx.ITEM_NORMAL, text=_(u'Check for updates...') + '\tCTRL+U')
+        parent.AppendSeparator()
         AppendMenu(parent, help='', id=wx.ID_EXIT,
                    kind=wx.ITEM_NORMAL, text=_(u'Quit') + '\tCTRL+Q')
 
@@ -144,6 +147,7 @@ class Beremiz(IDEFrame):
         self.Bind(wx.EVT_MENU, self.OnPageSetupMenu, id=wx.ID_PAGE_SETUP)
         self.Bind(wx.EVT_MENU, self.OnPreviewMenu, id=wx.ID_PREVIEW)
         self.Bind(wx.EVT_MENU, self.OnPrintMenu, id=wx.ID_PRINT)
+        self.Bind(wx.EVT_MENU, self.OnUpdateMenu, id=wx.ID_ANY)
         self.Bind(wx.EVT_MENU, self.OnQuitMenu, id=wx.ID_EXIT)
 
         self.AddToMenuToolBar([(wx.ID_NEW, "new", _(u'New'), None),

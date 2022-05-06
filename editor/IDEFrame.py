@@ -33,7 +33,7 @@ from PLCControler import *
 from controls import CustomTree, LibraryPanel, PouInstanceVariablesPanel, SearchResultPanel
 from controls.DebugVariablePanel import DebugVariablePanel
 from dialogs import ProjectDialog, PouDialog, PouTransitionDialog, PouActionDialog, FindInPouDialog, \
-    SearchInProjectDialog
+    SearchInProjectDialog, EditorUpdateDialog
 from editors.DataTypeEditor import DataTypeEditor
 from editors.EditorPanel import EditorPanel
 from editors.LDViewer import LD_Viewer
@@ -1159,6 +1159,10 @@ class IDEFrame(wx.Frame):
                     _("There was a problem printing.\nPerhaps your current printer is not set correctly?"))
             printout.Destroy()
 
+    def OnUpdateMenu(self, event):
+        dialog = EditorUpdateDialog.EditorUpdateDialog(self)
+        dialog.ShowModal()
+    
     def OnPropertiesMenu(self, event):
         self.EditProjectSettings()
 
