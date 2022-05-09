@@ -1494,7 +1494,7 @@ class IDEFrame(wx.Frame):
                 editor.SetTagName(new_tagname)
 
     def IsOpened(self, tagname):
-        for idx in list(range(self.TabsOpened.GetPageCount())):
+        for idx in range(self.TabsOpened.GetPageCount()):
             if self.TabsOpened.GetPage(idx).IsViewing(tagname):
                 return idx
         return None
@@ -1913,7 +1913,7 @@ class IDEFrame(wx.Frame):
                 if old_selected != openedidx:
                     if old_selected >= 0:
                         self.TabsOpened.GetPage(old_selected).ResetBuffer()
-                for i in list(range(self.TabsOpened.GetPageCount())):
+                for i in range(self.TabsOpened.GetPageCount()):
                     window = self.TabsOpened.GetPage(i)
                     if window == new_window:
                         self.TabsOpened.SetSelection(i)

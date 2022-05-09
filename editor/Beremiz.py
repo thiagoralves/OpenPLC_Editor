@@ -155,8 +155,8 @@ class BeremizIDELauncher(object):
 
             def updateinfoproc():
                 try:
-                    import urllib2
-                    self.updateinfo = urllib2.urlopen(self.updateinfo_url, None).read()
+                    from urllib import request
+                    self.updateinfo = request.urlopen(self.updateinfo_url, None).read()
                 except Exception:
                     self.updateinfo = _("update info unavailable.")
 
