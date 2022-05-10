@@ -2198,14 +2198,23 @@ class IDEFrame(wx.Frame):
             self.ResetEditorToolBar()
             self.CurrentMenu = menu
             self.CurrentEditorToolBar = []
-            EditorToolBar = self.Panes["EditorToolBar"]
-            if EditorToolBar:
+            EditorToolBar: wx.ToolBar = self.Panes["EditorToolBar"]
+            if EditorToolBar is not None:
                 for radio, modes, id, method, picture, help in self.EditorToolBarItems[menu]:
                     if modes & self.DrawingMode:
                         if radio or self.DrawingMode == FREEDRAWING_MODE:
-                            EditorToolBar.AddRadioTool(id, GetBitmap(picture), wx.NullBitmap, help)
+                            EditorToolBar.AddRadioTool(
+                                toolId=id,
+                                label="",
+                                bitmap1=GetBitmap(picture),
+                                bmpDisabled=wx.NullBitmap,
+                                shortHelp=help)
                         else:
-                            EditorToolBar.AddTool(id, GetBitmap(picture), help)
+                            EditorToolBar.AddTool(
+                                toolId=id,
+                                label="",
+                                bitmap=GetBitmap(picture),
+                                shortHelp=help)
                         self.Bind(wx.EVT_MENU, getattr(self, method), id=id)
                         self.CurrentEditorToolBar.append(id)
                 EditorToolBar.Realize()
