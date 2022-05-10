@@ -2242,7 +2242,7 @@ class IDEFrame(wx.Frame):
             EditorToolBar.ToggleTool(ID_PLCOPENEDITOREDITORTOOLBARSELECTION, True)
 
     def ResetToolToggle(self, id):
-        tool = self.Panes["EditorToolBar"].FindById(id)
+        tool: wx.ToolBarToolBase = self.Panes["EditorToolBar"].FindById(id)
         tool.SetToggle(False)
 
     def OnSelectionTool(self, event):
@@ -2256,31 +2256,31 @@ class IDEFrame(wx.Frame):
             self.TabsOpened.GetPage(selected).SetMode(MODE_MOTION)
 
     def OnCommentTool(self, event):
-        self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARCOMMENT)
+        # self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARCOMMENT)
         selected = self.TabsOpened.GetSelection()
         if selected != -1:
             self.TabsOpened.GetPage(selected).SetMode(MODE_COMMENT)
 
     def OnVariableTool(self, event):
-        self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARVARIABLE)
+        # self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARVARIABLE)
         selected = self.TabsOpened.GetSelection()
         if selected != -1:
             self.TabsOpened.GetPage(selected).SetMode(MODE_VARIABLE)
 
     def OnBlockTool(self, event):
-        self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARBLOCK)
+        # self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARBLOCK)
         selected = self.TabsOpened.GetSelection()
         if selected != -1:
             self.TabsOpened.GetPage(selected).SetMode(MODE_BLOCK)
 
     def OnConnectionTool(self, event):
-        self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARCONNECTION)
+        # self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARCONNECTION)
         selected = self.TabsOpened.GetSelection()
         if selected != -1:
             self.TabsOpened.GetPage(selected).SetMode(MODE_CONNECTION)
 
     def OnPowerRailTool(self, event):
-        self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARPOWERRAIL)
+        # self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARPOWERRAIL)
         selected = self.TabsOpened.GetSelection()
         if selected != -1:
             self.TabsOpened.GetPage(selected).SetMode(MODE_POWERRAIL)
@@ -2292,15 +2292,15 @@ class IDEFrame(wx.Frame):
         event.Skip()
 
     def OnCoilTool(self, event):
-        self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARCOIL)
+        # self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARCOIL)
         selected = self.TabsOpened.GetSelection()
         if selected != -1:
             self.TabsOpened.GetPage(selected).SetMode(MODE_COIL)
         event.Skip()
 
     def OnContactTool(self, event):
-        if self.DrawingMode == FREEDRAWING_MODE:
-            self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARCONTACT)
+        # if self.DrawingMode == FREEDRAWING_MODE:
+        #     self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARCONTACT)
         selected = self.TabsOpened.GetSelection()
         if selected != -1:
             if self.DrawingMode == FREEDRAWING_MODE:
@@ -2314,14 +2314,14 @@ class IDEFrame(wx.Frame):
             self.TabsOpened.GetPage(selected).AddLadderBranch()
 
     def OnInitialStepTool(self, event):
-        self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARINITIALSTEP)
+        # self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARINITIALSTEP)
         selected = self.TabsOpened.GetSelection()
         if selected != -1:
             self.TabsOpened.GetPage(selected).SetMode(MODE_INITIALSTEP)
 
     def OnStepTool(self, event):
-        if self.GetDrawingMode() == FREEDRAWING_MODE:
-            self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARSTEP)
+        # if self.GetDrawingMode() == FREEDRAWING_MODE:
+        #     self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARSTEP)
         selected = self.TabsOpened.GetSelection()
         if selected != -1:
             if self.GetDrawingMode() == FREEDRAWING_MODE:
@@ -2330,8 +2330,8 @@ class IDEFrame(wx.Frame):
                 self.TabsOpened.GetPage(selected).AddStep()
 
     def OnActionBlockTool(self, event):
-        if self.GetDrawingMode() == FREEDRAWING_MODE:
-            self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARACTIONBLOCK)
+        # if self.GetDrawingMode() == FREEDRAWING_MODE:
+        #     self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARACTIONBLOCK)
         selected = self.TabsOpened.GetSelection()
         if selected != -1:
             if self.GetDrawingMode() == FREEDRAWING_MODE:
@@ -2340,14 +2340,14 @@ class IDEFrame(wx.Frame):
                 self.TabsOpened.GetPage(selected).AddStepAction()
 
     def OnTransitionTool(self, event):
-        self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARTRANSITION)
+        # self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARTRANSITION)
         selected = self.TabsOpened.GetSelection()
         if selected != -1:
             self.TabsOpened.GetPage(selected).SetMode(MODE_TRANSITION)
 
     def OnDivergenceTool(self, event):
-        if self.GetDrawingMode() == FREEDRAWING_MODE:
-            self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARDIVERGENCE)
+        # if self.GetDrawingMode() == FREEDRAWING_MODE:
+        #     self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARDIVERGENCE)
         selected = self.TabsOpened.GetSelection()
         if selected != -1:
             if self.GetDrawingMode() == FREEDRAWING_MODE:
@@ -2356,8 +2356,8 @@ class IDEFrame(wx.Frame):
                 self.TabsOpened.GetPage(selected).AddDivergence()
 
     def OnJumpTool(self, event):
-        if self.GetDrawingMode() == FREEDRAWING_MODE:
-            self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARJUMP)
+        # if self.GetDrawingMode() == FREEDRAWING_MODE:
+        #     self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARJUMP)
         selected = self.TabsOpened.GetSelection()
         if selected != -1:
             if self.GetDrawingMode() == FREEDRAWING_MODE:
