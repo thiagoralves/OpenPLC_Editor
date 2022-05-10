@@ -28,6 +28,7 @@ Beremiz Project Controller
 """
 
 import os
+import platform
 import re
 import shutil
 import socket
@@ -123,15 +124,13 @@ class Iec2CSettings(object):
         return path
 
     def findCmd(self):
-        cmd = "iec2c" # + (".exe" if wx.Platform == '__WXMSW__' else "")
-        if wx.PlatformInformation.Get().GetOperatingSystemId() == wx.OS_MAC_OSX_DARWIN:
+        cmd = "iec2c" #default
+        if platform.system() == "Darwin":
             cmd = "iec2c_mac"
-        if wx.PlatformInformation.Get().GetOperatingSystemId() == wx.OS_WINDOWS_NT:
+        elif platform.system() == "Windows":
             cmd = "iec2c.exe"
-        #if wx.Platform == '__WXMSW__':
-        #    cmd = "iec2c.exe"
-        #if wx.Platform == '__WXOSX_OR_COCOA__':
-        #    cmd = "iec2c_mac"
+        elif platform.system() == "Linux":
+            cmd = "iec2c"
         paths = [
             os.path.join(base_folder, "matiec")
         ]
