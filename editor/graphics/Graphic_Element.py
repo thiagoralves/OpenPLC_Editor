@@ -416,12 +416,11 @@ class Graphic_Element(ToolTipProducer):
         dc.SetUserScale(1, 1)
         dc.SetPen(MiterPen(HIGHLIGHTCOLOR))
         dc.SetBrush(wx.Brush(HIGHLIGHTCOLOR))
-        dc.SetLogicalFunction(wx.AND)
+        #dc.SetLogicalFunction(wx.AND)
         dc.DrawRectangle(int(round((self.Pos.x - 1) * scalex)) - 2,
                          int(round((self.Pos.y - 1) * scaley)) - 2,
                          int(round((self.Size.width + 3) * scalex)) + 5,
                          int(round((self.Size.height + 3) * scaley)) + 5)
-        dc.SetLogicalFunction(wx.COPY)
         dc.SetUserScale(scalex, scaley)
 
     # Draws the handles of this element if it is selected
@@ -1162,7 +1161,7 @@ class Connector(DebugDataConsumer, ToolTipProducer):
         pen.SetCap(wx.CAP_BUTT)
         dc.SetPen(pen)
         dc.SetBrush(wx.Brush(HIGHLIGHTCOLOR))
-        dc.SetLogicalFunction(wx.AND)
+        #dc.SetLogicalFunction(wx.AND)
         parent_pos = self.ParentBlock.GetPosition()
         xstart = parent_pos[0] + self.Pos.x
         ystart = parent_pos[1] + self.Pos.y
@@ -1174,7 +1173,7 @@ class Connector(DebugDataConsumer, ToolTipProducer):
         yend = ystart + CONNECTOR_SIZE * self.Direction[1]
         dc.DrawLine(round((xstart + self.Direction[0]) * scalex), round((ystart + self.Direction[1]) * scaley),
                     round(xend * scalex), round(yend * scaley))
-        dc.SetLogicalFunction(wx.COPY)
+        #dc.SetLogicalFunction(wx.COPY)
         dc.SetUserScale(scalex, scaley)
 
     # Adds an highlight to the connector
@@ -2414,7 +2413,7 @@ class Wire(Graphic_Element, DebugDataConsumer):
             highlightcolor = HIGHLIGHTCOLOR
         dc.SetPen(MiterPen(highlightcolor, (2 * scalex + 5)))
         dc.SetBrush(wx.Brush(highlightcolor))
-        dc.SetLogicalFunction(wx.AND)
+        #dc.SetLogicalFunction(wx.AND)
         # Draw the start and end points if they are not connected or the mouse is over them
         if len(self.Points) > 0 and (not self.StartConnected or self.OverStart):
             dc.DrawCircle(round(self.Points[0].x * scalex),
@@ -2432,7 +2431,7 @@ class Wire(Graphic_Element, DebugDataConsumer):
         else:
             points = []
         dc.DrawLines(points)
-        dc.SetLogicalFunction(wx.COPY)
+        #dc.SetLogicalFunction(wx.COPY)
         dc.SetUserScale(scalex, scaley)
 
         if self.StartConnected is not None:
@@ -2668,7 +2667,7 @@ class Comment(Graphic_Element):
         dc.SetUserScale(1, 1)
         dc.SetPen(MiterPen(HIGHLIGHTCOLOR))
         dc.SetBrush(wx.Brush(HIGHLIGHTCOLOR))
-        dc.SetLogicalFunction(wx.AND)
+        #dc.SetLogicalFunction(wx.AND)
 
         left = (self.Pos.x - 1) * scalex - 2
         right = (self.Pos.x + self.Size[0] + 1) * scalex + 2
@@ -2682,7 +2681,7 @@ class Comment(Graphic_Element):
                    wx.Point(left, bottom)]
         dc.DrawPolygon(polygon)
 
-        dc.SetLogicalFunction(wx.COPY)
+        #dc.SetLogicalFunction(wx.COPY)
         dc.SetUserScale(scalex, scaley)
 
     # Draws the comment and its content
