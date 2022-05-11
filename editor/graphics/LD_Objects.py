@@ -588,7 +588,7 @@ class LD_Contact(Graphic_Element, DebugDataConsumer):
         dc.SetUserScale(1, 1)
         dc.SetPen(MiterPen(HIGHLIGHTCOLOR))
         dc.SetBrush(wx.Brush(HIGHLIGHTCOLOR))
-        dc.SetLogicalFunction(wx.AND)
+        #dc.SetLogicalFunction(wx.AND)
         # Draw two rectangles for representing the contact
         left_left = (self.Pos.x - 1) * scalex - 2
         right_left = (self.Pos.x + self.Size[0] - 2) * scalex - 2
@@ -598,7 +598,7 @@ class LD_Contact(Graphic_Element, DebugDataConsumer):
 
         dc.DrawRectangle(left_left, top, width, height)
         dc.DrawRectangle(right_left, top, width, height)
-        dc.SetLogicalFunction(wx.COPY)
+        #dc.SetLogicalFunction(wx.COPY)
         dc.SetUserScale(scalex, scaley)
 
     # Adds an highlight to the connection
@@ -908,7 +908,7 @@ class LD_Coil(Graphic_Element):
         dc.SetUserScale(1, 1)
         dc.SetPen(MiterPen(HIGHLIGHTCOLOR, (3 * scalex + 5), wx.SOLID))
         dc.SetBrush(wx.TRANSPARENT_BRUSH)
-        dc.SetLogicalFunction(wx.AND)
+        #dc.SetLogicalFunction(wx.AND)
         # Draw a two circle arcs for representing the coil
         dc.DrawEllipticArc(round(self.Pos.x * scalex),
                            round((self.Pos.y - int(self.Size[1] * (sqrt(2) - 1.) / 2.) + 1) * scaley),
@@ -920,7 +920,7 @@ class LD_Coil(Graphic_Element):
                            round(self.Size[0] * scalex),
                            round((int(self.Size[1] * sqrt(2)) - 1) * scaley),
                            -45, 45)
-        dc.SetLogicalFunction(wx.COPY)
+        #dc.SetLogicalFunction(wx.COPY)
         dc.SetUserScale(scalex, scaley)
 
     # Adds an highlight to the connection
