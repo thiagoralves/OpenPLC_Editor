@@ -1,6 +1,11 @@
 from __future__ import absolute_import
 import threading
+import time
 from builtins import str as text
+
+import urllib.request
+import ssl
+import platform
 
 import wx
 import wx.xrc
@@ -47,9 +52,40 @@ class EditorUpdateDialog(wx.Dialog):
 
         self.Centre( wx.BOTH )
 
+        return_code = 0
+        updater_thread = threading.Thread(target=self.updater, args=([return_code]))
+        updater_thread.start()
+
     def __del__( self ):
         pass
 
+    def updater(self, return_code):
+        #Read current revision
+        local_revision = 0
+        try:
+            f = open("revision", "r")
+            local_revision = int(f.read())
+        except OSError:
+            local_revision = 0
+        
+        #Download revision file from GitHub
+        if platform.system() == 'Darwin':
+            context = ssl._create_unverified_context() #bypass SSL errors on macOS - TODO: fix it later
+            cloud_file = urllib.request.urlopen('https://github.com/thiagoralves/OpenPLC_Editor/blob/master/revision?raw=true', context=context)
+        else:
+            cloud_file = urllib.request.urlopen('https://github.com/thiagoralves/OpenPLC_Editor/blob/master/revision?raw=true')
+        
+        cloud_revision = int(cloud_file.read().decode('utf-8'))
+        if (cloud_revision > local_revision):
+            r = wx.MessageDialog(None, 'There is a newer version available. \nCurrent revision: ' + str(local_revision) + '\nUpdate: ' + str(cloud_revision) + '\n\nWould you like to update?', 'OpenPLC Editor Update', wx.YES_NO | wx.NO_DEFAULT | wx.ICON_QUESTION).ShowModal()
+            if r == wx.ID_YES:
+                wx.CallAfter(self.update_msg_lbl.SetLabelText, 'Downloading update...')
+            else:
+                self.EndModal(wx.ID_OK)
+        else:
+            wx.MessageDialog(None, "You're running the most recent version of OpenPLC Editor. There are no updates available at this time.", 'OpenPLC Editor Update', wx.OK | wx.OK_DEFAULT).ShowModal()
+            self.EndModal(wx.ID_OK)
+            
     def onUIChange(self, e):
         pass
 
