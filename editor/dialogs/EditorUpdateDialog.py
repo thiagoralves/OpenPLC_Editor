@@ -58,6 +58,13 @@ class EditorUpdateDialog(wx.Dialog):
 
     def __del__( self ):
         pass
+        
+    def shouldUpdate(self, local_revision, cloud_revision):
+        r = wx.MessageDialog(None, 'There is a newer version available. \nCurrent revision: ' + str(local_revision) + '\nUpdate: ' + str(cloud_revision) + '\n\nWould you like to update?', 'OpenPLC Editor Update', wx.YES_NO | wx.NO_DEFAULT | wx.ICON_QUESTION).ShowModal()
+        if r == wx.ID_YES:
+            wx.CallAfter(self.update_msg_lbl.SetLabelText, 'Downloading update...')
+        else:
+            self.EndModal(wx.ID_OK)
 
     def updater(self, return_code):
         #Read current revision
@@ -77,14 +84,11 @@ class EditorUpdateDialog(wx.Dialog):
         
         cloud_revision = int(cloud_file.read().decode('utf-8'))
         if (cloud_revision > local_revision):
-            r = wx.MessageDialog(None, 'There is a newer version available. \nCurrent revision: ' + str(local_revision) + '\nUpdate: ' + str(cloud_revision) + '\n\nWould you like to update?', 'OpenPLC Editor Update', wx.YES_NO | wx.NO_DEFAULT | wx.ICON_QUESTION).ShowModal()
-            if r == wx.ID_YES:
-                wx.CallAfter(self.update_msg_lbl.SetLabelText, 'Downloading update...')
-            else:
-                self.EndModal(wx.ID_OK)
+            wx.CallAfter(self.shouldUpdate, local_revision, cloud_revision)
         else:
-            wx.MessageDialog(None, "You're running the most recent version of OpenPLC Editor. There are no updates available at this time.", 'OpenPLC Editor Update', wx.OK | wx.OK_DEFAULT).ShowModal()
-            self.EndModal(wx.ID_OK)
+            r = wx.MessageDialog(None, "You're running the most recent version of OpenPLC Editor. There are no updates available at this time.", 'OpenPLC Editor Update', wx.OK | wx.OK_DEFAULT)
+            wx.CallAfter(r.ShowModal)
+            wx.CallAfter(self.EndModal, wx.ID_OK)
             
     def onUIChange(self, e):
         pass
