@@ -11,6 +11,7 @@ git clone https://github.com/thiagoralves/OpenPLC_Editor
 if [ -d "./OpenPLC_Editor/editor" ]
 then
     mv "./OpenPLC_Editor/editor" ./new_editor
+    cp ./OpenPLC_Editor/revision ./
     rm -Rf OpenPLC_Editor
     echo "Update applied successfully"
 else

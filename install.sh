@@ -45,6 +45,11 @@ cd ..
 WORKING_DIR=$(pwd)
 echo -e "#!/bin/bash\n\
 cd \"$WORKING_DIR\"\n\
+if [ -d \"./new_editor\" ]\n\
+then\n\
+    rm -Rf editor\n\
+    mv ./new_editor ./editor\n\
+fi\n\
 python2.7 ./editor/Beremiz.py" > openplc_editor.sh
 chmod +x ./openplc_editor.sh
 cd ~/.local/share/applications
