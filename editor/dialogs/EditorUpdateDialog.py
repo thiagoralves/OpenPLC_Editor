@@ -87,7 +87,7 @@ class EditorUpdateDialog(wx.Dialog):
     def cloneRepository(self):
         self.update_finished = 0
         self.incrementGauge()
-        run_script = 'update.sh'
+        run_script = './update.sh'
         if platform.system() == 'Windows':
             run_script = 'update.cmd'
         return_str = check_output(run_script, shell=True)
