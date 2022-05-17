@@ -11,6 +11,46 @@
 #include <locale.h>
 #include <semaphore.h>
 
+//Define empty prototypes for macOS for now
+#ifdef __APPLE__
+long AtomicCompareExchange(long* atomicvar,long compared, long exchange)
+{
+    return __sync_val_compare_and_swap(atomicvar, compared, exchange);
+}
+long long AtomicCompareExchange64(long long* atomicvar, long long compared, long long exchange)
+{
+    return __sync_val_compare_and_swap(atomicvar, compared, exchange);
+}
+int ForceSaveRetainReq(void) 
+{
+}
+void InitiateDebugTransfer()
+{
+}
+void LeaveDebugSection(void)
+{
+}
+void PLC_GetTime(IEC_TIME *CURRENT_TIME)
+{
+}
+void PLC_SetTimer(unsigned long long next, unsigned long long period)
+{
+}
+int TryEnterDebugSection(void)
+{
+}
+int WaitDebugData(unsigned long *tick)
+{
+}
+int startPLC(int argc,char **argv)
+{
+}
+int stopPLC()
+{
+}
+
+#else
+
 static sem_t Run_PLC;
 
 long AtomicCompareExchange(long* atomicvar,long compared, long exchange)
@@ -235,3 +275,4 @@ void LockPython(void)
 {
     pthread_mutex_lock(&python_mutex);
 }
+#endif
