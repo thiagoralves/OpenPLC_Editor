@@ -6,6 +6,7 @@ from builtins import str as text
 import urllib.request
 import ssl
 import platform
+from subprocess import getoutput
 
 import wx
 import wx.xrc
@@ -15,31 +16,32 @@ import os
 #                            Editor Update Dialog
 # -------------------------------------------------------------------------------
 
-
 class EditorUpdateDialog(wx.Dialog):
     """Dialog to configure upload parameters"""
+
+    update_finished = 0
+    update_cancelled = False
 
     def __init__(self, parent):
         """
         Constructor
         @param parent: Parent wx.Window of dialog for modal
         """
-
-        if os.name == 'nt':
-            wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"OpenPLC Editor Updater", pos = wx.DefaultPosition, size = wx.Size( -1,-1 ), style = wx.DEFAULT_DIALOG_STYLE )
-        else:
-            wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"OpenPLC Editor Updater", pos = wx.DefaultPosition, size = wx.Size( -1,-1 ), style = wx.DEFAULT_DIALOG_STYLE )
+        
+        wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"OpenPLC Editor Updater", pos = wx.DefaultPosition, size = wx.Size( -1,-1 ), style = wx.DEFAULT_DIALOG_STYLE )
 		
         self.SetSizeHints( wx.Size( 450,150 ), wx.DefaultSize )
 
         bSizer2 = wx.BoxSizer( wx.VERTICAL )
 
-        self.update_msg_lbl = wx.StaticText( self, wx.ID_ANY, u"Checking for updates...", wx.Point( -1,-1 ), wx.Size( -1,-1 ), wx.ALIGN_LEFT )
+        self.update_msg_lbl = wx.StaticText( self, wx.ID_ANY, u"Checking for updates...", wx.Point( -1,-1 ), wx.Size( 400,-1 ), wx.ALIGN_CENTRE )
         self.update_msg_lbl.Wrap( -1 )
-        bSizer2.Add( self.update_msg_lbl, 0, wx.ALIGN_CENTER|wx.ALL, 10 )
+        self.update_msg_lbl.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 90, False, wx.EmptyString ) )
+        bSizer2.Add( self.update_msg_lbl, 0, wx.ALIGN_CENTER|wx.ALIGN_CENTER_HORIZONTAL|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 10 )
 
         self.m_gauge1 = wx.Gauge( self, wx.ID_ANY, 100, wx.DefaultPosition, wx.Size( 400,-1 ), wx.GA_HORIZONTAL )
-        self.m_gauge1.SetValue( 0 ) 
+        self.m_gauge1.SetValue( 0 )
+        self.m_gauge1.SetRange(100)
         bSizer2.Add( self.m_gauge1, 0, wx.ALIGN_CENTER|wx.ALL, 15 )
 
         self.cancel_button = wx.Button( self, wx.ID_ANY, u"Cancel", wx.Point( -1,-1 ), wx.Size( 150,40 ), 0 )
@@ -58,11 +60,47 @@ class EditorUpdateDialog(wx.Dialog):
 
     def __del__( self ):
         pass
+
+    def incrementGauge(self):
+        if self.update_cancelled is True:
+            return
+        
+        current_value = self.m_gauge1.GetValue()
+        if (current_value < 80):
+            wx.CallAfter(self.m_gauge1.SetValue, current_value+5)
+        else:
+            wx.CallAfter(self.update_msg_lbl.SetLabelText, 'Checking update...')
+        
+        if self.update_finished == 0:
+            threading.Timer(3, self.incrementGauge).start()
+        elif self.update_finished == 1:
+            wx.CallAfter(self.m_gauge1.SetValue, 100)
+            wx.CallAfter(self.update_msg_lbl.SetLabelText, 'Update finished! Please restart OpenPLC Editor.')
+            wx.CallAfter(self.cancel_button.SetLabel, 'Ok')
+        elif self.update_finished == -1:
+            wx.CallAfter(self.m_gauge1.SetValue, 0)
+            wx.CallAfter(self.update_msg_lbl.SetLabelText, 'Error while trying to download update.\nCheck your internet connection and try again.')
+            wx.CallAfter(self.cancel_button.SetLabel, 'Ok')
+
+    def cloneRepository(self):
+        self.update_finished = 0
+        self.incrementGauge()
+        run_script = './update.sh'
+        if platform.system() == 'Windows':
+            run_script = 'update.cmd'
+        return_str = getoutput(run_script)
+        last_line = return_str[-35:]
+        if 'Update applied successfully' in last_line:
+            self.update_finished = 1
+        else:
+            self.update_finished = -1
         
     def shouldUpdate(self, local_revision, cloud_revision):
         r = wx.MessageDialog(None, 'There is a newer version available. \nCurrent revision: ' + str(local_revision) + '\nUpdate: ' + str(cloud_revision) + '\n\nWould you like to update?', 'OpenPLC Editor Update', wx.YES_NO | wx.NO_DEFAULT | wx.ICON_QUESTION).ShowModal()
         if r == wx.ID_YES:
             wx.CallAfter(self.update_msg_lbl.SetLabelText, 'Downloading update...')
+            updater_thread = threading.Thread(target=self.cloneRepository)
+            updater_thread.start()
         else:
             self.EndModal(wx.ID_OK)
 

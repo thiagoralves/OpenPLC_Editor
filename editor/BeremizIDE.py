@@ -77,6 +77,11 @@ from util.BitmapLibrary import GetBitmap
 from util.MiniTextControler import MiniTextControler
 from util.ProcessLogger import ProcessLogger
 
+# Define OpenPLC Editor FileMenu extra items id
+[
+    ID_OPENPLCFILEMENUUPDATE
+] = [wx.NewId() for _init_coll_FileMenu_Items in range(1)]
+
 beremiz_dir = paths.AbsDir(__file__)
 
 
@@ -132,9 +137,8 @@ class Beremiz(IDEFrame):
         AppendMenu(parent, help='', id=wx.ID_PRINT,
                    kind=wx.ITEM_NORMAL, text=_(u'Print') + '\tCTRL+P')
         parent.AppendSeparator()
-
-        id_update = wx.NewIdRef()
-        AppendMenu(parent, help='', id=id_update,
+        
+        AppendMenu(parent, help='', id=ID_OPENPLCFILEMENUUPDATE,
                    kind=wx.ITEM_NORMAL, text=_(u'Check for updates...') + '\tCTRL+U')
 
         parent.AppendSeparator()
@@ -150,7 +154,7 @@ class Beremiz(IDEFrame):
         self.Bind(wx.EVT_MENU, self.OnPageSetupMenu, id=wx.ID_PAGE_SETUP)
         self.Bind(wx.EVT_MENU, self.OnPreviewMenu, id=wx.ID_PREVIEW)
         self.Bind(wx.EVT_MENU, self.OnPrintMenu, id=wx.ID_PRINT)
-        self.Bind(wx.EVT_MENU, self.OnUpdateMenu, id=id_update)
+        self.Bind(wx.EVT_MENU, self.OnUpdateMenu, id=ID_OPENPLCFILEMENUUPDATE)
         self.Bind(wx.EVT_MENU, self.OnQuitMenu, id=wx.ID_EXIT)
 
         self.AddToMenuToolBar([(wx.ID_NEW, "new", _(u'New'), None),
