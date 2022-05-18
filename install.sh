@@ -19,6 +19,17 @@ fi
 
 pip3 install lxml matplotlib zeroconf pyserial gnosis simplejson pyjamas nevow
 
+echo ""
+echo "[COMPILING MATIEC]"
+cd matiec
+autoreconf -i
+./configure
+make -s
+cp ./iec2c ../editor/arduino/bin/
+echo ""
+echo "[FINALIZING]"
+cd ..
+
 WORKING_DIR=$(pwd)
 echo -e "#!/bin/bash\n\
 cd \"$WORKING_DIR\"\n\
