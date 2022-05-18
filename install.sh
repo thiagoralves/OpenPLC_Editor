@@ -10,6 +10,7 @@ sudo apt -y -qq update
 sudo apt -y -qq install python3
 sudo apt -y -qq install python3-pip
 sudo apt -y -qq install python3-wxgtk4.0
+sudo apt -y -qq install build-essential bison flex autoconf
 
 if [ $? -ne 0 ]; then
     #Manual install
