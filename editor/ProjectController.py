@@ -2022,9 +2022,10 @@ class ProjectController(ConfigTreeNode, PLCControler):
             f = open(self._getIECgeneratedcodepath(), "r")	
             program = f.read()	
             f.close()	
-            dlg = wx.FileDialog(self.AppFrame, "Save to file:", "", "", "OpenPLC Program(*.st)|*.st", wx.SAVE|wx.OVERWRITE_PROMPT)	
+            dlg = wx.FileDialog(self.AppFrame, "Save to file:", "", "",
+                                "OpenPLC Program(*.st)|*.st", wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
             if dlg.ShowModal() == wx.ID_OK:	
-                try:	
+                try:
                     f = open(dlg.GetPath(), "w")	
                     f.write(program)	
                     f.close()	
