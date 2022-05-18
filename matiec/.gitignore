@@ -1,3 +1,9 @@
+# ------------ matiec ------------
+iec_bison.hh
+iec_bison.cc
+iec_flex.cc
+*.Po
+
 # -------------- Cpp --------------
 # Prerequisites
 *.d
