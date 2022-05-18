@@ -10,6 +10,7 @@ sudo apt -y -qq update
 sudo apt -y -qq install python3
 sudo apt -y -qq install python3-pip
 sudo apt -y -qq install python3-wxgtk4.0
+sudo apt -y -qq install build-essential bison flex autoconf
 
 if [ $? -ne 0 ]; then
     #Manual install
@@ -17,7 +18,18 @@ if [ $? -ne 0 ]; then
     sudo dpkg -i ./wxpython/python3-wxgtk4.0_4.0.7+dfsg-10_amd64.deb
 fi
 
-pip3 install lxml matplotlib zeroconf pyserial gnosis simplejson pyjamas nevow
+pip3 install lxml matplotlib zeroconf pyserial gnosis simplejson nevow
+
+echo ""
+echo "[COMPILING MATIEC]"
+cd matiec
+autoreconf -i
+./configure
+make -s
+cp ./iec2c ../editor/arduino/bin/
+echo ""
+echo "[FINALIZING]"
+cd ..
 
 WORKING_DIR=$(pwd)
 echo -e "#!/bin/bash\n\

@@ -124,7 +124,7 @@ class Iec2CSettings(object):
         return path
 
     def findCmd(self):
-        cmd = "iec2c" #default
+        cmd = "iec2c"  # default
         if platform.system() == "Darwin":
             cmd = "iec2c_mac"
         elif platform.system() == "Windows":
@@ -490,10 +490,13 @@ class ProjectController(ConfigTreeNode, PLCControler):
         self._setBuildPath(BuildPath)
         # get confnodes bloclist (is that usefull at project creation?)
         self.RefreshConfNodesBlockLists()
-        # set default scaling properties	
-        PLCControler.SetProjectProperties(self, properties={"scaling": {'FBD': (10, 10)}})	
-        PLCControler.SetProjectProperties(self, properties={"scaling": {'LD': (10, 10)}})	
-        PLCControler.SetProjectProperties(self, properties={"scaling": {'SFC': (10, 10)}})
+        # set default scaling properties
+        PLCControler.SetProjectProperties(
+            self, properties={"scaling": {'FBD': (10, 10)}})
+        PLCControler.SetProjectProperties(
+            self, properties={"scaling": {'LD': (10, 10)}})
+        PLCControler.SetProjectProperties(
+            self, properties={"scaling": {'SFC': (10, 10)}})
         # this will create files base XML files
         self.SaveProject()
         return None
@@ -587,7 +590,8 @@ class ProjectController(ConfigTreeNode, PLCControler):
             if not os.path.isdir(new_project_path) or len(os.listdir(new_project_path)) > 0:
                 plc_file = os.path.join(new_project_path, "plc.xml")
                 if os.path.isfile(plc_file):
-                    message = _("Selected directory already contains another project. Overwrite? \n")
+                    message = _(
+                        "Selected directory already contains another project. Overwrite? \n")
                 else:
                     message = _("Selected directory isn't empty. Continue? \n")
                 dialog = wx.MessageDialog(
@@ -773,18 +777,18 @@ class ProjectController(ConfigTreeNode, PLCControler):
         if self._Generate_PLC_ST():
             return self._Compile_ST_to_SoftPLC()
         return False
-    
-    def RemoveLocatedVariables(self, st_program):	
-        modified_program = ""	
-        for line in st_program.splitlines(True):	
-            if (line.find("AT %") > 0):	
-                a = line.split("AT %")	
-                b = a[1].split(":")	
-                modified_program += a[0] + ":" + b[1]	
-                if(len(b) > 2):	
-                    modified_program += ":" + b[2]	
-            else:	
-                modified_program += line	
+
+    def RemoveLocatedVariables(self, st_program):
+        modified_program = ""
+        for line in st_program.splitlines(True):
+            if (line.find("AT %") > 0):
+                a = line.split("AT %")
+                b = a[1].split(":")
+                modified_program += a[0] + ":" + b[1]
+                if(len(b) > 2):
+                    modified_program += ":" + b[2]
+            else:
+                modified_program += line
         return modified_program
 
     def _Generate_PLC_ST(self):
@@ -824,7 +828,8 @@ class ProjectController(ConfigTreeNode, PLCControler):
             self.ProgramOffset += 1
         plc_file.close()
         plc_file = open(self._getIECcodepath(), "a")
-        plc_file.write(self.RemoveLocatedVariables(open(self._getIECgeneratedcodepath(), "r").read()))
+        plc_file.write(self.RemoveLocatedVariables(
+            open(self._getIECgeneratedcodepath(), "r").read()))
         plc_file.close()
         return True
 
@@ -891,7 +896,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
 
         # Now extract C files of stdout
         C_files = [fname for fname in result.splitlines() if fname[
-                                                             -2:] == ".c" or fname[-2:] == ".C"]
+            -2:] == ".c" or fname[-2:] == ".C"]
         # remove those that are not to be compiled because included by others
         C_files.remove("POUS.c")
         if not C_files:
@@ -904,7 +909,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
 
         # prepend beremiz include to configuration header
         H_files = [fname for fname in result.splitlines() if fname[
-                                                             -2:] == ".h" or fname[-2:] == ".H"]
+            -2:] == ".h" or fname[-2:] == ".H"]
         H_files.remove("LOCATED_VARIABLES.h")
         H_files = list(map(
             lambda filename: os.path.join(buildpath, filename), H_files))
@@ -1112,11 +1117,11 @@ class ProjectController(ConfigTreeNode, PLCControler):
         if not self.BeremizRoot.getDisable_Extensions():
             plc_main_code = targets.GetCode("plc_main_head.c") % {
                 "calls_prototypes": "\n".join([(
-                                                       "int __init_%(s)s(int argc,char **argv);\n" +
-                                                       "void __cleanup_%(s)s(void);\n" +
-                                                       "void __retrieve_%(s)s(void);\n" +
-                                                       "void __publish_%(s)s(void);") % {'s': locstr} for locstr in
-                                               locstrs]),
+                    "int __init_%(s)s(int argc,char **argv);\n" +
+                    "void __cleanup_%(s)s(void);\n" +
+                    "void __retrieve_%(s)s(void);\n" +
+                    "void __publish_%(s)s(void);") % {'s': locstr} for locstr in
+                    locstrs]),
                 "retrieve_calls": "\n    ".join([
                     "__retrieve_%s();" % locstr for locstr in locstrs]),
                 "publish_calls": "\n    ".join([  # Call publish in reverse order
@@ -1162,7 +1167,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
 
         # Generate SoftPLC IEC code
         IECGenRes = self._Generate_SoftPLC()
-        #self.UpdateButtons()
+        # self.UpdateButtons()
 
         # If IEC code gen fail, bail out.
         if not IECGenRes:
@@ -1438,7 +1443,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
         # kill the builder
         self._builder = None
         self.CompareLocalAndRemotePLC()
-        #self.UpdateButtons()
+        # self.UpdateButtons()
 
     def _UpdateButtons(self):
         #self.EnableMethod("_Clean", os.path.exists(self._getBuildPath()))
@@ -1448,22 +1453,22 @@ class ProjectController(ConfigTreeNode, PLCControler):
 
     def UpdateButtons(self):
         wx.CallAfter(self._UpdateButtons)
-    
-    def _BlockButtons(self):	
-        self.EnableMethod("_Run", False)	
-        if self.AppFrame is not None and not self.UpdateMethodsFromPLCStatus():	
-            self.AppFrame.RefreshStatusToolBar()	
-    
-    def BlockButtons(self):	
-        wx.CallAfter(self._BlockButtons)
-    	
-    def _UnblockButtons(self):	
-        self.EnableMethod("_Run", True)	
-        self.EnableMethod("_generateOpenPLC", True)	
-        if self.AppFrame is not None and not self.UpdateMethodsFromPLCStatus():	
+
+    def _BlockButtons(self):
+        self.EnableMethod("_Run", False)
+        if self.AppFrame is not None and not self.UpdateMethodsFromPLCStatus():
             self.AppFrame.RefreshStatusToolBar()
-    	
-    def UnblockButtons(self):	
+
+    def BlockButtons(self):
+        wx.CallAfter(self._BlockButtons)
+
+    def _UnblockButtons(self):
+        self.EnableMethod("_Run", True)
+        self.EnableMethod("_generateOpenPLC", True)
+        if self.AppFrame is not None and not self.UpdateMethodsFromPLCStatus():
+            self.AppFrame.RefreshStatusToolBar()
+
+    def UnblockButtons(self):
         wx.CallAfter(self._UnblockButtons)
 
     def UpdatePLCLog(self, log_count):
@@ -1471,39 +1476,39 @@ class ProjectController(ConfigTreeNode, PLCControler):
             if self.AppFrame is not None:
                 self.AppFrame.LogViewer.SetLogCounters(log_count)
 
-    DefaultMethods = {	
-        "_Run": True,	
-        "_Stop": False,	
-        "_Transfer": False,	
-        "_Connect": False,	
-        "_Disconnect": False,	
-        "_showIECcode": False,	
-        "_showIDManager": False,	
-        "_generateOpenPLC": True,	
-        "_generateArduino": True	
+    DefaultMethods = {
+        "_Run": True,
+        "_Stop": False,
+        "_Transfer": False,
+        "_Connect": False,
+        "_Disconnect": False,
+        "_showIECcode": False,
+        "_showIDManager": False,
+        "_generateOpenPLC": True,
+        "_generateArduino": True
     }
 
-    MethodsFromStatus = {	
-        PlcStatus.Started:      {"_Stop": True,	
-                                 "_Run": False,	
-                                 "_Transfer": False,	
-                                 "_Connect": False,	
-                                 "_Disconnect": False,	
-                                 "_generateOpenPLC": True,	
-                                 "_generateArduino": True},	
-        PlcStatus.Stopped:      {"_Run": True,	
-                                 "_Stop": False,	
-                                 "_Transfer": False,	
-                                 "_Connect": False,	
-                                 "_Disconnect": False,	
-                                 "_generateOpenPLC": True,	
-                                 "_generateArduino": True},	
-        PlcStatus.Empty:        {"_Transfer": True,	
-                                 "_Connect": False,	
-                                 "_Disconnect": True},	
-        PlcStatus.Broken:       {"_Connect": False,	
-                                 "_Disconnect": True},	
-        PlcStatus.Disconnected: {},	
+    MethodsFromStatus = {
+        PlcStatus.Started:      {"_Stop": True,
+                                 "_Run": False,
+                                 "_Transfer": False,
+                                 "_Connect": False,
+                                 "_Disconnect": False,
+                                 "_generateOpenPLC": True,
+                                 "_generateArduino": True},
+        PlcStatus.Stopped:      {"_Run": True,
+                                 "_Stop": False,
+                                 "_Transfer": False,
+                                 "_Connect": False,
+                                 "_Disconnect": False,
+                                 "_generateOpenPLC": True,
+                                 "_generateArduino": True},
+        PlcStatus.Empty:        {"_Transfer": True,
+                                 "_Connect": False,
+                                 "_Disconnect": True},
+        PlcStatus.Broken:       {"_Connect": False,
+                                 "_Disconnect": True},
+        PlcStatus.Disconnected: {},
     }
 
     def UpdateMethodsFromPLCStatus(self):
@@ -1557,7 +1562,8 @@ class ProjectController(ConfigTreeNode, PLCControler):
     def SnapshotAndResetDebugValuesBuffers(self):
         debug_status = PlcStatus.Disconnected
         if self._connector is not None and self.DebugToken is not None:
-            debug_status, Traces = self._connector.GetTraceVariables(self.DebugToken)
+            debug_status, Traces = self._connector.GetTraceVariables(
+                self.DebugToken)
             # print [dict.keys() for IECPath, (dict, log, status, fvalue) in
             # self.IECdebug_datas.items()]
             if debug_status == PlcStatus.Started:
@@ -1624,7 +1630,8 @@ class ProjectController(ConfigTreeNode, PLCControler):
                 IdxsT = zip(*Idxs)
                 self.TracedIECPath = IdxsT[3]
                 self.TracedIECTypes = IdxsT[1]
-                self.DebugToken = self._connector.SetTraceVariablesList(zip(*IdxsT[0:3]))
+                self.DebugToken = self._connector.SetTraceVariablesList(
+                    zip(*IdxsT[0:3]))
             else:
                 self.TracedIECPath = []
                 self._connector.SetTraceVariablesList([])
@@ -1789,30 +1796,30 @@ class ProjectController(ConfigTreeNode, PLCControler):
     def _Run(self):
         """	
         Start PLC	
-        """	
-        self.BlockButtons()	
-        #Clean build folder	
-        self._Clean()	
-        #Build Project	
-        if (self._Build() is False):	
-            self.UnblockButtons()	
-            return	
-        #Connect to target	
-        if (self._Connect() is False):	
-            self.UnblockButtons()	
-            return	
-        #Transfer PLC program	
-        if (self._Transfer() is False):	
-            self.UnblockButtons()	
-            return	
-        #Run	
-        if self.GetIECProgramsAndVariables():	
-            self._connector.StartPLC()	
-            self.logger.write(_("Starting PLC\n"))	
-            self._connect_debug()	
-        else:	
-            self.logger.write_error(_("Couldn't start PLC !\n"))	
-        self.UnblockButtons()	
+        """
+        self.BlockButtons()
+        # Clean build folder
+        self._Clean()
+        # Build Project
+        if (self._Build() is False):
+            self.UnblockButtons()
+            return
+        # Connect to target
+        if (self._Connect() is False):
+            self.UnblockButtons()
+            return
+        # Transfer PLC program
+        if (self._Transfer() is False):
+            self.UnblockButtons()
+            return
+        # Run
+        if self.GetIECProgramsAndVariables():
+            self._connector.StartPLC()
+            self.logger.write(_("Starting PLC\n"))
+            self._connect_debug()
+        else:
+            self.logger.write_error(_("Couldn't start PLC !\n"))
+        self.UnblockButtons()
         wx.CallAfter(self.UpdateMethodsFromPLCStatus)
 
     def _Stop(self):
@@ -1856,16 +1863,16 @@ class ProjectController(ConfigTreeNode, PLCControler):
 
         # if uri is empty launch discovery dialog
         if uri == "":
-            uri = "LOCAL://"	
-            self.BeremizRoot.setURI_location(uri)	
-            self.ChangesToSave = True	
-            if self._View is not None:	
-                self._View.RefreshView()	
-            if self.AppFrame is not None:	
-                self.AppFrame.RefreshTitle()	
-                self.AppFrame.RefreshFileMenu()	
-                self.AppFrame.RefreshEditMenu()	
-                self.AppFrame.RefreshPageTitles()	
+            uri = "LOCAL://"
+            self.BeremizRoot.setURI_location(uri)
+            self.ChangesToSave = True
+            if self._View is not None:
+                self._View.RefreshView()
+            if self.AppFrame is not None:
+                self.AppFrame.RefreshTitle()
+                self.AppFrame.RefreshFileMenu()
+                self.AppFrame.RefreshEditMenu()
+                self.AppFrame.RefreshPageTitles()
             """
             try:
                 # Launch Service Discovery dialog
@@ -1911,7 +1918,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
             self.CompareLocalAndRemotePLC()
 
             # Init with actual PLC status and print it
-            #self.UpdateMethodsFromPLCStatus()
+            # self.UpdateMethodsFromPLCStatus()
             if self.previous_plcstate in [PlcStatus.Started, PlcStatus.Stopped]:
                 if self.DebugAvailable() and self.GetIECProgramsAndVariables():
                     self.logger.write(_("Debugger ready\n"))
@@ -2014,31 +2021,36 @@ class ProjectController(ConfigTreeNode, PLCControler):
             return False
         return False
 
-        #wx.CallAfter(self.UpdateMethodsFromPLCStatus)
+        # wx.CallAfter(self.UpdateMethodsFromPLCStatus)
 
-    def _generateOpenPLC(self):	
-        self._Clean()	
-        if (self._Build() is True):	
-            f = open(self._getIECgeneratedcodepath(), "r")	
-            program = f.read()	
-            f.close()	
-            dlg = wx.FileDialog(self.AppFrame, "Save to file:", "", "", "OpenPLC Program(*.st)|*.st", wx.SAVE|wx.OVERWRITE_PROMPT)	
-            if dlg.ShowModal() == wx.ID_OK:	
-                try:	
-                    f = open(dlg.GetPath(), "w")	
-                    f.write(program)	
-                    f.close()	
-                    #wx.MessageBox('OpenPLC program generated successfully', 'Info', wx.OK | wx.ICON_INFORMATION)	
-                    self.logger.write("OpenPLC program generated successfully\n")	
-                except:	
-                    self.logger.write_error('It was not possible to save the generated program\n')	
-    def _generateArduino(self):	
-        self._Clean()	
-        if (self._Build() is True):	
-            f = open(self._getIECgeneratedcodepath(), 'r')	
-            program = f.read()	
+    def _generateOpenPLC(self):
+        self._Clean()
+        if (self._Build() is True):
+            f = open(self._getIECgeneratedcodepath(), "r")
+            program = f.read()
             f.close()
-            dialog = ArduinoUploadDialog.ArduinoUploadDialog(self.AppFrame, program)	
+            dlg = wx.FileDialog(self.AppFrame, "Save to file:", "", "",
+                                "OpenPLC Program(*.st)|*.st", wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
+            if dlg.ShowModal() == wx.ID_OK:
+                try:
+                    f = open(dlg.GetPath(), "w")
+                    f.write(program)
+                    f.close()
+                    #wx.MessageBox('OpenPLC program generated successfully', 'Info', wx.OK | wx.ICON_INFORMATION)
+                    self.logger.write(
+                        "OpenPLC program generated successfully\n")
+                except:
+                    self.logger.write_error(
+                        'It was not possible to save the generated program\n')
+
+    def _generateArduino(self):
+        self._Clean()
+        if (self._Build() is True):
+            f = open(self._getIECgeneratedcodepath(), 'r')
+            program = f.read()
+            f.close()
+            dialog = ArduinoUploadDialog.ArduinoUploadDialog(
+                self.AppFrame, program)
             dialog.ShowModal()
 
     def _Repair(self):
@@ -2052,85 +2064,85 @@ class ProjectController(ConfigTreeNode, PLCControler):
         if answer == wx.ID_YES:
             self._connector.RepairPLC()
 
-    StatusMethods = [	
-        {	
-            "bitmap":    "Build",	
-            "name":    _("Build"),	
-            "tooltip": _("Build project into build folder"),	
-            "method":   "_Build",	
-            "shown":      False,	
-        },	
-        {	
-            "bitmap":    "Clean",	
-            "name":    _("Clean"),	
-            "tooltip": _("Clean project build folder"),	
-            "method":   "_Clean",	
-            "enabled":    False,	
-            "shown":      False,	
-        },	
-        {	
-            "bitmap":    "Run",	
-            "name":    _("Run"),	
-            "tooltip": _("Start PLC Simulation"),	
-            "method":   "_Run",	
-            "shown":      True,	
-        },	
-        {	
-            "bitmap":    "Stop",	
-            "name":    _("Stop"),	
-            "tooltip": _("Stop PLC Simulation"),	
-            "method":   "_Stop",	
-            "shown":      False,	
-        },	
-        {	
-            "bitmap":    "Connect",	
-            "name":    _("Connect"),	
-            "tooltip": _("Connect to the target PLC"),	
-            "method":   "_Connect",	
-            "shown":      False,	
-        },	
-        {	
-            "bitmap":    "Transfer",	
-            "name":    _("Transfer"),	
-            "tooltip": _("Transfer PLC"),	
-            "method":   "_Transfer",	
-            "shown":      False,	
-        },	
-        {	
-            "bitmap":    "Disconnect",	
-            "name":    _("Disconnect"),	
-            "tooltip": _("Disconnect from PLC"),	
-            "method":   "_Disconnect",	
-            "shown":      False,	
-        },	
-        {	
-            "bitmap":    "IDManager",	
-            "name":    _("ID Manager"),	
-            "tooltip": _("Manage secure connection identities"),	
-            "method":   "_showIDManager",	
-            "shown":      False,	
-        },	
-        {	
-            "bitmap":    "ShowIECcode",	
-            "name":    _("Show code"),	
-            "tooltip": _("Show IEC code generated by PLCGenerator"),	
-            "method":   "_showIECcode",	
-            "shown":      False,	
-        },	
-        {	
-            "bitmap":    "down",	
-            "name":    _("Generate Program"),	
-            "tooltip": _("Generate program for OpenPLC Runtime"),	
-            "method":   "_generateOpenPLC",	
-            "shown":      True,	
-        },	
-        {	
-            "bitmap":    "arduino",	
-            "name":    _("Upload Arduino"),	
-            "tooltip": _("Upload program to Arduino Board"),	
-            "method":   "_generateArduino",	
-            "shown":      True,	
-        },	
+    StatusMethods = [
+        {
+            "bitmap":    "Build",
+            "name":    _("Build"),
+            "tooltip": _("Build project into build folder"),
+            "method":   "_Build",
+            "shown":      False,
+        },
+        {
+            "bitmap":    "Clean",
+            "name":    _("Clean"),
+            "tooltip": _("Clean project build folder"),
+            "method":   "_Clean",
+            "enabled":    False,
+            "shown":      False,
+        },
+        {
+            "bitmap":    "Run",
+            "name":    _("Run"),
+            "tooltip": _("Start PLC Simulation"),
+            "method":   "_Run",
+            "shown":      True,
+        },
+        {
+            "bitmap":    "Stop",
+            "name":    _("Stop"),
+            "tooltip": _("Stop PLC Simulation"),
+            "method":   "_Stop",
+            "shown":      False,
+        },
+        {
+            "bitmap":    "Connect",
+            "name":    _("Connect"),
+            "tooltip": _("Connect to the target PLC"),
+            "method":   "_Connect",
+            "shown":      False,
+        },
+        {
+            "bitmap":    "Transfer",
+            "name":    _("Transfer"),
+            "tooltip": _("Transfer PLC"),
+            "method":   "_Transfer",
+            "shown":      False,
+        },
+        {
+            "bitmap":    "Disconnect",
+            "name":    _("Disconnect"),
+            "tooltip": _("Disconnect from PLC"),
+            "method":   "_Disconnect",
+            "shown":      False,
+        },
+        {
+            "bitmap":    "IDManager",
+            "name":    _("ID Manager"),
+            "tooltip": _("Manage secure connection identities"),
+            "method":   "_showIDManager",
+            "shown":      False,
+        },
+        {
+            "bitmap":    "ShowIECcode",
+            "name":    _("Show code"),
+            "tooltip": _("Show IEC code generated by PLCGenerator"),
+            "method":   "_showIECcode",
+            "shown":      False,
+        },
+        {
+            "bitmap":    "down",
+            "name":    _("Generate Program"),
+            "tooltip": _("Generate program for OpenPLC Runtime"),
+            "method":   "_generateOpenPLC",
+            "shown":      True,
+        },
+        {
+            "bitmap":    "arduino",
+            "name":    _("Upload Arduino"),
+            "tooltip": _("Upload program to Arduino Board"),
+            "method":   "_generateArduino",
+            "shown":      True,
+        },
     ]
 
     ConfNodeMethods = [
