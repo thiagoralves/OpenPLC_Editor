@@ -1,7 +1,9 @@
 # matiec
 iec2c
+iec2c.exe
 iec2c_mac
 iec2iec
+iec2iec.exe
 iec_bison.cc
 iec_bison.hh
 iec_flex.cc
