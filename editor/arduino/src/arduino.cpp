@@ -4,40 +4,26 @@ extern "C" {
 }
 #include "Arduino.h"
 
-//OpenPLC HAL for AutomationDirect P1AM PLC
+//OpenPLC HAL for Arduino Nano form factor (Nano Every, Nano 33 BLE, Nano 33 IoT)
 
 /******************PINOUT CONFIGURATION***********************
-Digital In:  0, 1, 2, 3, 4, 5               (%IX0.0 - %IX0.5)
-Digital Out: 7, 8, 9, 10, 11, 12            (%QX0.0 - %QX0.5)
-Analog In: A1, A2, A3, A4, A5, A6           (%IW0 - %IW5)
-Analog Out: 6, 15                           (%QW0 - %QW1)
+Digital In:  2, 3, 4, 5, 6                  (%IX0.0 - %IX0.4)
+Digital Out: 7, 8, 10, 11, 12, 13           (%QX0.0 - %QX0.5)
+Analog In: A1, A2, A3, A4, A5, A6, A7       (%IW0 - %IW6)
+Analog Out: 9, 14                           (%QW0 - %QW1)
 **************************************************************/
 
 //Define the number of inputs and outputs for this board (mapping for the Arduino UNO)
-#define NUM_DISCRETE_INPUT          0
-#define NUM_ANALOG_INPUT            0
-#define NUM_DISCRETE_OUTPUT         0
-#define NUM_ANALOG_OUTPUT           0
+#define NUM_DISCRETE_INPUT          5
+#define NUM_ANALOG_INPUT            7
+#define NUM_DISCRETE_OUTPUT         6
+#define NUM_ANALOG_OUTPUT           2
 
 //Create the I/O pin masks
-uint8_t pinMask_DIN[] = {0, 1, 2, 3, 4, 5};
-uint8_t pinMask_AIN[] = {A1, A2, A3, A4, A5, A6};
-uint8_t pinMask_DOUT[] = {7, 8, 9, 10, 11, 12};
-uint8_t pinMask_AOUT[] = {6, 15};
-
-extern uint8_t disabled_pins[11];
-
-bool checkPin(uint8_t pin)
-{
-    for (int i = 1; i < disabled_pins[0]; i++)
-    {
-        if (pin == disabled_pins[i])
-        {
-            return false;
-        }
-    }
-    return true;
-}
+uint8_t pinMask_DIN[] = {2, 3, 4, 5, 6};
+uint8_t pinMask_AIN[] = {15, 16, 17, 18, 19, 20, 21};
+uint8_t pinMask_DOUT[] = {7, 8, 10, 11, 12, 13};
+uint8_t pinMask_AOUT[] = {9, 14};
 
 void hardwareInit()
 {

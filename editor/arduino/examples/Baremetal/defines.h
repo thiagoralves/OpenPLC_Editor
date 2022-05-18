@@ -8,16 +8,14 @@
 #define MBTCP_SUBNET 255,255,255,0
 #define MBTCP_SSID ""
 #define MBTCP_PWD ""
-#define MBSERIAL
-#define MODBUS_ENABLED
+#define BOARD_WIFININA
 
 
 //Arduino Libraries
-#define USE_P1AM_BLOCKS
 
 
 //Pin Array Sizes
-#define NUM_DISCRETE_INPUT          0
-#define NUM_ANALOG_INPUT            0
-#define NUM_DISCRETE_OUTPUT         0
-#define NUM_ANALOG_OUTPUT           0
+#define NUM_DISCRETE_INPUT          5
+#define NUM_ANALOG_INPUT            7
+#define NUM_DISCRETE_OUTPUT         6
+#define NUM_ANALOG_OUTPUT           2
