@@ -14,16 +14,12 @@
 # limitations under the License.
 #
 # pylint: disable=no-absolute-import,bad-python3-import
-
-from __future__ import print_function
-import sys
-import compiler
-from compiler import ast
-import os
+import ast
 import copy
-from builtins import str as text
-from past.builtins import basestring
-from six.moves import cStringIO
+import os
+import sys
+
+import io
 
 # the standard location for builtins (e.g. pyjslib) can be
 # over-ridden by changing this.  it defaults to sys.prefix
@@ -134,7 +130,7 @@ def escapejs(value):
 
 def uuprefix(name, leave_alone=0):
     name = name.split(".")
-    name = name[:leave_alone] + map(lambda x: "__%s" % x, name[leave_alone:])
+    name = name[:leave_alone] + list(map(lambda x: "__%s" % x, name[leave_alone:]))
     return '.'.join(name)
 
 
@@ -1358,7 +1354,7 @@ class Translator(object):
             return str(node.value)
         elif isinstance(node.value, float):
             return str(node.value)
-        elif isinstance(node.value, basestring):
+        elif isinstance(node.value, str):
             v = node.value
             if isinstance(node.value, text):
                 v = v.encode('utf-8')
@@ -1444,7 +1440,7 @@ class Translator(object):
             raise TranslationError("varargs are not supported in Lambdas", node)
         if node.kwargs:
             raise TranslationError("kwargs are not supported in Lambdas", node)
-        res = cStringIO()
+        res = io.StringIO()
         arg_names = list(node.argnames)
         function_args = ", ".join(arg_names)
         for child in node.getChildNodes():
@@ -1535,7 +1531,7 @@ def translate(file_name, module_name, debug=False):
     f = open(file_name, "r")
     src = f.read()
     f.close()
-    output = cStringIO()
+    output = io.StringIO()
     mod = compiler.parseFile(file_name)
     Translator(module_name, module_name, module_name, src, debug, mod, output)
     return output.getvalue()
@@ -1684,7 +1680,7 @@ class AppTranslator(object):
 
         file_name = self.findFile(module_name + self.extension)
 
-        output = cStringIO()
+        output = io.StringIO()
 
         f = open(file_name, "r")
         src = f.read()
@@ -1719,8 +1715,8 @@ class AppTranslator(object):
 
     def translate(self, module_name, is_app=True, debug=False,
                   library_modules=None):
-        app_code = cStringIO()
-        lib_code = cStringIO()
+        app_code = io.StringIO()
+        lib_code = io.StringIO()
         imported_js = set()
         self.library_modules = []
         self.overrides = {}

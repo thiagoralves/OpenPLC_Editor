@@ -23,20 +23,18 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
 import wx
+import wx.grid
 
-from dialogs.BrowseLocationsDialog import BrowseLocationsDialog
 
-
-class LocationCellControl(wx.PyControl):
+class LocationCellControl(wx.Control):
 
     '''
     Custom cell editor control with a text box and a button that launches
     the BrowseLocationsDialog.
     '''
     def __init__(self, parent):
-        wx.PyControl.__init__(self, parent)
+        wx.Control.__init__(self, parent)
 
         main_sizer = wx.FlexGridSizer(cols=2, hgap=0, rows=1, vgap=0)
         main_sizer.AddGrowableCol(0)
@@ -46,12 +44,12 @@ class LocationCellControl(wx.PyControl):
         self.Location = wx.TextCtrl(self, size=wx.Size(0, -1),
                                     style=wx.TE_PROCESS_ENTER)
         self.Location.Bind(wx.EVT_KEY_DOWN, self.OnLocationChar)
-        main_sizer.AddWindow(self.Location, flag=wx.GROW)
+        main_sizer.Add(self.Location, flag=wx.GROW)
 
         # create browse button
         self.BrowseButton = wx.Button(self, label='...', size=wx.Size(30, -1))
         self.BrowseButton.Bind(wx.EVT_BUTTON, self.OnBrowseButtonClick)
-        main_sizer.AddWindow(self.BrowseButton, flag=wx.GROW)
+        main_sizer.Add(self.BrowseButton, flag=wx.GROW)
 
         self.Bind(wx.EVT_SIZE, self.OnSize)
 
@@ -90,6 +88,7 @@ class LocationCellControl(wx.PyControl):
         self.Layout()
 
     def OnBrowseButtonClick(self, event):
+        from dialogs.BrowseLocationsDialog import BrowseLocationsDialog
         # pop up the location browser dialog
         dialog = BrowseLocationsDialog(self, self.VarType, self.Controller)
         if dialog.ShowModal() == wx.ID_OK:
@@ -150,12 +149,12 @@ class LocationCellControl(wx.PyControl):
         self.Location.SetFocus()
 
 
-class LocationCellEditor(wx.grid.PyGridCellEditor):
+class LocationCellEditor(wx.grid.GridCellEditor):
     '''
     Grid cell editor that uses LocationCellControl to display a browse button.
     '''
     def __init__(self, table, controller):
-        wx.grid.PyGridCellEditor.__init__(self)
+        wx.grid.GridCellEditor.__init__(self)
 
         self.Table = table
         self.Controller = controller
@@ -210,9 +209,12 @@ class LocationCellEditor(wx.grid.PyGridCellEditor):
             return self.EndEditInternal(row, col, grid, old_loc)
 
     def SetSize(self, rect):
-        self.CellControl.SetDimensions(rect.x + 1, rect.y,
-                                       rect.width, rect.height,
-                                       wx.SIZE_ALLOW_MINUS_ONE)
+        self.CellControl.SetSize(rect.x + 1, rect.y,
+                                 rect.width, rect.height,
+                                 wx.SIZE_ALLOW_MINUS_ONE)
+
+    def ApplyEdit(self, row, col, grid):
+        pass
 
     def Clone(self):
         return LocationCellEditor(self.Table, self.Controller)

@@ -22,16 +22,14 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-
-from __future__ import absolute_import
-from __future__ import print_function
+import getopt
 import os
 import sys
-import getopt
-from past.builtins import execfile
+import traceback
 
 import wx
 from wx.lib.agw.advancedsplash import AdvancedSplash, AS_NOTIMEOUT, AS_CENTER_ON_SCREEN
+from util.misc import execfile
 
 import util.paths as paths
 
@@ -102,18 +100,13 @@ class BeremizIDELauncher(object):
             self.buildpath = args[1]
 
     def CreateApplication(self):
-
-        BeremizAppType = wx.App if wx.VERSION >= (3, 0, 0) else wx.PySimpleApp
-
-        class BeremizApp(BeremizAppType):
+        class BeremizApp(wx.App):
             def OnInit(_self):  # pylint: disable=no-self-argument
                 self.ShowSplashScreen()
                 return True
 
         self.app = BeremizApp(redirect=self.debug)
         self.app.SetAppName('beremiz')
-        if wx.VERSION < (3, 0, 0):
-            wx.InitAllImageHandlers()
 
     def ShowSplashScreen(self):
         class Splash(AdvancedSplash):
@@ -162,8 +155,8 @@ class BeremizIDELauncher(object):
 
             def updateinfoproc():
                 try:
-                    import urllib2
-                    self.updateinfo = urllib2.urlopen(self.updateinfo_url, None).read()
+                    from urllib import request
+                    self.updateinfo = request.urlopen(self.updateinfo_url, None).read()
                 except Exception:
                     self.updateinfo = _("update info unavailable.")
 
@@ -206,7 +199,9 @@ class BeremizIDELauncher(object):
             self.ShowUI()
         except (KeyboardInterrupt, SystemExit):
             raise
-        except Exception:
+        except Exception as e:
+            print(e)
+            print(traceback.print_exc())
             if self.handle_exception is not None:
                 self.handle_exception(*sys.exc_info(), exit=True)
             else:

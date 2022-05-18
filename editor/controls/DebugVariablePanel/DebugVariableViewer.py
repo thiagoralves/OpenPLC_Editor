@@ -23,15 +23,11 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
-from __future__ import division
 from collections import OrderedDict
 from functools import reduce
 
 import wx
 from matplotlib.backends.backend_wxagg import _convert_agg_to_wx_bitmap
-
-from dialogs.ForceVariableDialog import ForceVariableDialog
 
 # Viewer highlight types
 [HIGHLIGHT_NONE,
@@ -66,7 +62,7 @@ class DebugVariableViewer(object):
         items = [] if items is None else items
         self.ItemsDict = OrderedDict([(item.GetVariable(), item)
                                       for item in items])
-        self.Items = self.ItemsDict.viewvalues()
+        self.Items = self.ItemsDict.values()
 
         # Variable storing current highlight displayed in Viewer
         self.Highlight = HIGHLIGHT_NONE
@@ -111,7 +107,7 @@ class DebugVariableViewer(object):
         Return items displayed by Viewer
         @return: List of items displayed in Viewer
         """
-        return self.ItemsDict.values()
+        return list(self.ItemsDict.values())
 
     def AddItem(self, item):
         """
@@ -150,7 +146,7 @@ class DebugVariableViewer(object):
         Function that unsubscribe and remove every item that store values of
         a variable that doesn't exist in PLC anymore
         """
-        for item in self.ItemsDict.values()[:]:
+        for item in list(self.ItemsDict.values())[:]:
             iec_path = item.GetVariable()
 
             # Check that variablepath exist in PLC
@@ -347,13 +343,13 @@ class DebugVariableViewer(object):
         """
         Function called when Force button is pressed
         """
-        self.ForceValue(self.ItemsDict.values()[0])
+        self.ForceValue(list(self.ItemsDict.values())[0])
 
     def OnReleaseButton(self):
         """
         Function called when Release button is pressed
         """
-        self.ReleaseValue(self.ItemsDict.values()[0])
+        self.ReleaseValue(list(self.ItemsDict.values())[0])
 
     def OnMouseDragging(self, x, y):
         """
@@ -420,7 +416,7 @@ class DebugVariableViewer(object):
         # Return immediately if not found
         if iec_type is None:
             return
-
+        from dialogs.ForceVariableDialog import ForceVariableDialog
         # Open a dialog to enter varaible forced value
         dialog = ForceVariableDialog(self, iec_type, str(item.GetValue()))
         if dialog.ShowModal() == wx.ID_OK:

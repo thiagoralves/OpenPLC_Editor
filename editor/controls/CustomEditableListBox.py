@@ -23,15 +23,15 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
 import wx
+import wx.adv
 import wx.gizmos
 
 
-class CustomEditableListBox(wx.gizmos.EditableListBox):
+class CustomEditableListBox(wx.adv.EditableListBox):
 
     def __init__(self, *args, **kwargs):
-        wx.gizmos.EditableListBox.__init__(self, *args, **kwargs)
+        wx.adv.EditableListBox.__init__(self, *args, **kwargs)
 
         listbox = self.GetListCtrl()
         listbox.Bind(wx.EVT_KEY_DOWN, self.OnKeyDown)
@@ -44,7 +44,7 @@ class CustomEditableListBox(wx.gizmos.EditableListBox):
                 (self.GetDelButton(), _("Delete item"), "_OnDelButton"),
                 (self.GetUpButton(), _("Move up"), "_OnUpButton"),
                 (self.GetDownButton(), _("Move down"), "_OnDownButton")]:
-            button.SetToolTipString(tooltip)
+            button.SetToolTip(tooltip)
             button.Bind(wx.EVT_BUTTON, self.GetButtonPressedFunction(call_function))
 
         self.Editing = False

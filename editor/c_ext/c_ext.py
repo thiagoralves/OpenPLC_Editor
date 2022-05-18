@@ -22,11 +22,10 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from __future__ import absolute_import
 import os
 
-from c_ext.CFileEditor import CFileEditor
 from CodeFileTreeNode import CodeFile
+from c_ext.CFileEditor import CFileEditor
 
 
 class CFile(CodeFile):
@@ -120,10 +119,11 @@ class CFile(CodeFile):
         text += "\n}\n\n"
 
         Gen_Cfile_path = os.path.join(buildpath, "CFile_%s.c" % location_str)
-        cfile = open(Gen_Cfile_path, 'w')
+        cfile = open(Gen_Cfile_path, 'w', encoding='utf-8')
         cfile.write(text)
         cfile.close()
 
         matiec_CFLAGS = '"-I%s"' % os.path.abspath(self.GetCTRoot().GetIECLibPath())
 
-        return [(Gen_Cfile_path, str(self.CExtension.getCFLAGS() + matiec_CFLAGS))], str(self.CExtension.getLDFLAGS()), True
+        return [(Gen_Cfile_path, str(self.CExtension.getCFLAGS() + matiec_CFLAGS))], str(
+            self.CExtension.getLDFLAGS()), True, []

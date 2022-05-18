@@ -23,21 +23,21 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from __future__ import absolute_import
-from __future__ import division
 import os
-import sys
 import shutil
+import sys
+
 import wx
-from gnosis.xml.pickle import *  # pylint: disable=import-error
-from gnosis.xml.pickle.util import setParanoia  # pylint: disable=import-error
 
 import util.paths as paths
-from util.TranslationCatalogs import AddCatalog
 from ConfigTreeNode import ConfigTreeNode
 from PLCControler import \
     LOCATION_CONFNODE, \
     LOCATION_VAR_MEMORY
+from util.TranslationCatalogs import AddCatalog
+
+# from gnosis.xml.pickle import *  # pylint: disable=import-error
+# from gnosis.xml.pickle.util import setParanoia  # pylint: disable=import-error
 
 base_folder = paths.AbsParentDir(__file__, 2)  # noqa
 CanFestivalPath = os.path.join(base_folder, "CanFestival-3")  # noqa
@@ -57,7 +57,9 @@ from canfestival.NetworkEditor import NetworkEditor
 
 
 AddCatalog(os.path.join(CanFestivalPath, "objdictgen", "locale"))
-setParanoia(0)
+
+
+# setParanoia(0)
 
 
 # --------------------------------------------------
@@ -237,7 +239,7 @@ class _SlaveCTN(NodeManager):
         res = eds_utils.GenerateEDSFile(os.path.join(buildpath, "Slave_%s.eds" % prefix), slave)
         if res:
             raise Exception(res)
-        return [(Gen_OD_path, local_canfestival_config.getCFLAGS(CanFestivalPath))], "", False
+        return [(Gen_OD_path, local_canfestival_config.getCFLAGS(CanFestivalPath))], "", False, []
 
     def LoadPrevious(self):
         self.LoadCurrentPrevious()
@@ -352,8 +354,8 @@ class _NodeListCTN(NodeList):
 
     def GetVariableLocationTree(self):
         current_location = self.GetCurrentLocation()
-        nodeindexes = self.SlaveNodes.keys()
-        nodeindexes.sort()
+        nodeindexes = list(self.SlaveNodes.keys())
+        sorted(nodeindexes)
         children = []
         children += [GetSlaveLocationTree(self.Manager.GetCurrentNodeCopy(),
                                           current_location,
@@ -459,13 +461,13 @@ class _NodeListCTN(NodeList):
         if res:
             raise Exception(res)
 
-        file = open(os.path.join(buildpath, "MasterGenerated.od"), "w")
+        file = open(os.path.join(buildpath, "MasterGenerated.od"), "w", encoding='utf-8')
         # linter disabled here, undefined variable happens
         # here because gnosis isn't impored while linting
         dump(master, file)  # pylint: disable=undefined-variable
         file.close()
 
-        return [(Gen_OD_path, local_canfestival_config.getCFLAGS(CanFestivalPath))], "", False
+        return [(Gen_OD_path, local_canfestival_config.getCFLAGS(CanFestivalPath))], "", False, []
 
     def LoadPrevious(self):
         self.Manager.LoadCurrentPrevious()
@@ -608,11 +610,13 @@ class RootClass(object):
         filename = paths.AbsNeighbourFile(__file__, "cf_runtime.c")
         cf_main = open(filename).read() % format_dict
         cf_main_path = os.path.join(buildpath, "CF_%(locstr)s.c" % format_dict)
-        f = open(cf_main_path, 'w')
+        f = open(cf_main_path, 'w', encoding='utf-8')
         f.write(cf_main)
         f.close()
 
-        res = [(cf_main_path, local_canfestival_config.getCFLAGS(CanFestivalPath))], local_canfestival_config.getLDFLAGS(CanFestivalPath), True
+        res = [(
+            cf_main_path, local_canfestival_config.getCFLAGS(CanFestivalPath))], local_canfestival_config.getLDFLAGS(
+            CanFestivalPath), True, []
 
         if can_driver is not None:
             can_driver_path = os.path.join(CanFestivalPath, "drivers", can_driver, can_driver_name)

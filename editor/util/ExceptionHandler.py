@@ -24,14 +24,14 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
 import os
-import sys
-import time
-import tempfile
 import platform
-import traceback
+import sys
+import tempfile
 import threading
+import time
+import traceback
+
 import wx
 
 Max_Traceback_List_Size = 20
@@ -49,7 +49,7 @@ def Display_Exception_Dialog(e_type, e_value, e_tb, bug_report_path, exit):
         trcbck_lst.append(trcbck)
 
     # Allow clicking....
-    cap = wx.Window_GetCapture()
+    cap = wx.Window.GetCapture()
     if cap:
         cap.ReleaseMouse()
 
@@ -81,13 +81,13 @@ Traceback:
 
 
 def get_last_traceback(tb):
-    while tb.tb_next:
+    while tb and tb.tb_next:
         tb = tb.tb_next
     return tb
 
 
 def format_namespace(d, indent='    '):
-    return '\n'.join(['%s%s: %s' % (indent, k, repr(v)[:10000]) for k, v in d.iteritems()])
+    return '\n'.join(['%s%s: %s' % (indent, k, repr(v)[:10000]) for k, v in d.items()])
 
 
 ignored_exceptions = []  # a problem with a line in a module is only reported once per session
@@ -121,9 +121,9 @@ def AddExceptHook(app_version='[No version]'):
         path = os.path.dirname(bug_report_path)
         if not os.path.exists(path):
             os.mkdir(path)
-        output = open(bug_report_path, 'w')
-        lst = info.keys()
-        lst.sort()
+        output = open(bug_report_path, 'w', encoding='utf-8')
+        lst = list(info.keys())
+        sorted(lst)
         for a in lst:
             output.write(a + ":\n" + str(info[a]) + "\n\n")
         output.close()
@@ -131,6 +131,10 @@ def AddExceptHook(app_version='[No version]'):
     def handle_exception(e_type, e_value, e_traceback, exit=False):
         traceback.print_exception(e_type, e_value, e_traceback)  # this is very helpful when there's an exception in the rest of this func
         last_tb = get_last_traceback(e_traceback)
+
+        if last_tb is None:
+            return
+
         ex = (last_tb.tb_frame.f_code.co_filename, last_tb.tb_frame.f_lineno)
         if ex not in ignored_exceptions:
             ignored_exceptions.append(ex)

@@ -23,19 +23,21 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
-import os
-import sys
-import subprocess
 import ctypes
-from threading import Timer, Lock, Thread, Semaphore
+import os
 import signal
+import subprocess
+import sys
+from threading import Timer, Lock, Thread, Semaphore
+
+import wx
 
 
 class outputThread(Thread):
     """
     Thread is used to print the output of a command to the stdout
     """
+
     def __init__(self, Proc, fd, callback=None, endcallback=None):
         Thread.__init__(self)
         self.killed = False
@@ -58,7 +60,7 @@ class outputThread(Thread):
             outchunk = self.fd.readline()
             if self.callback:
                 self.callback(outchunk)
-        while outchunk != '' and not self.killed:
+        while outchunk != b'' and not self.killed:
             outchunk = self.fd.readline()
             if self.callback:
                 self.callback(outchunk)
@@ -97,8 +99,7 @@ class ProcessLogger(object):
 
         if encoding is None:
             encoding = fsencoding
-        self.Command = [self.Command[0].encode(fsencoding)]+map(
-            lambda x: x.encode(encoding), self.Command[1:])
+        self.Command = [self.Command[0]] + list(map(lambda x: x, self.Command[1:]))
 
         self.finish_callback = finish_callback
         self.no_stdout = no_stdout
@@ -118,8 +119,8 @@ class ProcessLogger(object):
         self.endlock = Lock()
 
         popenargs = {
-            "cwd":    os.getcwd() if cwd is None else cwd,
-            "stdin":  subprocess.PIPE,
+            "cwd": os.getcwd() if cwd is None else cwd,
+            "stdin": subprocess.PIPE,
             "stdout": subprocess.PIPE,
             "stderr": subprocess.PIPE
         }
@@ -160,7 +161,7 @@ class ProcessLogger(object):
         self.outlen += 1
         if not self.no_stdout:
             self.logger.write(v)
-        if (self.keyword and v.find(self.keyword) != -1) or (self.outlimit and self.outlen > self.outlimit):
+        if (self.keyword and v.find(self.keyword.encode()) != -1) or (self.outlimit and self.outlen > self.outlimit):
             self.endlog()
 
     def errors(self, v):
@@ -222,5 +223,12 @@ class ProcessLogger(object):
             self.finishsem.release()
 
     def spin(self):
-        self.finishsem.acquire()
-        return [self.exitcode, "".join(self.outdata), "".join(self.errdata)]
+        while not self.finishsem.acquire(blocking=False):
+            eventLoop = wx.GUIEventLoop()
+            #eventLoop.Dispatch()
+        try:
+            return [self.exitcode, "".join([x.decode('gbk', errors='ignore') for x in self.outdata]),
+                    "".join([x.decode('gbk', errors='ignore') for x in self.errdata])]
+        except:
+            return [self.exitcode, "".join([x.decode() for x in self.outdata]),
+                    "".join([x.decode(errors='ignore') for x in self.errdata])]

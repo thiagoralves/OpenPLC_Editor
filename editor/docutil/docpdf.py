@@ -23,8 +23,6 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
-from __future__ import print_function
 import os
 import wx
 
@@ -34,7 +32,7 @@ readerexepath = None
 
 def get_acroversion():
     " Return version of Adobe Acrobat executable or None"
-    from six.moves import winreg
+    import winreg
     adobesoft = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r'Software\Adobe')
     for index in range(winreg.QueryInfoKey(adobesoft)[0]):
         key = winreg.EnumKey(adobesoft, index)

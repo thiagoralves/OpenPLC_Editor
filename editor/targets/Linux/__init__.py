@@ -21,10 +21,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-
-
-from __future__ import absolute_import
-from ..toolchain_gcc import toolchain_gcc
+from targets.toolchain_gcc import toolchain_gcc
+import platform
 
 
 class Linux_target(toolchain_gcc):
@@ -35,4 +33,7 @@ class Linux_target(toolchain_gcc):
         return toolchain_gcc.getBuilderCFLAGS(self) + ["-fPIC"]
 
     def getBuilderLDFLAGS(self):
-        return toolchain_gcc.getBuilderLDFLAGS(self) + ["-shared", "-lrt"]
+        if platform.system() == 'Darwin':
+            return toolchain_gcc.getBuilderLDFLAGS(self) + ["-shared"]
+        else:
+            return toolchain_gcc.getBuilderLDFLAGS(self) + ["-shared", "-lrt"]

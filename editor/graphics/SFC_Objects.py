@@ -23,16 +23,10 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
-from __future__ import division
-from future.builtins import round
 
-import wx
-from six.moves import xrange
-
-from graphics.GraphicCommons import *
-from graphics.DebugDataConsumer import DebugDataConsumer
-from plcopen.structures import *
+from .DebugDataConsumer import DebugDataConsumer
+from .GraphicCommons import *
+from .Graphic_Element import Connector, Graphic_Element
 
 
 def GetWireSize(block):
@@ -719,7 +713,7 @@ class SFC_Transition(Graphic_Element, DebugDataConsumer):
                                self.Pos.y + (self.Size[1] - text_height) // 2,
                                text_width,
                                text_height)
-            test_text = text_bbx.InsideXY(pt.x, pt.y)
+            test_text = text_bbx.Contains(pt.x, pt.y)
         else:
             test_text = False
         return test_text or Graphic_Element.HitTest(self, pt, connectors)
@@ -1037,7 +1031,7 @@ class SFC_Transition(Graphic_Element, DebugDataConsumer):
             self.Condition.Draw(dc)
 
         if not getattr(dc, "printing", False):
-            for name, highlights in self.Highlights.iteritems():
+            for name, highlights in self.Highlights.items():
                 if name == "priority":
                     DrawHighlightedText(dc, str(self.Priority), highlights, priority_pos[0], priority_pos[1])
                 else:
@@ -1067,11 +1061,11 @@ class SFC_Divergence(Graphic_Element):
         if self.Type in [SELECTION_DIVERGENCE, SIMULTANEOUS_DIVERGENCE]:
             self.Inputs = [Connector(self, "", None, wx.Point(self.Size[0] // 2, 0), NORTH, onlyone=True)]
             self.Outputs = []
-            for i in xrange(number):
+            for i in range(number):
                 self.Outputs.append(Connector(self, "", None, wx.Point(i * SFC_DEFAULT_SEQUENCE_INTERVAL, self.Size[1]), SOUTH, onlyone=True))
         elif self.Type in [SELECTION_CONVERGENCE, SIMULTANEOUS_CONVERGENCE]:
             self.Inputs = []
-            for i in xrange(number):
+            for i in range(number):
                 self.Inputs.append(Connector(self, "", None, wx.Point(i * SFC_DEFAULT_SEQUENCE_INTERVAL, 0), NORTH, onlyone=True))
             self.Outputs = [Connector(self, "", None, wx.Point(self.Size[0] // 2, self.Size[1]), SOUTH, onlyone=True)]
         self.Value = None
@@ -1124,7 +1118,7 @@ class SFC_Divergence(Graphic_Element):
         return divergence
 
     def GetConnectorTranslation(self, element):
-        return dict(zip(self.Inputs + self.Outputs, element.Inputs + element.Outputs))
+        return dict(list(zip(self.Inputs + self.Outputs, element.Inputs + element.Outputs)))
 
     # Returns the RedrawRect
     def GetRedrawRect(self, movex=0, movey=0):
@@ -1204,7 +1198,7 @@ class SFC_Divergence(Graphic_Element):
 
     # Returns if the point given is in the bounding box
     def HitTest(self, pt, connectors=True):
-        return self.BoundingBox.InsideXY(pt.x, pt.y) or self.TestConnector(pt, exclude=False) is not None
+        return self.BoundingBox.Contains(pt.x, pt.y) or self.TestConnector(pt, exclude=False) is not None
 
     # Refresh the divergence bounding box
     def RefreshBoundingBox(self):
@@ -1244,8 +1238,8 @@ class SFC_Divergence(Graphic_Element):
             for output in self.Outputs:
                 output_pos = output.GetRelPosition()
                 output.SetPosition(wx.Point(output_pos.x - minx, output_pos.y))
-        self.Inputs.sort(lambda x, y: cmp(x.Pos.x, y.Pos.x))
-        self.Outputs.sort(lambda x, y: cmp(x.Pos.x, y.Pos.x))
+        self.Inputs.sort(lambda x, y: operator.eq(x.Pos.x, y.Pos.x))
+        self.Outputs.sort(lambda x, y: operator.eq(x.Pos.x, y.Pos.x))
         self.Pos.x += minx
         self.Size[0] = maxx - minx
         connector.MoveConnected()
@@ -1466,7 +1460,7 @@ class SFC_Divergence(Graphic_Element):
         dc.SetUserScale(1, 1)
         dc.SetPen(MiterPen(HIGHLIGHTCOLOR))
         dc.SetBrush(wx.Brush(HIGHLIGHTCOLOR))
-        dc.SetLogicalFunction(wx.AND)
+        #dc.SetLogicalFunction(wx.AND)
         # Draw two rectangles for representing the contact
         posx = self.Pos.x
         width = self.Size[0]
@@ -1477,7 +1471,7 @@ class SFC_Divergence(Graphic_Element):
                          int(round((self.Pos.y - 1) * scaley)) - 2,
                          int(round((width + 3) * scalex)) + 5,
                          int(round((self.Size.height + 3) * scaley)) + 5)
-        dc.SetLogicalFunction(wx.COPY)
+        #dc.SetLogicalFunction(wx.COPY)
         dc.SetUserScale(scalex, scaley)
 
     # Draws divergence
@@ -1592,7 +1586,7 @@ class SFC_Jump(Graphic_Element):
                            self.Pos.y + (self.Size[1] - text_height) // 2,
                            text_width,
                            text_height)
-        return text_bbx.InsideXY(pt.x, pt.y) or Graphic_Element.HitTest(self, pt, connectors)
+        return text_bbx.Contains(pt.x, pt.y) or Graphic_Element.HitTest(self, pt, connectors)
 
     # Refresh the jump bounding box
     def RefreshBoundingBox(self):
@@ -1736,7 +1730,7 @@ class SFC_Jump(Graphic_Element):
         dc.SetUserScale(1, 1)
         dc.SetPen(MiterPen(HIGHLIGHTCOLOR))
         dc.SetBrush(wx.Brush(HIGHLIGHTCOLOR))
-        dc.SetLogicalFunction(wx.AND)
+        #dc.SetLogicalFunction(wx.AND)
         points = [wx.Point(int(round((self.Pos.x - 2) * scalex)) - 3,
                            int(round((self.Pos.y - 2) * scaley)) - 2),
                   wx.Point(int(round((self.Pos.x + self.Size[0] + 2) * scalex)) + 4,
@@ -1744,7 +1738,7 @@ class SFC_Jump(Graphic_Element):
                   wx.Point(int(round((self.Pos.x + self.Size[0] / 2) * scalex)),
                            int(round((self.Pos.y + self.Size[1] + 3) * scaley)) + 4)]
         dc.DrawPolygon(points)
-        dc.SetLogicalFunction(wx.COPY)
+        #dc.SetLogicalFunction(wx.COPY)
         dc.SetUserScale(scalex, scaley)
 
     # Draws divergence
@@ -2058,7 +2052,7 @@ class SFC_ActionBlock(Graphic_Element):
 
             if not getattr(dc, "printing", False):
                 action_highlights = self.Highlights.get(i, {})
-                for name, attribute_highlights in action_highlights.iteritems():
+                for name, attribute_highlights in action_highlights.items():
                     if name == "qualifier":
                         DrawHighlightedText(dc, action.qualifier, attribute_highlights, qualifier_pos[0], qualifier_pos[1])
                     elif name == "duration":

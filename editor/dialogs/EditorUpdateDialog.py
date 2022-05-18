@@ -3,10 +3,10 @@ import threading
 import time
 from builtins import str as text
 
-import urllib2
+import urllib.request
 import ssl
 import platform
-from subprocess import check_output
+from subprocess import getoutput
 
 import wx
 import wx.xrc
@@ -15,8 +15,6 @@ import os
 # -------------------------------------------------------------------------------
 #                            Editor Update Dialog
 # -------------------------------------------------------------------------------
-
-global update_finished
 
 class EditorUpdateDialog(wx.Dialog):
     """Dialog to configure upload parameters"""
@@ -32,7 +30,7 @@ class EditorUpdateDialog(wx.Dialog):
         
         wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"OpenPLC Editor Updater", pos = wx.DefaultPosition, size = wx.Size( -1,-1 ), style = wx.DEFAULT_DIALOG_STYLE )
 		
-        self.SetSizeHintsSz( wx.Size( 450,150 ), wx.DefaultSize )
+        self.SetSizeHints( wx.Size( 450,150 ), wx.DefaultSize )
 
         bSizer2 = wx.BoxSizer( wx.VERTICAL )
 
@@ -90,7 +88,7 @@ class EditorUpdateDialog(wx.Dialog):
         run_script = './update.sh'
         if platform.system() == 'Windows':
             run_script = 'update.cmd'
-        return_str = check_output(run_script, shell=True)
+        return_str = getoutput(run_script)
         last_line = return_str[-35:]
         if 'Update applied successfully' in last_line:
             self.update_finished = 1
@@ -112,15 +110,15 @@ class EditorUpdateDialog(wx.Dialog):
         try:
             f = open("revision", "r")
             local_revision = int(f.read())
-        except IOError:
+        except OSError:
             local_revision = 0
         
         #Download revision file from GitHub
         if platform.system() == 'Darwin':
             context = ssl._create_unverified_context() #bypass SSL errors on macOS - TODO: fix it later
-            cloud_file = urllib2.urlopen('https://github.com/thiagoralves/OpenPLC_Editor/blob/master/revision?raw=true', context=context)
+            cloud_file = urllib.request.urlopen('https://github.com/thiagoralves/OpenPLC_Editor/blob/dev-python3/revision?raw=true', context=context)
         else:
-            cloud_file = urllib2.urlopen('https://github.com/thiagoralves/OpenPLC_Editor/blob/master/revision?raw=true')
+            cloud_file = urllib.request.urlopen('https://github.com/thiagoralves/OpenPLC_Editor/blob/dev-python3/revision?raw=true')
         
         cloud_revision = int(cloud_file.read().decode('utf-8'))
         if (cloud_revision > local_revision):
@@ -134,7 +132,6 @@ class EditorUpdateDialog(wx.Dialog):
         pass
 
     def OnCancel(self, event):
-        self.update_cancelled = True
         self.EndModal(wx.ID_OK)
 
     def startUpdater(self):

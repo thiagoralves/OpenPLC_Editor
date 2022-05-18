@@ -9,16 +9,15 @@
 #
 # See COPYING file for copyrights details.
 
-from __future__ import absolute_import
+
 import os
 
 import wx
+from MotionLibrary import AxisXSD
 
 from PLCControler import LOCATION_CONFNODE, LOCATION_VAR_INPUT
-
-from MotionLibrary import AxisXSD
-from etherlab.EthercatSlave import _EthercatSlaveCTN, _CommonSlave
 from etherlab.ConfigEditor import CIA402NodeEditor
+from etherlab.EthercatSlave import _EthercatSlaveCTN, _CommonSlave
 
 # Definition of node variables that have to be mapped in PDO
 # [(name, index, subindex, type,
@@ -356,11 +355,11 @@ __%(dir)s%(var_size)s%(location_str)s_%(index)d_%(subindex)d""" % loc_dict
         [fieldbus_interface_declaration, fieldbus_interface_definition,
          init_axis_params, extra_variables_retrieve, extra_variables_publish,
          extern_located_variables_declaration, entry_variables,
-         init_entry_variables] = map("\n".join, [
+         init_entry_variables] = list(map("\n".join, [
              fieldbus_interface_declaration, fieldbus_interface_definition,
              init_axis_params, extra_variables_retrieve, extra_variables_publish,
              extern_located_variables_declaration, entry_variables,
-             init_entry_variables])
+            init_entry_variables]))
 
         # Write generated content to CIA402 node file
         Gen_CIA402Nodefile_path = os.path.join(buildpath,
@@ -369,4 +368,4 @@ __%(dir)s%(var_size)s%(location_str)s_%(index)d_%(subindex)d""" % loc_dict
         cia402nodefile.write(plc_cia402node_code % locals())
         cia402nodefile.close()
 
-        return [(Gen_CIA402Nodefile_path, '"-I%s"' % os.path.abspath(self.GetCTRoot().GetIECLibPath()))], "", True
+        return [(Gen_CIA402Nodefile_path, '"-I%s"' % os.path.abspath(self.GetCTRoot().GetIECLibPath()))], "", True, []

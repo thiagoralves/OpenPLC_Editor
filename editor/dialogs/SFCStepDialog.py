@@ -24,11 +24,11 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
 import wx
 
-from graphics.SFC_Objects import SFC_Step
 from dialogs.BlockPreviewDialog import BlockPreviewDialog
+from graphics.SFC_Objects import SFC_Step
+
 
 # -------------------------------------------------------------------------------
 #                         Set SFC Step Parameters Dialog
@@ -57,16 +57,16 @@ class SFCStepDialog(BlockPreviewDialog):
 
         # Create label for SFC step name
         name_label = wx.StaticText(self, label=_('Name:'))
-        self.LeftGridSizer.AddWindow(name_label, flag=wx.GROW)
+        self.LeftGridSizer.Add(name_label, flag=wx.GROW)
 
         # Create text control for defining SFC step name
         self.StepName = wx.TextCtrl(self)
         self.Bind(wx.EVT_TEXT, self.OnNameChanged, self.StepName)
-        self.LeftGridSizer.AddWindow(self.StepName, flag=wx.GROW)
+        self.LeftGridSizer.Add(self.StepName, flag=wx.GROW)
 
         # Create label for SFC step connectors
         connectors_label = wx.StaticText(self, label=_('Connectors:'))
-        self.LeftGridSizer.AddWindow(connectors_label, flag=wx.GROW)
+        self.LeftGridSizer.Add(connectors_label, flag=wx.GROW)
 
         # Create check boxes for defining connectors available on SFC step
         self.ConnectorsCheckBox = {}
@@ -77,15 +77,15 @@ class SFCStepDialog(BlockPreviewDialog):
             if name == "output" or (name == "input" and not initial):
                 check_box.SetValue(True)
             self.Bind(wx.EVT_CHECKBOX, self.OnConnectorsChanged, check_box)
-            self.LeftGridSizer.AddWindow(check_box, flag=wx.GROW)
+            self.LeftGridSizer.Add(check_box, flag=wx.GROW)
             self.ConnectorsCheckBox[name] = check_box
 
         # Add preview panel and associated label to sizers
-        self.RightGridSizer.AddWindow(self.PreviewLabel, flag=wx.GROW)
-        self.RightGridSizer.AddWindow(self.Preview, flag=wx.GROW)
+        self.RightGridSizer.Add(self.PreviewLabel, flag=wx.GROW)
+        self.RightGridSizer.Add(self.Preview, flag=wx.GROW)
 
         # Add buttons sizer to sizers
-        self.MainSizer.AddSizer(
+        self.MainSizer.Add(
             self.ButtonSizer, border=20,
             flag=wx.ALIGN_RIGHT | wx.BOTTOM | wx.LEFT | wx.RIGHT)
 
@@ -130,7 +130,7 @@ class SFCStepDialog(BlockPreviewDialog):
         values = {"name": self.StepName.GetValue()}
         values.update({
             name: control.IsChecked()
-            for name, control in self.ConnectorsCheckBox.iteritems()})
+            for name, control in self.ConnectorsCheckBox.items()})
         values["width"], values["height"] = self.Element.GetSize()
         return values
 
@@ -174,7 +174,7 @@ class SFCStepDialog(BlockPreviewDialog):
         self.RefreshPreview()
         event.Skip()
 
-    def RefreshPreview(self):
+    def DrawPreview(self):
         """
         Refresh preview panel of graphic element
         Override BlockPreviewDialog function
@@ -185,11 +185,11 @@ class SFCStepDialog(BlockPreviewDialog):
                                 self.Initial)
 
         # Update connectors of SFC step element according to check boxes value
-        for name, control in self.ConnectorsCheckBox.iteritems():
+        for name, control in self.ConnectorsCheckBox.items():
             if control.IsChecked():
                 getattr(self.Element, "Add" + name.capitalize())()
             else:
                 getattr(self.Element, "Remove" + name.capitalize())()
 
         # Call BlockPreviewDialog function
-        BlockPreviewDialog.RefreshPreview(self)
+        BlockPreviewDialog.DrawPreview(self)

@@ -3,9 +3,12 @@
 # This file is part of Beremiz.
 # See COPYING file for copyrights details.
 
-from __future__ import absolute_import
+# 
+
 import os
+
 from lxml import etree
+
 import util.paths as paths
 from plcopen.structures import StdBlckLibs
 
@@ -23,7 +26,7 @@ class XSLTModelQuery(object):
             ("GetProject", lambda *_ignored:
              [controller.GetProject(self.debug)]),
             ("GetStdLibs", lambda *_ignored:
-             [lib for lib in StdBlckLibs.values()]),
+            [lib for lib in list(StdBlckLibs.values())]),
             ("GetExtensions", lambda *_ignored:
              [ctn["types"] for ctn in controller.ConfNodeTypes])
         ]
@@ -40,7 +43,7 @@ class XSLTModelQuery(object):
 
     def _process_xslt(self, root, debug, **kwargs):
         self.debug = debug
-        res = self.xslt(root, **{k: etree.XSLT.strparam(v) for k, v in kwargs.iteritems()})
+        res = self.xslt(root, **{k: etree.XSLT.strparam(v) for k, v in kwargs.items()})
         # print(self.xslt.error_log)
         return res
 
@@ -62,4 +65,4 @@ def _BoolValue(x):
 def _translate_args(translations, args):
     return [translate(arg[0]) if len(arg) > 0 else None
             for translate, arg in
-            zip(translations, args)]
+            list(zip(translations, args))]

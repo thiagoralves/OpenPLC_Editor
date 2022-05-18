@@ -3,7 +3,9 @@
 
 /* Beremiz' header file for use by extensions */
 
-#include "iec_types.h"
+#include "iec_types_all.h"
+#include "POUS.h"
+#include "accessor.h"
 
 #define LOG_LEVELS 4
 #define LOG_CRITICAL 0

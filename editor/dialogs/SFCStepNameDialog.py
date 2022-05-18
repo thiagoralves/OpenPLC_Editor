@@ -23,9 +23,10 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
 import wx
+
 from plcopen.structures import TestIdentifier, IEC_KEYWORDS
+
 
 # -------------------------------------------------------------------------------
 #                          Edit Step Name Dialog
@@ -42,8 +43,8 @@ class SFCStepNameDialog(wx.TextEntryDialog):
         self.Variables = []
         self.StepNames = []
 
-        self.Bind(wx.EVT_BUTTON, self.OnOK,
-                  self.GetSizer().GetItem(2).GetSizer().GetItem(1).GetSizer().GetAffirmativeButton())
+        # self.Bind(wx.EVT_BUTTON, self.OnOK,
+        #           self.GetSizer().GetItem(2).GetSizer().GetItem(1).GetSizer().GetAffirmativeButton())
 
     def OnOK(self, event):
         message = None

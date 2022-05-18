@@ -26,7 +26,6 @@
 
 # plcopen module dynamically creates its classes
 
-from __future__ import absolute_import
 from plcopen.plcopen import \
     PLCOpenParser, LoadProject, SaveProject, LoadPou, \
     LoadPouInstances, VarOrder, QualifierList, rect

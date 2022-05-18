@@ -26,14 +26,17 @@
 Misc definitions
 """
 
-
-from __future__ import absolute_import
 import os
+import sys
 from functools import reduce
+from os import path
 
 from util.BitmapLibrary import AddBitmapFolder
 from util.TranslationCatalogs import AddCatalog
 
+_base_path = os.path.abspath(os.path.dirname(__file__))
+_base_path = os.path.abspath(path.join(_base_path, '..'))
+sys.path.append(_base_path)
 
 def CheckPathPerm(path):
     """ Helper func to check path write permission """
@@ -71,3 +74,14 @@ def InstallLocalRessources(CWD):
 
     # Internationalization
     AddCatalog(os.path.join(CWD, "locale"))
+
+def execfile(filepath, globals=None, locals=None):
+    if globals is None:
+        globals = {}
+
+    globals.update({
+        "__file__": filepath,
+        "__name__": "__main__",
+    })
+    with open(filepath, 'rb') as file:
+        exec(compile(file.read(), filepath, 'exec'), globals, locals)

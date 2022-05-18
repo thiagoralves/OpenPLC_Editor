@@ -23,11 +23,11 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-
-from __future__ import absolute_import
 from os.path import join
+
 import util.paths as paths
 from util.TranslationCatalogs import NoTranslate
+
 sd = paths.AbsDir(__file__)
 
 # Override gettext _ in this module
@@ -48,9 +48,7 @@ LOCATIONDATATYPES = {"X": ["BOOL"],
 # -------------------------------------------------------------------------------
 
 StdTC6Libs = [(_("Standard function blocks"),   join(sd, "Standard_Function_Blocks.xml")),
-              (_("Additional function blocks"), join(sd, "Additional_Function_Blocks.xml")),
-              (_("Arduino"), join(sd, "Arduino_Function_Blocks.xml")),
-              (_("P1AM Modules"), join(sd, "P1AM.xml"))]
+              (_("Additional function blocks"), join(sd, "Additional_Function_Blocks.xml"))]
 
 StdFuncsCSV = join(sd, "iec_std.csv")
 

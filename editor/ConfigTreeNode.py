@@ -31,21 +31,20 @@ Config Tree Node base class.
 - ... TODO : document
 """
 
-from __future__ import absolute_import
 import os
+import shutil
 import traceback
 import types
-import shutil
-from operator import add
-from functools import reduce
 from builtins import str as text
-from past.builtins import execfile
+from functools import reduce
+from operator import add
 
 from lxml import etree
 
-from xmlclass import GenerateParserFromXSDstring
 from PLCControler import LOCATION_CONFNODE
 from editors.ConfTreeNodeEditor import ConfTreeNodeEditor
+from util.misc import execfile
+from xmlclass import GenerateParserFromXSDstring
 
 _BaseParamsParser = GenerateParserFromXSDstring("""<?xml version="1.0" encoding="ISO-8859-1" ?>
         <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
@@ -205,22 +204,22 @@ class ConfigTreeNode(object):
 
             # generate XML for base XML parameters controller of the confnode
             if self.MandatoryParams:
-                BaseXMLFile = open(self.ConfNodeBaseXmlFilePath(), 'w')
+                BaseXMLFile = open(self.ConfNodeBaseXmlFilePath(), 'w', encoding='utf-8')
                 BaseXMLFile.write(etree.tostring(
                     self.MandatoryParams[1],
                     pretty_print=True,
                     xml_declaration=True,
-                    encoding='utf-8'))
+                    encoding='utf-8').decode())
                 BaseXMLFile.close()
 
             # generate XML for XML parameters controller of the confnode
             if self.CTNParams:
-                XMLFile = open(self.ConfNodeXmlFilePath(), 'w')
+                XMLFile = open(self.ConfNodeXmlFilePath(), 'w', encoding='utf-8')
                 XMLFile.write(etree.tostring(
                     self.CTNParams[1],
                     pretty_print=True,
                     xml_declaration=True,
-                    encoding='utf-8'))
+                    encoding='utf-8').decode())
                 XMLFile.close()
 
             # Call the confnode specific OnCTNSave method
@@ -320,8 +319,8 @@ class ConfigTreeNode(object):
         # reorder children by IEC_channels
         ordered = [(chld.BaseParams.getIEC_Channel(), chld) for chld in self.IterChildren()]
         if ordered:
-            ordered.sort()
-            return zip(*ordered)[1]
+            sorted(ordered)
+            return list(zip(*ordered))[1]
         else:
             return []
 
@@ -440,7 +439,7 @@ class ConfigTreeNode(object):
         for CTNInstance in self.CTNParent.IterChildren():
             if CTNInstance != self:
                 AllChannels.append(CTNInstance.BaseParams.getIEC_Channel())
-        AllChannels.sort()
+        sorted(AllChannels)
         return AllChannels
 
     def FindNewIEC_Channel(self, DesiredChannel):
@@ -461,7 +460,8 @@ class ConfigTreeNode(object):
             if res < CurrentChannel:  # Want to go down ?
                 res -= 1  # Test for n-1
                 if res < 0:
-                    self.GetCTRoot().logger.write_warning(_("Cannot find lower free IEC channel than %d\n") % CurrentChannel)
+                    self.GetCTRoot().logger.write_warning(
+                        _("Cannot find lower free IEC channel than %d\n") % CurrentChannel)
                     return CurrentChannel  # Can't go bellow 0, do nothing
             else:  # Want to go up ?
                 res += 1  # Test for n-1
@@ -536,8 +536,8 @@ class ConfigTreeNode(object):
         """
         # reorganize self.CTNChildrenTypes tuples from (name, CTNClass, Help)
         # to ( name, (CTNClass, Help)), an make a dict
-        transpose = zip(*self.CTNChildrenTypes)
-        CTNChildrenTypes = dict(zip(transpose[0], zip(transpose[1], transpose[2])))
+        transpose = list(zip(*self.CTNChildrenTypes))
+        CTNChildrenTypes = dict(list(zip(transpose[0], list(zip(transpose[1], transpose[2])))))
         # Check that adding this confnode is allowed
         try:
             CTNClass, CTNHelp = CTNChildrenTypes[CTNType]
@@ -665,11 +665,12 @@ class ConfigTreeNode(object):
         # Iterate over all CTNName@CTNType in confnode directory, and try to open them
         for CTNDir in os.listdir(self.CTNPath()):
             if os.path.isdir(os.path.join(self.CTNPath(), CTNDir)) and \
-               CTNDir.count(NameTypeSeparator) == 1:
+                    CTNDir.count(NameTypeSeparator) == 1:
                 pname, ptype = CTNDir.split(NameTypeSeparator)
                 try:
                     self.CTNAddChild(pname, ptype)
                 except Exception as exc:
-                    msg = _("Could not add child \"{a1}\", type {a2} :\n{a3}\n").format(a1=pname, a2=ptype, a3=text(exc))
+                    msg = _("Could not add child \"{a1}\", type {a2} :\n{a3}\n").format(a1=pname, a2=ptype,
+                                                                                        a3=text(exc))
                     self.GetCTRoot().logger.write_error(msg)
                     self.GetCTRoot().logger.write_error(traceback.format_exc())

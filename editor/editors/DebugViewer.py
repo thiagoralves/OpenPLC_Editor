@@ -23,13 +23,14 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
+
+
 from threading import Lock, Timer
 from time import time as gettime
 
 import wx
 
-REFRESH_PERIOD = 0.1         # Minimum time between 2 refresh
+REFRESH_PERIOD = 0.5  # Minimum time between 2 refresh
 DEBUG_REFRESH_LOCK = Lock()  # Common refresh lock for all debug viewers
 
 # -------------------------------------------------------------------------------
@@ -130,7 +131,7 @@ class DebugViewer(object):
         @param inhibit: Inhibit flag
         """
         # Inhibit every data consumers in list
-        for consumer, _iec_path in self.DataConsumers.iteritems():
+        for consumer, _iec_path in self.DataConsumers.items():
             consumer.Inhibit(inhibit)
 
         # Save inhibit flag
@@ -192,7 +193,7 @@ class DebugViewer(object):
                 self.DataProducer.UnsubscribeDebugIECVariable("__tick__", self)
 
             # Unsubscribe all data consumers in list
-            for consumer, iec_path in self.DataConsumers.iteritems():
+            for consumer, iec_path in self.DataConsumers.items():
                 self.DataProducer.UnsubscribeDebugIECVariable(iec_path, consumer)
 
         self.DataConsumers = {}

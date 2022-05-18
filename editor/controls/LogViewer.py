@@ -23,15 +23,12 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
-from __future__ import division
 from datetime import datetime
 from time import time as gettime
 from weakref import proxy
 
 import numpy
 import wx
-from six.moves import xrange
 
 from controls.CustomToolTip import CustomToolTip, TOOLTIP_WAIT_PERIOD
 from editors.DebugViewer import DebugViewer, REFRESH_PERIOD
@@ -99,8 +96,8 @@ class LogScrollBar(wx.Panel):
         width, height = self.GetClientSize()
         range_rect = self.GetRangeRect()
         thumb_rect = self.GetThumbRect()
-        if range_rect.InsideXY(posx, posy):
-            if thumb_rect.InsideXY(posx, posy):
+        if range_rect.Contains(posx, posy):
+            if thumb_rect.Contains(posx, posy):
                 self.ThumbScrollingStartPos = wx.Point(posx, posy)
             elif posy < thumb_rect.y:
                 self.Parent.ScrollToLast()
@@ -139,13 +136,13 @@ class LogScrollBar(wx.Panel):
     def OnPaint(self, event):
         dc = wx.BufferedPaintDC(self)
         dc.Clear()
-        dc.BeginDrawing()
+        # dc.BeginDrawing()
 
         gc = wx.GCDC(dc)
 
         width, height = self.GetClientSize()
 
-        gc.SetPen(wx.Pen(wx.NamedColour("GREY"), 3))
+        gc.SetPen(wx.Pen(wx.Colour("GREY"), 3))
         gc.SetBrush(wx.GREY_BRUSH)
 
         gc.DrawLines(ArrowPoints(wx.TOP, width * 0.75, width * 0.5, 2, (width + height) // 4 - 3))
@@ -162,7 +159,7 @@ class LogScrollBar(wx.Panel):
         if self.Parent.IsMessagePanelBottom():
             exclusion_rect.height = height - width - exclusion_rect.y
         if exclusion_rect != thumb_rect:
-            colour = wx.NamedColour("LIGHT GREY")
+            colour = wx.Colour("LIGHT GREY")
             gc.SetPen(wx.Pen(colour))
             gc.SetBrush(wx.Brush(colour))
 
@@ -179,7 +176,7 @@ class LogScrollBar(wx.Panel):
         gc.DrawRectangle(thumb_rect.x, thumb_rect.y,
                          thumb_rect.width, thumb_rect.height)
 
-        dc.EndDrawing()
+        # dc.EndDrawing()
         event.Skip()
 
 
@@ -207,7 +204,7 @@ class LogButton(object):
     def HitTest(self, x, y):
         rect = wx.Rect(self.Position.x, self.Position.y,
                        self.Size.width, self.Size.height)
-        if rect.InsideXY(x, y):
+        if rect.Contains(x, y):
             return True
         return False
 
@@ -217,7 +214,7 @@ class LogButton(object):
 
     def Draw(self, dc):
         dc.SetPen(wx.TRANSPARENT_PEN)
-        dc.SetBrush(wx.Brush(wx.NamedColour("LIGHT GREY")))
+        dc.SetBrush(wx.Brush(wx.Colour("LIGHT GREY")))
 
         dc.DrawRectangle(self.Position.x, self.Position.y,
                          self.Size.width, self.Size.height)
@@ -246,8 +243,8 @@ class LogMessage(object):
 
     def __cmp__(self, other):
         if self.Date == other.Date:
-            return cmp(self.Seconds, other.Seconds)
-        return cmp(self.Date, other.Date)
+            return operator.eq(self.Seconds, other.Seconds)
+        return operator.eq(self.Date, other.Date)
 
     def GetFullText(self):
         date = self.Date.replace(second=int(self.Seconds))
@@ -303,7 +300,7 @@ class LogViewer(DebugViewer, wx.Panel):
         main_sizer.AddGrowableRow(1)
 
         filter_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        main_sizer.AddSizer(filter_sizer, border=5, flag=wx.TOP | wx.LEFT | wx.RIGHT | wx.GROW)
+        main_sizer.Add(filter_sizer, border=5, flag=wx.TOP | wx.LEFT | wx.RIGHT | wx.GROW)
 
         self.MessageFilter = wx.ComboBox(self, style=wx.CB_READONLY)
         self.MessageFilter.Append(_("All"))
@@ -312,7 +309,7 @@ class LogViewer(DebugViewer, wx.Panel):
         for level in levels:
             self.MessageFilter.Append(_(level))
         self.Bind(wx.EVT_COMBOBOX, self.OnMessageFilterChanged, self.MessageFilter)
-        filter_sizer.AddWindow(self.MessageFilter, 1, border=5, flag=wx.RIGHT | wx.ALIGN_CENTER_VERTICAL)
+        filter_sizer.Add(self.MessageFilter, 1, border=5, flag=wx.RIGHT | wx.ALIGN_CENTER_VERTICAL)
 
         self.SearchMessage = wx.SearchCtrl(self, style=wx.TE_PROCESS_ENTER)
         self.SearchMessage.ShowSearchButton(True)
@@ -322,18 +319,18 @@ class LogViewer(DebugViewer, wx.Panel):
                   self.OnSearchMessageSearchButtonClick, self.SearchMessage)
         self.Bind(wx.EVT_SEARCHCTRL_CANCEL_BTN,
                   self.OnSearchMessageCancelButtonClick, self.SearchMessage)
-        filter_sizer.AddWindow(self.SearchMessage, 3, border=5, flag=wx.RIGHT | wx.ALIGN_CENTER_VERTICAL)
+        filter_sizer.Add(self.SearchMessage, 3, border=5, flag=wx.RIGHT | wx.ALIGN_CENTER_VERTICAL)
 
         self.CleanButton = wx.lib.buttons.GenBitmapButton(self, bitmap=GetBitmap("Clean"),
                                                           size=wx.Size(28, 28), style=wx.NO_BORDER)
-        self.CleanButton.SetToolTipString(_("Clean log messages"))
+        self.CleanButton.SetToolTip(_("Clean log messages"))
         self.Bind(wx.EVT_BUTTON, self.OnCleanButton, self.CleanButton)
-        filter_sizer.AddWindow(self.CleanButton)
+        filter_sizer.Add(self.CleanButton)
 
         message_panel_sizer = wx.FlexGridSizer(cols=2, hgap=0, rows=1, vgap=0)
         message_panel_sizer.AddGrowableCol(0)
         message_panel_sizer.AddGrowableRow(0)
-        main_sizer.AddSizer(message_panel_sizer, border=5, flag=wx.LEFT | wx.RIGHT | wx.BOTTOM | wx.GROW)
+        main_sizer.Add(message_panel_sizer, border=5, flag=wx.LEFT | wx.RIGHT | wx.BOTTOM | wx.GROW)
 
         self.MessagePanel = wx.Panel(self)
         if wx.Platform == '__WXMSW__':
@@ -349,10 +346,10 @@ class LogViewer(DebugViewer, wx.Panel):
         self.MessagePanel.Bind(wx.EVT_ERASE_BACKGROUND, self.OnMessagePanelEraseBackground)
         self.MessagePanel.Bind(wx.EVT_PAINT, self.OnMessagePanelPaint)
         self.MessagePanel.Bind(wx.EVT_SIZE, self.OnMessagePanelResize)
-        message_panel_sizer.AddWindow(self.MessagePanel, flag=wx.GROW)
+        message_panel_sizer.Add(self.MessagePanel, flag=wx.GROW)
 
         self.MessageScrollBar = LogScrollBar(self, wx.Size(16, -1))
-        message_panel_sizer.AddWindow(self.MessageScrollBar, flag=wx.GROW)
+        message_panel_sizer.Add(self.MessageScrollBar, flag=wx.GROW)
 
         self.SetSizer(main_sizer)
 
@@ -372,7 +369,7 @@ class LogViewer(DebugViewer, wx.Panel):
         self.ParentWindow = window
 
         self.LevelIcons = [GetBitmap("LOG_" + level) for level in LogLevels]
-        self.LevelFilters = [range(i) for i in xrange(4, 0, -1)]
+        self.LevelFilters = [range(i) for i in range(4, 0, -1)]
         self.CurrentFilter = self.LevelFilters[0]
         self.CurrentSearchValue = ""
 
@@ -417,14 +414,14 @@ class LogViewer(DebugViewer, wx.Panel):
 
     def SetLogCounters(self, log_count):
         new_messages = []
-        for level, count, prev in zip(xrange(LogLevelsCount), log_count, self.previous_log_count):
+        for level, count, prev in list(zip(range(LogLevelsCount), log_count, self.previous_log_count)):
             if count is not None and prev != count:
                 if prev is None:
                     dump_end = max(-1, count - 10)
                     oldest_message = (-1, None)
                 else:
                     dump_end = prev - 1
-                for msgidx in xrange(count-1, dump_end, -1):
+                for msgidx in range(count - 1, dump_end, -1):
                     new_message = self.GetLogMessageFromSource(msgidx, level)
                     if new_message is None:
                         if prev is None:
@@ -441,7 +438,7 @@ class LogViewer(DebugViewer, wx.Panel):
                 if prev is None and len(self.OldestMessages) <= level:
                     self.OldestMessages.append(oldest_message)
                 self.previous_log_count[level] = count
-        new_messages.sort()
+        sorted(new_messages)
         if len(new_messages) > 0:
             self.HasNewData = True
             if self.CurrentMessage is not None:
@@ -534,10 +531,10 @@ class LogViewer(DebugViewer, wx.Panel):
 
     def RefreshView(self):
         width, height = self.MessagePanel.GetClientSize()
-        bitmap = wx.EmptyBitmap(width, height)
+        bitmap = wx.Bitmap(width, height)
         dc = wx.BufferedDC(wx.ClientDC(self.MessagePanel), bitmap)
         dc.Clear()
-        dc.BeginDrawing()
+        # dc.BeginDrawing()
 
         if self.CurrentMessage is not None:
 
@@ -559,13 +556,13 @@ class LogViewer(DebugViewer, wx.Panel):
                     draw_date = message.Date != previous_message.Date
                 message = previous_message
 
-        dc.EndDrawing()
+        # dc.EndDrawing()
 
         self.MessageScrollBar.RefreshThumbPosition()
 
     def IsPLCLogEmpty(self):
         empty = True
-        for _level, prev in zip(xrange(LogLevelsCount), self.previous_log_count):
+        for _level, prev in list(zip(range(LogLevelsCount), self.previous_log_count)):
             if prev is not None:
                 empty = False
                 break
@@ -711,8 +708,8 @@ class LogViewer(DebugViewer, wx.Panel):
         if message is not None:
             menu = wx.Menu(title='')
 
-            new_id = wx.NewId()
-            menu.Append(help='', id=new_id, kind=wx.ITEM_NORMAL, text=_("Copy"))
+            new_id = wx.NewIdRef()
+            menu.Append(helpString='', id=new_id, kind=wx.ITEM_NORMAL, text=_("Copy"))
             self.Bind(wx.EVT_MENU, self.GetCopyMessageToClipboardFunction(message), id=new_id)
 
             self.MessagePanel.PopupMenu(menu)

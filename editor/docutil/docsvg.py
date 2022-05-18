@@ -23,7 +23,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
+
 import os
 import subprocess
 import wx
@@ -31,7 +31,7 @@ import wx
 
 def get_inkscape_path():
     """ Return the Inkscape path """
-    from six.moves import winreg
+    import winreg
     try:
         svgexepath = winreg.QueryValue(winreg.HKEY_LOCAL_MACHINE,
                                        'Software\\Classes\\svgfile\\shell\\Inkscape\\command')

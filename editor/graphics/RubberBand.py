@@ -23,7 +23,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
+
+
 import wx
 
 from graphics.GraphicCommons import GetScaledEventPosition
@@ -94,7 +95,7 @@ class RubberBand(object):
 
         # Change viewer mouse cursor to reflect a rubberband bounding box is
         # edited
-        self.DrawingSurface.SetCursor(wx.StockCursor(wx.CURSOR_CROSS))
+        self.DrawingSurface.SetCursor(wx.Cursor(wx.CURSOR_CROSS))
 
         self.Redraw()
 

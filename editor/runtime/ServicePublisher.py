@@ -22,12 +22,13 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 
-from __future__ import absolute_import
-from __future__ import print_function
+# 
+
+
 import socket
 import threading
-import zeroconf
 
+import zeroconf
 
 service_type = '_Beremiz._tcp.local.'
 

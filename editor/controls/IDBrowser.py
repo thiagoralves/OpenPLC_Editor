@@ -3,20 +3,20 @@
 
 # See COPYING file for copyrights details.
 
-from __future__ import absolute_import
 import wx
 import wx.dataview as dv
+
 import PSKManagement as PSK
 from PSKManagement import *
 from dialogs.IDMergeDialog import IDMergeDialog
 
 
-class IDBrowserModel(dv.PyDataViewIndexListModel):
+class IDBrowserModel(dv.DataViewIndexListModel):
     def __init__(self, project_path, columncount):
         self.project_path = project_path
         self.columncount = columncount
         self.data = PSK.GetData(project_path)
-        dv.PyDataViewIndexListModel.__init__(self, len(self.data))
+        dv.DataViewIndexListModel.__init__(self, len(self.data))
 
     def _saveData(self):
         PSK.SaveData(self.project_path, self.data)
@@ -43,9 +43,9 @@ class IDBrowserModel(dv.PyDataViewIndexListModel):
         row1 = self.GetRow(item1)
         row2 = self.GetRow(item2)
         if col == 0:
-            return cmp(int(self.data[row1][col]), int(self.data[row2][col]))
+            return operator.eq(int(self.data[row1][col]), int(self.data[row2][col]))
         else:
-            return cmp(self.data[row1][col], self.data[row2][col])
+            return operator.eq(self.data[row1][col], self.data[row2][col])
 
     def DeleteRows(self, rows):
         rows = list(rows)

@@ -23,14 +23,9 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
-from __future__ import division
-from future.builtins import round
-
-import wx
-from six.moves import xrange
 
 from editors.Viewer import *
+
 
 
 def ExtractNextBlocks(block, block_list):
@@ -301,7 +296,7 @@ class LD_Viewer(Viewer):
             return Viewer.SearchElements(self, bbox)
 
         elements = []
-        for element in self.Blocks.values() + self.Comments.values():
+        for element in list(self.Blocks.values()) + list(self.Comments.values()):
             if element.IsInSelection(bbox):
                 elements.append(element)
         return elements
@@ -768,8 +763,8 @@ class LD_Viewer(Viewer):
                         infos["rights"].remove(right_element)
                         if "LD_PowerRail" not in infos["rights"]:
                             infos["rights"].append("LD_PowerRail")
-                infos["lefts"].sort()
-                infos["rights"].sort()
+                sorted(infos["lefts"])
+                sorted(infos["rights"])
             lefts = blocks_infos[0]["lefts"]
             rights = blocks_infos[0]["rights"]
             good = True
@@ -1190,7 +1185,7 @@ class LD_Viewer(Viewer):
 
     def RefreshRungs(self, movey, fromidx):
         if movey != 0:
-            for i in xrange(fromidx, len(self.Rungs)):
+            for i in range(fromidx, len(self.Rungs)):
                 self.RungComments[i].Move(0, movey)
                 self.RungComments[i].RefreshModel()
                 self.Rungs[i].Move(0, movey)

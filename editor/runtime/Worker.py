@@ -7,11 +7,12 @@
 #
 # See COPYING.Runtime file for copyrights details.
 
-from __future__ import absolute_import
+# 
 import sys
 from threading import Lock, Condition
+
 import six
-from six.moves import _thread
+import _thread
 
 
 class job(object):
@@ -21,8 +22,9 @@ class job(object):
     def __init__(self, call, *args, **kwargs):
         self.job = (call, args, kwargs)
         self.result = None
-        self.success = False
+        self.success = None
         self.exc_info = None
+        self.enabled = False
 
     def do(self):
         """
@@ -50,6 +52,7 @@ class worker(object):
         self.done = Condition(self.mutex)
         self.free = Condition(self.mutex)
         self.job = None
+        self.enabled = True
 
     def reraise(self, job):
         """
@@ -67,9 +70,11 @@ class worker(object):
         """
         self._threadID = _thread.get_ident()
         self.mutex.acquire()
+        self.enabled = True
         if args or kwargs:
             _job = job(*args, **kwargs)
             _job.do()
+            # _job.success can't be None after do()
             if not _job.success:
                 self.reraise(_job)
 
@@ -99,6 +104,9 @@ class worker(object):
         else:
             # otherwise notify and wait for completion
             self.mutex.acquire()
+            if not self.enabled:
+                self.mutex.release()
+                raise EOFError("Worker is disabled")
 
             while self.job is not None:
                 self.free.wait()
@@ -109,6 +117,9 @@ class worker(object):
             self.job = None
             self.free.notify()
             self.mutex.release()
+
+        if _job.success is None:
+            raise EOFError("Worker job was interrupted")
 
         if _job.success:
             return _job.result
@@ -122,6 +133,8 @@ class worker(object):
         # mark queue
         self._finish = True
         self.mutex.acquire()
+        self.enabled = False
         self.job = None
         self.todo.notify()
+        self.done.notify()
         self.mutex.release()

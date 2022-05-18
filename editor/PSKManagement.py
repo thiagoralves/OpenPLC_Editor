@@ -3,10 +3,9 @@
 
 # See COPYING file for copyrights details.
 
-from __future__ import absolute_import
+import json
 import os
 import time
-import json
 from zipfile import ZipFile
 
 # PSK Management Data model :

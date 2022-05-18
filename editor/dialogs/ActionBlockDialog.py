@@ -22,8 +22,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-
-from __future__ import absolute_import
 import wx
 import wx.grid
 import wx.lib.buttons
@@ -32,6 +30,8 @@ from controls import CustomGrid, CustomTable
 from plcopen.BlockInstanceCollector import _ActionInfos
 from util.BitmapLibrary import GetBitmap
 from util.TranslationCatalogs import NoTranslate
+
+
 # -------------------------------------------------------------------------------
 #                                  Helpers
 # -------------------------------------------------------------------------------
@@ -85,28 +85,28 @@ class ActionTable(CustomTable):
                 readonly = False
                 colname = self.GetColLabelValue(col, False)
                 if colname == "Qualifier":
-                    editor = wx.grid.GridCellChoiceEditor()
+                    editor = wx.grid.GridCellChoiceEditor(self.Parent.QualifierList.split(','))
                     editor.SetParameters(self.Parent.QualifierList)
                 if colname == "Duration":
                     editor = wx.grid.GridCellTextEditor()
                     renderer = wx.grid.GridCellStringRenderer()
                     readonly = not self.Parent.DurationList[self.data[row].qualifier]
                 elif colname == "Type":
-                    editor = wx.grid.GridCellChoiceEditor()
+                    editor = wx.grid.GridCellChoiceEditor(GetTypeList())
                     editor.SetParameters(self.Parent.TypeList)
                 elif colname == "Value":
                     value_type = self.data[row].type
                     if value_type == "Action":
-                        editor = wx.grid.GridCellChoiceEditor()
+                        editor = wx.grid.GridCellChoiceEditor(self.Parent.ActionList.split(','))
                         editor.SetParameters(self.Parent.ActionList)
                     elif value_type == "Variable":
-                        editor = wx.grid.GridCellChoiceEditor()
+                        editor = wx.grid.GridCellChoiceEditor(self.Parent.VariableList.split('1'))
                         editor.SetParameters(self.Parent.VariableList)
                     elif value_type == "Inline":
                         editor = wx.grid.GridCellTextEditor()
                         renderer = wx.grid.GridCellStringRenderer()
                 elif colname == "Indicator":
-                    editor = wx.grid.GridCellChoiceEditor()
+                    editor = wx.grid.GridCellChoiceEditor(self.Parent.VariableList.split(','))
                     editor.SetParameters(self.Parent.VariableList)
 
                 grid.SetCellEditor(row, col, editor)
@@ -133,11 +133,11 @@ class ActionBlockDialog(wx.Dialog):
         top_sizer = wx.FlexGridSizer(cols=5, hgap=5, rows=1, vgap=0)
         top_sizer.AddGrowableCol(0)
         top_sizer.AddGrowableRow(0)
-        main_sizer.AddSizer(top_sizer, border=20,
-                            flag=wx.GROW | wx.TOP | wx.LEFT | wx.RIGHT)
+        main_sizer.Add(top_sizer, border=20,
+                       flag=wx.GROW | wx.TOP | wx.LEFT | wx.RIGHT)
 
         actions_label = wx.StaticText(self, label=_('Actions:'))
-        top_sizer.AddWindow(actions_label, flag=wx.ALIGN_BOTTOM)
+        top_sizer.Add(actions_label, flag=wx.ALIGN_BOTTOM)
 
         for name, bitmap, help in [
                 ("AddButton", "add_element", _("Add action")),
@@ -147,21 +147,21 @@ class ActionBlockDialog(wx.Dialog):
             button = wx.lib.buttons.GenBitmapButton(
                 self, bitmap=GetBitmap(bitmap),
                 size=wx.Size(28, 28), style=wx.NO_BORDER)
-            button.SetToolTipString(help)
+            button.SetToolTip(help)
             setattr(self, name, button)
-            top_sizer.AddWindow(button)
+            top_sizer.Add(button)
 
         self.ActionsGrid = CustomGrid(self, size=wx.Size(-1, 250), style=wx.VSCROLL)
         self.ActionsGrid.DisableDragGridSize()
         self.ActionsGrid.EnableScrolling(False, True)
-        self.ActionsGrid.Bind(wx.grid.EVT_GRID_CELL_CHANGE,
+        self.ActionsGrid.Bind(wx.grid.EVT_GRID_CELL_CHANGED,
                               self.OnActionsGridCellChange)
-        main_sizer.AddSizer(self.ActionsGrid, border=20,
-                            flag=wx.GROW | wx.LEFT | wx.RIGHT)
+        main_sizer.Add(self.ActionsGrid, border=20,
+                       flag=wx.GROW | wx.LEFT | wx.RIGHT)
 
         button_sizer = self.CreateButtonSizer(wx.OK | wx.CANCEL | wx.CENTRE)
-        self.Bind(wx.EVT_BUTTON, self.OnOK, button_sizer.GetAffirmativeButton())
-        main_sizer.AddSizer(button_sizer, border=20,
+        # self.Bind(wx.EVT_BUTTON, self.OnOK, button_sizer.GetAffirmativeButton())
+        main_sizer.Add(button_sizer, border=20,
                             flag=wx.ALIGN_RIGHT | wx.BOTTOM | wx.LEFT | wx.RIGHT)
 
         self.SetSizer(main_sizer)

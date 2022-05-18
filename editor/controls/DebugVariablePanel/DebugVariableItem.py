@@ -23,10 +23,11 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
-from datetime import timedelta
 import binascii
+from datetime import timedelta
+
 import numpy
+
 from graphics.DebugDataConsumer import DebugDataConsumer, TYPE_TRANSLATOR
 
 # -------------------------------------------------------------------------------
@@ -103,7 +104,7 @@ class DebugVariableItem(DebugDataConsumer):
             # Init masked variable path
             variable = ""
 
-            for m, p in zip(mask, parts):
+            for m, p in list(zip(mask, parts)):
                 # Part is not masked, add part prefixed with '.' is previous
                 # wasn't masked
                 if m == '*':
@@ -252,7 +253,7 @@ class DebugVariableItem(DebugDataConsumer):
                 last_raw_data_idx = len(self.RawData) - 1
 
             data_values = []
-            for tick, (value, forced) in zip(ticks, values):
+            for tick, (value, forced) in list(zip(ticks, values)):
                 # Translate forced flag to float for storing in Data table
                 forced_value = float(forced)
 

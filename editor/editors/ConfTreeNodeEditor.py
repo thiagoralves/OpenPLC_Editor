@@ -24,17 +24,16 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
-from __future__ import division
+
+
 
 import wx
-
-from editors.EditorPanel import EditorPanel
+from wx import Size
 
 from IDEFrame import TITLE, FILEMENU, PROJECTTREE, PAGETITLES
-
 from controls import TextCtrlAutoComplete
 from dialogs import BrowseValuesLibraryDialog, UriEditor
+from editors.EditorPanel import EditorPanel
 from util.BitmapLibrary import GetBitmap
 
 if wx.Platform == '__WXMSW__':
@@ -120,7 +119,7 @@ class GenStaticBitmap(wx.StaticBitmap):
 
         bitmap = GetBitmap(bitmapname)
         if bitmap is None:
-            bitmap = wx.EmptyBitmap(0, 0)
+            bitmap = wx.Bitmap()
 
         wx.StaticBitmap.__init__(self, parent, ID,
                                  bitmap,
@@ -148,19 +147,19 @@ class ConfTreeNodeEditor(EditorPanel):
 
             if self.SHOW_BASE_PARAMS:
                 baseparamseditor_sizer = wx.BoxSizer(wx.HORIZONTAL)
-                self.MainSizer.AddSizer(baseparamseditor_sizer, border=5,
-                                        flag=wx.GROW | wx.ALL)
+                self.MainSizer.Add(baseparamseditor_sizer, border=5,
+                                   flag=wx.GROW | wx.ALL)
 
                 self.FullIECChannel = wx.StaticText(self.Editor, -1)
                 self.FullIECChannel.SetFont(
                     wx.Font(faces["size"], wx.DEFAULT, wx.NORMAL,
                             wx.BOLD, faceName=faces["helv"]))
-                baseparamseditor_sizer.AddWindow(self.FullIECChannel,
-                                                 flag=wx.ALIGN_CENTER_VERTICAL)
+                baseparamseditor_sizer.Add(self.FullIECChannel,
+                                           flag=wx.ALIGN_CENTER_VERTICAL)
 
                 updownsizer = wx.BoxSizer(wx.VERTICAL)
-                baseparamseditor_sizer.AddSizer(updownsizer, border=5,
-                                                flag=wx.LEFT | wx.ALIGN_CENTER_VERTICAL)
+                baseparamseditor_sizer.Add(updownsizer, border=5,
+                                           flag=wx.LEFT | wx.ALIGN_CENTER_VERTICAL)
 
                 self.IECCUpButton = wx.lib.buttons.GenBitmapTextButton(
                     self.Editor,
@@ -169,14 +168,14 @@ class ConfTreeNodeEditor(EditorPanel):
                     style=wx.NO_BORDER)
                 self.IECCUpButton.Bind(wx.EVT_BUTTON, self.GetItemChannelChangedFunction(1),
                                        self.IECCUpButton)
-                updownsizer.AddWindow(self.IECCUpButton, flag=wx.ALIGN_LEFT)
+                updownsizer.Add(self.IECCUpButton, flag=wx.ALIGN_LEFT)
 
                 self.IECCDownButton = wx.lib.buttons.GenBitmapButton(
                     self.Editor, bitmap=GetBitmap('IECCUp'),
                     size=wx.Size(16, 16), style=wx.NO_BORDER)
                 self.IECCDownButton.Bind(wx.EVT_BUTTON, self.GetItemChannelChangedFunction(-1),
                                          self.IECCDownButton)
-                updownsizer.AddWindow(self.IECCDownButton, flag=wx.ALIGN_LEFT)
+                updownsizer.Add(self.IECCDownButton, flag=wx.ALIGN_LEFT)
 
                 self.ConfNodeName = wx.TextCtrl(self.Editor,
                                                 size=wx.Size(150, 25))
@@ -187,17 +186,17 @@ class ConfTreeNodeEditor(EditorPanel):
                     wx.EVT_TEXT,
                     self.GetTextCtrlCallBackFunction(self.ConfNodeName, "BaseParams.Name", True),
                     self.ConfNodeName)
-                baseparamseditor_sizer.AddWindow(
+                baseparamseditor_sizer.Add(
                     self.ConfNodeName, border=5,
                     flag=wx.LEFT | wx.RIGHT | wx.ALIGN_CENTER_VERTICAL)
 
                 buttons_sizer = self.GenerateMethodButtonSizer()
-                baseparamseditor_sizer.AddSizer(buttons_sizer, flag=wx.ALIGN_CENTER)
+                baseparamseditor_sizer.Add(buttons_sizer, flag=wx.ALIGN_CENTER)
 
             if tabs_num > 1:
                 self.ConfNodeNoteBook = wx.Notebook(self.Editor)
                 parent = self.ConfNodeNoteBook
-                self.MainSizer.AddWindow(self.ConfNodeNoteBook, 1, flag=wx.GROW)
+                self.MainSizer.Add(self.ConfNodeNoteBook, 1, flag=wx.GROW)
             else:
                 parent = self.Editor
                 self.ConfNodeNoteBook = None
@@ -212,7 +211,7 @@ class ConfTreeNodeEditor(EditorPanel):
             if self.ConfNodeNoteBook is not None:
                 self.ConfNodeNoteBook.AddPage(editor, title)
             elif self.SHOW_BASE_PARAMS:
-                self.MainSizer.AddWindow(editor, 1, flag=wx.GROW)
+                self.MainSizer.Add(editor, 1, flag=wx.GROW)
             else:
                 self.Editor = editor
 
@@ -232,15 +231,15 @@ class ConfTreeNodeEditor(EditorPanel):
             self.ParamsEditor.SetSizer(self.ParamsEditorSizer)
 
             self.ConfNodeParamsSizer = wx.BoxSizer(wx.VERTICAL)
-            self.ParamsEditorSizer.AddSizer(self.ConfNodeParamsSizer, border=5,
-                                            flag=wx.LEFT | wx.RIGHT | wx.BOTTOM)
+            self.ParamsEditorSizer.Add(self.ConfNodeParamsSizer, border=5,
+                                       flag=wx.LEFT | wx.RIGHT | wx.BOTTOM)
 
             self.RefreshConfNodeParamsSizer()
 
             if self.ConfNodeNoteBook is not None:
                 self.ConfNodeNoteBook.AddPage(self.ParamsEditor, _("Config"))
             elif self.SHOW_BASE_PARAMS:
-                self.MainSizer.AddWindow(self.ParamsEditor, 1, flag=wx.GROW)
+                self.MainSizer.Add(self.ParamsEditor, 1, flag=wx.GROW)
             else:
                 self.Editor = self.ParamsEditor
         else:
@@ -317,7 +316,7 @@ class ConfTreeNodeEditor(EditorPanel):
                                              label=confnode_method["name"],
                                              style=wx.NO_BORDER)
                 button.SetFont(normal_bt_font)
-                button.SetToolTipString(confnode_method["tooltip"])
+                button.SetToolTip(confnode_method["tooltip"])
                 if confnode_method.get("push", False):
                     button.Bind(wx.EVT_LEFT_DOWN, self.GetButtonCallBackFunction(confnode_method["method"], True))
                 else:
@@ -335,7 +334,7 @@ class ConfTreeNodeEditor(EditorPanel):
                 # hack to force size to mini
                 if not confnode_method.get("enabled", True):
                     button.Disable()
-                msizer.AddWindow(button, flag=wx.ALIGN_CENTER)
+                msizer.Add(button, flag=wx.ALIGN_CENTER)
         return msizer
 
     def UriOptions(self, event):
@@ -356,7 +355,7 @@ class ConfTreeNodeEditor(EditorPanel):
                 CTR_AppFrame.RefreshFileMenu()
                 CTR_AppFrame.RefreshEditMenu()
                 CTR_AppFrame.RefreshPageTitles()
-
+        dialog.close()
         dialog.Destroy()
 
     def GenerateSizerElements(self, sizer, elements, path, clean=True):
@@ -380,32 +379,32 @@ class ConfTreeNodeEditor(EditorPanel):
                 flags = (wx.GROW | wx.BOTTOM | wx.LEFT | wx.RIGHT)
                 if first:
                     flags |= wx.TOP
-                sizer.AddSizer(staticboxsizer, border=5, flag=flags)
+                sizer.Add(staticboxsizer, border=5, flag=flags)
                 self.GenerateSizerElements(staticboxsizer,
                                            element_infos["children"],
                                            element_path)
             else:
-                boxsizer = wx.FlexGridSizer(cols=3, rows=1)
+                boxsizer = wx.FlexGridSizer(rows=1, cols=3, gap=Size(0, 0))
                 boxsizer.AddGrowableCol(1)
                 flags = (wx.GROW | wx.BOTTOM | wx.LEFT | wx.RIGHT)
                 if first:
                     flags |= wx.TOP
-                sizer.AddSizer(boxsizer, border=5, flag=flags)
+                sizer.Add(boxsizer, border=5, flag=flags)
                 staticbitmap = GenStaticBitmap(
                     ID=-1, bitmapname=element_infos["name"],
                     name="%s_bitmap" % element_infos["name"], parent=self.ParamsEditor,
                     pos=wx.Point(0, 0), size=wx.Size(24, 24), style=0)
-                boxsizer.AddWindow(staticbitmap, border=5, flag=wx.RIGHT)
+                boxsizer.Add(staticbitmap, border=5, flag=wx.RIGHT)
 
                 statictext = wx.StaticText(self.ParamsEditor,
                                            label="%s:" % _(element_infos["name"]))
-                boxsizer.AddWindow(statictext, border=5,
-                                   flag=wx.ALIGN_CENTER_VERTICAL | wx.RIGHT)
+                boxsizer.Add(statictext, border=5,
+                             flag=wx.ALIGN_CENTER_VERTICAL | wx.RIGHT)
 
                 if isinstance(element_infos["type"], list):
                     if isinstance(element_infos["value"], tuple):
                         browse_boxsizer = wx.BoxSizer(wx.HORIZONTAL)
-                        boxsizer.AddSizer(browse_boxsizer)
+                        boxsizer.Add(browse_boxsizer)
 
                         textctrl = wx.TextCtrl(self.ParamsEditor,
                                                size=wx.Size(275, -1), style=wx.TE_READONLY)
@@ -414,10 +413,10 @@ class ConfTreeNodeEditor(EditorPanel):
                             value_infos = element_infos["value"][1]
                         else:
                             value_infos = None
-                        browse_boxsizer.AddWindow(textctrl)
+                        browse_boxsizer.Add(textctrl)
 
                         button = wx.Button(self.ParamsEditor, label="...")
-                        browse_boxsizer.AddWindow(button)
+                        browse_boxsizer.Add(button)
                         button.Bind(wx.EVT_BUTTON,
                                     self.GetBrowseCallBackFunction(element_infos["name"], textctrl, element_infos["type"],
                                                                    value_infos, element_path),
@@ -425,7 +424,7 @@ class ConfTreeNodeEditor(EditorPanel):
                     else:
                         combobox = wx.ComboBox(self.ParamsEditor,
                                                size=wx.Size(300, -1), style=wx.CB_READONLY)
-                        boxsizer.AddWindow(combobox)
+                        boxsizer.Add(combobox)
 
                         if element_infos["use"] == "optional":
                             combobox.Append("")
@@ -439,7 +438,7 @@ class ConfTreeNodeEditor(EditorPanel):
                                                      label="%s - %s" % (_(name), _(value)),
                                                      size=wx.Size(10, 0))
                             staticboxsizer = wx.StaticBoxSizer(staticbox, wx.VERTICAL)
-                            sizer.AddSizer(staticboxsizer, border=5, flag=wx.GROW | wx.BOTTOM | wx.LEFT | wx.RIGHT)
+                            sizer.Add(staticboxsizer, border=5, flag=wx.GROW | wx.BOTTOM | wx.LEFT | wx.RIGHT)
                             self.GenerateSizerElements(staticboxsizer, element_infos["children"], element_path)
                             callback = self.GetChoiceContentCallBackFunction(combobox, staticboxsizer, element_path)
                         else:
@@ -463,7 +462,7 @@ class ConfTreeNodeEditor(EditorPanel):
                                            size=wx.Size(300, -1),
                                            style=wx.SP_ARROW_KEYS | wx.ALIGN_RIGHT)
                     spinctrl.SetRange(scmin, scmax)
-                    boxsizer.AddWindow(spinctrl)
+                    boxsizer.Add(spinctrl)
                     if element_infos["value"] is not None:
                         spinctrl.SetValue(element_infos["value"])
                     spinctrl.Bind(wx.EVT_SPINCTRL,
@@ -473,7 +472,7 @@ class ConfTreeNodeEditor(EditorPanel):
                 else:
                     if element_infos["type"] == "boolean":
                         checkbox = wx.CheckBox(self.ParamsEditor, size=wx.Size(17, 25))
-                        boxsizer.AddWindow(checkbox)
+                        boxsizer.Add(checkbox)
                         if element_infos["value"] is not None:
                             checkbox.SetValue(element_infos["value"])
                         checkbox.Bind(wx.EVT_CHECKBOX,
@@ -490,7 +489,7 @@ class ConfTreeNodeEditor(EditorPanel):
                                                size=wx.Size(300, -1),
                                                style=wx.SP_ARROW_KEYS | wx.ALIGN_RIGHT)
                         spinctrl.SetRange(scmin, scmax)
-                        boxsizer.AddWindow(spinctrl)
+                        boxsizer.Add(spinctrl)
                         if element_infos["value"] is not None:
                             spinctrl.SetValue(element_infos["value"])
                         spinctrl.Bind(wx.EVT_SPINCTRL,
@@ -513,12 +512,12 @@ class ConfTreeNodeEditor(EditorPanel):
                             self.EditButton = wx.Button(self.ParamsEditor, label='...', size=wx.Size(30, -1))
                             self.Bind(wx.EVT_BUTTON, self.UriOptions, self.EditButton)
 
-                            uriSizer.AddWindow(textctrl, flag=wx.GROW)
-                            uriSizer.AddWindow(self.EditButton, flag=wx.GROW)
+                            uriSizer.Add(textctrl, flag=wx.GROW)
+                            uriSizer.Add(self.EditButton, flag=wx.GROW)
 
-                            boxsizer.AddWindow(uriSizer)
+                            boxsizer.Add(uriSizer)
                         else:
-                            boxsizer.AddWindow(textctrl)
+                            boxsizer.Add(textctrl)
 
                         if element_infos["value"] is not None:
                             textctrl.ChangeValue(str(element_infos["value"]))

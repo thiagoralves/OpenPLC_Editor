@@ -24,9 +24,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
 import wx
-
 
 class BrowseValuesLibraryDialog(wx.Dialog):
     """
@@ -51,13 +49,13 @@ class BrowseValuesLibraryDialog(wx.Dialog):
 
         self.ButtonSizer = self.CreateButtonSizer(wx.OK | wx.CANCEL | wx.CENTRE)
 
-        self.Bind(wx.EVT_BUTTON, self.OnOK, id=self.ButtonSizer.GetAffirmativeButton().GetId())
+        # self.Bind(wx.EVT_BUTTON, self.OnOK, id=self.ButtonSizer.GetAffirmativeButton().GetId())
 
         self.flexGridSizer1 = wx.FlexGridSizer(cols=1, hgap=0, rows=3, vgap=10)
 
-        self.flexGridSizer1.AddWindow(self.staticText1,   0, border=20, flag=wx.GROW | wx.TOP | wx.LEFT | wx.RIGHT)
-        self.flexGridSizer1.AddWindow(self.ValuesLibrary, 0, border=20, flag=wx.GROW | wx.LEFT | wx.RIGHT)
-        self.flexGridSizer1.AddSizer(self.ButtonSizer,    0, border=20, flag=wx.ALIGN_RIGHT | wx.BOTTOM | wx.LEFT | wx.RIGHT)
+        self.flexGridSizer1.Add(self.staticText1, 0, border=20, flag=wx.GROW | wx.TOP | wx.LEFT | wx.RIGHT)
+        self.flexGridSizer1.Add(self.ValuesLibrary, 0, border=20, flag=wx.GROW | wx.LEFT | wx.RIGHT)
+        self.flexGridSizer1.Add(self.ButtonSizer, 0, border=20, flag=wx.ALIGN_RIGHT | wx.BOTTOM | wx.LEFT | wx.RIGHT)
 
         self.flexGridSizer1.AddGrowableCol(0)
         self.flexGridSizer1.AddGrowableRow(1)
@@ -71,7 +69,7 @@ class BrowseValuesLibraryDialog(wx.Dialog):
     def GenerateValuesLibraryBranch(self, root, children, default):
         for infos in children:
             item = self.ValuesLibrary.AppendItem(root, infos["name"])
-            self.ValuesLibrary.SetPyData(item, infos["infos"])
+            self.ValuesLibrary.SetItemData(item, infos["infos"])
             if infos["infos"] is not None and infos["infos"] == default:
                 self.ValuesLibrary.SelectItem(item)
                 self.ValuesLibrary.EnsureVisible(item)
@@ -79,11 +77,11 @@ class BrowseValuesLibraryDialog(wx.Dialog):
 
     def GetValueInfos(self):
         selected = self.ValuesLibrary.GetSelection()
-        return self.ValuesLibrary.GetPyData(selected)
+        return self.ValuesLibrary.GetItemData(selected)
 
     def OnOK(self, event):
         selected = self.ValuesLibrary.GetSelection()
-        if not selected.IsOk() or self.ValuesLibrary.GetPyData(selected) is None:
+        if not selected.IsOk() or self.ValuesLibrary.GetItemData(selected) is None:
             message = wx.MessageDialog(self, _("No valid value selected!"), _("Error"), wx.OK | wx.ICON_ERROR)
             message.ShowModal()
             message.Destroy()

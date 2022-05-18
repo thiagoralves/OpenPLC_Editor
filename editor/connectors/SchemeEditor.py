@@ -3,9 +3,8 @@
 
 # See COPYING file for copyrights details.
 
-from __future__ import absolute_import
-
 from functools import partial
+
 import wx
 
 from controls.IDBrowser import IDBrowser
@@ -28,19 +27,19 @@ class SchemeEditor(wx.Panel):
                     (wx.StaticText(self, label=label),
                      wx.ALIGN_CENTER_VERTICAL),
                     (txtctrl, wx.GROW)]:
-                self.fieldsizer.AddWindow(win, flag=flag)
+                self.fieldsizer.Add(win, flag=flag)
 
         self.fieldsizer.AddSpacer(20)
 
         if self.EnableIDSelector:
             self.mainsizer = wx.FlexGridSizer(cols=2, hgap=10, vgap=10)
-            self.mainsizer.AddSizer(self.fieldsizer)
+            self.mainsizer.Add(self.fieldsizer)
             self.idselector = IDBrowser(
                 self, parent.ctr,
                 # use a callafter, as editor can be deleted by calling SetURI
                 partial(wx.CallAfter, parent.SetURI),
                 self.txtctrls["ID"].SetValue)
-            self.mainsizer.AddWindow(self.idselector)
+            self.mainsizer.Add(self.idselector)
             self.SetSizer(self.mainsizer)
         else:
             self.SetSizer(self.fieldsizer)

@@ -23,18 +23,16 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from __future__ import absolute_import
 from collections import Counter
 
 import wx
 
-# Import some libraries on Beremiz code
-from util.BitmapLibrary import GetBitmap
 from controls.CustomGrid import CustomGrid
 from controls.CustomTable import CustomTable
 from editors.ConfTreeNodeEditor import ConfTreeNodeEditor
 from graphics.GraphicCommons import ERROR_HIGHLIGHT
-
+# Import some libraries on Beremiz code
+from util.BitmapLibrary import GetBitmap
 
 # BACnet Engineering units taken from: ASHRAE 135-2016, clause/chapter 21
 BACnetEngineeringUnits = [
@@ -516,7 +514,7 @@ class MSIObject(MultiSObject):
 
 
 class ObjectTable(CustomTable):
-    #  A custom wx.grid.PyGridTableBase using user supplied data
+    #  A custom wx.grid.GridTableBase using user supplied data
     #
     #  This will basically store a list of BACnet objects that the slave will support/implement.
     #  There will be one instance of this ObjectTable class for each BACnet object type
@@ -714,8 +712,8 @@ class ObjectGrid(CustomGrid):
                 # More than 1 BACnet object using this ID! Let us Highlight this row with errors...
                 # TODO: change the hardcoded column number '0' to a number obtained at runtime
                 #       that is guaranteed to match the column titled "Object Identifier"
-                self.SetCellBackgroundColour(row, 0, ERROR_HIGHLIGHT[0])
-                self.SetCellTextColour(row, 0, ERROR_HIGHLIGHT[1])
+                self.SetCellBackgroundColour(row, 0, wx.Colour(255, 255, 0))
+                self.SetCellTextColour(row, 0, wx.RED)
             else:
                 self.SetCellBackgroundColour(row, 0, wx.WHITE)
                 self.SetCellTextColour(row, 0, wx.BLACK)
@@ -816,7 +814,7 @@ class ObjectEditor(wx.Panel):
                 self, bitmap=GetBitmap(bitmap),
                 size=wx.Size(28, 28),
                 style=wx.NO_BORDER)
-            button.SetToolTipString(help)
+            button.SetToolTip(help)
             setattr(self, name, button)
             controls_sizer.Add(button)
 
@@ -826,7 +824,7 @@ class ObjectEditor(wx.Panel):
         # use only to enable drag'n'drop
         # self.VariablesGrid.SetDropTarget(VariableDropTarget(self))
         self.VariablesGrid.Bind(
-            wx.grid.EVT_GRID_CELL_CHANGE,     self.OnVariablesGridCellChange)
+            wx.grid.EVT_GRID_CELL_CHANGED, self.OnVariablesGridCellChange)
         # self.VariablesGrid.Bind(wx.grid.EVT_GRID_CELL_LEFT_CLICK, self.OnVariablesGridCellLeftClick)
         # self.VariablesGrid.Bind(wx.grid.EVT_GRID_EDITOR_SHOWN,    self.OnVariablesGridEditorShown)
         self.MainSizer.Add(self.VariablesGrid, flag=wx.GROW)

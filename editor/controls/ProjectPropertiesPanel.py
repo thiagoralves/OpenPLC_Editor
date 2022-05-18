@@ -23,7 +23,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from __future__ import absolute_import
 import wx
 from wx.lib.scrolledpanel import ScrolledPanel
 
@@ -57,16 +56,16 @@ class ProjectPropertiesPanel(wx.Notebook):
                 border |= wx.BOTTOM
 
             st = wx.StaticText(parent, label=label)
-            sizer.AddWindow(st, border=10,
-                            flag=wx.ALIGN_CENTER_VERTICAL | border | wx.LEFT)
+            sizer.Add(st, border=10,
+                      flag=wx.ALIGN_CENTER_VERTICAL | border | wx.LEFT)
 
             tc = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
             setattr(self, name, tc)
             callback = self.GetTextCtrlChangedFunction(tc, name)
             self.Bind(wx.EVT_TEXT_ENTER, callback, tc)
             tc.Bind(wx.EVT_KILL_FOCUS, callback)
-            sizer.AddWindow(tc, border=10,
-                            flag=wx.GROW | border | wx.RIGHT)
+            sizer.Add(tc, border=10,
+                      flag=wx.GROW | border | wx.RIGHT)
 
     def __init__(self, parent, controller=None, window=None, enable_required=True, scrolling=True):
         wx.Notebook.__init__(self, parent)
@@ -125,20 +124,20 @@ class ProjectPropertiesPanel(wx.Notebook):
 
         pageSize_st = wx.StaticText(self.GraphicsPanel,
                                     label=_('Page Size (optional):'))
-        graphicpanel_sizer.AddWindow(
+        graphicpanel_sizer.Add(
             pageSize_st, border=10,
             flag=wx.ALIGN_CENTER_VERTICAL | wx.TOP | wx.LEFT | wx.RIGHT)
 
         pageSize_sizer = wx.FlexGridSizer(cols=2, hgap=5, rows=2, vgap=5)
         pageSize_sizer.AddGrowableCol(1)
-        graphicpanel_sizer.AddSizer(pageSize_sizer, border=10,
-                                    flag=wx.GROW | wx.LEFT | wx.RIGHT)
+        graphicpanel_sizer.Add(pageSize_sizer, border=10,
+                               flag=wx.GROW | wx.LEFT | wx.RIGHT)
 
         for name, label in [('PageWidth', _('Width:')),
                             ('PageHeight', _('Height:'))]:
             st = wx.StaticText(self.GraphicsPanel, label=label)
-            pageSize_sizer.AddWindow(st, border=12,
-                                     flag=wx.ALIGN_CENTER_VERTICAL | wx.LEFT)
+            pageSize_sizer.Add(st, border=12,
+                               flag=wx.ALIGN_CENTER_VERTICAL | wx.LEFT)
 
             sp = wx.SpinCtrl(self.GraphicsPanel,
                              min=0, max=2**16, style=wx.TE_PROCESS_ENTER)
@@ -146,16 +145,16 @@ class ProjectPropertiesPanel(wx.Notebook):
             callback = self.GetPageSizeChangedFunction(sp, name)
             self.Bind(wx.EVT_TEXT_ENTER, callback, sp)
             sp.Bind(wx.EVT_KILL_FOCUS, callback)
-            pageSize_sizer.AddWindow(sp, flag=wx.GROW)
+            pageSize_sizer.Add(sp, flag=wx.GROW)
 
         scaling_st = wx.StaticText(self.GraphicsPanel,
                                    label=_('Grid Resolution:'))
-        graphicpanel_sizer.AddWindow(scaling_st, border=10,
-                                     flag=wx.GROW | wx.LEFT | wx.RIGHT)
+        graphicpanel_sizer.Add(scaling_st, border=10,
+                               flag=wx.GROW | wx.LEFT | wx.RIGHT)
 
         scaling_nb = wx.Notebook(self.GraphicsPanel)
-        graphicpanel_sizer.AddWindow(scaling_nb, border=10,
-                                     flag=wx.GROW | wx.BOTTOM | wx.LEFT | wx.RIGHT)
+        graphicpanel_sizer.Add(scaling_nb, border=10,
+                               flag=wx.GROW | wx.BOTTOM | wx.LEFT | wx.RIGHT)
 
         self.Scalings = {}
         for language, translation in [("FBD", _("FBD")), ("LD", _("LD")), ("SFC", _("SFC"))]:
@@ -173,18 +172,18 @@ class ProjectPropertiesPanel(wx.Notebook):
                     border = wx.BOTTOM
 
                 st = wx.StaticText(scaling_panel, label=label)
-                scalingpanel_sizer.AddWindow(
+                scalingpanel_sizer.Add(
                     st, border=10,
                     flag=wx.ALIGN_CENTER_VERTICAL | border | wx.LEFT)
 
-                sp = wx.SpinCtrl(scaling_panel,
+                sp = wx.SpinCtrl(scaling_panel, value='10',
                                  min=0, max=2**16, style=wx.TE_PROCESS_ENTER)
                 scaling_controls.append(sp)
                 callback = self.GetScalingChangedFunction(sp, language, name)
                 self.Bind(wx.EVT_TEXT_ENTER, callback, sp)
                 sp.Bind(wx.EVT_KILL_FOCUS, callback)
-                scalingpanel_sizer.AddWindow(sp, border=10,
-                                             flag=wx.GROW | border | wx.RIGHT)
+                scalingpanel_sizer.Add(sp, border=10,
+                                       flag=wx.GROW | border | wx.RIGHT)
 
             self.Scalings[language] = scaling_controls
             scaling_nb.AddPage(scaling_panel, translation)
@@ -206,19 +205,19 @@ class ProjectPropertiesPanel(wx.Notebook):
 
         language_label = wx.StaticText(self.MiscellaneousPanel,
                                        label=_('Language (optional):'))
-        miscellaneouspanel_sizer.AddWindow(language_label, border=10,
-                                           flag=wx.ALIGN_CENTER_VERTICAL | wx.TOP | wx.LEFT)
+        miscellaneouspanel_sizer.Add(language_label, border=10,
+                                     flag=wx.ALIGN_CENTER_VERTICAL | wx.TOP | wx.LEFT)
 
         self.Language = wx.ComboBox(self.MiscellaneousPanel,
                                     style=wx.CB_READONLY)
         self.Bind(wx.EVT_COMBOBOX, self.OnLanguageChanged, self.Language)
-        miscellaneouspanel_sizer.AddWindow(self.Language, border=10,
-                                           flag=wx.GROW | wx.TOP | wx.RIGHT)
+        miscellaneouspanel_sizer.Add(self.Language, border=10,
+                                     flag=wx.GROW | wx.TOP | wx.RIGHT)
 
         description_label = wx.StaticText(
             self.MiscellaneousPanel, label=_('Content Description (optional):'))
-        miscellaneouspanel_sizer.AddWindow(description_label, border=10,
-                                           flag=wx.BOTTOM | wx.LEFT)
+        miscellaneouspanel_sizer.Add(description_label, border=10,
+                                     flag=wx.BOTTOM | wx.LEFT)
 
         self.ContentDescription = wx.TextCtrl(
             self.MiscellaneousPanel, size=wx.Size(240, 150),
@@ -227,8 +226,8 @@ class ProjectPropertiesPanel(wx.Notebook):
                   self.ContentDescription)
         self.ContentDescription.Bind(wx.EVT_KILL_FOCUS,
                                      self.OnContentDescriptionChanged)
-        miscellaneouspanel_sizer.AddWindow(self.ContentDescription, border=10,
-                                           flag=wx.GROW | wx.BOTTOM | wx.RIGHT)
+        miscellaneouspanel_sizer.Add(self.ContentDescription, border=10,
+                                     flag=wx.GROW | wx.BOTTOM | wx.RIGHT)
 
         self.AddPage(self.MiscellaneousPanel, _("Miscellaneous"))
 
@@ -338,7 +337,7 @@ class ProjectPropertiesPanel(wx.Notebook):
     def GetScalingChangedFunction(self, spinctrl, language, name):
         def ScalingChangedFunction(event):
             if self.Controller is not None:
-                old_value = (0, 0)
+                old_value = (10, 10)
                 if self.Values is not None:
                     scaling = self.Values.get("scaling")
                     if scaling is not None:

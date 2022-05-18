@@ -23,16 +23,15 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
 import os
 import shutil
 
 import wx
 import wx.lib.buttons
 
+from controls import FolderTree
 from editors.EditorPanel import EditorPanel
 from util.BitmapLibrary import GetBitmap
-from controls import FolderTree
 
 
 class FileManagementPanel(EditorPanel):
@@ -43,14 +42,14 @@ class FileManagementPanel(EditorPanel):
         main_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         left_sizer = wx.BoxSizer(wx.VERTICAL)
-        main_sizer.AddSizer(left_sizer, 1, border=5, flag=wx.GROW | wx.ALL)
+        main_sizer.Add(left_sizer, 1, border=5, flag=wx.GROW | wx.ALL)
 
         managed_dir_label = wx.StaticText(self.Editor, label=_(self.TagName) + ":")
-        left_sizer.AddWindow(managed_dir_label, border=5, flag=wx.GROW | wx.BOTTOM)
+        left_sizer.Add(managed_dir_label, border=5, flag=wx.GROW | wx.BOTTOM)
 
         FILTER = _("All files (*.*)|*.*|CSV files (*.csv)|*.csv")
         self.ManagedDir = FolderTree(self.Editor, self.Folder, FILTER)
-        left_sizer.AddWindow(self.ManagedDir, 1, flag=wx.GROW)
+        left_sizer.Add(self.ManagedDir, 1, flag=wx.GROW)
 
         managed_treectrl = self.ManagedDir.GetTreeCtrl()
         self.Bind(wx.EVT_TREE_SEL_CHANGED, self.OnTreeItemChanged, managed_treectrl)
@@ -58,8 +57,8 @@ class FileManagementPanel(EditorPanel):
             self.Bind(wx.EVT_TREE_BEGIN_DRAG, self.OnTreeBeginDrag, managed_treectrl)
 
         button_sizer = wx.BoxSizer(wx.VERTICAL)
-        main_sizer.AddSizer(button_sizer, border=5,
-                            flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL)
+        main_sizer.Add(button_sizer, border=5,
+                       flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL)
 
         for idx, (name, bitmap, help) in enumerate([
                 ("DeleteButton", "remove_element", _("Remove file from left folder")),
@@ -70,26 +69,26 @@ class FileManagementPanel(EditorPanel):
                 self.Editor,
                 bitmap=GetBitmap(bitmap),
                 size=wx.Size(28, 28), style=wx.NO_BORDER)
-            button.SetToolTipString(help)
+            button.SetToolTip(help)
             setattr(self, name, button)
             if idx > 0:
                 flag = wx.TOP
             else:
                 flag = 0
             self.Bind(wx.EVT_BUTTON, getattr(self, "On" + name), button)
-            button_sizer.AddWindow(button, border=20, flag=flag)
+            button_sizer.Add(button, border=20, flag=flag)
 
         right_sizer = wx.BoxSizer(wx.VERTICAL)
-        main_sizer.AddSizer(right_sizer, 1, border=5, flag=wx.GROW | wx.ALL)
+        main_sizer.Add(right_sizer, 1, border=5, flag=wx.GROW | wx.ALL)
 
         if wx.Platform == '__WXMSW__':
             system_dir_label = wx.StaticText(self.Editor, label=_("My Computer:"))
         else:
             system_dir_label = wx.StaticText(self.Editor, label=_("Home Directory:"))
-        right_sizer.AddWindow(system_dir_label, border=5, flag=wx.GROW | wx.BOTTOM)
+        right_sizer.Add(system_dir_label, border=5, flag=wx.GROW | wx.BOTTOM)
 
         self.SystemDir = FolderTree(self.Editor, self.HomeDirectory, FILTER, False)
-        right_sizer.AddWindow(self.SystemDir, 1, flag=wx.GROW)
+        right_sizer.Add(self.SystemDir, 1, flag=wx.GROW)
 
         system_treectrl = self.SystemDir.GetTreeCtrl()
         self.Bind(wx.EVT_TREE_SEL_CHANGED, self.OnTreeItemChanged, system_treectrl)

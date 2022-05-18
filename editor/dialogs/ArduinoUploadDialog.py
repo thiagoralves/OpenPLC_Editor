@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 import re
 import datetime
 import threading
@@ -11,6 +10,7 @@ import wx.xrc
 
 import time
 import os
+import platform
 import json
 import time
 import glob
@@ -32,10 +32,12 @@ class ArduinoUploadDialog(wx.Dialog):
         self.last_update = 0
         self.update_subsystem = True
 
-        if os.name == 'nt':
+        if platform.system() == 'Windows':
             wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Upload to Arduino Board", pos = wx.DefaultPosition, size = wx.Size( 400,600 ), style = wx.DEFAULT_DIALOG_STYLE )
-        else:
+        elif platform.system() == 'Linux':
             wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Upload to Arduino Board", pos = wx.DefaultPosition, size = wx.Size( 480,780 ), style = wx.DEFAULT_DIALOG_STYLE )
+        elif platform.system() == 'Darwin':
+            wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Upload to Arduino Board", pos = wx.DefaultPosition, size = wx.Size( 410,600 ), style = wx.DEFAULT_DIALOG_STYLE )
 
         # load Hals automatically and initialize the board_type_comboChoices
         self.loadHals()
@@ -216,7 +218,7 @@ class ArduinoUploadDialog(wx.Dialog):
         self.cancel_button.Bind(wx.EVT_BUTTON, self.OnCancel)
 
 
-        bSizer2.Add( gSizer3, 0, wx.ALIGN_CENTER|wx.ALL|wx.EXPAND, 5 )
+        bSizer2.Add( gSizer3, 0, wx.ALL|wx.EXPAND, 5 )
 
 
         self.SetSizer( bSizer2 )
@@ -394,7 +396,7 @@ class ArduinoUploadDialog(wx.Dialog):
             define_file += '#define USE_CLOUD_BLOCKS\n'
 
         #Write file to disk
-        if (os.name == 'nt'):
+        if platform.system() == 'Windows':
             base_path = 'editor\\arduino\\examples\\Baremetal\\'
         else:
             base_path = 'editor/arduino/examples/Baremetal/'
@@ -423,7 +425,7 @@ class ArduinoUploadDialog(wx.Dialog):
 
         #write settings to disk
         jsonStr = json.dumps(settings)
-        if (os.name == 'nt'):
+        if platform.system() == 'Windows':
             base_path = 'editor\\arduino\\examples\\Baremetal\\'
         else:
             base_path = 'editor/arduino/examples/Baremetal/'
@@ -435,7 +437,7 @@ class ArduinoUploadDialog(wx.Dialog):
 
     def loadSettings(self):
         #read settings from disk
-        if (os.name == 'nt'):
+        if platform.system() == 'Windows':
             base_path = 'editor\\arduino\\examples\\Baremetal\\'
         else:
             base_path = 'editor/arduino/examples/Baremetal/'
@@ -477,11 +479,11 @@ class ArduinoUploadDialog(wx.Dialog):
     
     def loadHals(self):
         # load hals list from json file, or construct it
-        if (os.name == 'nt'):
+        if platform.system() == 'Windows':
             jfile = 'editor\\arduino\\examples\\Baremetal\\hals.json'
         else:
             jfile = 'editor/arduino/examples/Baremetal/hals.json'
-        if (os.name == 'nt'):
+        if platform.system() == 'Windows':
             base_path = 'editor\\arduino\\src\hal\\'
         else:
             base_path = 'editor/arduino/src/hal/'

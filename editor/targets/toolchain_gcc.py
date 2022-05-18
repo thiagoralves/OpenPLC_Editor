@@ -24,14 +24,13 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
+import hashlib
+import operator
 import os
 import re
-import operator
-import hashlib
 from functools import reduce
-from util.ProcessLogger import ProcessLogger
 
+from util.ProcessLogger import ProcessLogger
 
 includes_re = re.compile(r'\s*#include\s*["<]([^">]*)[">].*')
 
@@ -42,6 +41,7 @@ class toolchain_gcc(object):
     It cannot be used as this and should be inherited in a target specific
     class such as target_linux or target_win32
     """
+
     def __init__(self, CTRInstance):
         self.CTRInstance = CTRInstance
         self.buildpath = None
@@ -58,7 +58,7 @@ class toolchain_gcc(object):
         Returns list of builder specific LDFLAGS
         """
         return self.CTRInstance.LDFLAGS + \
-            [self.CTRInstance.GetTarget().getcontent().getLDFLAGS()]
+               [self.CTRInstance.GetTarget().getcontent().getLDFLAGS()]
 
     def getCompiler(self):
         """
@@ -118,7 +118,7 @@ class toolchain_gcc(object):
         self.append_cfile_deps(src, deps)
         # recurse through deps
         # TODO detect cicular deps.
-        return reduce(operator.concat, map(self.concat_deps, deps), src)
+        return reduce(operator.concat, list(map(self.concat_deps, deps), src))
 
     def check_and_update_hash_and_deps(self, bn):
         # Get latest computed hash and deps
@@ -126,7 +126,7 @@ class toolchain_gcc(object):
         # read source
         src = open(os.path.join(self.buildpath, bn)).read()
         # compute new hash
-        newhash = hashlib.md5(src).hexdigest()
+        newhash = hashlib.md5(src.encode()).hexdigest()
         # compare
         match = (oldhash == newhash)
         if not match:
@@ -138,7 +138,8 @@ class toolchain_gcc(object):
             self.srcmd5[bn] = (newhash, deps)
         # recurse through deps
         # TODO detect cicular deps.
-        return reduce(operator.and_, map(self.check_and_update_hash_and_deps, deps), match)
+        # return reduce(operator.and_, list(map(self.check_and_update_hash_and_deps, deps)), match)
+        return match
 
     def calc_source_md5(self):
         wholesrcdata = ""
@@ -163,24 +164,24 @@ class toolchain_gcc(object):
         for Location, CFilesAndCFLAGS, _DoCalls in self.CTRInstance.LocationCFilesAndCFLAGS:
             if CFilesAndCFLAGS:
                 if Location:
-                    self.CTRInstance.logger.write(".".join(map(str, Location))+" :\n")
+                    self.CTRInstance.logger.write(".".join(map(str, Location)) + " :\n")
                 else:
                     self.CTRInstance.logger.write(_("PLC :\n"))
 
             for CFile, CFLAGS in CFilesAndCFLAGS:
                 if CFile.endswith(".c"):
                     bn = os.path.basename(CFile)
-                    obn = os.path.splitext(bn)[0]+".o"
-                    objectfilename = os.path.splitext(CFile)[0]+".o"
+                    obn = os.path.splitext(bn)[0] + ".o"
+                    objectfilename = os.path.splitext(CFile)[0] + ".o"
 
                     match = self.check_and_update_hash_and_deps(bn)
 
                     if match:
-                        self.CTRInstance.logger.write("   [pass]  "+bn+" -> "+obn+"\n")
+                        self.CTRInstance.logger.write("   [pass]  " + bn + " -> " + obn + "\n")
                     else:
                         relink = True
 
-                        self.CTRInstance.logger.write("   [CC]  "+bn+" -> "+obn+"\n")
+                        self.CTRInstance.logger.write("   [CC]  " + bn + " -> " + obn + "\n")
 
                         status, _result, _err_result = ProcessLogger(
                             self.CTRInstance.logger,
@@ -207,7 +208,7 @@ class toolchain_gcc(object):
 
             ALLldflags = ' '.join(self.getBuilderLDFLAGS())
 
-            self.CTRInstance.logger.write("   [CC]  " + ' '.join(obns)+" -> " + self.bin + "\n")
+            self.CTRInstance.logger.write("   [CC]  " + ' '.join(obns) + " -> " + self.bin + "\n")
 
             status, _result, _err_result = ProcessLogger(
                 self.CTRInstance.logger,
@@ -222,13 +223,13 @@ class toolchain_gcc(object):
                 return False
 
         else:
-            self.CTRInstance.logger.write("   [pass]  " + ' '.join(obns)+" -> " + self.bin + "\n")
+            self.CTRInstance.logger.write("   [pass]  " + ' '.join(obns) + " -> " + self.bin + "\n")
 
         # Calculate md5 key and get data for the new created PLC
         self.md5key = hashlib.md5(open(self.bin_path, "rb").read()).hexdigest()
 
         # Store new PLC filename based on md5 key
-        f = open(self._GetMD5FileName(), "w")
+        f = open(self._GetMD5FileName(), "w", encoding='utf-8')
         f.write(self.md5key)
         f.close()
 

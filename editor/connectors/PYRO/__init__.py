@@ -23,21 +23,14 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
-from __future__ import print_function
-import traceback
-from time import sleep
-import copy
-import socket
+import Pyro4
+import Pyro4.core
+import Pyro4.util
 import os.path
-
-import Pyro
-import Pyro.core
-import Pyro.util
-from Pyro.errors import PyroError
+from Pyro4.errors import PyroError
 
 import PSKManagement as PSK
-import connectors.PYRO.PSK_Adapter
+from connectors.PYRO.PSK_Adapter import setupPSKAdapter
 from runtime import PlcStatus
 
 
@@ -47,9 +40,9 @@ def switch_pyro_adapter(use_ssl):
     This is workaround for Pyro, because it doesn't work with SSL wrapper.
     """
     # Pyro.config.PYRO_BROKEN_MSGWAITALL = use_ssl
-    reload(Pyro.protocol)
+    reload(Pyro4.protocol)
     if use_ssl:
-        connectors.PYRO.PSK_Adapter.setupPSKAdapter()
+        setupPSKAdapter()
 
 
 def PYRO_connector_factory(uri, confnodesroot):
@@ -71,7 +64,7 @@ def PYRO_connector_factory(uri, confnodesroot):
                 'Error: Pre-Shared-Key Secret in %s is missing!\n' % secpath)
             return None
         secret = open(secpath).read().partition(':')[2].rstrip('\n\r')
-        Pyro.config.PYROPSK = (secret, ID)
+        Pyro4.config.PYROPSK = (secret, ID)
         # strip ID from URL, so that pyro can understand it.
         location = url
     else:
@@ -79,7 +72,7 @@ def PYRO_connector_factory(uri, confnodesroot):
 
     # Try to get the proxy object
     try:
-        RemotePLCObjectProxy = Pyro.core.getAttrProxyForURI(schemename + "://" + location + "/PLCObject")
+        RemotePLCObjectProxy = Pyro4.core.getAttrProxyForURI(schemename + "://" + location + "/PLCObject")
     except Exception as e:
         confnodesroot.logger.write_error(
             _("Connection to {loc} failed with exception {ex}\n").format(
@@ -96,14 +89,14 @@ def PYRO_connector_factory(uri, confnodesroot):
         def catcher_func(*args, **kwargs):
             try:
                 return func(*args, **kwargs)
-            except Pyro.errors.ConnectionClosedError as e:
+            except Pyro4.errors.ConnectionClosedError as e:
                 confnodesroot.logger.write_error(_("Connection lost!\n"))
                 confnodesroot._SetConnector(None)
-            except Pyro.errors.ProtocolError as e:
+            except Pyro4.errors.ProtocolError as e:
                 confnodesroot.logger.write_error(_("Pyro exception: %s\n") % e)
             except Exception as e:
                 # confnodesroot.logger.write_error(traceback.format_exc())
-                errmess = ''.join(Pyro.util.getPyroTraceback(e))
+                errmess = ''.join(Pyro4.util.getPyroTraceback(e))
                 confnodesroot.logger.write_error(errmess + "\n")
                 print(errmess)
                 confnodesroot._SetConnector(None)

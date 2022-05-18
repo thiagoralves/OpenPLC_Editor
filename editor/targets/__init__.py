@@ -33,17 +33,17 @@ Beremiz Targets
 - Target class may inherit from a toolchain_(toolchainname)
 - The target folder's name must match to name define in the XSD for TargetType
 """
-
-
-from __future__ import absolute_import
+import sys
 from os import listdir, path
+
 import util.paths as paths
 
 _base_path = paths.AbsDir(__file__)
-
+sys.path.append(_base_path)
 
 def _GetLocalTargetClassFactory(name):
-    return lambda: getattr(__import__(name, globals(), locals()), name+"_target")
+    m = __import__(name, globals(), locals())
+    return lambda: getattr(m, name + "_target")
 
 
 targets = dict([(name, {"xsd":   path.join(_base_path, name, "XSD"),
@@ -69,14 +69,17 @@ def GetTargetChoices():
     targetchoices = ""
 
     # Get all xsd toolchains
-    for toolchainname, xsdfilename in toolchains.iteritems():
+    for toolchainname, xsdfilename in toolchains.items():
         if path.isfile(xsdfilename):
-            DictXSD_toolchain["toolchain_"+toolchainname] = open(xsdfilename).read()
+            with open(xsdfilename) as f:
+                DictXSD_toolchain["toolchain_" + toolchainname] = f.read()
+
 
     # Get all xsd targets
-    for target_name, nfo in targets.iteritems():
-        xsd_string = open(nfo["xsd"]).read()
-        targetchoices += xsd_string % dict(DictXSD_toolchain,
+    for target_name, nfo in targets.items():
+        with open(nfo["xsd"]) as f:
+            xsd_string = f.read()
+            targetchoices += xsd_string % dict(DictXSD_toolchain,
                                            target_name=target_name)
 
     return targetchoices

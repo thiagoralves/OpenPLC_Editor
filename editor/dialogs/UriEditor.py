@@ -1,6 +1,5 @@
-from __future__ import absolute_import
-
 import wx
+
 from connectors import ConnectorSchemes, EditorClassFromScheme
 from controls.DiscoveryPanel import DiscoveryPanel
 
@@ -38,9 +37,12 @@ class UriEditor(wx.Dialog):
         self._init_sizers()
         self.scheme = None
         self.scheme_editor = None
-        self.SetURI(uri)
+        self.SetURI('')
         self.CenterOnParent()
 
+    def close(self):
+        if self.scheme_editor:
+            self.scheme_editor.close()
     def OnTypeChoice(self, event):
         index = event.GetSelection()
         self._replaceSchemeEditor(event.GetString() if index > 0 else None)

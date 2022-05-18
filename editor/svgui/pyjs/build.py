@@ -1,16 +1,14 @@
 #!/usr/bin/env python
 
 
-from __future__ import absolute_import
-from __future__ import print_function
-import sys
-import shutil
-import re
 import os
-from os.path import join, basename, abspath, split, isfile, isdir
+import re
+import shutil
+import sys
 from hashlib import md5
 from optparse import OptionParser
-from six.moves import cStringIO
+
+from os.path import join, basename, abspath, split, isfile, isdir
 
 from svgui.pyjs import pyjs
 
@@ -158,7 +156,7 @@ def check_html_file(source_file, dest_path):
 
     base_html = base_html % {'modulename': mod_name, 'title': title, 'css': css}
 
-    fh = open(file_name, 'w')
+    fh = open(file_name, 'w', encoding='utf-8')
     fh.write(base_html)
     fh.close()
 
@@ -216,7 +214,7 @@ def build(app_name, output, js_includes=(), debug=False, dynamic=0,
     print("Copying: pygwt.js")
 
     pygwt_js_template = read_boilerplate(data_dir, "pygwt.js")
-    pygwt_js_output = open(join(output, "pygwt.js"), "w")
+    pygwt_js_output = open(join(output, "pygwt.js"), "w", encoding='utf-8')
 
     print(pygwt_js_template, file=pygwt_js_output)
 
@@ -344,7 +342,7 @@ def generateAppFiles(data_dir, js_includes, app_name, debug, output, dynamic,
 
         dependencies = {}
 
-        deps = map(pyjs.strip_py, modules_to_do)
+        deps = list(map(pyjs.strip_py, modules_to_do))
         for d in deps:
             sublist = add_subdeps(dependencies, d)
             modules_to_do += sublist
@@ -382,7 +380,7 @@ def generateAppFiles(data_dir, js_includes, app_name, debug, output, dynamic,
             modules_to_do += mods
             modules[platform] += mods
 
-            deps = map(pyjs.strip_py, mods)
+            deps = list(map(pyjs.strip_py, mods))
             sd = subdeps(mod_name)
             if len(sd) > 1:
                 deps += sd[:-1]
@@ -438,7 +436,7 @@ def generateAppFiles(data_dir, js_includes, app_name, debug, output, dynamic,
             modnames = []
 
             for md in modlevels:
-                mnames = map(lambda x: "'%s'" % x, md)
+                mnames = list(map(lambda x: "'%s'" % x, md))
                 mnames = "new pyjslib.List([\n\t\t\t%s])" % ',\n\t\t\t'.join(mnames)
                 modnames.append(mnames)
 
@@ -447,11 +445,11 @@ def generateAppFiles(data_dir, js_includes, app_name, debug, output, dynamic,
 
             # convert the overrides
 
-            overnames = map(lambda x: "'%s': '%s'" % x, pover[platform].items())
+            overnames = list(map(lambda x: "'%s': '%s'" % x, pover[platform].items()))
             overnames = "new pyjslib.Dict({\n\t\t%s\n\t})" % ',\n\t\t'.join(overnames)
 
             if dynamic:
-                mod_cache_html_output = open(join(output, mod_cache_name), "w")
+                mod_cache_html_output = open(join(output, mod_cache_name), "w", encoding='utf-8')
             else:
                 mod_cache_html_output = cStringIO()
 
@@ -476,7 +474,7 @@ def generateAppFiles(data_dir, js_includes, app_name, debug, output, dynamic,
         app_modnames = []
 
         for md in mod_levels[platform]:
-            mnames = map(lambda x: "'%s'" % x, md)
+            mnames = list(map(lambda x: "'%s'" % x, md))
             mnames = "new pyjslib.List([\n\t\t\t%s])" % ',\n\t\t\t'.join(mnames)
             app_modnames.append(mnames)
 
@@ -485,7 +483,7 @@ def generateAppFiles(data_dir, js_includes, app_name, debug, output, dynamic,
 
         # convert the overrides
 
-        overnames = map(lambda x: "'%s': '%s'" % x, pover[platform].items())
+        overnames = list(map(lambda x: "'%s': '%s'" % x, pover[platform].items()))
         overnames = "new pyjslib.Dict({\n\t\t%s\n\t})" % ',\n\t\t'.join(overnames)
 
         # print "platform names", platform, overnames
@@ -513,7 +511,7 @@ def generateAppFiles(data_dir, js_includes, app_name, debug, output, dynamic,
             file_name = "%s.%s" % (platform.lower(), app_name)
         file_name += ".cache.html"
         out_path = join(output, file_name)
-        out_file = open(out_path, 'w')
+        out_file = open(out_path, 'w', encoding='utf-8')
         out_file.write(file_contents)
         out_file.close()
         app_files.append((platform.lower(), file_name))
@@ -580,7 +578,7 @@ def filter_mods(app_name, md):
     while app_name in md:
         md.remove(app_name)
     md = filter(lambda x: not x.endswith('.js'), md)
-    md = map(pyjs.strip_py, md)
+    md = list(map(pyjs.strip_py, md))
 
     return uniquify(md)
 
@@ -647,7 +645,7 @@ def make_deps(app_name, deps, mod_list):
         # print "nodeps", nodeps
         mod_list = filter(lambda x: x not in nodeps, mod_list)
         newdeps = {}
-        for k in deps.keys():
+        for k in list(deps.keys()):
             depslist = deps[k]
             depslist = filter(lambda x: x not in nodeps, depslist)
             if depslist:

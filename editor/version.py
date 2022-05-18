@@ -23,11 +23,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 
-from __future__ import absolute_import
-from __future__ import unicode_literals
-
-import subprocess
 import os
+import subprocess
 
 import util.paths as paths
 
@@ -46,11 +43,18 @@ def GetAppRevision():
     app_dir = paths.AbsDir(__file__)
     try:
         pipe = subprocess.Popen(
-            ["hg", "id", "-i"],
+            ["git", "pull"],
             stdout=subprocess.PIPE,
-            cwd=app_dir
+            cwd=app_dir, shell=True
         )
-        rev = pipe.communicate()[0]
+        pipe = subprocess.Popen(
+            ["git", "rev-parse", "--abbrev-ref", "HEAD"],
+            stdout=subprocess.PIPE,
+            cwd=app_dir, shell=True
+        )
+        rev = pipe.communicate()
+        rev = rev[0]
+        rev = rev.decode()
         if pipe.returncode != 0:
             rev = None
     except Exception:
@@ -69,22 +73,18 @@ def GetAppRevision():
 
 def GetAboutDialogInfo():
     import wx
-    info = wx.AboutDialogInfo()
+    info = wx.adv.AboutDialogInfo()
 
     info.Name = "OpenPLC Editor"
     info.Version = app_version
-
     info.Copyright = ""
     info.Copyright += "(C) 2019 Thiago Alves"
     #info.Copyright += "(C) 2016-2018 Andrey Skvortsov\n"
     #info.Copyright += "(C) 2008-2018 Eduard Tisserant\n"
     #info.Copyright += "(C) 2008-2015 Laurent Bessard"
-
     info.WebSite = ("http://www.openplcproject.com", "openplcproject.com")
-
     info.Description = _("Open Source IDE for the OpenPLC Runtime, compliant with "
                          "the IEC 61131-3 international standard.\n\nBased on PLCOpen Editor and Beremiz by Andrey Skvortsov, Sergey Surkov, Edouard Tisserant and Laurent Bessard.")
-
     #info.Developers = "Thiago Alves <thiagoralves@gmail.com>"
     info.Developers = (
         "Thiago Alves <thiagoralves@gmail.com>",
@@ -92,7 +92,6 @@ def GetAboutDialogInfo():
         "Sergey Surkov <surkov.sv@summatechnology.ru>",
         "Edouard Tisserant <edouard.tisserant@gmail.com>",
         "Laurent Bessard <laurent.bessard@gmail.com>")
-
     info.License = (
         '\n This program is free software; you can redistribute it and/or\n'
         ' modify it under the terms of the GNU General Public License\n'
@@ -116,6 +115,7 @@ def GetAboutDialogInfo():
         with open(license_path) as f:
             info.License += f.read()
 
+    info.IconPath = os.path.join(path, "images", "about_brz_logo.png")
     info.Icon = wx.Icon(os.path.join(path, "images", "about_brz_logo.png"), wx.BITMAP_TYPE_PNG)
 
     info.Translators = (
@@ -133,6 +133,7 @@ def GetAboutDialogInfo():
         "  Yiwei Yan <523136664@qq.com>, 2018",
         "  Ji Wang <2485567515@qq.com>, 2019",
         "  珂 曾 <15627997@qq.com>, 2019",
+        "  Gastonfeng<gastonfeng@gmail.com>, 2019",
         "",
 
         "Dutch (Netherlands)",
@@ -216,8 +217,8 @@ def GetAboutDialogInfo():
     return info
 
 
-app_version = "1.3.3"
+app_version = "1.3.3 beta"
 #rev = GetAppRevision()
-rev = "Release: 2022-05-16"
+rev = "Release: 2022-05-17 dev-python3"
 if rev is not None:
     app_version = app_version + "\n" + rev.rstrip()
