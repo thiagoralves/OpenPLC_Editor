@@ -33,9 +33,9 @@ class ArduinoUploadDialog(wx.Dialog):
         self.update_subsystem = True
 
         if os.name == 'nt':
-            wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Upload to Arduino Board", pos = wx.DefaultPosition, size = wx.Size( 400,600 ), style = wx.DEFAULT_DIALOG_STYLE )
+            wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Upload to Arduino Board", pos = wx.DefaultPosition, size = wx.Size( 400,640 ), style = wx.DEFAULT_DIALOG_STYLE )
         else:
-            wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Upload to Arduino Board", pos = wx.DefaultPosition, size = wx.Size( 480,780 ), style = wx.DEFAULT_DIALOG_STYLE )
+            wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Upload to Arduino Board", pos = wx.DefaultPosition, size = wx.Size( 480,820 ), style = wx.DEFAULT_DIALOG_STYLE )
 
         # load Hals automatically and initialize the board_type_comboChoices
         self.loadHals()
@@ -59,6 +59,15 @@ class ArduinoUploadDialog(wx.Dialog):
         self.board_type_combo = wx.ComboBox( self, wx.ID_ANY, u"Uno", wx.DefaultPosition, wx.Size( 300,-1 ), board_type_comboChoices, wx.CB_READONLY )
         self.board_type_combo.SetSelection( 0 )
         fgSizer1.Add( self.board_type_combo, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+        self.mode_lbl = wx.StaticText( self, wx.ID_ANY, u"Mode:", wx.DefaultPosition, wx.Size( 65,-1 ), 0)
+        self.mode_lbl.Wrap( -1 )
+        fgSizer1.Add( self.mode_lbl, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 10 )
+
+        self.check_compile = wx.CheckBox( self, wx.ID_ANY, u"Compile Only", wx.DefaultPosition, wx.DefaultSize, 0 )
+        fgSizer1.Add( self.check_compile, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+        self.check_compile.Bind(wx.EVT_CHECKBOX, self.onUIChange)
+        
 
         self.com_port_lbl = wx.StaticText( self, wx.ID_ANY, u"COM Port:", wx.DefaultPosition, wx.Size( 65,-1 ), 0 )
         self.com_port_lbl.Wrap( -1 )
@@ -237,6 +246,13 @@ class ArduinoUploadDialog(wx.Dialog):
             self.serial_iface_combo.Enable(True)
             self.baud_rate_combo.Enable(True)
 
+        if (self.check_compile.GetValue() == False):
+            self.com_port_combo.Enable(True)
+            self.upload_button.SetLabel("Upload")
+        elif (self.check_compile.GetValue() == True):
+            self.com_port_combo.Enable(False)
+            self.upload_button.SetLabel("Compile")
+        
         if (self.check_modbus_tcp.GetValue() == False):
             self.tcp_iface_combo.Enable(False)
             self.mac_txt.Enable(False)
@@ -324,7 +340,11 @@ class ArduinoUploadDialog(wx.Dialog):
 
         self.generateDefinitionsFile()
 
-        compiler_thread = threading.Thread(target=builder.build, args=(self.plc_program, platform, source, self.com_port_combo.GetValue(), self.output_text, self.update_subsystem))
+        port = self.com_port_combo.GetValue()
+        if (self.check_compile.GetValue() == True):
+            port = None
+        
+        compiler_thread = threading.Thread(target=builder.build, args=(self.plc_program, platform, source, port, self.output_text, self.update_subsystem))
         compiler_thread.start()
         compiler_thread.join()
         wx.CallAfter(self.upload_button.Enable, True)
