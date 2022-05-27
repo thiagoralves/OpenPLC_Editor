@@ -58,6 +58,14 @@ def build(st_file, platform, source_file, port, txtCtrl, update_subsystem):
         compiler_logs += env_setup.read()
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(txtCtrl.SetInsertionPoint, -1)
+        
+        #Remove STM32 Board
+        env_setup = os.popen(cli_command + ' config remove board_manager.additional_urls https://raw.githubusercontent.com/stm32duino/BoardManagerFiles/master/STM32/package_stm_index.json 2>&1')
+        compiler_logs += env_setup.read()
+        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
+        wx.CallAfter(txtCtrl.SetInsertionPoint, -1)
+        
+        
         #Setup boards - add 3rd party boards
         env_setup = os.popen(cli_command + ' config add board_manager.additional_urls https://arduino.esp8266.com/stable/package_esp8266com_index.json 2>&1')
         compiler_logs += env_setup.read()
@@ -67,6 +75,13 @@ def build(st_file, platform, source_file, port, txtCtrl, update_subsystem):
         compiler_logs += env_setup.read()
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(txtCtrl.SetInsertionPoint, -1)
+        
+        #Add STM32 Board
+        env_setup = os.popen(cli_command + ' config add board_manager.additional_urls https://raw.githubusercontent.com/stm32duino/BoardManagerFiles/master/STM32/package_stm_index.json 2>&1')
+        compiler_logs += env_setup.read()
+        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
+        wx.CallAfter(txtCtrl.SetInsertionPoint, -1)
+        
         
         #Update
         env_setup = os.popen(cli_command + ' core update-index 2>&1')
@@ -131,6 +146,24 @@ def build(st_file, platform, source_file, port, txtCtrl, update_subsystem):
         compiler_logs += env_setup.read()
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(txtCtrl.SetInsertionPoint, -1)
+        
+        #Install ADS115X library
+        env_setup = os.popen(cli_command + ' lib install "Adafruit ADS1X15" 2>&1')
+        compiler_logs += env_setup.read()
+        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
+        wx.CallAfter(txtCtrl.SetInsertionPoint, -1)
+        #Install MQTT library
+        env_setup = os.popen(cli_command + ' lib install "PubSubClient" 2>&1')
+        compiler_logs += env_setup.read()
+        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
+        wx.CallAfter(txtCtrl.SetInsertionPoint, -1)
+        #Install ArduinoJson library
+        env_setup = os.popen(cli_command + ' lib install "ArduinoJson" 2>&1')
+        compiler_logs += env_setup.read()
+        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
+        wx.CallAfter(txtCtrl.SetInsertionPoint, -1)
+        
+        
         env_setup = os.popen(cli_command + ' upgrade 2>&1')
         compiler_logs += env_setup.read()
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
@@ -414,19 +447,29 @@ void updateTime()
     wx.CallAfter(txtCtrl.SetValue, compiler_logs)
     wx.CallAfter(txtCtrl.SetInsertionPoint, -1)
 
-    if (port != None and compilation.returncode == 0):
-        compiler_logs += '\nUploading program to Arduino board at ' + port + '...\n'
-        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
-        wx.CallAfter(txtCtrl.SetInsertionPoint, -1)
-        if (os.name == 'nt'):
-            uploading = os.popen('editor\\arduino\\bin\\arduino-cli-w32 upload --port ' + port + ' --fqbn ' + platform + ' editor\\arduino\\examples\\Baremetal/ 2>&1')
+    if (compilation.returncode == 0):
+        if (port != None):
+            compiler_logs += '\nUploading program to Arduino board at ' + port + '...\n'
+            wx.CallAfter(txtCtrl.SetValue, compiler_logs)
+            wx.CallAfter(txtCtrl.SetInsertionPoint, -1)
+            if (os.name == 'nt'):
+                uploading = os.popen('editor\\arduino\\bin\\arduino-cli-w32 upload --port ' + port + ' --fqbn ' + platform + ' editor\\arduino\\examples\\Baremetal/ 2>&1')
+            else:
+                uploading = os.popen('editor/arduino/bin/arduino-cli-l64 upload --port ' + port + ' --fqbn ' + platform + ' editor/arduino/examples/Baremetal/ 2>&1')
+            compiler_logs += uploading.read()
+            compiler_logs += '\nDone!\n'
+            wx.CallAfter(txtCtrl.SetValue, compiler_logs)
+            wx.CallAfter(txtCtrl.SetInsertionPoint, -1)
         else:
-            uploading = os.popen('editor/arduino/bin/arduino-cli-l64 upload --port ' + port + ' --fqbn ' + platform + ' editor/arduino/examples/Baremetal/ 2>&1')
-        compiler_logs += uploading.read()
-        compiler_logs += '\nDone!\n'
-        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
-        wx.CallAfter(txtCtrl.SetInsertionPoint, -1)
-
+            cwd = os.getcwd()
+            compiler_logs += '\nOUTPUT DIRECTORY:\n'
+            if (os.name == 'nt'):
+                compiler_logs += cwd + '\\editor\\arduino\\examples\\Baremetal\\build\n'
+            else:
+                compiler_logs += cwd + '/editor/arduino/examples/Baremetal/build\n'
+            compiler_logs += '\nCOMPILATION DONE!'
+            wx.CallAfter(txtCtrl.SetValue, compiler_logs)
+            wx.CallAfter(txtCtrl.SetInsertionPoint, -1)
     time.sleep(1) #make sure files are not in use anymore
     
     #no clean up
