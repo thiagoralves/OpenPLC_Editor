@@ -455,16 +455,13 @@ void ModbusSerial::config(uint8_t *mac, IPAddress ip, IPAddress dns, IPAddress g
         (*_port).flush(); // flush data
         return;
     }
-    if ((*_port).available() == 0) // avoid infinite loop
+    if ((*_port).available() == 0)
         return;
 	
     while ((*_port).available() > _len) {
       _len = (*_port).available(); // (len is byte)
       delayMicroseconds(_t15);
     }
-
-    if (_len == 0) 
-        return;
 
     byte i;
     _frame = (byte*) malloc(_len);
@@ -481,7 +478,7 @@ void ModbusSerial::config(uint8_t *mac, IPAddress ip, IPAddress dns, IPAddress g
     (*DebugPort).println(F("-----------------"));
     #endif
 
-    if (_len > 3) { // ignore data receiver, if len < 3
+    if (_len > 3) { // ignore data receiver, if len <= 3
         if (this->receive(_frame)) {
             if (_reply == MB_REPLY_NORMAL)
                 this->sendPDU(_frame);
