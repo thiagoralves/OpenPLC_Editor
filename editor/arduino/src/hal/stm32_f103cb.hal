@@ -1,0 +1,5 @@
+# HAL configuration
+# Format :
+# Board type, FQBN, BOARD definition (optional)
+
+STM32-F103CB (Bluepill), STM32:stm32:GenF1:pnum=BLUEPILL_F103C8, BOARD_STM32_F103CB
