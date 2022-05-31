@@ -193,8 +193,8 @@ def build(st_file, platform, source_file, port, txtCtrl, update_subsystem):
     else:
         compilation = subprocess.Popen(['../bin/iec2c', 'plc_prog.st'], cwd='./editor/arduino/src', stdout = subprocess.PIPE, stderr = subprocess.PIPE)
     stdout, stderr = compilation.communicate()
-    compiler_logs += stdout
-    compiler_logs += stderr
+    compiler_logs += stdout.decode('UTF-8')
+    compiler_logs += stderr.decode('UTF-8')
     wx.CallAfter(txtCtrl.SetValue, compiler_logs)
     wx.CallAfter(txtCtrl.SetInsertionPoint, -1)
 
@@ -444,8 +444,8 @@ void updateTime()
     else:
         compilation = subprocess.Popen(['editor/arduino/bin/arduino-cli-l64', 'compile', '-v', '--libraries=editor/arduino', '--build-property', 'compiler.c.extra_flags="-Ieditor/arduino/src/lib"', '--build-property', 'compiler.cpp.extra_flags="-Ieditor/arduino/src/lib"', '--export-binaries', '-b', platform, 'editor/arduino/examples/Baremetal/Baremetal.ino'], stdout = subprocess.PIPE, stderr = subprocess.PIPE)
     stdout, stderr = compilation.communicate()
-    compiler_logs += stdout
-    compiler_logs += stderr
+    compiler_logs += stdout.decode('UTF-8')
+    compiler_logs += stderr.decode('UTF-8')
     if (compilation.returncode != 0):
         compiler_logs += '\nCOMPILATION FAILED!\n'
     wx.CallAfter(txtCtrl.SetValue, compiler_logs)
