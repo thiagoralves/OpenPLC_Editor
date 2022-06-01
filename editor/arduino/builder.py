@@ -12,7 +12,8 @@ global compiler_logs
 compiler_logs = ''
 
 def scrollToEnd(txtCtrl):
-    #txtCtrl.SetInsertionPoint(-1)
+    if platform.system() != 'Darwin':
+        txtCtrl.SetInsertionPoint(-1)
     txtCtrl.ShowPosition(txtCtrl.GetLastPosition())
     txtCtrl.Refresh()
     txtCtrl.Update()
