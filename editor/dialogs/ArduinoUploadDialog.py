@@ -208,8 +208,12 @@ class ArduinoUploadDialog(wx.Dialog):
 
         self.output_text = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( -1,-1 ), wx.TE_MULTILINE|wx.TE_READONLY|wx.TE_WORDWRAP|wx.VSCROLL )
         self.output_text.SetFont( wx.Font( 8, 75, 90, 90, False, "Consolas" ) )
-        self.output_text.SetForegroundColour( wx.Colour( 255, 255, 255 ) )
-        self.output_text.SetBackgroundColour( wx.Colour( 0, 0, 0 ) )
+        if platform.system() == 'Darwin':
+            self.output_text.SetForegroundColour( wx.Colour( 0, 0, 0 ) )
+            self.output_text.SetBackgroundColour( wx.Colour( 255, 255, 255 ) )
+        else:
+            self.output_text.SetForegroundColour( wx.Colour( 255, 255, 255 ) )
+            self.output_text.SetBackgroundColour( wx.Colour( 0, 0, 0 ) )
         self.output_text.SetMinSize( wx.Size( -1,75 ) )
 
         bSizer2.Add( self.output_text, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 10 )
