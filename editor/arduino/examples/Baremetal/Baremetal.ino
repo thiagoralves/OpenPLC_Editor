@@ -65,7 +65,6 @@ void setup()
     config_init__();
     glueVars();
 	#ifdef MODBUS_ENABLED
-    
     #ifdef MBSERIAL
 	//Config Modbus Serial (port, speed, rs485 tx pin)
 	modbus.config(&MBSERIAL_IFACE, MBSERIAL_BAUD, -1);
@@ -110,12 +109,45 @@ void setup()
 	{
 		modbus.addHreg(i);
 	}
+    mapEmptyBuffers();
 	#endif
 
     setupCycleDelay(common_ticktime__);
 }
 
 #ifdef MODBUS_ENABLED
+void mapEmptyBuffers()
+{
+    //Map all empty I/O buffers to Modbus registers
+    for (int i = 0; i < MAX_DIGITAL_OUTPUT; i++)
+    {
+        if (bool_output[i/8][i%8] == NULL)
+        {
+			bool_output[i/8][i%8] = (IEC_BOOL *)malloc(sizeof(IEC_BOOL));
+        }
+    }
+    for (int i = 0; i < MAX_ANALOG_OUTPUT; i++)
+    {
+        if (int_output[i] == NULL)
+        {
+			int_output[i] = (IEC_UINT *)malloc(sizeof(IEC_UINT));
+        }
+    }
+    for (int i = 0; i < MAX_DIGITAL_INPUT; i++)
+    {
+        if (bool_input[i/8][i%8] == NULL)
+        {
+            bool_input[i/8][i%8] = (IEC_BOOL *)malloc(sizeof(IEC_BOOL));
+        }
+    }
+    for (int i = 0; i < MAX_ANALOG_INPUT; i++)
+    {
+        if (int_input[i] == NULL)
+        {
+			int_input[i] = (IEC_UINT *)malloc(sizeof(IEC_UINT));
+        }
+    }
+}
 void syncModbusBuffers()
 {
     //Sync OpenPLC Buffers with Modbus Buffers	
