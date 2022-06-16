@@ -455,13 +455,14 @@ void ModbusSerial::config(uint8_t *mac, IPAddress ip, IPAddress dns, IPAddress g
         (*_port).flush(); // flush data
         return;
     }
-    if ((*_port).available() == 0)
+    if ((*_port).available() == 0) 
         return;
 	
     while ((*_port).available() > _len) {
       _len = (*_port).available(); // (len is byte)
       delayMicroseconds(_t15);
     }
+
 
     byte i;
     _frame = (byte*) malloc(_len);

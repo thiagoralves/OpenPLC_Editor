@@ -7,23 +7,27 @@ extern "C" {
 //OpenPLC HAL for AutomationDirect P1AM PLC
 
 /******************PINOUT CONFIGURATION***********************
-Digital In:  0, 1, 2, 3, 4, 5               (%IX0.0 - %IX0.5)
-Digital Out: 7, 8, 9, 10, 11, 12            (%QX0.0 - %QX0.5)
-Analog In: A1, A2, A3, A4, A5, A6           (%IW0 - %IW5)
-Analog Out: 6, 15                           (%QW0 - %QW1)
+Digital In:  31, 0, 1, 2, 3, 4              (%IX0.0 - %IX0.5)
+Digital Out: 32, 6, 7, 11, 12, 13, 14       (%QX0.0 - %QX0.6)
+Analog In: A1, A2, A5, A6                   (%IW0 - %IW3)
+Analog Out: A0                              (%QW0 - %QW0)
+
+Notes:
+P1AM Toggle Switch (digital pin 31) mapped to %IX0.0
+P1AM LED (digital pin 32) mapped to %QX0.0
 **************************************************************/
 
 //Define the number of inputs and outputs for this board (mapping for the Arduino UNO)
-#define NUM_DISCRETE_INPUT          0
-#define NUM_ANALOG_INPUT            0
-#define NUM_DISCRETE_OUTPUT         0
-#define NUM_ANALOG_OUTPUT           0
+#define NUM_DISCRETE_INPUT          6
+#define NUM_ANALOG_INPUT            7
+#define NUM_DISCRETE_OUTPUT         4
+#define NUM_ANALOG_OUTPUT           1
 
 //Create the I/O pin masks
-uint8_t pinMask_DIN[] = {0, 1, 2, 3, 4, 5};
-uint8_t pinMask_AIN[] = {A1, A2, A3, A4, A5, A6};
-uint8_t pinMask_DOUT[] = {7, 8, 9, 10, 11, 12};
-uint8_t pinMask_AOUT[] = {6, 15};
+uint8_t pinMask_DIN[] = {31, 0, 1, 2, 3, 4};
+uint8_t pinMask_AIN[] = {A1, A2, A5, A6};
+uint8_t pinMask_DOUT[] = {32, 6, 7, 11, 12, 13, 14};
+uint8_t pinMask_AOUT[] = {A0};
 
 extern uint8_t disabled_pins[11];
 

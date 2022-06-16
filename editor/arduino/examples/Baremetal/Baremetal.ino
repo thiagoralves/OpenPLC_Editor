@@ -124,6 +124,7 @@ void mapEmptyBuffers()
         if (bool_output[i/8][i%8] == NULL)
         {
 			bool_output[i/8][i%8] = (IEC_BOOL *)malloc(sizeof(IEC_BOOL));
+			*bool_output[i/8][i%8] = 0;
         }
     }
     for (int i = 0; i < MAX_ANALOG_OUTPUT; i++)
@@ -131,6 +132,7 @@ void mapEmptyBuffers()
         if (int_output[i] == NULL)
         {
 			int_output[i] = (IEC_UINT *)malloc(sizeof(IEC_UINT));
+			*int_output[i] = 0;
         }
     }
     for (int i = 0; i < MAX_DIGITAL_INPUT; i++)
@@ -138,6 +140,7 @@ void mapEmptyBuffers()
         if (bool_input[i/8][i%8] == NULL)
         {
             bool_input[i/8][i%8] = (IEC_BOOL *)malloc(sizeof(IEC_BOOL));
+			*bool_input[i/8][i%8] = 0;
         }
     }
     for (int i = 0; i < MAX_ANALOG_INPUT; i++)
@@ -145,6 +148,7 @@ void mapEmptyBuffers()
         if (int_input[i] == NULL)
         {
 			int_input[i] = (IEC_UINT *)malloc(sizeof(IEC_UINT));
+			*int_input[i] = 0;
         }
     }
 }
