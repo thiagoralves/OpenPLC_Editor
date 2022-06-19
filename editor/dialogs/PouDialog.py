@@ -83,7 +83,7 @@ class PouDialog(wx.Dialog):
         infos_sizer.Add(self.Language, flag=wx.GROW)
 
         button_sizer = self.CreateButtonSizer(wx.OK | wx.CANCEL | wx.CENTRE)
-        # self.Bind(wx.EVT_BUTTON, self.OnOK, button_sizer.GetAffirmativeButton())
+        self.Bind(wx.EVT_BUTTON, self.OnOK, id=self.GetAffirmativeId())
         main_sizer.Add(button_sizer, border=20,
                             flag=wx.ALIGN_RIGHT | wx.BOTTOM | wx.LEFT | wx.RIGHT)
 
