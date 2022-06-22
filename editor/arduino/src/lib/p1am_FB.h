@@ -410,22 +410,22 @@ static void P1_16TR_body__(P1_16TR *data__) {
   else {
     __SET_VAR(data__->,ENO,,__BOOL_LITERAL(TRUE));
   }
-  uint8_t output_byte = __GET_VAR(data__->O8) << 15 | 
-                        __GET_VAR(data__->O7) << 14 | 
-                        __GET_VAR(data__->O6) << 13 | 
-                        __GET_VAR(data__->O5) << 12 | 
-                        __GET_VAR(data__->O4) << 11 | 
-                        __GET_VAR(data__->O3) << 10 | 
-                        __GET_VAR(data__->O2) << 9 |
-                        __GET_VAR(data__->O2) << 8 |
-                        __GET_VAR(data__->O8) << 7 | 
-                        __GET_VAR(data__->O7) << 6 | 
-                        __GET_VAR(data__->O6) << 5 | 
-                        __GET_VAR(data__->O5) << 4 | 
-                        __GET_VAR(data__->O4) << 3 | 
-                        __GET_VAR(data__->O3) << 2 | 
-                        __GET_VAR(data__->O2) << 1 | 
-                        __GET_VAR(data__->O1);
+  uint16_t output_byte = __GET_VAR(data__->O16) << 15 | 
+                         __GET_VAR(data__->O15) << 14 | 
+                         __GET_VAR(data__->O14) << 13 | 
+                         __GET_VAR(data__->O13) << 12 | 
+                         __GET_VAR(data__->O12) << 11 | 
+                         __GET_VAR(data__->O11) << 10 | 
+                         __GET_VAR(data__->O10) << 9 |
+                         __GET_VAR(data__->O9) << 8 |
+                         __GET_VAR(data__->O8) << 7 | 
+                         __GET_VAR(data__->O7) << 6 | 
+                         __GET_VAR(data__->O6) << 5 | 
+                         __GET_VAR(data__->O5) << 4 | 
+                         __GET_VAR(data__->O4) << 3 | 
+                         __GET_VAR(data__->O3) << 2 | 
+                         __GET_VAR(data__->O2) << 1 | 
+                         __GET_VAR(data__->O1);
   p1am_writeDiscrete(output_byte, __GET_VAR(data__->SLOT), 0);
 
   goto __end;
