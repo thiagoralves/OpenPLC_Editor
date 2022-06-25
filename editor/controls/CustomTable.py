@@ -63,7 +63,7 @@ class CustomTable(wx.grid.GridTableBase):
             return self.colnames[col]
 
     def GetRowLabelValue(self, row, translate=True):
-        return row
+        return str(row)
 
     def GetValue(self, row, col):
         if row < self.GetNumberRows():
