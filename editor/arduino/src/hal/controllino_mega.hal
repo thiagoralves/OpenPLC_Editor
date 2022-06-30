@@ -1,0 +1,5 @@
+# HAL configuration
+# Format :
+# Board type, FQBN
+
+CONTROLLINO MEGA, CONTROLLINO_Boards:avr:controllino_mega
