@@ -1,0 +1,5 @@
+# HAL configuration
+# Format :
+# Board type, FQBN
+
+CONTROLLINO MAXI, CONTROLLINO_Boards:avr:controllino_maxi

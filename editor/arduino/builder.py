@@ -73,6 +73,13 @@ def build(st_file, board_type, source_file, port, txtCtrl, update_subsystem):
         compiler_logs += env_setup.read()
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
+
+        #Remove CONTROLLINO boards
+        env_setup = os.popen(cli_command + ' config remove board_manager.additional_urls https://raw.githubusercontent.com/CONTROLLINO-PLC/CONTROLLINO_Library/master/Boards/package_ControllinoHardware_index.json 2>&1')
+        compiler_logs += env_setup.read()
+        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
+        wx.CallAfter(scrollToEnd, txtCtrl)
+
         #Setup boards - add 3rd party boards
         env_setup = os.popen(cli_command + ' config add board_manager.additional_urls https://arduino.esp8266.com/stable/package_esp8266com_index.json 2>&1')
         compiler_logs += env_setup.read()
@@ -83,6 +90,12 @@ def build(st_file, board_type, source_file, port, txtCtrl, update_subsystem):
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
         env_setup = os.popen(cli_command + ' config add board_manager.additional_urls https://raw.githubusercontent.com/stm32duino/BoardManagerFiles/master/STM32/package_stm_index.json 2>&1')
+        compiler_logs += env_setup.read()
+        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
+        wx.CallAfter(scrollToEnd, txtCtrl)
+
+        #Add CONTROLLINO Boards
+        env_setup = os.popen(cli_command + ' config add board_manager.additional_urls https://raw.githubusercontent.com/CONTROLLINO-PLC/CONTROLLINO_Library/master/Boards/package_ControllinoHardware_index.json 2>&1')
         compiler_logs += env_setup.read()
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
@@ -154,6 +167,18 @@ def build(st_file, board_type, source_file, port, txtCtrl, update_subsystem):
         compiler_logs += env_setup.read()
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
+
+        # Install CONTROLLINO boards core
+        env_setup = os.popen(cli_command + ' core install CONTROLLINO_Boards:avr 2>&1')
+        compiler_logs += env_setup.read()
+        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
+        wx.CallAfter(scrollToEnd, txtCtrl)
+        # Install CONTROLLINO library
+        env_setup = os.popen(cli_command + ' lib install CONTROLLINO 2>&1')
+        compiler_logs += env_setup.read()
+        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
+        wx.CallAfter(scrollToEnd, txtCtrl)
+
         #Install ADS115X library
         env_setup = os.popen(cli_command + ' lib install "Adafruit ADS1X15" 2>&1')
         compiler_logs += env_setup.read()
@@ -373,6 +398,14 @@ void updateTime()
         source_file = 'mega_due.cpp'
     elif board_type == 'arduino:samd:mkrzero' or board_type == 'arduino:samd:mkrwifi1010':
         source_file = 'mkr.cpp'
+    elif platform == 'CONTROLLINO_Boards:avr:controllino_mini':
+        source_file = 'controllino_mini.cpp'
+    elif platform == 'CONTROLLINO_Boards:avr:controllino_maxi':
+        source_file = 'controllino_maxi.cpp'
+    elif platform == 'CONTROLLINO_Boards:avr:controllino_maxi_automation':
+        source_file = 'controllino_maxi_automation.cpp'
+    elif platform == 'CONTROLLINO_Boards:avr:controllino_mega':
+        source_file = 'controllino_mega.cpp'
     elif board_type == 'arduino:samd:mkrzero-p1am':
         source_file = 'p1am.cpp'
         board_type = 'arduino:samd:mkrzero'
