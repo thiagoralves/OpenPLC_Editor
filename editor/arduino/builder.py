@@ -169,6 +169,11 @@ def build(st_file, platform, source_file, port, txtCtrl, update_subsystem):
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
 
+        # Install CONTROLLINO boards core
+        env_setup = os.popen(cli_command + ' core install CONTROLLINO_Boards:avr 2>&1')
+        compiler_logs += env_setup.read()
+        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
+        wx.CallAfter(scrollToEnd, txtCtrl)
         # Install CONTROLLINO library
         env_setup = os.popen(cli_command + ' lib install CONTROLLINO 2>&1')
         compiler_logs += env_setup.read()
