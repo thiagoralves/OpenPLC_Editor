@@ -289,7 +289,7 @@ class generate_var_list_c: protected generate_c_base_and_typeid_c {
       if (list == NULL) ERROR;
 
       for(int i = 0; i < list->n; i++) {
-        declare_variable(list->elements[i]);
+        declare_variable(list->get_element(i));
       }
     }
     
@@ -345,7 +345,7 @@ class generate_var_list_c: protected generate_c_base_and_typeid_c {
         case search_type_symbol_c::structure_vtc:
         case search_type_symbol_c::function_block_vtc:
           this->current_var_type_name->accept(*this);
-          s4o.print(";\n");
+          s4o.print(";;\n");
           if (this->current_var_class_category != external_vcc) {
               SYMBOL *current_name;
               symbol_c *tmp_var_type;
@@ -360,10 +360,14 @@ class generate_var_list_c: protected generate_c_base_and_typeid_c {
           break;
         case search_type_symbol_c::array_vtc:
           this->current_var_type_name->accept(*this);
-          s4o.print(";\n");
+          s4o.print(";;\n");
           break;
         default:
+          // base type name
           this->current_var_type_symbol->accept(*this);
+          s4o.print(";");
+          // type name (eventualy derived)
+          this->current_var_type_name->accept(*this);
           s4o.print(";\n");
           break;
       }
@@ -793,7 +797,7 @@ class generate_var_list_c: protected generate_c_base_and_typeid_c {
 
     void *visit(structure_element_declaration_list_c *symbol) {
       for(int i = 0; i < symbol->n; i++) {
-        symbol->elements[i]->accept(*this);
+        symbol->get_element(i)->accept(*this);
       }
       return NULL;
     }
@@ -860,7 +864,7 @@ class generate_var_list_c: protected generate_c_base_and_typeid_c {
       transition_number = 0;
       action_number = 0;
       for(int i = 0; i < symbol->n; i++) {
-        symbol->elements[i]->accept(*this);
+        symbol->get_element(i)->accept(*this);
       }
       return NULL;
     }
@@ -876,7 +880,7 @@ class generate_var_list_c: protected generate_c_base_and_typeid_c {
       print_symbol_list();
       s4o.print("__step_list[");
       print_step_number();
-      s4o.print("].X;BOOL;\n");
+      s4o.print("].X;BOOL;BOOL;\n");
       step_number++;
       return NULL;
     }
@@ -892,7 +896,7 @@ class generate_var_list_c: protected generate_c_base_and_typeid_c {
       print_symbol_list();
       s4o.print("__step_list[");
       print_step_number();
-      s4o.print("].X;BOOL;\n");
+      s4o.print("].X;BOOL;BOOL;\n");
       step_number++;
       return NULL;
     }
@@ -916,7 +920,7 @@ class generate_var_list_c: protected generate_c_base_and_typeid_c {
       print_symbol_list();
       s4o.print("__debug_transition_list[");
       print_transition_number();
-      s4o.print("];BOOL;\n");
+      s4o.print("];BOOL;BOOL;\n");
       transition_number++;
       return NULL;
     }
@@ -937,7 +941,7 @@ class generate_var_list_c: protected generate_c_base_and_typeid_c {
     //SYM_LIST(step_name_list_c)
     void *visit(step_name_list_c *symbol) {
       for(int i = 0; i < symbol->n; i++) {
-        symbol->elements[i]->accept(*this);
+        symbol->get_element(i)->accept(*this);
         if (i < symbol->n - 1)
           s4o.print(",");
       }
@@ -955,7 +959,7 @@ class generate_var_list_c: protected generate_c_base_and_typeid_c {
       print_symbol_list();
       s4o.print("__action_list[");
       print_action_number();
-      s4o.print("].state;BOOL;\n");
+      s4o.print("].state;BOOL;BOOL;\n");
       action_number++;
       return NULL;
     }

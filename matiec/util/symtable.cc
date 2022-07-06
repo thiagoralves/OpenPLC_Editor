@@ -85,7 +85,7 @@ void symtable_c<value_type>::set(const symbol_c *symbol, value_t new_value) {
     return;
   }
 
-  const token_c *name = dynamic_cast<const token_c *>(symbol);
+  const token_c *name = symbol->token;
   if (name == NULL)
     ERROR;
   set(name->value, new_value);
@@ -134,7 +134,7 @@ void symtable_c<value_type>::insert(const symbol_c *symbol, value_t new_value) {
     return;
   }
 */
-  const token_c *name = dynamic_cast<const token_c *>(symbol);
+  const token_c *name = symbol->token;
   if (name == NULL)
     ERROR;
   insert(name->value, new_value);
@@ -183,7 +183,7 @@ typename symtable_c<value_type>::iterator symtable_c<value_type>::find(const std
 
 template<typename value_type>
 typename symtable_c<value_type>::iterator symtable_c<value_type>::find(const   symbol_c *symbol) {
-  const token_c *name = dynamic_cast<const token_c *>(symbol);
+  const token_c *name = symbol->token;
   if (name == NULL)
     ERROR;
   return find(name->value);

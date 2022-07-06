@@ -267,6 +267,7 @@ SYM_REF0(dword_type_name_c)
 SYM_REF0(lword_type_name_c)
 SYM_REF0(string_type_name_c)
 SYM_REF0(wstring_type_name_c)
+SYM_REF0(void_type_name_c) /* a non-standard extension! */
 
   /*****************************************************************/
   /* Keywords defined in "Safety Software Technical Specification" */

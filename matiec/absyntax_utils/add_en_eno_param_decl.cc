@@ -84,7 +84,16 @@ add_en_eno_param_decl_c::~add_en_eno_param_decl_c(void) {
 
 void* add_en_eno_param_decl_c::iterate_list(list_c *list) {
   for (int i = 0; i < list->n; i++) {
-    list->elements[i]->accept(*this);
+    if (NULL != list->get_element(i))
+      /* This add_en_eno_param_decl_c may be called to handle an AST
+       * that contains errors, as it is called directly from bison
+       * during stage1_2 code parsing (i.e. before matiec compiler
+       * aborts due to errors in the input code being parsed)
+       * 
+       * We must therefore take into account the possibility of NULL 
+       * entries in the list, placed when an ERROR is found.
+       */
+      list->get_element(i)->accept(*this);
   }
   return NULL;
 }

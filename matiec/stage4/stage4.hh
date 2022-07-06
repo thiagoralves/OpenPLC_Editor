@@ -42,7 +42,8 @@
 #include "../absyntax/absyntax.hh"
 
 
-void stage4err(const char *stage4_generator_id, symbol_c *symbol1, symbol_c *symbol2, const char *errmsg, ...);
+void stage4err (const char *stage4_generator_id, symbol_c *symbol1, symbol_c *symbol2, const char *errmsg, ...);
+void stage4warn(const char *stage4_generator_id, symbol_c *symbol1, symbol_c *symbol2, const char *errmsg, ...);
 
 
 class stage4out_c {

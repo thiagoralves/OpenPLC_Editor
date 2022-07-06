@@ -422,7 +422,7 @@ void *visit(subscript_list_c *symbol) {
     if (dimension == NULL) ERROR;
 
     s4o.print("[(");
-    symbol->elements[i]->accept(*this);
+    symbol->get_element(i)->accept(*this);
     s4o.print(") - (");
     dimension->accept(*this);
     s4o.print(")]");
@@ -593,7 +593,7 @@ void *visit(or_expression_c *symbol) {
 
 void *visit(xor_expression_c *symbol) {
   if (get_datatype_info_c::is_BOOL_compatible(symbol->datatype)) {
-    s4o.print("(");
+    s4o.print("((");
     symbol->l_exp->accept(*this);
     s4o.print(" && !");
     symbol->r_exp->accept(*this);
@@ -601,7 +601,7 @@ void *visit(xor_expression_c *symbol) {
     symbol->l_exp->accept(*this);
     s4o.print(" && ");
     symbol->r_exp->accept(*this);
-    s4o.print(")");
+    s4o.print("))");
     return NULL;
   }
   if (get_datatype_info_c::is_ANY_nBIT_compatible(symbol->datatype))
@@ -925,9 +925,9 @@ void *visit(function_invocation_c *symbol) {
 /********************/
 void *visit(statement_list_c *symbol) {
   for(int i = 0; i < symbol->n; i++) {
-    print_line_directive(symbol->elements[i]);
+    print_line_directive(symbol->get_element(i));
     s4o.print(s4o.indent_spaces);
-    symbol->elements[i]->accept(*this);
+    symbol->get_element(i)->accept(*this);
     s4o.print(";\n");
   }
   return NULL;
@@ -937,7 +937,7 @@ void *visit(statement_list_c *symbol) {
 /* B 3.2.1 Assignment Statements */
 /*********************************/
 void *visit(assignment_statement_c *symbol) {
-  symbol_c *left_type = search_varfb_instance_type->get_type_id(symbol->l_exp);
+  symbol_c *left_type = symbol->l_exp->datatype;
   
   if (this->is_variable_prefix_null()) {
     symbol->l_exp->accept(*this);
@@ -1213,10 +1213,10 @@ void *visit(case_list_c *symbol) {
      */
     if (0 != i)  s4o.print(" ||\n" + s4o.indent_spaces + "         ");
     s4o.print("(");
-    subrange_c *subrange = dynamic_cast<subrange_c *>(symbol->elements[i]);
+    subrange_c *subrange = dynamic_cast<subrange_c *>(symbol->get_element(i));
     if (NULL == subrange) {
       s4o.print("__case_expression == ");
-      symbol->elements[i]->accept(*this);
+      symbol->get_element(i)->accept(*this);
     } else {
       s4o.print("__case_expression >= ");
       subrange->lower_limit->accept(*this);
@@ -1233,19 +1233,26 @@ void *visit(case_list_c *symbol) {
 /* B 3.2.4 Iteration Statements */
 /********************************/
 void *visit(for_statement_c *symbol) {
-  s4o.print("for(");
-  symbol->control_variable->accept(*this);
-  s4o.print(" = ");
-  symbol->beg_expression->accept(*this);
-  s4o.print("; ");
+  /* Due to the way the GET/SET_GLOBAL accessor macros access VAR_GLOBAL variables,
+   * these varibles cannot be used within a C for(;;) loop.
+   * We must therefore implemnt the FOR END_FOR loop as a C while() loop
+   */
+  s4o.print("/* FOR ... */\n" + s4o.indent_spaces);
+  /* For the initialization part, we create an assignment_statement_c   */
+  /* and have this visitor visit it!                                    */ 
+  assignment_statement_c ini_assignment(symbol->control_variable, symbol->beg_expression);
+  ini_assignment.accept(*this);
+  //symbol->control_variable->accept(*this);  // this does not work for VAR_GLOBAL variables
+  //s4o.print(" = ");
+  //symbol->beg_expression->accept(*this);
+  
+  /* comparison // check for end of loop */
+  s4o.print(";\n" + s4o.indent_spaces + "while( ");
   if (symbol->by_expression == NULL) {
-    /* increment by 1 */
+    /* increment by 1 */    
     symbol->control_variable->accept(*this);
     s4o.print(" <= ");
     symbol->end_expression->accept(*this);
-    s4o.print("; ");
-    symbol->control_variable->accept(*this);
-    s4o.print("++");
   } else {
     /* increment by user defined value  */
     /* The user defined increment value may be negative, in which case
@@ -1265,19 +1272,47 @@ void *visit(for_statement_c *symbol) {
     symbol->control_variable->accept(*this);
     s4o.print(" >= (");
     symbol->end_expression->accept(*this);
-    s4o.print(")); ");
-    symbol->control_variable->accept(*this);
-    s4o.print(" += (");
-    symbol->by_expression->accept(*this);
-    s4o.print(")");
+    s4o.print(")) ");
   }
-  s4o.print(")");
+  s4o.print(" ) {\n");
   
-  s4o.print(" {\n");
+  /* the body part */
   s4o.indent_right();
   symbol->statement_list->accept(*this);
+
+  /* increment part */
+  s4o.print(s4o.indent_spaces + "/* BY ... (of FOR loop) */\n");
+  s4o.print(s4o.indent_spaces); 
+  if (symbol->by_expression == NULL) {
+    /* increment by 1 */    
+    /* For the increment part, we create an add_expression_c and assignment_statement_c   */
+    /* and have this visitor vist the latter!                                             */ 
+    integer_c              integer_oneval("1");
+    add_expression_c       add_expression(symbol->control_variable, &integer_oneval);
+    assignment_statement_c inc_assignment(symbol->control_variable, &add_expression);
+    integer_oneval.const_value._int64 .set(1);                    // set the stage3 anottation we need 
+    integer_oneval.const_value._uint64.set(1);                    // set the stage3 anottation we need
+    integer_oneval.datatype = symbol->control_variable->datatype; // set the stage3 anottation we need
+    add_expression.datatype = symbol->control_variable->datatype; // set the stage3 anottation we need
+    inc_assignment.accept(*this);
+    //symbol->control_variable->accept(*this);  // this does not work for VAR_GLOBAL variables
+    //s4o.print("++");
+  } else {
+    /* increment by user defined value  */
+    /* For the increment part, we create an add_expression_c and assignment_statement_c   */
+    /* and have this visitor vist the latter!                                             */ 
+    add_expression_c       add_expression(symbol->control_variable, symbol->by_expression);
+    assignment_statement_c inc_assignment(symbol->control_variable, &add_expression);
+    add_expression.datatype = symbol->control_variable->datatype; // set the stage3 anottation we need
+    inc_assignment.accept(*this);
+    //symbol->control_variable->accept(*this);  // this does not work for VAR_GLOBAL variables
+    //s4o.print(" += (");
+    //symbol->by_expression->accept(*this);
+    //s4o.print(")");
+  }  
+  
   s4o.indent_left();
-  s4o.print(s4o.indent_spaces); s4o.print("}");
+  s4o.print(";\n" + s4o.indent_spaces + "} /* END_FOR */");
   return NULL;
 }
 

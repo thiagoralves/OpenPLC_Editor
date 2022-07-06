@@ -55,22 +55,33 @@
 #define  LAST_(symbol1, symbol2) (((symbol1)->last_order  > (symbol2)->last_order)    ? (symbol1) : (symbol2))
 #include <stdarg.h>
 
-void stage4err(const char *stage4_generator_id, symbol_c *symbol1, symbol_c *symbol2, const char *errmsg, ...) {
+static void stage4msg(const char *msgtype, const char *stage4_generator_id, symbol_c *symbol1, symbol_c *symbol2, const char *msg, ...) {
     va_list argptr;
-    va_start(argptr, errmsg); /* second argument is last fixed pamater of stage4err() */
+    va_start(argptr, msg); /* second argument is last fixed pamater of stage4err() */
 
     if ((symbol1 != NULL) && (symbol2 != NULL))
       fprintf(stderr, "%s:%d-%d..%d-%d: ",
               FIRST_(symbol1,symbol2)->first_file, FIRST_(symbol1,symbol2)->first_line, FIRST_(symbol1,symbol2)->first_column,
                                                    LAST_(symbol1,symbol2) ->last_line,  LAST_(symbol1,symbol2) ->last_column);
 
-    fprintf(stderr, "error %s: ", stage4_generator_id);
-    vfprintf(stderr, errmsg, argptr);
+    fprintf(stderr, "%s %s: ", msgtype, stage4_generator_id);
+    vfprintf(stderr, msg, argptr);
     fprintf(stderr, "\n");
     // error_count++;
     va_end(argptr);
 }
 
+void stage4err(const char *stage4_generator_id, symbol_c *symbol1, symbol_c *symbol2, const char *errmsg, ...) {
+    va_list argptr;
+    va_start(argptr, errmsg); /* second argument is last fixed pamater of stage4err() */
+    stage4msg("error", stage4_generator_id, symbol1, symbol2, errmsg, argptr);
+}
+
+void stage4warn(const char *stage4_generator_id, symbol_c *symbol1, symbol_c *symbol2, const char *errmsg, ...) {
+    va_list argptr;
+    va_start(argptr, errmsg); /* second argument is last fixed pamater of stage4err() */
+    stage4msg("warning", stage4_generator_id, symbol1, symbol2, errmsg, argptr);
+}
 
 
 stage4out_c::stage4out_c(std::string indent_level):

@@ -54,7 +54,7 @@ void dsymtable_c<value_type>::insert(const char *identifier_str, value_t new_val
 
 template<typename value_type>
 void dsymtable_c<value_type>::insert(const symbol_c *symbol, value_t new_value) {
-  const token_c *name = dynamic_cast<const token_c *>(symbol);
+  const token_c *name = symbol->token;
   if (name == NULL)
     ERROR;
   insert(name->value, new_value);
@@ -76,7 +76,7 @@ void dsymtable_c<value_type>::insert_noduplicate(const char *identifier_str, val
 
 template<typename value_type>
 void dsymtable_c<value_type>::insert_noduplicate(const symbol_c *symbol, value_t new_value) {
-  const token_c *name = dynamic_cast<const token_c *>(symbol);
+  const token_c *name = symbol->token;
   if (name == NULL)
     ERROR;
   insert_noduplicate(name->value, new_value);
@@ -88,7 +88,7 @@ void dsymtable_c<value_type>::insert_noduplicate(const symbol_c *symbol, value_t
 
 template<typename value_type>
 const char * dsymtable_c<value_type>::symbol_to_string(const symbol_c *symbol) {
-  const token_c *name = dynamic_cast<const token_c *>(symbol);
+  const token_c *name = symbol->token;
   if (name == NULL)
     ERROR;
   return name->value;
