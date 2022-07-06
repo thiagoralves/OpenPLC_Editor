@@ -133,38 +133,38 @@ void array_range_check_c::check_bounds(array_variable_c *symbol) {
       return;
 
     /* Check lower limit */
-    if ( VALID_CVALUE( int64, l->elements[i]) && VALID_CVALUE( int64, dimension->lower_limit))
-      if ( GET_CVALUE( int64, l->elements[i]) < GET_CVALUE( int64, dimension->lower_limit) )
-      {STAGE3_ERROR(0, symbol, symbol, "Array access out of bounds (using constant value of %"PRId64", should be >= %"PRId64").", GET_CVALUE( int64, l->elements[i]), GET_CVALUE( int64, dimension->lower_limit)); continue;}
+    if ( VALID_CVALUE( int64, l->get_element(i)) && VALID_CVALUE( int64, dimension->lower_limit))
+      if ( GET_CVALUE( int64, l->get_element(i)) < GET_CVALUE( int64, dimension->lower_limit) )
+      {STAGE3_ERROR(0, symbol, symbol, "Array access out of bounds (using constant value of %"PRId64", should be >= %"PRId64").", GET_CVALUE( int64, l->get_element(i)), GET_CVALUE( int64, dimension->lower_limit)); continue;}
 
-    if ( VALID_CVALUE( int64, l->elements[i]) && VALID_CVALUE(uint64, dimension->lower_limit))
-      if ( cmp_unsigned_signed( GET_CVALUE(uint64, dimension->lower_limit), GET_CVALUE( int64, l->elements[i])) > 0 )
-      {STAGE3_ERROR(0, symbol, symbol, "Array access out of bounds (using constant value of %"PRId64", should be >= %"PRIu64").", GET_CVALUE( int64, l->elements[i]), GET_CVALUE(uint64, dimension->lower_limit)); continue;}
+    if ( VALID_CVALUE( int64, l->get_element(i)) && VALID_CVALUE(uint64, dimension->lower_limit))
+      if ( cmp_unsigned_signed( GET_CVALUE(uint64, dimension->lower_limit), GET_CVALUE( int64, l->get_element(i))) > 0 )
+      {STAGE3_ERROR(0, symbol, symbol, "Array access out of bounds (using constant value of %"PRId64", should be >= %"PRIu64").", GET_CVALUE( int64, l->get_element(i)), GET_CVALUE(uint64, dimension->lower_limit)); continue;}
 
-    if ( VALID_CVALUE(uint64, l->elements[i]) && VALID_CVALUE(uint64, dimension->lower_limit))
-      if ( GET_CVALUE(uint64, l->elements[i])   <  GET_CVALUE(uint64, dimension->lower_limit))
-      {STAGE3_ERROR(0, symbol, symbol, "Array access out of bounds (using constant value of %"PRIu64", should be >= %"PRIu64").", GET_CVALUE(uint64, l->elements[i]), GET_CVALUE(uint64, dimension->lower_limit)); continue;}
+    if ( VALID_CVALUE(uint64, l->get_element(i)) && VALID_CVALUE(uint64, dimension->lower_limit))
+      if ( GET_CVALUE(uint64, l->get_element(i))   <  GET_CVALUE(uint64, dimension->lower_limit))
+      {STAGE3_ERROR(0, symbol, symbol, "Array access out of bounds (using constant value of %"PRIu64", should be >= %"PRIu64").", GET_CVALUE(uint64, l->get_element(i)), GET_CVALUE(uint64, dimension->lower_limit)); continue;}
 
-    if ( VALID_CVALUE(uint64, l->elements[i]) && VALID_CVALUE( int64, dimension->lower_limit))
-      if ( cmp_unsigned_signed(GET_CVALUE(uint64, l->elements[i]), GET_CVALUE( int64, dimension->lower_limit)) < 0 )
-      {STAGE3_ERROR(0, symbol, symbol, "Array access out of bounds (using constant value of %"PRIu64", should be >= %"PRId64").", GET_CVALUE(uint64, l->elements[i]), GET_CVALUE( int64, dimension->lower_limit)); continue;}
+    if ( VALID_CVALUE(uint64, l->get_element(i)) && VALID_CVALUE( int64, dimension->lower_limit))
+      if ( cmp_unsigned_signed(GET_CVALUE(uint64, l->get_element(i)), GET_CVALUE( int64, dimension->lower_limit)) < 0 )
+      {STAGE3_ERROR(0, symbol, symbol, "Array access out of bounds (using constant value of %"PRIu64", should be >= %"PRId64").", GET_CVALUE(uint64, l->get_element(i)), GET_CVALUE( int64, dimension->lower_limit)); continue;}
 
     /* Repeat the same check, now for upper limit */
-    if ( VALID_CVALUE( int64, l->elements[i]) && VALID_CVALUE( int64, dimension->upper_limit))
-      if ( GET_CVALUE( int64, l->elements[i])   >  GET_CVALUE( int64, dimension->upper_limit))
-      {STAGE3_ERROR(0, symbol, symbol, "Array access out of bounds (using constant value of %"PRId64", should be <= %"PRId64").", GET_CVALUE( int64, l->elements[i]), GET_CVALUE( int64, dimension->upper_limit)); continue;}
+    if ( VALID_CVALUE( int64, l->get_element(i)) && VALID_CVALUE( int64, dimension->upper_limit))
+      if ( GET_CVALUE( int64, l->get_element(i))   >  GET_CVALUE( int64, dimension->upper_limit))
+      {STAGE3_ERROR(0, symbol, symbol, "Array access out of bounds (using constant value of %"PRId64", should be <= %"PRId64").", GET_CVALUE( int64, l->get_element(i)), GET_CVALUE( int64, dimension->upper_limit)); continue;}
 
-    if ( VALID_CVALUE( int64, l->elements[i]) && VALID_CVALUE(uint64, dimension->upper_limit))
-      if ( cmp_unsigned_signed( GET_CVALUE(uint64, dimension->upper_limit), GET_CVALUE( int64, l->elements[i])) < 0 )
-      {STAGE3_ERROR(0, symbol, symbol, "Array access out of bounds (using constant value of %"PRId64", should be <= %"PRIu64").", GET_CVALUE( int64, l->elements[i]), GET_CVALUE(uint64, dimension->upper_limit)); continue;}
+    if ( VALID_CVALUE( int64, l->get_element(i)) && VALID_CVALUE(uint64, dimension->upper_limit))
+      if ( cmp_unsigned_signed( GET_CVALUE(uint64, dimension->upper_limit), GET_CVALUE( int64, l->get_element(i))) < 0 )
+      {STAGE3_ERROR(0, symbol, symbol, "Array access out of bounds (using constant value of %"PRId64", should be <= %"PRIu64").", GET_CVALUE( int64, l->get_element(i)), GET_CVALUE(uint64, dimension->upper_limit)); continue;}
 
-    if ( VALID_CVALUE(uint64, l->elements[i]) && VALID_CVALUE(uint64, dimension->upper_limit))
-      if ( GET_CVALUE(uint64, l->elements[i])   >  GET_CVALUE(uint64, dimension->upper_limit))
-      {STAGE3_ERROR(0, symbol, symbol, "Array access out of bounds (using constant value of %"PRIu64", should be <= %"PRIu64").", GET_CVALUE(uint64, l->elements[i]), GET_CVALUE(uint64, dimension->upper_limit)); continue;}
+    if ( VALID_CVALUE(uint64, l->get_element(i)) && VALID_CVALUE(uint64, dimension->upper_limit))
+      if ( GET_CVALUE(uint64, l->get_element(i))   >  GET_CVALUE(uint64, dimension->upper_limit))
+      {STAGE3_ERROR(0, symbol, symbol, "Array access out of bounds (using constant value of %"PRIu64", should be <= %"PRIu64").", GET_CVALUE(uint64, l->get_element(i)), GET_CVALUE(uint64, dimension->upper_limit)); continue;}
       
-    if ( VALID_CVALUE(uint64, l->elements[i]) && VALID_CVALUE( int64, dimension->upper_limit))
-      if ( cmp_unsigned_signed(GET_CVALUE(uint64, l->elements[i]), GET_CVALUE( int64, dimension->upper_limit)) > 0 )
-      {STAGE3_ERROR(0, symbol, symbol, "Array access out of bounds (using constant value of %"PRIu64", should be <= %"PRId64").", GET_CVALUE(uint64, l->elements[i]), GET_CVALUE( int64, dimension->upper_limit)); continue;}
+    if ( VALID_CVALUE(uint64, l->get_element(i)) && VALID_CVALUE( int64, dimension->upper_limit))
+      if ( cmp_unsigned_signed(GET_CVALUE(uint64, l->get_element(i)), GET_CVALUE( int64, dimension->upper_limit)) > 0 )
+      {STAGE3_ERROR(0, symbol, symbol, "Array access out of bounds (using constant value of %"PRIu64", should be <= %"PRId64").", GET_CVALUE(uint64, l->get_element(i)), GET_CVALUE( int64, dimension->upper_limit)); continue;}
       
   }
 }

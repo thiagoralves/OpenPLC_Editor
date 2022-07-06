@@ -165,6 +165,8 @@ class get_datatype_info_c {
     static bool is_ANY_SAFESTRING                  (symbol_c *type_symbol);
     static bool is_ANY_STRING_compatible           (symbol_c *type_symbol);
 
+    // A non-standard extension --> data type 'VOID' (used for functions that do not return any data)
+    static bool is_VOID                            (symbol_c *type_symbol);
     
     
     
