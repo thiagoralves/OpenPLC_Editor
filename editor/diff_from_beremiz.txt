@@ -11,6 +11,9 @@ New toolbar buttons
 Run function modified to clean, build, connect, transfer and run
 Default scaling changed for new projects
 
+ - PLCController.py
+Added functionality to sort items
+
  - features.py
 Removed unused features
 
