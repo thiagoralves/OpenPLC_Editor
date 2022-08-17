@@ -331,7 +331,7 @@ class FBDBlockDialog(BlockPreviewDialog):
         self.RefreshPreview()
         event.Skip()
 
-    def RefreshPreview(self):
+    def DrawPreview(self):
         """
         Refresh preview panel of graphic element
         Override BlockPreviewDialog function
@@ -355,4 +355,4 @@ class FBDBlockDialog(BlockPreviewDialog):
             self.Element = None
 
         # Call BlockPreviewDialog function
-        BlockPreviewDialog.RefreshPreview(self)
+        BlockPreviewDialog.DrawPreview(self)

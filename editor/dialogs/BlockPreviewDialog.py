@@ -252,8 +252,7 @@ class BlockPreviewDialog(wx.Dialog):
 
     def RefreshPreview(self):
         """Triggers EVT_PAINT event to refresh UI"""
-        #self.Refresh()
-        self.DrawPreview()
+        self.Refresh()
 
     def DrawPreview(self):
         """
@@ -261,7 +260,7 @@ class BlockPreviewDialog(wx.Dialog):
         May be overridden by inherited classes
         """
         # Init preview panel paint device context
-        dc = wx.ClientDC(self.Preview)
+        dc = wx.PaintDC(self.Preview)
         dc.SetFont(self.Preview.GetFont())
         dc.Clear()
 

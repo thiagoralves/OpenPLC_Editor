@@ -41,7 +41,6 @@ def OpenHtmlFrame(self, title, file, size):
         window.Show()
 
 
-[ID_HTMLFRAME, ID_HTMLFRAMEHTMLCONTENT] = [wx.NewId() for _init_ctrls in range(2)]
 EVT_HTML_URL_CLICK = wx.NewId()
 
 
@@ -72,13 +71,12 @@ class HtmlFrame(wx.Frame):
         self.SetIcon(prnt.icon)
         self.Bind(wx.EVT_CLOSE, self.OnCloseFrame)
 
-        self.HtmlContent = UrlClickHtmlWindow(id=ID_HTMLFRAMEHTMLCONTENT,
-                                              name='HtmlContent', parent=self, pos=wx.Point(0, 0),
+        self.HtmlContent = UrlClickHtmlWindow(name='HtmlContent', parent=self, pos=wx.Point(0, 0),
                                               size=wx.Size(-1, -1), style=wx.html.HW_SCROLLBAR_AUTO | wx.html.HW_NO_SELECTION)
         self.HtmlContent.Bind(HtmlWindowUrlClick, self.OnLinkClick)
 
     def __init__(self, parent, opened):
-        wx.Frame.__init__(self, id=ID_HTMLFRAME, name='HtmlFrame',
+        wx.Frame.__init__(self, name='HtmlFrame',
                           parent=parent, pos=wx.Point(320, 231),
                           size=wx.Size(853, 616),
                           style=wx.DEFAULT_FRAME_STYLE, title='')

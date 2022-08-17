@@ -28,7 +28,6 @@ import os
 import sys
 from builtins import str as text
 
-
 def AbsFile(file):
     if isinstance(file, str):
         file = text(file, sys.getfilesystemencoding())
@@ -49,3 +48,10 @@ def AbsParentDir(file, level=1):
     for dummy in range(0, level):
         path = os.path.dirname(path)
     return path
+
+def ThirdPartyPath(name):
+    """
+    Return folder where to find sibling projects like Modbus, CanFestival, BACnet
+    """
+    return os.path.join(AbsParentDir(__file__, 2), name)
+

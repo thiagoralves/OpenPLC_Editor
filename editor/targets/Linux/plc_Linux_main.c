@@ -217,7 +217,7 @@ int WaitPythonCommands(void)
 /* Called by PLC thread on each new python command*/
 void UnBlockPythonCommands(void)
 {
-    /* signal debugger thread it can read data */
+    /* signal python thread it can read data */
     pthread_mutex_unlock(&python_wait_mutex);
 }
 
@@ -234,4 +234,58 @@ void UnLockPython(void)
 void LockPython(void)
 {
     pthread_mutex_lock(&python_mutex);
+}
+
+struct RT_to_nRT_signal_s {
+    pthread_cond_t WakeCond;
+    pthread_mutex_t WakeCondLock;
+};
+
+typedef struct RT_to_nRT_signal_s RT_to_nRT_signal_t;
+
+#define _LogAndReturnNull(text) \
+    {\
+    	char mstr[256] = text " for ";\
+        strncat(mstr, name, 255);\
+        LogMessage(LOG_CRITICAL, mstr, strlen(mstr));\
+        return NULL;\
+    }
+
+void *create_RT_to_nRT_signal(char* name){
+    RT_to_nRT_signal_t *sig = (RT_to_nRT_signal_t*)malloc(sizeof(RT_to_nRT_signal_t));
+
+    if(!sig) 
+    	_LogAndReturnNull("Failed allocating memory for RT_to_nRT signal");
+
+    pthread_cond_init(&sig->WakeCond, NULL);
+    pthread_mutex_init(&sig->WakeCondLock, NULL);
+
+    return (void*)sig;
+}
+
+void delete_RT_to_nRT_signal(void* handle){
+    RT_to_nRT_signal_t *sig = (RT_to_nRT_signal_t*)handle;
+
+    pthread_cond_destroy(&sig->WakeCond);
+    pthread_mutex_destroy(&sig->WakeCondLock);
+
+    free(sig);
+}
+
+int wait_RT_to_nRT_signal(void* handle){
+    int ret;
+    RT_to_nRT_signal_t *sig = (RT_to_nRT_signal_t*)handle;
+    pthread_mutex_lock(&sig->WakeCondLock);
+    ret = pthread_cond_wait(&sig->WakeCond, &sig->WakeCondLock);
+    pthread_mutex_unlock(&sig->WakeCondLock);
+    return ret;
+}
+
+int unblock_RT_to_nRT_signal(void* handle){
+    RT_to_nRT_signal_t *sig = (RT_to_nRT_signal_t*)handle;
+    return pthread_cond_signal(&sig->WakeCond);
+}
+
+void nRT_reschedule(void){
+    sched_yield();
 }

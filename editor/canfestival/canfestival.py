@@ -33,14 +33,14 @@ from gnosis.xml.pickle import *  # pylint: disable=import-error
 from gnosis.xml.pickle.util import setParanoia  # pylint: disable=import-error
 
 import util.paths as paths
+
 from util.TranslationCatalogs import AddCatalog
 from ConfigTreeNode import ConfigTreeNode
 from PLCControler import \
     LOCATION_CONFNODE, \
     LOCATION_VAR_MEMORY
 
-base_folder = paths.AbsParentDir(__file__, 2)  # noqa
-CanFestivalPath = os.path.join(base_folder, "CanFestival-3")  # noqa
+CanFestivalPath = paths.ThirdPartyPath("CanFestival-3")  # noqa
 sys.path.append(os.path.join(CanFestivalPath, "objdictgen"))  # noqa
 
 # pylint: disable=wrong-import-position

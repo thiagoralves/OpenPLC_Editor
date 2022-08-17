@@ -34,12 +34,17 @@ from __future__ import print_function
 import socket
 import re
 import ssl
-import sslpsk
 import Pyro
 from Pyro.core import PyroURI
 from Pyro.protocol import _connect_socket, TCPConnection, PYROAdapter
 from Pyro.errors import ConnectionDeniedError, ProtocolError
 from Pyro.util import Log
+
+try:
+    import sslpsk
+except ImportError as e:
+    print(str(e))
+    sslpsk = None
 
 
 class PYROPSKAdapter(PYROAdapter):
@@ -126,5 +131,8 @@ def setupPSKAdapter():
     This function should be called after
     reimport of Pyro module to enable PYROS:// again.
     """
-    Pyro.protocol.getProtocolAdapter = getProtocolAdapter
-    Pyro.core.processStringURI = processStringURI
+    if sslpsk is not None:
+        Pyro.protocol.getProtocolAdapter = getProtocolAdapter
+        Pyro.core.processStringURI = processStringURI
+    else:
+        raise Exception("sslpsk python module unavailable")

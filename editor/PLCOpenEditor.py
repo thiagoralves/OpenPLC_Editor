@@ -140,9 +140,8 @@ class PLCOpenEditor(IDEFrame):
                 _(u'Community support'),
                 wx.OK | wx.ICON_INFORMATION)
 
-        id = wx.NewId()
-        parent.Append(help='', id=id, kind=wx.ITEM_NORMAL, text=_(u'Community support'))
-        self.Bind(wx.EVT_MENU, handler, id=id)
+        menu_entry = parent.Append(help='', id=wx.ID_ANY, kind=wx.ITEM_NORMAL, text=_(u'Community support'))
+        self.Bind(wx.EVT_MENU, handler, menu_entry)
 
         AppendMenu(parent, help='', id=wx.ID_ABOUT,
                    kind=wx.ITEM_NORMAL, text=_(u'About'))

@@ -43,14 +43,8 @@ from plcopen.structures import TestIdentifier, IEC_KEYWORDS
 # -------------------------------------------------------------------------------
 
 
-[
-    ID_CONFIGURATIONEDITOR,
-] = [wx.NewId() for _init_ctrls in range(1)]
-
-
 class ConfigurationEditor(EditorPanel):
 
-    ID = ID_CONFIGURATIONEDITOR
     VARIABLE_PANEL_TYPE = "config"
 
     def GetBufferState(self):

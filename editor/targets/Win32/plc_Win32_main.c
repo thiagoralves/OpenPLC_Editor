@@ -26,10 +26,10 @@ long long AtomicCompareExchange64(long long* atomicvar, long long compared, long
     return res;
 }
 
-struct _timeb timetmp;
+struct timeb timetmp;
 void PLC_GetTime(IEC_TIME *CURRENT_TIME)
 {
-	_ftime(&timetmp);
+	ftime(&timetmp);
 
 	(*CURRENT_TIME).tv_sec = timetmp.time;
 	(*CURRENT_TIME).tv_nsec = timetmp.millitm * 1000000;
@@ -260,5 +260,65 @@ static void __attribute__((destructor))
 beremiz_dll_destroy(void)
 {
     DeleteCriticalSection(&Atomic64CS);
+}
+
+struct RT_to_nRT_signal_s {
+    HANDLE sem;
+};
+
+typedef struct RT_to_nRT_signal_s RT_to_nRT_signal_t;
+
+#define _LogAndReturnNull(text) \
+    {\
+    	char mstr[256] = text " for ";\
+        strncat(mstr, name, 255);\
+        LogMessage(LOG_CRITICAL, mstr, strlen(mstr));\
+        return NULL;\
+    }
+
+void *create_RT_to_nRT_signal(char* name){
+    RT_to_nRT_signal_t *sig = (RT_to_nRT_signal_t*)malloc(sizeof(RT_to_nRT_signal_t));
+
+    if(!sig) 
+    	_LogAndReturnNull("Failed allocating memory for RT_to_nRT signal");
+
+    sig->sem = CreateSemaphore(
+                            NULL,           // default security attributes
+                            1,  			// initial count
+                            1,  			// maximum count
+                            NULL);          // unnamed semaphore
+
+    if(sig->sem == NULL)
+    {
+    	char mstr[256];
+        snprintf(mstr, 255, "startPLC CreateSemaphore %s error: %d\n", name, GetLastError());
+        LogMessage(LOG_CRITICAL, mstr, strlen(mstr));
+        return NULL;
+    }
+
+    return (void*)sig;
+}
+
+void delete_RT_to_nRT_signal(void* handle){
+    RT_to_nRT_signal_t *sig = (RT_to_nRT_signal_t*)handle;
+
+    CloseHandle(python_sem);
+
+    free(sig);
+}
+
+int wait_RT_to_nRT_signal(void* handle){
+    int ret;
+    RT_to_nRT_signal_t *sig = (RT_to_nRT_signal_t*)handle;
+	return WaitForSingleObject(sig->sem, INFINITE);
+}
+
+int unblock_RT_to_nRT_signal(void* handle){
+    RT_to_nRT_signal_t *sig = (RT_to_nRT_signal_t*)handle;
+	return ReleaseSemaphore(sig->sem, 1, NULL);
+}
+
+void nRT_reschedule(void){
+    SwitchToThread();
 }
 

@@ -22,3 +22,4 @@ class ConnectorBase(object):
                     return blobID
                 blobID = self.AppendChunkToBlob(chunk, blobID)
                 s.update(chunk)
+        raise IOError("Data corrupted during transfer or connection lost")

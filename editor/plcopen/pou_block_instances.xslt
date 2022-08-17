@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<xsl:stylesheet xmlns:exsl="http://exslt.org/common" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:ppx="http://www.plcopen.org/xml/tc6_0201" xmlns:ns="beremiz" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" extension-element-prefixes="ns" version="1.0" exclude-result-prefixes="ns">
+<xsl:stylesheet xmlns:ns="beremiz" xmlns:regexp="http://exslt.org/regular-expressions" xmlns:str="http://exslt.org/strings" xmlns:ppx="http://www.plcopen.org/xml/tc6_0201" xmlns:exsl="http://exslt.org/common" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xhtml="http://www.w3.org/1999/xhtml" version="1.0" exclude-result-prefixes="ns" extension-element-prefixes="ns">
   <xsl:output method="xml"/>
   <xsl:template match="text()"/>
   <xsl:template match="ppx:pou[ppx:body]|ppx:transition[ppx:body]|ppx:action[ppx:body]">

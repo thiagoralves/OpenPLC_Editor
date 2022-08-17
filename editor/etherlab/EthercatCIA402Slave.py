@@ -201,11 +201,69 @@ class _EthercatCIA402SlaveCTN(_EthercatSlaveCTN):
             ("%%IW%s.402" % ".".join(map(str, self.GetCurrentLocation())),
              "location", "AXIS_REF", self.CTNName(), ""))
 
+    # add jblee
+    """
+    def LoadPDOSelectData(self):
+        ReadData = []
+        files = os.listdir(self.CTNPath())
+        filepath = os.path.join(self.CTNPath(), "DataForPDO.txt")
+        if os.path.isfile(filepath):
+            PDODataRead = open(filepath, 'r')
+            ReadData = PDODataRead.readlines()
+            PDODataRead.close()
+
+        if len(ReadData) > 1:
+            for data in ReadData[0].split() :
+                if data == "RxPDO":
+                    continue
+                self.SelectedRxPDOIndex.append(int(data, 0))
+
+            for data in ReadData[1].split() :
+                if data == "TxPDO":
+                    continue
+                self.SelectedTxPDOIndex.append(int(data, 0))
+    """
+
+    def LoadPDOSelectData(self):
+        RxPDOData = self.BaseParams.getRxPDO()
+        RxPDOs = []
+        if RxPDOData != "None":
+            RxPDOs = RxPDOData.split()
+        if RxPDOs :
+            for RxPDO in RxPDOs :
+                self.SelectedRxPDOIndex.append(int(RxPDO, 0))
+
+        TxPDOData = self.BaseParams.getTxPDO()
+        TxPDOs = []
+        if TxPDOData != "None":
+            TxPDOs = TxPDOData.split()
+        if TxPDOs :
+            for TxPDO in TxPDOs :
+                self.SelectedTxPDOIndex.append(int(TxPDO, 0))
+
+    def LoadDefaultPDOSet(self):
+        ReturnData = []
+        rx_pdo_entries = self.CommonMethod.GetRxPDOCategory()
+        if len(rx_pdo_entries):
+            for i in range(len(rx_pdo_entries)):
+                if rx_pdo_entries[i]['sm'] is not None:
+                    ReturnData.append(rx_pdo_entries[i]['pdo_index'])
+
+        tx_pdo_entries = self.CommonMethod.GetTxPDOCategory()
+        if len(tx_pdo_entries):
+            for i in range(len(tx_pdo_entries)):
+                if tx_pdo_entries[i]['sm'] is not None:
+                    ReturnData.append(tx_pdo_entries[i]['pdo_index'])
+
+        if ReturnData :
+            return ReturnData
+        else :
+            return [5632, 6656]
+        
     def CTNGenerate_C(self, buildpath, locations):
         current_location = self.GetCurrentLocation()
 
         location_str = "_".join(map(str, current_location))
-        slave_pos = self.GetSlavePos()
 
         # Open CIA402 node code template file
         plc_cia402node_filepath = os.path.join(os.path.split(__file__)[0],
@@ -213,160 +271,204 @@ class _EthercatCIA402SlaveCTN(_EthercatSlaveCTN):
         plc_cia402node_file = open(plc_cia402node_filepath, 'r')
         plc_cia402node_code = plc_cia402node_file.read()
         plc_cia402node_file.close()
-
-        # Init list of generated strings for each code template file section
-        fieldbus_interface_declaration = []
-        fieldbus_interface_definition = []
-        init_axis_params = []
-        extra_variables_retrieve = []
-        extra_variables_publish = []
-        extern_located_variables_declaration = []
-        entry_variables = []
-        init_entry_variables = []
-
-        # Fieldbus interface code sections
+        # HSAHN 150726
+        # add "default_variables_retrieve": [], "default_variables_publish": [],
+		# As PDO mapping object, it will add auto-complete code.
+        # add "modeofop_homing_method", "modeofop_computation_mode" by jblee
+        str_completion = {
+            "slave_pos": self.GetSlavePos(),
+            "location": location_str,
+            "MCL_headers": Headers,
+            "extern_located_variables_declaration": [],
+            "fieldbus_interface_declaration": [],
+            "fieldbus_interface_definition": [],
+            "entry_variables": [],
+            "init_axis_params": [],
+            "init_entry_variables": [],
+            "default_variables_retrieve": [],
+            "default_variables_publish": [],
+            "extra_variables_retrieve": [],
+            "extra_variables_publish": [],
+            "modeofop_homing_method": [],
+            "modeofop_computation_mode": []
+        }
+        
         for blocktype_infos in FIELDBUS_INTERFACE_GLOBAL_INSTANCES:
-            blocktype = blocktype_infos["blocktype"]
-            ucase_blocktype = blocktype.upper()
-            blockname = "_".join([ucase_blocktype, location_str])
-
-            extract_inputs = "\n".join([
-                """\
-                __SET_VAR(%s->, %s,, %s);""" % (blockname, input_name, input_value)
-                for (input_name, input_value) in
-                [("EXECUTE", "__GET_VAR(data__->EXECUTE)")] + [
-                    (input["name"].upper(),
-                     "__GET_VAR(data__->%s)" % input["name"].upper())
-                    for input in blocktype_infos["inputs"]
-                ]])
-
-            return_outputs = "\n".join([
-                """\
-                __SET_VAR(data__->,%(output_name)s,,
-                __GET_VAR(%(blockname)s->%(output_name)s));""" % {
-                    "output_name": output_name,
-                    "blockname": blockname
-                }
-                for output_name in ["DONE", "BUSY", "ERROR"] + [
-                    output["name"].upper()
-                    for output in blocktype_infos["outputs"]]
-            ])
-
-            loc_dict = {
-                "ucase_blocktype": ucase_blocktype,
-                "blocktype": blocktype,
-                "blockname": blockname,
-                "location_str": location_str,
-                "extract_inputs": extract_inputs,
-                "return_outputs": return_outputs,
+            texts = {
+                "blocktype": blocktype_infos["blocktype"],
+                "ucase_blocktype": blocktype_infos["blocktype"].upper(),
+                "location": "_".join(map(str, current_location))
             }
+            texts["blockname"] = "%(ucase_blocktype)s_%(location)s" % texts
+            
+            inputs = [{"input_name": "POS", "input_value": str(self.GetSlavePos())},
+                      {"input_name": "EXECUTE", "input_value": "__GET_VAR(data__->EXECUTE)"}] +\
+                     [{"input_name": input["name"].upper(), 
+                       "input_value": "__GET_VAR(data__->%s)" % input["name"].upper()}
+                      for input in blocktype_infos["inputs"]]
+            input_texts = []
+            for input_infos in inputs:
+                input_infos.update(texts)
+                input_texts.append(BLOCK_INPUT_TEMPLATE % input_infos)
+            texts["extract_inputs"] = "\n".join(input_texts)
+            
+            outputs = [{"output_name": output} for output in ["DONE", "BUSY", "ERROR"]] + \
+                      [{"output_name": output["name"].upper()} for output in blocktype_infos["outputs"]]
+            output_texts = []
+            for output_infos in outputs:
+                output_infos.update(texts)
+                output_texts.append(BLOCK_OUTPUT_TEMPLATE % output_infos)
+            texts["return_outputs"] = "\n".join(output_texts)
+            
+            str_completion["fieldbus_interface_declaration"].append(
+                    BLOCK_FUNCTION_TEMPLATE % texts)
+            
+            str_completion["fieldbus_interface_definition"].append(
+                    BLOCK_FUNTION_DEFINITION_TEMPLATE % texts)
 
-            fieldbus_interface_declaration.append("""
-extern void ETHERLAB%(ucase_blocktype)s_body__(ETHERLAB%(ucase_blocktype)s* data__);
-void __%(blocktype)s_%(location_str)s(MC_%(ucase_blocktype)s *data__) {
-__DECLARE_GLOBAL_PROTOTYPE(ETHERLAB%(ucase_blocktype)s, %(blockname)s);
-ETHERLAB%(ucase_blocktype)s* %(blockname)s = __GET_GLOBAL_%(blockname)s();
-__SET_VAR(%(blockname)s->, POS,, AxsPub.axis->NetworkPosition);
-%(extract_inputs)s
-ETHERLAB%(ucase_blocktype)s_body__(%(blockname)s);
-%(return_outputs)s
-}""" % loc_dict)
-
-            fieldbus_interface_definition.append("""\
-        AxsPub.axis->__mcl_func_MC_%(blocktype)s = __%(blocktype)s_%(location_str)s;\
-""" % loc_dict)
-
-        # Get a copy list of default variables to map
         variables = NODE_VARIABLES[:]
 
-        # Set AxisRef public struct members value
-        node_params = self.CTNParams[1].getElementInfos(self.CTNParams[0])
-        for param in node_params["children"]:
-            param_name = param["name"]
+#HSAHN
+#2015. 7. 24 PDO Variable
+        #if PDO is not selected, use 1st PDO set
+        self.LoadPDOSelectData()
+        if not self.SelectedRxPDOIndex and not self.SelectedTxPDOIndex :
+            self.SelectedPDOIndex = self.LoadDefaultPDOSet()
+        else :
+            self.SelectedPDOIndex = self.SelectedRxPDOIndex + self.SelectedTxPDOIndex
 
-            # Param is optional variables section enable flag
-            extra_node_variable_infos = EXTRA_NODE_VARIABLES_DICT.get(param_name)
-            if extra_node_variable_infos is not None:
-                param_name = param_name.replace("Enable", "") + "Enabled"
+        add_idx = []
+        for i in range(len(ADD_NODE_VARIABLES)):
+            add_idx.append(ADD_NODE_VARIABLES[i]['index'])
 
-                if not param["value"]:
-                    continue
+        self.CommonMethod.RequestPDOInfo()
+        pdo_info = self.CommonMethod.GetRxPDOCategory() + self.CommonMethod.GetTxPDOCategory()
+        pdo_entry = self.CommonMethod.GetRxPDOInfo() + self.CommonMethod.GetTxPDOInfo()
+        list_index = 0
+        ModeOfOpFlag = False
+        ModeOfOpDisplayFlag = False
+        for i in range(len(pdo_info)):
+            #if pdo_index is in the SelectedPDOIndex: put the PDO mapping information intto the "used" object
+            if pdo_info[i]['pdo_index'] in self.SelectedPDOIndex:
+                used = pdo_entry[list_index:list_index + pdo_info[i]['number_of_entry']]
+                for used_data in used:
+                    # 24672 -> 0x6060, Mode of Operation
+                    if used_data['entry_index'] == 24672:
+                        ModeOfOpFlag = True
+                    # 24673 -> 0x6061, Mode of Operation Display
+                    elif used_data["entry_index"] == 24673:
+                        ModeOfOpDisplayFlag = True
 
-                # Optional variables section is enabled
-                for variable_infos in extra_node_variable_infos:
-                    var_name = variable_infos["description"][0]
+                    if used_data['entry_index'] in add_idx:
+                        idx = add_idx.index(used_data['entry_index'])
+                        adder = list([ADD_NODE_VARIABLES[idx]['name'], ADD_NODE_VARIABLES[idx]['index'], \
+                                     ADD_NODE_VARIABLES[idx]['sub-index'], ADD_NODE_VARIABLES[idx]['type'], \
+                                     ADD_NODE_VARIABLES[idx]['direction']])
+                        variables.append(adder)
+                        if ADD_NODE_VARIABLES[idx]['direction'] == "Q":                           
+                            parsed_string = ADD_NODE_VARIABLES[idx]['name'].replace("Target", "")
+                            # add jblee
+                            check_q_data = "    *(AxsPub.Target%s) = AxsPub.axis->Raw%sSetPoint;" %(parsed_string, parsed_string)
+                            if check_q_data not in str_completion["default_variables_publish"]:
+                                str_completion["default_variables_publish"].append(check_q_data)
+                        elif ADD_NODE_VARIABLES[idx]['direction'] == "I":
+                            parsed_string = ADD_NODE_VARIABLES[idx]['name'].replace("Actual", "")
+                            # add jblee
+                            check_i_data = "    AxsPub.axis->ActualRaw%s = *(AxsPub.Actual%s);" %(parsed_string, parsed_string)
+                            if check_i_data not in str_completion["default_variables_retrieve"]:
+                                str_completion["default_variables_retrieve"].append(check_i_data)
+            list_index += pdo_info[i]['number_of_entry']
+#HSAHN END
 
-                    # Add each variables defined in section description to the
-                    # list of variables to map
-                    variables.append(variable_infos["description"])
+        params = self.CTNParams[1].getElementInfos(self.CTNParams[0])
+        for param in params["children"]:
+            if param["name"] in EXTRA_NODE_VARIABLES_DICT:
+                if param["value"]:
+                    extra_variables = EXTRA_NODE_VARIABLES_DICT.get(param["name"])
+                    for variable_infos in extra_variables:
+                        var_infos = {
+                            "location": location_str,
+                            "name": variable_infos["description"][0]
+                        }
+                        variables.append(variable_infos["description"])
+                        retrieve_template = variable_infos.get("retrieve", DEFAULT_RETRIEVE)
+                        publish_template = variable_infos.get("publish", DEFAULT_PUBLISH)
+                        
+                        if retrieve_template is not None:
+                            str_completion["extra_variables_retrieve"].append(
+                                retrieve_template % var_infos)
+                        if publish_template is not None:
+                            str_completion["extra_variables_publish"].append(
+                                publish_template % var_infos)
 
-                    # Add code to publish or retrive variable
-                    coded = [
-                        ("retrieve",
-                         extra_variables_retrieve,
-                         "    AxsPub.axis->%(var_name)s = *(AxsPub.%(var_name)s);"),
-                        ("publish",
-                         extra_variables_publish,
-                         "    *(AxsPub.%(var_name)s) = AxsPub.axis->%(var_name)s;")
-                    ]
-                    for var_exchange_dir, _str_list, default_template in coded:
-                        template = variable_infos.get(var_exchange_dir, default_template)
-                        if template is not None:
-                            extra_variables_publish.append(template % locals())
-
-            # Set AxisRef public struct member value if defined
+            #elif param["value"] is not None:
             if param["value"] is not None:
-                param_value = ({True: "1", False: "0"}[param["value"]]
-                               if param["type"] == "boolean"
-                               else str(param["value"]))
+                param_infos = {
+                    "location": location_str,
+                    "param_name": param["name"],
+                }
+                if param["type"] == "boolean":
+                    param_infos["param_value"] = {True: "1", False: "0"}[param["value"]]
+                    param_infos["param_name"] = param["name"].replace("Enable", "") + "Enabled"
+                    if param["value"] == False:
+                        continue
+                else:
+                    param_infos["param_value"] = str(param["value"])
+                # param_name = param_name.replace("Enable", "") + "Enabled"
+                str_completion["init_axis_params"].append(
+                    "        __CIA402Node_%(location)s.axis->%(param_name)s = %(param_value)s;" % param_infos)
+        
+        check_variable = []
+        for variable in variables:
+            # add jblee
+            if variable in check_variable:
+                continue
 
-                init_axis_params.append("""\
-                AxsPub.axis->%(param_name)s = %(param_value)s;""" % {
-                    "param_value": param_value,
-                    "param_name": param_name,
-                })
+            var_infos = dict(zip(["name", "index", "subindex", "var_type", "dir"], variable))
+            var_infos["location"] = location_str
+            var_infos["var_size"] = self.GetSizeOfType(var_infos["var_type"])
+            var_infos["var_name"] = "__%(dir)s%(var_size)s%(location)s_%(index)d_%(subindex)d" % var_infos
 
-        # Add each variable in list of variables to map to master list of
-        # variables to add to network configuration
-        for name, index, subindex, var_type, dir in variables:
-            var_size = self.GetSizeOfType(var_type)
-            loc_dict = {
-                "var_size": var_size,
-                "var_type": var_type,
-                "name:": name,
-                "location_str": location_str,
-                "index": index,
-                "subindex": subindex,
-            }
-            var_name = """\
-__%(dir)s%(var_size)s%(location_str)s_%(index)d_%(subindex)d""" % loc_dict
-            loc_dict["var_name"] = var_name
+            # add jblee
+            if var_infos["index"] in [24672] and ModeOfOpFlag:
+                str_completion["modeofop_homing_method"].append(MODEOFOP_HOMING_METHOD_TEMPLATE)
+                str_completion["modeofop_computation_mode"].append(MODEOFOP_COMPUTATION_MODE_TEMPLATE)
 
-            extern_located_variables_declaration.append(
-                "IEC_%(var_type)s *%(var_name)s;" % loc_dict)
-            entry_variables.append(
-                "    IEC_%(var_type)s *%(name)s;" % loc_dict)
-            init_entry_variables.append(
-                "    AxsPub.%(name)s = %(var_name)s;" % loc_dict)
+            # add jblee
+            if var_infos["index"] in [24672, 24673] and (not ModeOfOpFlag or not ModeOfOpDisplayFlag):
+                continue
 
+            str_completion["extern_located_variables_declaration"].append(
+                    "IEC_%(var_type)s *%(var_name)s;" % var_infos)
+            str_completion["entry_variables"].append(
+                    "    IEC_%(var_type)s *%(name)s;" % var_infos)
+            str_completion["init_entry_variables"].append(
+                    "    __CIA402Node_%(location)s.%(name)s = %(var_name)s;" % var_infos)
+            
             self.CTNParent.FileGenerator.DeclareVariable(
-                slave_pos, index, subindex, var_type, dir, var_name)
+                    self.GetSlavePos(), var_infos["index"], var_infos["subindex"], 
+                    var_infos["var_type"], var_infos["dir"], var_infos["var_name"])
 
-        # Add newline between string in list of generated strings for sections
-        [fieldbus_interface_declaration, fieldbus_interface_definition,
-         init_axis_params, extra_variables_retrieve, extra_variables_publish,
-         extern_located_variables_declaration, entry_variables,
-         init_entry_variables] = map("\n".join, [
-             fieldbus_interface_declaration, fieldbus_interface_definition,
-             init_axis_params, extra_variables_retrieve, extra_variables_publish,
-             extern_located_variables_declaration, entry_variables,
-             init_entry_variables])
-
-        # Write generated content to CIA402 node file
-        Gen_CIA402Nodefile_path = os.path.join(buildpath,
-                                               "cia402node_%s.c" % location_str)
+            # add jblee
+            check_variable.append(variable)
+        
+        for element in ["extern_located_variables_declaration", 
+                        "fieldbus_interface_declaration",
+                        "fieldbus_interface_definition",
+                        "entry_variables", 
+                        "init_axis_params", 
+                        "init_entry_variables",
+                        "default_variables_retrieve",
+                        "default_variables_publish",
+                        "extra_variables_retrieve",
+                        "extra_variables_publish",
+                        "modeofop_homing_method",
+                        "modeofop_computation_mode"]:
+            str_completion[element] = "\n".join(str_completion[element])
+        
+        Gen_CIA402Nodefile_path = os.path.join(buildpath, "cia402node_%s.c"%location_str)
         cia402nodefile = open(Gen_CIA402Nodefile_path, 'w')
-        cia402nodefile.write(plc_cia402node_code % locals())
+        cia402nodefile.write(plc_cia402node_code % str_completion)
         cia402nodefile.close()
 
         return [(Gen_CIA402Nodefile_path, '"-I%s"' % os.path.abspath(self.GetCTRoot().GetIECLibPath()))], "", True

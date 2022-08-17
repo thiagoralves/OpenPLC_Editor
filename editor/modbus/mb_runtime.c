@@ -25,6 +25,10 @@
 
 #include <stdio.h>
 #include <string.h>  /* required for memcpy() */
+#include <errno.h>
+#include <time.h>
+#include <signal.h>
+#include <unistd.h>  /* required for pause() */
 #include "mb_slave_and_master.h"
 #include "MB_%(locstr)s.h"
 
@@ -58,7 +62,7 @@ static int __execute_mb_request(int request_id){
 					(int) client_requests[request_id].count,
 					client_nodes[client_requests[request_id].client_node_id].mb_nd,
 					client_requests[request_id].retries,
-					&(client_requests[request_id].error_code),
+					&(client_requests[request_id].mb_error_code),
 					&(client_requests[request_id].resp_timeout),
 					&(client_requests[request_id].coms_buf_mutex));
 
@@ -70,7 +74,7 @@ static int __execute_mb_request(int request_id){
 					(int) client_requests[request_id].count,
 					client_nodes[client_requests[request_id].client_node_id].mb_nd,
 					client_requests[request_id].retries,
-					&(client_requests[request_id].error_code),
+					&(client_requests[request_id].mb_error_code),
 					&(client_requests[request_id].resp_timeout),
 					&(client_requests[request_id].coms_buf_mutex));
 
@@ -82,7 +86,7 @@ static int __execute_mb_request(int request_id){
 					(int) client_requests[request_id].count,
 					client_nodes[client_requests[request_id].client_node_id].mb_nd,
 					client_requests[request_id].retries,
-					&(client_requests[request_id].error_code),
+					&(client_requests[request_id].mb_error_code),
 					&(client_requests[request_id].resp_timeout),
 					&(client_requests[request_id].coms_buf_mutex));
 	
@@ -94,7 +98,7 @@ static int __execute_mb_request(int request_id){
 					(int) client_requests[request_id].count,
 					client_nodes[client_requests[request_id].client_node_id].mb_nd,
 					client_requests[request_id].retries,
-					&(client_requests[request_id].error_code),
+					&(client_requests[request_id].mb_error_code),
 					&(client_requests[request_id].resp_timeout),
 					&(client_requests[request_id].coms_buf_mutex));
 
@@ -104,7 +108,7 @@ static int __execute_mb_request(int request_id){
 					client_requests[request_id].coms_buffer[0],
 					client_nodes[client_requests[request_id].client_node_id].mb_nd,
 					client_requests[request_id].retries,
-					&(client_requests[request_id].error_code),
+					&(client_requests[request_id].mb_error_code),
 					&(client_requests[request_id].resp_timeout),
 					&(client_requests[request_id].coms_buf_mutex));
 
@@ -114,7 +118,7 @@ static int __execute_mb_request(int request_id){
 					client_requests[request_id].coms_buffer[0],
 					client_nodes[client_requests[request_id].client_node_id].mb_nd,
 					client_requests[request_id].retries,
-					&(client_requests[request_id].error_code),
+					&(client_requests[request_id].mb_error_code),
 					&(client_requests[request_id].resp_timeout),
 					&(client_requests[request_id].coms_buf_mutex));
 
@@ -134,7 +138,7 @@ static int __execute_mb_request(int request_id){
 					 client_requests[request_id].coms_buffer,
 					 client_nodes[client_requests[request_id].client_node_id].mb_nd,
 					 client_requests[request_id].retries,
-					 &(client_requests[request_id].error_code),
+					 &(client_requests[request_id].mb_error_code),
 					 &(client_requests[request_id].resp_timeout),
 					 &(client_requests[request_id].coms_buf_mutex));
 
@@ -145,7 +149,7 @@ static int __execute_mb_request(int request_id){
 					client_requests[request_id].coms_buffer,
 					client_nodes[client_requests[request_id].client_node_id].mb_nd,
 					client_requests[request_id].retries,
-					&(client_requests[request_id].error_code),
+					&(client_requests[request_id].mb_error_code),
 					&(client_requests[request_id].resp_timeout),
 					&(client_requests[request_id].coms_buf_mutex));
 	
@@ -196,12 +200,42 @@ static inline int __unpack_bits(u16 *unpacked_data, u16 start_addr, u16 bit_coun
 }
 
 
-static int __read_inbits   (void *mem_map, u16 start_addr, u16 bit_count, u8  *data_bytes)
-  {return   __pack_bits(((server_mem_t *)mem_map)->ro_bits, start_addr, bit_count, data_bytes);}
-static int __read_outbits  (void *mem_map, u16 start_addr, u16 bit_count, u8  *data_bytes)
-  {return   __pack_bits(((server_mem_t *)mem_map)->rw_bits, start_addr, bit_count, data_bytes);}
-static int __write_outbits (void *mem_map, u16 start_addr, u16 bit_count, u8  *data_bytes)
-  {return __unpack_bits(((server_mem_t *)mem_map)->rw_bits, start_addr, bit_count, data_bytes); }
+static int __read_inbits   (void *mem_map, u16 start_addr, u16 bit_count, u8  *data_bytes) {
+  int res = __pack_bits(((server_mem_t *)mem_map)->ro_bits, start_addr, bit_count, data_bytes);
+  
+  if (res >= 0) {
+    /* update the flag and counter of Modbus requests we have processed. */
+    ((server_mem_t *)mem_map)->flag_read_req_counter++;
+    ((server_mem_t *)mem_map)->flag_read_req_flag = 1;
+  }
+
+  return res;
+}
+
+static int __read_outbits  (void *mem_map, u16 start_addr, u16 bit_count, u8  *data_bytes) {
+  int res = __pack_bits(((server_mem_t *)mem_map)->rw_bits, start_addr, bit_count, data_bytes);
+  
+  if (res >= 0) {
+    /* update the flag and counter of Modbus requests we have processed. */
+    ((server_mem_t *)mem_map)->flag_read_req_counter++;
+    ((server_mem_t *)mem_map)->flag_read_req_flag = 1;
+  }
+
+  return res;
+}
+
+static int __write_outbits (void *mem_map, u16 start_addr, u16 bit_count, u8  *data_bytes) {
+  int res = __unpack_bits(((server_mem_t *)mem_map)->rw_bits, start_addr, bit_count, data_bytes);
+  
+  if (res >= 0) {
+    /* update the flag and counter of Modbus requests we have processed. */
+    ((server_mem_t *)mem_map)->flag_write_req_counter++;
+    ((server_mem_t *)mem_map)->flag_write_req_flag = 1;
+  }
+
+  return res;
+}
+
 
 
 
@@ -209,6 +243,10 @@ static int __read_inwords  (void *mem_map, u16 start_addr, u16 word_count, u16 *
 
   if ((start_addr + word_count) > MEM_AREA_SIZE)
     return -ERR_ILLEGAL_DATA_ADDRESS; /* ERR_ILLEGAL_DATA_ADDRESS defined in mb_util.h */
+
+  /* update the flag and counter of Modbus requests we have processed. */
+  ((server_mem_t *)mem_map)->flag_read_req_counter++;
+  ((server_mem_t *)mem_map)->flag_read_req_flag = 1;
 
   /* use memcpy() because loop with pointers (u16 *) caused alignment problems */
   memcpy(/* dest */ (void *)data_words,
@@ -224,6 +262,10 @@ static int __read_outwords (void *mem_map, u16 start_addr, u16 word_count, u16 *
   if ((start_addr + word_count) > MEM_AREA_SIZE)
     return -ERR_ILLEGAL_DATA_ADDRESS; /* ERR_ILLEGAL_DATA_ADDRESS defined in mb_util.h */
 
+  /* update the flag and counter of Modbus requests we have processed. */
+  ((server_mem_t *)mem_map)->flag_read_req_counter++;
+  ((server_mem_t *)mem_map)->flag_read_req_flag = 1;
+
   /* use memcpy() because loop with pointers (u16 *) caused alignment problems */
   memcpy(/* dest */ (void *)data_words,
          /* src  */ (void *)&(((server_mem_t *)mem_map)->rw_words[start_addr]),
@@ -238,6 +280,10 @@ static int __write_outwords(void *mem_map, u16 start_addr, u16 word_count, u16 *
 
   if ((start_addr + word_count) > MEM_AREA_SIZE)
     return -ERR_ILLEGAL_DATA_ADDRESS; /* ERR_ILLEGAL_DATA_ADDRESS defined in mb_util.h */
+
+  /* update the flag and counter of Modbus requests we have processed. */
+  ((server_mem_t *)mem_map)->flag_write_req_counter++;
+  ((server_mem_t *)mem_map)->flag_write_req_flag = 1;
 
   /* WARNING: The data returned in the data_words[] array is not guaranteed to be 16 bit aligned.
    *           It is not therefore safe to cast it to an u16 data type.
@@ -292,57 +338,95 @@ static void *__mb_server_thread(void *_server_node)  {
 
 static void *__mb_client_thread(void *_index)  {
 	int client_node_id = (char *)_index - (char *)NULL; // Use pointer arithmetic (more portable than cast)
-	struct timespec next_cycle;
-	int period_sec  =  client_nodes[client_node_id].comm_period / 1000;          /* comm_period is in ms */
-	int period_nsec = (client_nodes[client_node_id].comm_period %%1000)*1000000; /* comm_period is in ms */
 
 	// Enable thread cancelation. Enabled is default, but set it anyway to be safe.
 	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
 	
-	// get the current time
-	clock_gettime(CLOCK_MONOTONIC, &next_cycle);
+    /* loop the communication with the client
+     * 
+         * When the client thread has difficulty communicating with remote client and/or server (network issues, for example),
+         * then the communications get delayed and we will fall behind in the period. 
+         * 
+         * This is OK. Note that if the condition variable were to be signaled multiple times while the client thread is inside the same
+         * Modbus transaction, then all those signals would be ignored.
+         * However, and since we keep the mutex locked during the communication cycle, it is not possible to signal the condition variable
+         * during that time (it is only possible while the thread is blocked during the call to pthread_cond_wait().
+         * 
+         * This means that when network issues eventually get resolved, we will NOT have a bunch of delayed activations to handle
+         * in quick succession (which would goble up CPU time). 
+         * 
+         * Notice that the above property is valid whether the communication cycle is run with the mutex locked, or unlocked.
+         * Since it makes it easier to implement the correct semantics for the other activation methods if the communication cycle
+         * is run with the mutex locked, then that is what we do.
+         * 
+     * Note that during all the communication cycle we will keep locked the mutex 
+     * (i.e. the mutex used together with the condition variable that will activate a new communication cycle)
+     * 
+     * Note that we never get to explicitly unlock this mutex. It will only be unlocked by the pthread_cond_wait()
+     * call at the end of the cycle.
+     */
+    pthread_mutex_lock(&(client_nodes[client_node_id].mutex));
 
-	// loop the communication with the client
 	while (1) {
 		/*
 		struct timespec cur_time;
 		clock_gettime(CLOCK_MONOTONIC, &cur_time);
-		fprintf(stderr, "Modbus client thread - new cycle (%%ld:%%ld)!\n", cur_time.tv_sec, cur_time.tv_nsec);
+		fprintf(stderr, "Modbus client thread (%%d) - new cycle (%%ld:%%ld)!\n", client_node_id, cur_time.tv_sec, cur_time.tv_nsec);
 		*/
 		int req;
 		for (req=0; req < NUMBER_OF_CLIENT_REQTS; req ++){
-			/*just do the requests belonging to the client */
+			/* just do the requests belonging to the client */
 			if (client_requests[req].client_node_id != client_node_id)
 				continue;
+            
+            /* only do the request if:
+             *   - this request was explictly asked to be executed by the client program
+             *  OR
+             *   - the client thread was activated periodically
+             *     (in which case we execute all the requests belonging to the client node)
+             */
+            if ((client_requests[req].flag_exec_req == 0) && (client_nodes[client_requests[req].client_node_id].periodic_act == 0))
+                continue;
+            
+            /*
+            fprintf(stderr, "Modbus client thread (%%d): RUNNING Modbus request %%d  (periodic = %%d  flag_exec_req = %%d)\n", 
+                    client_node_id, req, client_nodes[client_requests[req].client_node_id].periodic_act, client_requests[req].flag_exec_req );
+            */
+            
 			int res_tmp = __execute_mb_request(req);
+			client_requests[req].tn_error_code = 0; // assume success
 			switch (res_tmp) {
 			  case PORT_FAILURE: {
 				if (res_tmp != client_nodes[client_node_id].prev_error)
 					fprintf(stderr, "Modbus plugin: Error connecting Modbus client %%s to remote server.\n", client_nodes[client_node_id].location);
 				client_nodes[client_node_id].prev_error = res_tmp;
+				client_requests[req].tn_error_code = 1; // error accessing IP network, or serial interface
 				break;
 			  }
 			  case INVALID_FRAME: {
 				if ((res_tmp != client_requests[req].prev_error) && (0 == client_nodes[client_node_id].prev_error))
 					fprintf(stderr, "Modbus plugin: Modbus client request configured at location %%s was unsuccesful. Server/slave returned an invalid/corrupted frame.\n", client_requests[req].location);
 				client_requests[req].prev_error = res_tmp;
+				client_requests[req].tn_error_code = 2; // reply received from server was an invalid frame
 				break;
 			  }
 			  case TIMEOUT: {
 				if ((res_tmp != client_requests[req].prev_error) && (0 == client_nodes[client_node_id].prev_error))
 					fprintf(stderr, "Modbus plugin: Modbus client request configured at location %%s timed out waiting for reply from server.\n", client_requests[req].location);
 				client_requests[req].prev_error = res_tmp;
+				client_requests[req].tn_error_code = 3; // server did not reply before timeout expired
 				break;
 			  }
 			  case MODBUS_ERROR: {
-				if (client_requests[req].prev_error != client_requests[req].error_code) {
-					fprintf(stderr, "Modbus plugin: Modbus client request configured at location %%s was unsuccesful. Server/slave returned error code 0x%%2x", client_requests[req].location, client_requests[req].error_code);
-					if (client_requests[req].error_code <= MAX_MODBUS_ERROR_CODE ) {
-						fprintf(stderr, "(%%s)", modbus_error_messages[client_requests[req].error_code]);
+				if (client_requests[req].prev_error != client_requests[req].mb_error_code) {
+					fprintf(stderr, "Modbus plugin: Modbus client request configured at location %%s was unsuccesful. Server/slave returned error code 0x%%2x", client_requests[req].location, client_requests[req].mb_error_code);
+					if (client_requests[req].mb_error_code <= MAX_MODBUS_ERROR_CODE ) {
+						fprintf(stderr, "(%%s)", modbus_error_messages[client_requests[req].mb_error_code]);
 						fprintf(stderr, ".\n");
 					}
 				}
-				client_requests[req].prev_error = client_requests[req].error_code;
+				client_requests[req].prev_error = client_requests[req].mb_error_code;
+				client_requests[req].tn_error_code = 4; // server returned a valid Modbus error frame
 				break;
 			  }
 			  default: {
@@ -357,36 +441,47 @@ static void *__mb_client_thread(void *_index)  {
 				break;
 			  }
 			}
-		}
-		// Determine absolute time instant for starting the next cycle
-		struct timespec prev_cycle, now;
-		prev_cycle = next_cycle;
-		timespec_add(next_cycle, period_sec, period_nsec);
-		/* NOTE A:
-		 * When we have difficulty communicating with remote client and/or server, then the communications get delayed and we will
-		 * fall behind in the period. This means that when communication is re-established we may end up running this loop continuously
-		 * for some time until we catch up.
-		 * This is undesirable, so we detect it by making sure the next_cycle will start in the future.
-		 * When this happens we will switch from a purely periodic task _activation_ sequence, to a fixed task suspension interval.
-		 * 
-		 * NOTE B:
-		 * It probably does not make sense to check for overflow of timer - so we don't do it for now!
-		 * Even in 32 bit systems this will take at least 68 years since the computer booted
-		 * (remember, we are using CLOCK_MONOTONIC, which should start counting from 0
-		 * every time the system boots). On 64 bit systems, it will take over 
-		 * 10^11 years to overflow.
-		 */
-		clock_gettime(CLOCK_MONOTONIC, &now);
-		if (  ((now.tv_sec > next_cycle.tv_sec) || ((now.tv_sec == next_cycle.tv_sec) && (now.tv_nsec > next_cycle.tv_nsec)))
-		   /* We are falling behind. See NOTE A above */
-		   || (next_cycle.tv_sec < prev_cycle.tv_sec)
-		   /* Timer overflow. See NOTE B above */
-		   ) {
-			next_cycle = now;
-			timespec_add(next_cycle, period_sec, period_nsec);
-		}
 
-		clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &next_cycle, NULL);
+			/* Set the flag_tn_error_code and flag_mb_error_code that are mapped onto
+             * located BYTE variables, so the user program
+             * knows how the communication is going.
+             */
+            client_requests[req].flag_mb_error_code = client_requests[req].mb_error_code;
+            client_requests[req].flag_tn_error_code = client_requests[req].tn_error_code;
+            
+            /* We have just finished excuting a client transcation request.
+             * If the current cycle was activated by user request we reset the flag used to ask to run it
+             */
+            if (0 != client_requests[req].flag_exec_req) {
+                client_requests[req].flag_exec_req     = 0;
+                client_requests[req].flag_exec_started = 0;   
+            }
+            
+            //fprintf(stderr, "Modbus plugin: RUNNING<---> of Modbus request %%d  (periodic = %%d  flag_exec_req = %%d)\n", 
+            //        req, client_nodes[client_requests[req].client_node_id].periodic_act, client_requests[req].flag_exec_req );
+        }
+
+        // Wait for signal (from timer or explicit request from user program) before starting the next cycle
+        {
+            // No need to lock the mutex. Is is already locked just before the while(1) loop.
+            // Read the comment there to understand why.
+            // pthread_mutex_lock(&(client_nodes[client_node_id].mutex));
+            
+            /* the client thread has just finished a cycle, so all the flags used to signal an activation
+             * and specify the activation source (periodic, user request, ...)
+             * get reset here, before waiting for a new activation.
+             */
+            client_nodes[client_node_id].periodic_act = 0;            
+            client_nodes[client_node_id].execute_req  = 0;
+            
+            while (client_nodes[client_node_id].execute_req == 0)
+                pthread_cond_wait(&(client_nodes[client_node_id].condv),
+                                &(client_nodes[client_node_id].mutex)); 
+                            
+            // We run the communication cycle with the mutex locked.
+            // Read the comment just above the while(1) to understand why.
+            // pthread_mutex_unlock(&(client_nodes[client_node_id].mutex));
+        }
 	}
 
 	// humour the compiler.
@@ -394,18 +489,119 @@ static void *__mb_client_thread(void *_index)  {
 }
 
 
+
+
+
+/* Thread that simply implements a periodic 'timer',
+ *  i.e. periodically sends signal to the  thread running __mb_client_thread()
+ * 
+ * Note that we do not use a posix timer (timer_create() ) because there doesn't seem to be a way
+ * of having the timer notify the thread that is portable across Xenomai and POSIX.
+ * - SIGEV_THREAD    : not supported by Xenomai
+ * - SIGEV_THREAD_ID : Linux specific (i.e. non POSIX)
+ *                     Even so, I did not get it to work under Linux (issues with the header files)
+ * - SIGEV_SIGNAL    : Will not work, as signal is sent to random thread in process!
+ */
+static void *__mb_client_timer_thread(void *_index) {
+	int client_node_id = (char *)_index - (char *)NULL; // Use pointer arithmetic (more portable than cast)
+	struct timespec next_cycle;
+
+	int period_sec  =  client_nodes[client_node_id].comm_period / 1000;          /* comm_period is in ms */
+	int period_nsec = (client_nodes[client_node_id].comm_period %%1000)*1000000; /* comm_period is in ms */
+
+	// Enable thread cancelation. Enabled is default, but set it anyway to be safe.
+	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
+    
+    if (client_nodes[client_node_id].comm_period <= 0) {
+        // No periodic activation required => nothing to do! 
+        while (1) pause(); // wait to be canceled when program terminates (shutdown() is called)
+        return NULL;  // not really necessary, just makes it easier to understand the code.
+    }
+
+	// get the current time
+	clock_gettime(CLOCK_MONOTONIC, &next_cycle);
+
+    while(1) {
+        // Determine absolute time instant for starting the next cycle
+        struct timespec prev_cycle, now;
+        prev_cycle = next_cycle;
+        timespec_add(next_cycle, period_sec, period_nsec);
+                
+        /* NOTE:
+         * It is probably un-necessary to check for overflow of timer!
+         * Even in 32 bit systems this will take at least 68 years since the computer booted
+         * (remember, we are using CLOCK_MONOTONIC, which should start counting from 0
+         * every time the system boots). On 64 bit systems, it will take over 
+         * 10^11 years to overflow.
+         */
+        clock_gettime(CLOCK_MONOTONIC, &now);
+        if (next_cycle.tv_sec < prev_cycle.tv_sec) {
+           /* Timer overflow. See NOTE B above */
+            next_cycle = now;
+            timespec_add(next_cycle, period_sec, period_nsec);
+        }
+        
+        while (0 != clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &next_cycle, NULL));
+        
+        /* signal the client node's condition variable on which the client node's thread should be waiting... */
+        /* Since the communication cycle is run with the mutex locked, we use trylock() instead of lock() */
+        if (pthread_mutex_trylock (&(client_nodes[client_node_id].mutex)) == 0) {
+            client_nodes[client_node_id].execute_req  = 1; // tell the thread to execute
+            client_nodes[client_node_id].periodic_act = 1; // tell the thread the activation was done by periodic timer   
+            pthread_cond_signal (&(client_nodes[client_node_id].condv));
+            pthread_mutex_unlock(&(client_nodes[client_node_id].mutex));
+        } else {
+            /* We never get to signal the thread for activation. But that is OK.
+             * If it still in the communication cycle (during which the mutex is kept locked)
+             * then that means that the communication cycle is falling behing in the periodic 
+             * communication cycle, and we therefore need to skip a period.
+             */
+        }
+    }
+
+    return NULL; // humour the compiler -> will never be executed!
+}
+
+
 int __cleanup_%(locstr)s ();
 int __init_%(locstr)s (int argc, char **argv){
 	int index;
 
-	for (index=0; index < NUMBER_OF_CLIENT_NODES;index++)
+	for (index=0; index < NUMBER_OF_CLIENT_NODES;index++) {
 		client_nodes[index].mb_nd = -1;
-	for (index=0; index < NUMBER_OF_SERVER_NODES;index++)
+        /* see comment in mb_runtime.h to understad why we need to initialize these entries */
+        switch (client_nodes[index].node_address.naf) {
+            case naf_tcp:
+                client_nodes[index].node_address.addr.tcp.host    = client_nodes[index].str1;
+                client_nodes[index].node_address.addr.tcp.service = client_nodes[index].str2;
+                break;
+            case naf_rtu:
+                client_nodes[index].node_address.addr.rtu.device  = client_nodes[index].str1;
+                break;
+        }
+    }
+
+	for (index=0; index < NUMBER_OF_SERVER_NODES;index++) {
 		// mb_nd with negative numbers indicate how far it has been initialised (or not)
 		//   -2  --> no modbus node created;  no thread  created
 		//   -1  -->    modbus node created!; no thread  created
 		//  >=0  -->    modbus node created!;    thread  created!
 		server_nodes[index].mb_nd = -2; 
+		server_nodes[index].mem_area.flag_write_req_flag    = 0; 
+		server_nodes[index].mem_area.flag_write_req_counter = 0; 
+		server_nodes[index].mem_area.flag_read_req_counter  = 0; 
+		server_nodes[index].mem_area.flag_read_req_flag     = 0; 
+        /* see comment in mb_runtime.h to understad why we need to initialize these entries */
+        switch (server_nodes[index].node_address.naf) {
+            case naf_tcp:
+                server_nodes[index].node_address.addr.tcp.host    = server_nodes[index].str1;
+                server_nodes[index].node_address.addr.tcp.service = server_nodes[index].str2;
+                break;
+            case naf_rtu:
+                server_nodes[index].node_address.addr.rtu.device  = server_nodes[index].str1;
+                break;
+        }
+	}
 
 	/* modbus library init */
 	/* Note that TOTAL_xxxNODE_COUNT are the nodes required by _ALL_ the instances of the modbus
@@ -421,9 +617,14 @@ int __init_%(locstr)s (int argc, char **argv){
 		return -1;
 	}
 	
-	/* init the mutex for each client request */
+	/* init each client request */
 	/* Must be done _before_ launching the client threads!! */
 	for (index=0; index < NUMBER_OF_CLIENT_REQTS; index ++){
+        /* make sure flags connected to user program MB transaction start request are all reset */
+        client_requests[index].flag_exec_req     = 0;
+        client_requests[index].flag_exec_started = 0;        
+        /* init the mutex for each client request */
+        /* Must be done _before_ launching the client threads!! */
 		if (pthread_mutex_init(&(client_requests[index].coms_buf_mutex), NULL)) {
 			fprintf(stderr, "Modbus plugin: Error initializing request for modbus client node %%s\n", client_nodes[client_requests[index].client_node_id].location);
 			goto error_exit;
@@ -443,6 +644,36 @@ int __init_%(locstr)s (int argc, char **argv){
 		}
 		client_nodes[index].init_state = 1; // we have created the node 
 		
+		/* initialize the mutex variable that will be used by the thread handling the client node */
+        bzero(&(client_nodes[index].mutex), sizeof(pthread_mutex_t));
+        if (pthread_mutex_init(&(client_nodes[index].mutex), NULL) < 0) {
+			fprintf(stderr, "Modbus plugin: Error creating mutex for modbus client node %%s\n", client_nodes[index].location);
+			goto error_exit;                
+        }
+		client_nodes[index].init_state = 2; // we have created the mutex
+		
+		/* initialize the condition variable that will be used by the thread handling the client node */
+        bzero(&(client_nodes[index].condv), sizeof(pthread_cond_t));
+        if (pthread_cond_init(&(client_nodes[index].condv), NULL) < 0) {
+			fprintf(stderr, "Modbus plugin: Error creating condition variable for modbus client node %%s\n", client_nodes[index].location);
+			goto error_exit;                
+        }
+        client_nodes[index].execute_req = 0; //variable associated with condition variable
+		client_nodes[index].init_state = 3; // we have created the condition variable
+		
+		/* launch a thread to handle this client node timer */
+		{
+			int res = 0;
+			pthread_attr_t attr;
+			res |= pthread_attr_init(&attr);
+			res |= pthread_create(&(client_nodes[index].timer_thread_id), &attr, &__mb_client_timer_thread, (void *)((char *)NULL + index));
+			if (res !=  0) {
+				fprintf(stderr, "Modbus plugin: Error starting timer thread for modbus client node %%s\n", client_nodes[index].location);
+				goto error_exit;
+			}
+		}
+        client_nodes[index].init_state = 4; // we have created the timer
+
 		/* launch a thread to handle this client node */
 		{
 			int res = 0;
@@ -450,11 +681,11 @@ int __init_%(locstr)s (int argc, char **argv){
 			res |= pthread_attr_init(&attr);
 			res |= pthread_create(&(client_nodes[index].thread_id), &attr, &__mb_client_thread, (void *)((char *)NULL + index));
 			if (res !=  0) {
-				fprintf(stderr, "Modbus plugin: Error starting modbus client thread for node %%s\n", client_nodes[index].location);
+				fprintf(stderr, "Modbus plugin: Error starting thread for modbus client node %%s\n", client_nodes[index].location);
 				goto error_exit;
 			}
 		}
-		client_nodes[index].init_state = 2; // we have created the node and a thread
+		client_nodes[index].init_state = 5; // we have created the thread
 	}
 
 	/* init each local server */
@@ -499,9 +730,26 @@ void __publish_%(locstr)s (){
 	int index;
 
 	for (index=0; index < NUMBER_OF_CLIENT_REQTS; index ++){
-		/*just do the output requests */
+		/* synchronize the PLC and MB buffers only for the output requests */
 		if (client_requests[index].req_type == req_output){
+            
+            // lock the mutex brefore copying the data
 			if(pthread_mutex_trylock(&(client_requests[index].coms_buf_mutex)) == 0){
+                
+                // Check if user configured this MB request to be activated whenever the data to be written changes
+                if (client_requests[index].write_on_change) {
+                    // Let's check if the data did change...
+                    // compare the data in plcv_buffer to coms_buffer
+                    int res;
+                    res = memcmp((void *)client_requests[index].coms_buffer /* buf 1 */,
+                                 (void *)client_requests[index].plcv_buffer /* buf 2*/,
+                                 REQ_BUF_SIZE * sizeof(u16) /* size in bytes */);
+                    
+                    // if data changed, activate execution request 
+                    if (0 != res)
+                        client_requests[index].flag_exec_req = 1;
+                }
+                
                 // copy from plcv_buffer to coms_buffer
                 memcpy((void *)client_requests[index].coms_buffer /* destination */,
                        (void *)client_requests[index].plcv_buffer /* source */,
@@ -509,7 +757,46 @@ void __publish_%(locstr)s (){
                 pthread_mutex_unlock(&(client_requests[index].coms_buf_mutex));
             }
 		}
-	}
+        /* if the user program set the execution request flag, then activate the thread
+         *  that handles this Modbus client transaction so it gets a chance to be executed
+         *  (but don't activate the thread if it has already been activated!)
+         * 
+         * NOTE that we do this, for both the IN and OUT mapped location, under this
+         *  __publish_() function. The scan cycle of the PLC works as follows:
+         *   - call __retrieve_()
+         *   - execute user programs
+         *   - call __publish_()
+         *   - insert <delay> until time to start next periodic/cyclic scan cycle
+         * 
+         *  In an attempt to be able to run the MB transactions during the <delay>
+         *  interval in which not much is going on, we handle the user program
+         *  requests to execute a specific MB transaction in this __publish_()
+         *  function.
+         */
+        if ((client_requests[index].flag_exec_req != 0) && (0 == client_requests[index].flag_exec_started)) {
+            int client_node_id = client_requests[index].client_node_id;
+            
+             /* We TRY to signal the client thread.
+              * We do this because this function can be called at the end of the PLC scan cycle
+              * and we don't want it to block at that time.
+              */
+             if (pthread_mutex_trylock(&(client_nodes[client_node_id].mutex)) == 0) {
+                 client_nodes[client_node_id].execute_req = 1; // tell the thread to execute
+                 pthread_cond_signal (&(client_nodes[client_node_id].condv));
+                 pthread_mutex_unlock(&(client_nodes[client_node_id].mutex));
+                 /* - upon success, set flag_exec_started
+                  * - both flags (flag_exec_req and flag_exec_started) will be reset
+                  *   once the transaction has completed.
+                  */
+                 client_requests[index].flag_exec_started = 1;    
+             } else {
+                 /* The mutex is locked => the client thread is currently executing MB transactions.
+                  * We will try to activate it in the next PLC cycle...
+                  * For now, do nothing.
+                  */
+             }
+        }                    
+    }
 }
 
 
@@ -544,12 +831,41 @@ int __cleanup_%(locstr)s (){
 	/* kill thread and close connections of each modbus client node */
 	for (index=0; index < NUMBER_OF_CLIENT_NODES; index++) {
 		close = 0;
-		if (client_nodes[index].init_state >= 2) {
+		if (client_nodes[index].init_state >= 5) {
 			// thread was launched, so we try to cancel it!
 			close  = pthread_cancel(client_nodes[index].thread_id);
 			close |= pthread_join  (client_nodes[index].thread_id, NULL);
 			if (close < 0)
-				fprintf(stderr, "Modbus plugin: Error closing thread for modbus client %%s\n", client_nodes[index].location);
+				fprintf(stderr, "Modbus plugin: Error closing thread for modbus client node %%s\n", client_nodes[index].location);
+		}
+		res |= close;
+
+		close = 0;
+		if (client_nodes[index].init_state >= 4) {
+			// timer thread was launched, so we try to cancel it!
+			close  = pthread_cancel(client_nodes[index].timer_thread_id);
+			close |= pthread_join  (client_nodes[index].timer_thread_id, NULL);
+			if (close < 0)
+				fprintf(stderr, "Modbus plugin: Error closing timer thread for modbus client node %%s\n", client_nodes[index].location);
+
+		}
+		res |= close;
+
+		close = 0;
+		if (client_nodes[index].init_state >= 3) {
+			// condition variable was created, so we try to destroy it!
+			close  = pthread_cond_destroy(&(client_nodes[index].condv));
+			if (close < 0)
+				fprintf(stderr, "Modbus plugin: Error destroying condition variable for modbus client node %%s\n", client_nodes[index].location);
+		}
+		res |= close;
+
+		close = 0;
+		if (client_nodes[index].init_state >= 2) {
+			// mutex was created, so we try to destroy it!
+			close  = pthread_mutex_destroy(&(client_nodes[index].mutex));
+			if (close < 0)
+				fprintf(stderr, "Modbus plugin: Error destroying mutex for modbus client node %%s\n", client_nodes[index].location);
 		}
 		res |= close;
 
@@ -567,6 +883,7 @@ int __cleanup_%(locstr)s (){
 		client_nodes[index].init_state = 0;
 	}
 	
+//fprintf(stderr, "Modbus plugin: __cleanup_%%s()  5  close=%%d   res=%%d\n", client_nodes[index].location, close, res);
 	/* kill thread and close connections of each modbus server node */
 	for (index=0; index < NUMBER_OF_SERVER_NODES; index++) {
 		close = 0;
@@ -611,4 +928,123 @@ int __cleanup_%(locstr)s (){
 
 	return res;
 }
+
+
+
+
+
+/**********************************************/
+/** Functions for Beremiz web interface.     **/
+/**********************************************/
+
+/*
+ * Beremiz has a program to run on the PLC (Beremiz_service.py)
+ * to handle downloading of compiled programs, start/stop of PLC, etc.
+ * (see runtime/PLCObject.py for start/stop, loading, ...)
+ * 
+ * This service also includes a web server to access PLC state (start/stop)
+ * and to change some basic confiuration parameters.
+ * (see runtime/NevowServer.py for the web server)
+ * 
+ * The web server allows for extensions, where additional configuration
+ * parameters may be changed on the running/downloaded PLC.
+ * Modbus plugin also comes with an extension to the web server, through
+ * which the basic Modbus plugin configuration parameters may be changed
+ * 
+ * These parameters are changed _after_ the code (.so file) is loaded into 
+ * memmory. These changes may be applied before (or after) the code starts
+ * running (i.e. before or after __init_() ets called)! 
+ * 
+ * The following functions are never called from other C code. They are 
+ * called instead from the python code in runtime/Modbus_config.py, that
+ * implements the web server extension for configuring Modbus parameters.
+ */
+
+
+/* The number of Cient nodes (i.e. the number of entries in the client_nodes array)
+ * The number of Server nodes (i.e. the numb. of entries in the server_nodes array)
+ * 
+ * These variables are also used by the Modbus web config code to determine 
+ * whether the current loaded PLC includes the Modbus plugin
+ * (so it should make the Modbus parameter web interface visible to the user).
+ */
+const int __modbus_plugin_client_node_count = NUMBER_OF_CLIENT_NODES;
+const int __modbus_plugin_server_node_count = NUMBER_OF_SERVER_NODES;
+const int __modbus_plugin_param_string_size = MODBUS_PARAM_STRING_SIZE;
+
+
+
+/* NOTE: We could have the python code in runtime/Modbus_config.py
+ *       directly access the server_node_t and client_node_t structures,
+ *       however this would create a tight coupling between these two
+ *       disjoint pieces of code.
+ *       Any change to the server_node_t or client_node_t structures would
+ *       require the python code to be changed accordingly. I have therefore 
+ *       opted to create get/set functions, one for each parameter.
+ * 
+ *       We also convert the enumerated constants naf_ascii, etc...
+ *       (from node_addr_family_t in modbus/mb_addr.h)
+ *       into strings so as to decouple the python code that will be calling
+ *       these functions from the Modbus library code definitions.
+ */
+const char *addr_type_str[] = {
+        [naf_ascii] = "ascii",
+        [naf_rtu  ] = "rtu",
+        [naf_tcp  ] = "tcp"    
+};
+
+
+#define __safe_strcnpy(str_dest, str_orig, max_size) {  \
+    strncpy(str_dest, str_orig, max_size);              \
+    str_dest[max_size - 1] = '\0';                      \
+}
+
+
+/* NOTE: The host, port and device parameters are strings that may be changed 
+ *       (by calling the following functions) after loading the compiled code 
+ *       (.so file) into memory, but before the code starts running
+ *       (i.e. before __init_() gets called).
+ *       This means that the host, port and device parameters may be changed
+ *       _before_ they get mapped onto the str1 and str2 variables by __init_(),
+ *       which is why the following functions must access the str1 and str2 
+ *       parameters directly.
+ */
+const char *       __modbus_get_ClientNode_config_name(int nodeid)  {return client_nodes[nodeid].config_name;                    }
+const char *       __modbus_get_ClientNode_host       (int nodeid)  {return client_nodes[nodeid].str1;                           }
+const char *       __modbus_get_ClientNode_port       (int nodeid)  {return client_nodes[nodeid].str2;                           }
+const char *       __modbus_get_ClientNode_device     (int nodeid)  {return client_nodes[nodeid].str1;                           }
+int                __modbus_get_ClientNode_baud       (int nodeid)  {return client_nodes[nodeid].node_address.addr.rtu.baud;     }
+int                __modbus_get_ClientNode_parity     (int nodeid)  {return client_nodes[nodeid].node_address.addr.rtu.parity;   }
+int                __modbus_get_ClientNode_stop_bits  (int nodeid)  {return client_nodes[nodeid].node_address.addr.rtu.stop_bits;}
+u64                __modbus_get_ClientNode_comm_period(int nodeid)  {return client_nodes[nodeid].comm_period;                    }
+const char *       __modbus_get_ClientNode_addr_type  (int nodeid)  {return addr_type_str[client_nodes[nodeid].node_address.naf];}
+                                                                                                                        
+const char *       __modbus_get_ServerNode_config_name(int nodeid)  {return server_nodes[nodeid].config_name;                    }
+const char *       __modbus_get_ServerNode_host       (int nodeid)  {char*x=server_nodes[nodeid].str1; return (x[0]=='\0'?"#ANY#":x); }
+const char *       __modbus_get_ServerNode_port       (int nodeid)  {return server_nodes[nodeid].str2;                           }
+const char *       __modbus_get_ServerNode_device     (int nodeid)  {return server_nodes[nodeid].str1;                           }
+int                __modbus_get_ServerNode_baud       (int nodeid)  {return server_nodes[nodeid].node_address.addr.rtu.baud;     }
+int                __modbus_get_ServerNode_parity     (int nodeid)  {return server_nodes[nodeid].node_address.addr.rtu.parity;   }
+int                __modbus_get_ServerNode_stop_bits  (int nodeid)  {return server_nodes[nodeid].node_address.addr.rtu.stop_bits;}
+u8                 __modbus_get_ServerNode_slave_id   (int nodeid)  {return server_nodes[nodeid].slave_id;                       }
+const char *       __modbus_get_ServerNode_addr_type  (int nodeid)  {return addr_type_str[server_nodes[nodeid].node_address.naf];}
+
+
+void __modbus_set_ClientNode_host       (int nodeid, const char * value)  {__safe_strcnpy(client_nodes[nodeid].str1, value, MODBUS_PARAM_STRING_SIZE);}
+void __modbus_set_ClientNode_port       (int nodeid, const char * value)  {__safe_strcnpy(client_nodes[nodeid].str2, value, MODBUS_PARAM_STRING_SIZE);}
+void __modbus_set_ClientNode_device     (int nodeid, const char * value)  {__safe_strcnpy(client_nodes[nodeid].str1, value, MODBUS_PARAM_STRING_SIZE);}
+void __modbus_set_ClientNode_baud       (int nodeid, int          value)  {client_nodes[nodeid].node_address.addr.rtu.baud      = value;}
+void __modbus_set_ClientNode_parity     (int nodeid, int          value)  {client_nodes[nodeid].node_address.addr.rtu.parity    = value;}
+void __modbus_set_ClientNode_stop_bits  (int nodeid, int          value)  {client_nodes[nodeid].node_address.addr.rtu.stop_bits = value;}
+void __modbus_set_ClientNode_comm_period(int nodeid, u64          value)  {client_nodes[nodeid].comm_period                     = value;}
+                                                                                                                        
+
+void __modbus_set_ServerNode_host       (int nodeid, const char * value)  {if (strcmp(value,"#ANY#")==0) value = "";
+                                                                           __safe_strcnpy(server_nodes[nodeid].str1, value, MODBUS_PARAM_STRING_SIZE);}
+void __modbus_set_ServerNode_port       (int nodeid, const char * value)  {__safe_strcnpy(server_nodes[nodeid].str2, value, MODBUS_PARAM_STRING_SIZE);}
+void __modbus_set_ServerNode_device     (int nodeid, const char * value)  {__safe_strcnpy(server_nodes[nodeid].str1, value, MODBUS_PARAM_STRING_SIZE);}
+void __modbus_set_ServerNode_baud       (int nodeid, int          value)  {server_nodes[nodeid].node_address.addr.rtu.baud      = value;}
+void __modbus_set_ServerNode_parity     (int nodeid, int          value)  {server_nodes[nodeid].node_address.addr.rtu.parity    = value;}
+void __modbus_set_ServerNode_stop_bits  (int nodeid, int          value)  {server_nodes[nodeid].node_address.addr.rtu.stop_bits = value;}
+void __modbus_set_ServerNode_slave_id   (int nodeid, u8           value)  {server_nodes[nodeid].slave_id                        = value;}
 

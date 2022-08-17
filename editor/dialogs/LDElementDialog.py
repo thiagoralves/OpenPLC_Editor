@@ -185,7 +185,7 @@ class LDElementDialog(BlockPreviewDialog):
         self.RefreshPreview()
         event.Skip()
 
-    def RefreshPreview(self):
+    def DrawPreview(self):
         """
         Refresh preview panel of graphic element
         Override BlockPreviewDialog function
@@ -202,7 +202,7 @@ class LDElementDialog(BlockPreviewDialog):
         button.Enable(value != "")
 
         # Call BlockPreviewDialog function
-        BlockPreviewDialog.RefreshPreview(self)
+        BlockPreviewDialog.DrawPreview(self)
 
     def OnOK(self, event):
         if self.ElementVariable.GetValue() != "":

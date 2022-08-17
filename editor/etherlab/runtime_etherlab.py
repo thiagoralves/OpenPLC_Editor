@@ -1,3 +1,14 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# this file is part of beremiz
+#
+# copyright (c) 2011-2014: laurent bessard, edouard tisserant
+#                          rtes lab : crkim, jblee, youcu
+#                          higen motor : donggu kang
+#
+# see copying file for copyrights details.
+
 from __future__ import absolute_import
 import os
 import signal
@@ -103,6 +114,7 @@ def KMSGPollThreadProc():
         time.sleep(0.5)
 
 
+# TODO : rename to match _runtime_{location}_extname_init() format
 def _runtime_etherlab_init():
     global KMSGPollThread, StopKMSGThread
     StopKMSGThread = False
@@ -110,6 +122,7 @@ def _runtime_etherlab_init():
     KMSGPollThread.start()
 
 
+# TODO : rename to match _runtime_{location}_extname_cleanup() format
 def _runtime_etherlab_cleanup():
     global KMSGPollThread, StopKMSGThread, SDOThread
     try:

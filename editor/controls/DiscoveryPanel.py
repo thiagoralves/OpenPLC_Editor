@@ -35,9 +35,9 @@ service_type = '_Beremiz._tcp.local.'
 
 
 class AutoWidthListCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
-    def __init__(self, parent, id, name, pos=wx.DefaultPosition,
+    def __init__(self, parent, name, pos=wx.DefaultPosition,
                  size=wx.DefaultSize, style=0):
-        wx.ListCtrl.__init__(self, parent, id, pos, size, style, name=name)
+        wx.ListCtrl.__init__(self, parent, wx.ID_ANY, pos, size, style, name=name)
         listmix.ListCtrlAutoWidthMixin.__init__(self)
 
 
@@ -73,9 +73,7 @@ class DiscoveryPanel(wx.Panel, listmix.ColumnSorterMixin):
 
     def _init_list_ctrl(self):
         # Set up list control
-        listID = wx.NewId()
         self.ServicesList = AutoWidthListCtrl(
-            id=listID,
             name='ServicesList', parent=self, pos=wx.Point(0, 0), size=wx.Size(0, 0),
             style=wx.LC_REPORT | wx.LC_EDIT_LABELS | wx.LC_SORT_ASCENDING | wx.LC_SINGLE_SEL)
         self.ServicesList.InsertColumn(0, _('NAME'))
@@ -87,8 +85,8 @@ class DiscoveryPanel(wx.Panel, listmix.ColumnSorterMixin):
         self.ServicesList.SetColumnWidth(2, 150)
         self.ServicesList.SetColumnWidth(3, 150)
         self.ServicesList.SetInitialSize(wx.Size(-1, 300))
-        self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnItemSelected, id=listID)
-        self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.OnItemActivated, id=listID)
+        self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnItemSelected, self.ServicesList)
+        self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.OnItemActivated, self.ServicesList)
 
     def _init_ctrls(self, prnt):
         self.staticText1 = wx.StaticText(

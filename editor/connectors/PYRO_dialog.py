@@ -40,8 +40,9 @@ class PYRO_dialog(SchemeEditor):
             template = "{host}"
             if fields['port']:
                 template += ":{port}"
-            if fields['ID']:
-                template += "#{ID}"
+            if self.EnableIDSelector:
+                if fields['ID']:
+                    template += "#{ID}"
 
             return template.format(**fields)
         return ''

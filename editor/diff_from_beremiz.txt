@@ -32,4 +32,17 @@ Called .upper() on all strings to make it conform to other debug strings
  - BlockPreviewDialog.py
 Fixed refresh of graphic dialogs on Windows
 
+ - /Arduino
+ New folder with Arduino functionality (arduino runtime, compiler, etc)
+ 
+ - /dialogs/ArduinoUploadDialog.py
+ Upload dialog for Arduino boards
+ 
+ - /dialogs/EditorUpdateDialog.py
+ Editor auto-updater
+ 
+ - /plcopen/definitions.py
+ New FB libraries (Arduino, Cloud, P1AM...) along with .xml files associated with each library
+ 
+
 Also, images folder was changed with new icons and logos.

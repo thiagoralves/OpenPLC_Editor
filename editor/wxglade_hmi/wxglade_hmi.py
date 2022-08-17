@@ -32,7 +32,6 @@ from xml.dom import minidom
 
 import wx
 
-import util.paths as paths
 from py_ext import PythonFileCTNMixin
 
 
@@ -49,9 +48,6 @@ class WxGladeHMI(PythonFileCTNMixin):
 
     def GetIconName(self):
         return "wxGlade"
-
-    def ConfNodePath(self):
-        return paths.AbsDir(__file__)
 
     def _getWXGLADEpath(self, project_path=None):
         if project_path is None:

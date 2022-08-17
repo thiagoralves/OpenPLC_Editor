@@ -48,8 +48,6 @@ from dialogs import *
 from editors.DebugViewer import DebugViewer, REFRESH_PERIOD
 from editors.EditorPanel import EditorPanel
 
-#from controls.DebugVariablePanel.DebugVariableItem import DebugVariableItem
-
 SCROLLBAR_UNIT = 10
 WINDOW_BORDER = 10
 SCROLL_ZONE = 10
@@ -69,10 +67,6 @@ def ResetCursors():
                    wx.StockCursor(wx.CURSOR_SIZENS)]
 
 
-def AppendMenu(parent, help, id, kind, text):
-    parent.Append(help=help, id=id, kind=kind, text=text)
-
-
 if wx.Platform == '__WXMSW__':
     faces = {
         'times': 'Times New Roman',
@@ -84,7 +78,7 @@ if wx.Platform == '__WXMSW__':
 else:
     faces = {
         'times': 'Times',
-        'mono':  'Courier',
+        'mono':  'FreeMono',
         'helv':  'Helvetica',
         'other': 'new century schoolbook',
         'size':  10,
@@ -238,25 +232,6 @@ def sort_blocks(block_infos1, block_infos2):
 # -------------------------------------------------------------------------------
 #                       Graphic elements Viewer base class
 # -------------------------------------------------------------------------------
-
-
-# ID Constants for alignment menu items
-[
-    ID_VIEWERALIGNMENTMENUITEMS0, ID_VIEWERALIGNMENTMENUITEMS1,
-    ID_VIEWERALIGNMENTMENUITEMS2, ID_VIEWERALIGNMENTMENUITEMS4,
-    ID_VIEWERALIGNMENTMENUITEMS5, ID_VIEWERALIGNMENTMENUITEMS6,
-] = [wx.NewId() for _init_coll_AlignmentMenu_Items in range(6)]
-
-# ID Constants for contextual menu items
-[
-    ID_VIEWERCONTEXTUALMENUITEMS0, ID_VIEWERCONTEXTUALMENUITEMS1,
-    ID_VIEWERCONTEXTUALMENUITEMS2, ID_VIEWERCONTEXTUALMENUITEMS3,
-    ID_VIEWERCONTEXTUALMENUITEMS5, ID_VIEWERCONTEXTUALMENUITEMS6,
-    ID_VIEWERCONTEXTUALMENUITEMS8, ID_VIEWERCONTEXTUALMENUITEMS9,
-    ID_VIEWERCONTEXTUALMENUITEMS11, ID_VIEWERCONTEXTUALMENUITEMS12,
-    ID_VIEWERCONTEXTUALMENUITEMS14, ID_VIEWERCONTEXTUALMENUITEMS16,
-    ID_VIEWERCONTEXTUALMENUITEMS17,
-] = [wx.NewId() for _init_coll_ContextualMenu_Items in range(13)]
 
 
 class ViewerDropTarget(wx.TextDropTarget):
@@ -414,7 +389,8 @@ class ViewerDropTarget(wx.TextDropTarget):
                 elif var_name.upper() in [name.upper() for name in self.ParentWindow.Controler.GetProjectPouNames(self.ParentWindow.Debug)]:
                     message = _("\"%s\" pou already exists!") % var_name
                 elif not var_name.upper() in [name.upper() for name in self.ParentWindow.Controler.GetEditedElementVariables(tagname, self.ParentWindow.Debug)]:
-                    self.ParentWindow.Controler.AddEditedElementPouExternalVar(tagname, values[2], var_name)
+                    kwargs = dict(description=values[4]) if len(values)>4 else {}
+                    self.ParentWindow.Controler.AddEditedElementPouExternalVar(tagname, values[2], var_name, **kwargs)
                     self.ParentWindow.RefreshVariablePanel()
                     self.ParentWindow.ParentWindow.RefreshPouInstanceVariablesPanel()
                     self.ParentWindow.AddVariableBlock(x, y, scaling, INPUT, var_name, values[2])
@@ -536,17 +512,6 @@ class Viewer(EditorPanel, DebugViewer):
     Class that implements a Viewer based on a wx.ScrolledWindow for drawing and
     manipulating graphic elements
     """
-
-    # Add list of menu items to the given menu
-    def AddMenuItems(self, menu, items):
-        for item in items:
-            if item is None:
-                menu.AppendSeparator()
-            else:
-                id, kind, text, help, callback = item
-                AppendMenu(menu, help=help, id=id, kind=kind, text=text)
-                # Link menu event to corresponding called functions
-                self.Bind(wx.EVT_MENU, callback, id=id)
 
     def AppendItem(self, menu, text, callback, *args, **kwargs):
         item = menu.Append(wx.ID_ANY, text, *args, **kwargs)
@@ -1008,7 +973,7 @@ class Viewer(EditorPanel, DebugViewer):
                     if connectorname == "":
                         iec_path = "%s.%s%d" % (instance_path, block.GetType(), block.GetId())
                     else:
-                        iec_path = "%s.%s%d_%s" % (instance_path, block.GetType(), block.GetId(), connectorname)
+                        iec_path = "%s._TMP_%s%d_%s" % (instance_path, block.GetType(), block.GetId(), connectorname)
             elif isinstance(block, FBD_Variable):
                 iec_path = "%s.%s" % (instance_path, block.GetName())
             elif isinstance(block, FBD_Connector):
@@ -1582,9 +1547,8 @@ class Viewer(EditorPanel, DebugViewer):
 
         def ForceVariableFunction(event):
             if iec_type is not None:
-                #item = DebugVariableItem(self, iec_path, False)
-                dialog = ForceVariableDialog(self, iec_type, "0")
-                #dialog = ForceVariableDialog(self.ParentWindow, iec_type, str(item.GetValue()))
+                #dialog = ForceVariableDialog(self.ParentWindow, iec_type, str(element.GetValue()))
+                dialog = ForceVariableDialog(self.ParentWindow, iec_type, "0")
                 if dialog.ShowModal() == wx.ID_OK:
                     self.ParentWindow.AddDebugVariable(iec_path)
                     self.ForceDataValue(iec_path, dialog.GetValue())
@@ -1592,13 +1556,12 @@ class Viewer(EditorPanel, DebugViewer):
 
     def GetForceBoolFunction(self, iec_path, element_state):
         iec_type = self.GetDataType(iec_path)
-
         def ForceBoolFunction(event):
             if iec_type is not None:
                 self.ParentWindow.AddDebugVariable(iec_path)
                 self.ForceDataValue(iec_path, element_state)
         return ForceBoolFunction
-
+    
     def GetReleaseVariableMenuFunction(self, iec_path):
         def ReleaseVariableFunction(event):
             self.ReleaseDataValue(iec_path)
@@ -1616,7 +1579,6 @@ class Viewer(EditorPanel, DebugViewer):
 
     def PopupForceMenu(self):
         iec_path = self.GetElementIECPath(self.SelectedElement)
-          
         #This is a contact (boolean)
         if iec_path is not None:
             menu = wx.Menu(title='')
@@ -1624,7 +1586,6 @@ class Viewer(EditorPanel, DebugViewer):
             self.Bind(wx.EVT_MENU, self.GetForceBoolFunction(iec_path.upper(), True), true_item)
             false_item = menu.Append(wx.ID_ANY, help='', kind=wx.ITEM_NORMAL, text="Force False")
             self.Bind(wx.EVT_MENU, self.GetForceBoolFunction(iec_path.upper(), False), false_item)
-
             #item = menu.Append(wx.ID_ANY, help='', kind=wx.ITEM_NORMAL, text=_("Force value"))
             #self.Bind(wx.EVT_MENU, self.GetForceVariableMenuFunction(iec_path.upper(), self.SelectedElement), item)
             ritem = menu.Append(wx.ID_ANY, help='', kind=wx.ITEM_NORMAL, text=_("Release value"))
@@ -1637,7 +1598,6 @@ class Viewer(EditorPanel, DebugViewer):
                 self.Editor.ReleaseMouse()
             self.Editor.PopupMenu(menu)
             menu.Destroy()
-        
         #This still could be a variable or a coil
         else:
             if isinstance(self.SelectedElement, FBD_Variable):
@@ -2668,7 +2628,6 @@ class Viewer(EditorPanel, DebugViewer):
             dialog = ConnectionDialog(self.ParentWindow, self.Controler, self.TagName)
             dialog.SetPreviewFont(self.GetFont())
             dialog.SetMinElementSize((bbox.width, bbox.height))
-            dialog.RefreshPreview()
             values = (dialog.GetValues()
                       if dialog.ShowModal() == wx.ID_OK
                       else None)

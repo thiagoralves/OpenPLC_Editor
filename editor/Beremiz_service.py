@@ -30,6 +30,9 @@ import os
 import sys
 import getopt
 import threading
+import shlex
+import traceback
+import threading
 from threading import Thread, Semaphore, Lock, currentThread
 from builtins import str as text
 from past.builtins import execfile
@@ -40,9 +43,22 @@ from runtime.PyroServer import PyroServer
 from runtime.xenomai import TryPreloadXenomai
 from runtime import LogMessageAndException
 from runtime import PlcStatus
+from runtime import default_evaluator
 from runtime.Stunnel import ensurePSK
 import util.paths as paths
 
+# In case system time is ajusted, it is better to use
+# monotonic timers for timers and other timeout based operations.
+# hot-patch threading module to force using monitonic time for all 
+# Thread/Timer/Event/Condition
+
+from runtime.monotonic_time import monotonic
+threading._time = monotonic
+
+try:
+    from runtime.spawn_subprocess import Popen
+except ImportError:
+    from subprocess import Popen
 
 def version():
     from version import app_version
@@ -71,7 +87,7 @@ Usage of Beremiz PLC execution service :\n
 
 
 try:
-    opts, argv = getopt.getopt(sys.argv[1:], "i:p:n:x:t:a:w:c:e:s:h", ["help", "version"])
+    opts, argv = getopt.getopt(sys.argv[1:], "i:p:n:x:t:a:w:c:e:s:h", ["help", "version", "status-change=", "on-plc-start=", "on-plc-stop="])
 except getopt.GetoptError as err:
     # print help information and exit:
     print(str(err))  # will print something like "option -a not recognized"
@@ -92,6 +108,13 @@ enabletwisted = True
 havetwisted = False
 
 extensions = []
+statuschange = []
+def status_change_call_factory(wanted, args):
+    def status_change_call(status):
+        if wanted is None or status is wanted:
+            cmd = shlex.split(args.format(status))
+            Popen(cmd)
+    return status_change_call
 
 for o, a in opts:
     if o == "-h" or o == "--help":
@@ -100,6 +123,12 @@ for o, a in opts:
     if o == "--version":
         version()
         sys.exit()
+    if o == "--on-plc-start":
+        statuschange.append(status_change_call_factory(PlcStatus.Started, a))
+    elif o == "--on-plc-stop":
+        statuschange.append(status_change_call_factory(PlcStatus.Stopped, a))
+    elif o == "--status-change":
+        statuschange.append(status_change_call_factory(None, a))
     elif o == "-i":
         if len(a.split(".")) == 4:
             interface = a
@@ -384,14 +413,6 @@ if not os.path.isdir(WorkingDir):
     os.mkdir(WorkingDir)
 
 
-def default_evaluator(tocall, *args, **kwargs):
-    try:
-        res = (tocall(*args, **kwargs), None)
-    except Exception:
-        res = (None, sys.exc_info())
-    return res
-
-
 if enabletwisted:
     import warnings
     with warnings.catch_warnings():
@@ -408,7 +429,6 @@ if enabletwisted:
             havetwisted = False
 
 pyruntimevars = {}
-statuschange = []
 
 if havetwisted:
     if havewx:
@@ -487,10 +507,10 @@ if havetwisted:
     if webport is not None:
         try:
             import runtime.NevowServer as NS  # pylint: disable=ungrouped-imports
+            NS.WorkingDir = WorkingDir
         except Exception:
             LogMessageAndException(_("Nevow/Athena import failed :"))
             webport = None
-        NS.WorkingDir = WorkingDir
 
     try:
         import runtime.WampClient as WC  # pylint: disable=ungrouped-imports
@@ -523,36 +543,46 @@ if havetwisted:
         try:
             website = NS.RegisterWebsite(interface, webport)
             pyruntimevars["website"] = website
-            NS.SetServer(pyroserver)
             statuschange.append(NS.website_statuslistener_factory(website))
         except Exception:
             LogMessageAndException(_("Nevow Web service failed. "))
 
     if havewamp:
         try:
-            WC.SetServer(pyroserver)
             WC.RegisterWampClient(wampconf, PSKpath)
             WC.RegisterWebSettings(NS)
         except Exception:
             LogMessageAndException(_("WAMP client startup failed. "))
 
-pyro_thread_started = Lock()
-pyro_thread_started.acquire()
-pyro_thread = Thread(target=pyroserver.PyroLoop,
-                     kwargs=dict(when_ready=pyro_thread_started.release))
-pyro_thread.start()
+def FirstWorkerJob():
+    """
+    RPC through pyro/wamp/UI may lead to delegation to Worker,
+    then this function ensures that Worker is already
+    created when pyro starts
+    """
+    global pyro_thread, pyroserver, ui_thread, reactor, twisted_reactor_thread_id
 
-# Wait for pyro thread to be effective
-pyro_thread_started.acquire()
+    pyro_thread_started = Lock()
+    pyro_thread_started.acquire()
+    pyro_thread = Thread(target=pyroserver.PyroLoop,
+                         kwargs=dict(when_ready=pyro_thread_started.release),
+                         name="PyroThread")
 
-pyroserver.PrintServerInfo()
+    pyro_thread.start()
 
-# Beremiz IDE detects LOCAL:// runtime is ready by looking
-# for self.workdir in the daemon's stdout.
-sys.stdout.write(_("Current working directory :") + WorkingDir + "\n")
-sys.stdout.flush()
+    # Wait for pyro thread to be effective
+    pyro_thread_started.acquire()
 
-if havetwisted or havewx:
+    pyroserver.PrintServerInfo()
+
+    # Beremiz IDE detects LOCAL:// runtime is ready by looking
+    # for self.workdir in the daemon's stdout.
+    sys.stdout.write(_("Current working directory :") + WorkingDir + "\n")
+    sys.stdout.flush()
+
+    if not (havetwisted or havewx):
+        return
+
     ui_thread_started = Lock()
     ui_thread_started.acquire()
     if havetwisted:
@@ -564,7 +594,7 @@ if havetwisted or havewx:
     else:
         ui_thread_target = app.MainLoop
 
-    ui_thread = Thread(target=ui_thread_target)
+    ui_thread = Thread(target=ui_thread_target, name="UIThread")
     ui_thread.start()
 
     # This order ui loop to unblock main thread when ready.
@@ -581,16 +611,28 @@ if havetwisted or havewx:
     ui_thread_started.acquire()
     print("UI thread started successfully.")
 
+    runtime.GetPLCObjectSingleton().AutoLoad(autostart)
+
 try:
-    runtime.MainWorker.runloop(
-        runtime.GetPLCObjectSingleton().AutoLoad, autostart)
+    runtime.MainWorker.runloop(FirstWorkerJob)
 except KeyboardInterrupt:
     pass
 
 pyroserver.Quit()
+pyro_thread.join()
 
 plcobj = runtime.GetPLCObjectSingleton()
-plcobj.StopPLC()
-plcobj.UnLoadPLC()
+try:
+    plcobj.StopPLC()
+    plcobj.UnLoadPLC()
+except:
+    print(traceback.format_exc())
+
+if havetwisted:
+    reactor.stop()
+    ui_thread.join()
+elif havewx:
+    app.ExitMainLoop()
+    ui_thread.join()
 
 sys.exit(0)

@@ -980,10 +980,6 @@ msgstr "更改工作目录"
 msgid "Character string"
 msgstr "字符串"
 
-#: ../svgui/svgui.py:136
-msgid "Choose a SVG file"
-msgstr "选择一个SVG文件"
-
 #: ../etherlab/EtherCATManagementEditor.py:911
 #: ../etherlab/EtherCATManagementEditor.py:1306
 msgid "Choose a binary file"
@@ -1315,10 +1311,6 @@ msgstr "无法开始PLC！\n"
 #: ../ProjectController.py:1725
 msgid "Couldn't stop PLC !\n"
 msgstr "无法停止PLC！\n"
-
-#: ../svgui/svgui.py:57
-msgid "Create HMI"
-msgstr "新建 HMI"
 
 #: ../dialogs/PouDialog.py:48
 msgid "Create a new POU"
@@ -2102,10 +2094,6 @@ msgstr "IP 无效！"
 msgid "Import ESI file"
 msgstr "导入ESI文件"
 
-#: ../svgui/svgui.py:50 ../svgui/svgui.py:51
-msgid "Import SVG"
-msgstr "导入 SVG"
-
 #: ../etherlab/ConfigEditor.py:1352
 msgid "Import file to ESI files database"
 msgstr "导入文件到ESI文件数据库"
@@ -2171,10 +2159,6 @@ msgstr ""
 #: ../etherlab/EthercatCIA402Slave.py:126
 msgid "Initiate Drag'n drop of Network position located variable"
 msgstr ""
-
-#: ../svgui/svgui.py:56
-msgid "Inkscape"
-msgstr "Inkscape"
 
 #: ../dialogs/SFCTransitionDialog.py:77 ../dialogs/ActionBlockDialog.py:47
 msgid "Inline"
@@ -2730,11 +2714,6 @@ msgstr "没有存在的搜索结果。"
 msgid "No slave defined at position %d!"
 msgstr ""
 
-#: ../svgui/svgui.py:142
-#, python-format
-msgid "No such SVG file: %s\n"
-msgstr "没有这样的SVG文件：%s\n"
-
 #: ../etherlab/ConfigEditor.py:1245
 #, python-format
 msgid "No such XML file: %s\n"
@@ -2827,10 +2806,6 @@ msgstr "唯一元素"
 #: ../PLCOpenEditor.py:118
 msgid "Open"
 msgstr "打开"
-
-#: ../svgui/svgui.py:151
-msgid "Open Inkscape"
-msgstr "打开 Inkscape"
 
 #: ../version.py:88
 msgid ""
@@ -3430,14 +3405,6 @@ msgstr "结构化文本"
 #: ../PLCOpenEditor.py:308
 msgid "ST files (*.st)|*.st|All files|*.*"
 msgstr "ST 文件 (*.st)|*.st|所有文件|*.*"
-
-#: ../svgui/svgui.py:136
-msgid "SVG files (*.svg)|*.svg|All files|*.*"
-msgstr "SVG 文件 (*.svg)|*.svg|All files|*.*"
-
-#: ../features.py:25
-msgid "SVGUI"
-msgstr "SVGUI"
 
 #: ../BeremizIDE.py:247 ../BeremizIDE.py:278 ../PLCOpenEditor.py:84
 #: ../PLCOpenEditor.py:119
@@ -4246,14 +4213,6 @@ msgstr "您不能定义它，他是只读或者并未连接"
 #: ../etherlab/EtherCATManagementEditor.py:648
 msgid "You cannot SDO download this state"
 msgstr "你不能SDO下载这个状态"
-
-#: ../svgui/svgui.py:150
-msgid ""
-"You don't have write permissions.\n"
-"Open Inkscape anyway ?"
-msgstr ""
-"你没有写入的许可。\n"
-"无论如何都打开Inkscape？"
 
 #: ../wxglade_hmi/wxglade_hmi.py:175
 msgid ""

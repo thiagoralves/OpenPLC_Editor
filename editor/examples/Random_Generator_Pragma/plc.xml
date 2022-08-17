@@ -1,0 +1,323 @@
+<?xml version='1.0' encoding='utf-8'?>
+<project xmlns:ns1="http://www.plcopen.org/xml/tc6_0201" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.plcopen.org/xml/tc6_0201">
+  <fileHeader companyName="Unknown" productName="Unnamed" productVersion="1" creationDateTime="2021-10-12T12:55:02"/>
+  <contentHeader name="Random_Generator" modificationDateTime="2022-08-16T15:46:52">
+    <coordinateInfo>
+      <fbd>
+        <scaling x="10" y="10"/>
+      </fbd>
+      <ld>
+        <scaling x="10" y="10"/>
+      </ld>
+      <sfc>
+        <scaling x="10" y="10"/>
+      </sfc>
+    </coordinateInfo>
+  </contentHeader>
+  <types>
+    <dataTypes/>
+    <pous>
+      <pou name="Random" pouType="program">
+        <interface>
+          <localVars>
+            <variable name="button">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="value">
+              <type>
+                <UDINT/>
+              </type>
+            </variable>
+            <variable name="rand_generator0">
+              <type>
+                <derived name="rand_generator"/>
+              </type>
+            </variable>
+          </localVars>
+        </interface>
+        <body>
+          <LD>
+            <contact localId="2" height="20" width="30" negated="false">
+              <position x="200" y="310"/>
+              <connectionPointIn>
+                <relPosition x="0" y="10"/>
+                <connection refLocalId="5">
+                  <position x="200" y="320"/>
+                  <position x="110" y="320"/>
+                </connection>
+              </connectionPointIn>
+              <connectionPointOut>
+                <relPosition x="30" y="10"/>
+              </connectionPointOut>
+              <variable>button</variable>
+            </contact>
+            <block localId="3" typeName="rand_generator" instanceName="rand_generator0" height="180" width="130">
+              <position x="340" y="180"/>
+              <inputVariables>
+                <variable formalParameter="EN">
+                  <connectionPointIn>
+                    <relPosition x="0" y="60"/>
+                    <connection refLocalId="5">
+                      <position x="340" y="240"/>
+                      <position x="110" y="240"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN">
+                  <connectionPointIn>
+                    <relPosition x="0" y="140"/>
+                    <connection refLocalId="2">
+                      <position x="340" y="320"/>
+                      <position x="230" y="320"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="ENO">
+                  <connectionPointOut>
+                    <relPosition x="130" y="60"/>
+                  </connectionPointOut>
+                </variable>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="130" y="140"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <outVariable localId="4" height="30" width="50" negated="false">
+              <position x="880" y="300"/>
+              <connectionPointIn>
+                <relPosition x="0" y="20"/>
+                <connection refLocalId="3" formalParameter="OUT">
+                  <position x="880" y="320"/>
+                  <position x="470" y="320"/>
+                </connection>
+              </connectionPointIn>
+              <expression>value</expression>
+            </outVariable>
+            <leftPowerRail localId="5" height="800" width="10">
+              <position x="100" y="180"/>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="20"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="60"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="100"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="140"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="180"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="220"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="260"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="300"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="340"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="380"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="420"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="460"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="500"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="540"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="580"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="620"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="660"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="700"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="740"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="780"/>
+              </connectionPointOut>
+            </leftPowerRail>
+            <rightPowerRail localId="1" height="800" width="10">
+              <position x="990" y="180"/>
+              <connectionPointIn>
+                <relPosition x="0" y="20"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="60"/>
+                <connection refLocalId="3" formalParameter="ENO">
+                  <position x="990" y="240"/>
+                  <position x="470" y="240"/>
+                </connection>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="100"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="140"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="180"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="220"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="260"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="300"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="340"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="380"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="420"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="460"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="500"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="540"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="580"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="620"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="660"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="700"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="740"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="780"/>
+              </connectionPointIn>
+            </rightPowerRail>
+            <comment localId="6" height="110" width="910">
+              <position x="90" y="30"/>
+              <content>
+                <xhtml:p><![CDATA[This example demonstrates the use of Pragmas to declare C code directly on your PLC program. The included 'rand_generator' block is a Structured Text Function Block that generates a random number whenever 'IN' is activated, and write the result on 'OUT'.]]></xhtml:p>
+              </content>
+            </comment>
+          </LD>
+        </body>
+      </pou>
+      <pou name="rand_generator" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="IN">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+          </inputVars>
+          <localVars>
+            <variable name="M">
+              <type>
+                <BOOL/>
+              </type>
+              <initialValue>
+                <simpleValue value="0"/>
+              </initialValue>
+            </variable>
+            <variable name="INIT">
+              <type>
+                <BOOL/>
+              </type>
+              <initialValue>
+                <simpleValue value="0"/>
+              </initialValue>
+            </variable>
+          </localVars>
+          <outputVars>
+            <variable name="OUT">
+              <type>
+                <UDINT/>
+              </type>
+              <initialValue>
+                <simpleValue value="0"/>
+              </initialValue>
+            </variable>
+          </outputVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[(* This example uses Pragmas to write C code directly on *)
+(* your Structured Text code *)
+
+(* Some platforms require including <time.h> library *)
+(* for this to work. If you get compilation errors, *)
+(* just uncomment the declaration below *)
+{//#include <time.h>}
+
+
+(* Initialize our random generator *)
+(* This IF is called only the first time this *)
+(* block executes *)
+IF INIT = 0 THEN
+  {time_t t;
+  srand((unsigned) time(&t))}
+  INIT := 1;
+END_IF;
+
+IF M = 0 and IN = 1 THEN
+  (* Using pragma to write code directly in C. *)
+  (* You can access your PLC program variables using *)
+  (* GetFbVar(var,...) and SetFbVar(var,val,...) calls *)
+  {SetFbVar(OUT,rand())}
+END_IF;
+M := IN;]]></xhtml:p>
+          </ST>
+        </body>
+      </pou>
+    </pous>
+  </types>
+  <instances>
+    <configurations>
+      <configuration name="Config0">
+        <resource name="Res0">
+          <task name="task0" priority="0" interval="T#20ms">
+            <pouInstance name="instance0" typeName="Random"/>
+          </task>
+        </resource>
+      </configuration>
+    </configurations>
+  </instances>
+</project>

@@ -71,11 +71,15 @@ class EtherCATManagementTreebook(wx.Treebook):
         panels = [
             ("Slave State",        SlaveStatePanelClass, []),
             ("SDO Management",     SDOPanelClass, []),
-            ("PDO Monitoring",     PDOPanelClass, []),
+            ("PDO Mapping",     PDOPanelClass, [
+                    ("Rx PDO", RxPDOPanelClass),
+                    ("Tx PDO", TxPDOPanelClass)]),
+            ("MDP Setting",		MDPPanel, []),
             ("ESC Management",     EEPROMAccessPanel, [
-                ("Smart View", SlaveSiiSmartView),
-                ("Hex View", HexView)]),
-            ("Register Access",     RegisterAccessPanel, [])
+                    ("Smart View",  SlaveSiiSmartView),
+                    ("Hex View",    HexView)]),
+            ("Register Access",    RegisterAccessPanel, []),
+            ("DC Configuration",    DCConfigPanel, [])
         ]
         for pname, pclass, subs in panels:
             self.AddPage(pclass(self, self.Controler), pname)
@@ -230,7 +234,9 @@ class SlaveStatePanelClass(wx.Panel):
         Event handler for slave state transition button click (Init, PreOP, SafeOP, OP button)
         @param event : wx.EVT_BUTTON object
         """
-        check_connect_flag = self.Controler.CommonMethod.CheckConnect(False)
+        # Check whether beremiz connected or not.
+        # If this method is called cyclically, set the cyclic flag true
+        check_connect_flag = self.Controler.CommonMethod.CheckConnect(cyclic_flag = False)
         if check_connect_flag:
             state_dic = ["INIT", "PREOP", "SAFEOP", "OP"]
 
@@ -255,7 +261,12 @@ class SlaveStatePanelClass(wx.Panel):
         Timer event handler for periodic slave state monitoring (Default period: 1 sec = 1000 msec).
         @param event : wx.TIMER object
         """
-        check_connect_flag = self.Controler.CommonMethod.CheckConnect(True)
+        if self.IsShownOnScreen() is False:
+            return
+
+        # Check whether beremiz connected or not.
+        # If this method is called cyclically, set the cyclic flag true
+        check_connect_flag = self.Controler.CommonMethod.CheckConnect(cyclic_flag = True)
         if check_connect_flag:
             returnVal = self.Controler.CommonMethod.GetSlaveStateFromSlave()
             line = returnVal.split("\n")
@@ -285,9 +296,15 @@ class SlaveStatePanelClass(wx.Panel):
           - start slave state monitoring thread
         @param event : wx.EVT_BUTTON object
         """
-        self.SlaveStateThread = wx.Timer(self)
-        # set timer period (1000 ms)
-        self.SlaveStateThread.Start(1000)
+        # Check whether beremiz connected or not.
+        # If this method is called cyclically, set the cyclic flag true
+        check_connect_flag = self.Controler.CommonMethod.CheckConnect(cyclic_flag = False)
+        if check_connect_flag:
+            self.SlaveStateThread = wx.Timer(self)
+            # set timer period (2000 ms)
+            self.SlaveStateThread.Start(2000)
+        else:
+            pass
 
     def CurrentStateThreadStop(self, event):
         """
@@ -318,143 +335,218 @@ class SDOPanelClass(wx.Panel):
 
         self.Controler = controler
 
+        self.SDOMonitorEntries = {}
+        #----------------------------- SDO Monitor -------------------------------#
+        self.RBList = ["ON","OFF"]
+        
+        self.SDOMonitorRB = wx.RadioBox(self, label=_("monitoring"),
+                                        choices=self.RBList, majorDimension=2)
+        
+        self.SDOMonitorRB.SetSelection(1)
+        self.Bind(wx.EVT_RADIOBOX, self.OnRadioBox, self.SDOMonitorRB)
+       
+        self.SDOMonitorGrid = wx.grid.Grid(self,size=wx.Size(850,150),style=wx.EXPAND
+                                                        |wx.ALIGN_CENTER_HORIZONTAL
+                                                        |wx.ALIGN_CENTER_VERTICAL) 
+        self.SDOMonitorGrid.Bind(gridlib.EVT_GRID_CELL_LEFT_DCLICK, 
+                                                    self.onMonitorGridDoubleClick)
+
+        #----------------------------- SDO Entries ----------------------------#
+        self.SDOUpdateBtn = wx.Button(self, label=_("update"))         
+        self.SDOUpdateBtn.Bind(wx.EVT_BUTTON, self.OnSDOUpdate)
+        
+        self.SDOTraceThread = None
+        self.SDOMonitoringFlag = False
+        self.SDOValuesList = []
+        # Default SDO Page Number
+        self.SDOPageNum = 2
+
+        #----------------------------- Sizer --------------------------------------#
         self.SDOManagementMainSizer = wx.BoxSizer(wx.VERTICAL)
-        self.SDOManagementInnerMainSizer = wx.FlexGridSizer(cols=1, hgap=10, rows=2, vgap=10)
+        self.SDOInfoBox = wx.StaticBox(self, label=_("SDO Entries"))
+        self.SDOMonitorBox = wx.StaticBox(self, label=_("SDO Monitor"))
 
-        self.SDOUpdate = wx.Button(self, label=_('update'))
-        self.SDOUpdate.Bind(wx.EVT_BUTTON, self.SDOInfoUpdate)
-
-        self.CallSDONoteBook = SDONoteBook(self, controler=self.Controler)
-        self.SDOManagementInnerMainSizer.Add(self.SDOUpdate)
-        self.SDOManagementInnerMainSizer.Add(self.CallSDONoteBook, wx.ALL | wx.EXPAND)
-
-        self.SDOManagementMainSizer.Add(self.SDOManagementInnerMainSizer)
-
+        self.SDONoteBook = SDONoteBook(self, controler=self.Controler)
+        self.SDOInfoBoxSizer = wx.StaticBoxSizer(self.SDOInfoBox, orient=wx.VERTICAL)
+        self.SDOMonitorBoxSizer = wx.StaticBoxSizer(self.SDOMonitorBox, 
+                                                                    orient=wx.VERTICAL)
+        self.SDOInfoBoxSizer.Add(self.SDOUpdateBtn)
+        
+        self.SDOInfoBoxSizer.Add(self.SDONoteBook, wx.ALL|wx.EXPAND)
+        self.SDOMonitorBoxSizer.Add(self.SDOMonitorRB)
+        self.SDOMonitorBoxSizer.Add(self.SDOMonitorGrid)
+        self.SDOManagementMainSizer.AddMany([self.SDOInfoBoxSizer, 
+                                             self.SDOMonitorBoxSizer])
         self.SetSizer(self.SDOManagementMainSizer)
+        
+        #----------------------------- fill the contents --------------------------# 
+        #self.entries = self.Controler.CTNParent.CTNParent.GetEntriesList()
 
-    def SDOInfoUpdate(self, event):
-        """
-        Evenet handler for SDO "update" button.
-          - Load SDO data from current slave
-        @param event : wx.EVT_BUTTON object
-        """
-        self.Controler.CommonMethod.SaveSDOData = []
+        slave = self.Controler.CTNParent.GetSlave(self.Controler.GetSlavePos())
+        type_infos = slave.getType()
+        device, alignment = self.Controler.CTNParent.GetModuleInfos(type_infos)
+        self.entries = device.GetEntriesList()
+
+        self.Controler.CommonMethod.SDOVariables = []
+        self.Controler.CommonMethod.SDOSubEntryData = []
         self.Controler.CommonMethod.ClearSDODataSet()
-        self.SDOFlag = False
+        self.SDOParserXML(self.entries)
+        self.SDONoteBook.CreateNoteBook()      
+        self.CreateSDOMonitorGrid()
+        self.Refresh()
 
-        # Check whether beremiz connected or not.
-        check_connect_flag = self.Controler.CommonMethod.CheckConnect(False)
+    def OnSDOUpdate(self, event):
+        SlavePos = self.Controler.GetSlavePos()
+        num = self.SDOPageNum - 1
+        if num < 0:
+            for i in range(len(self.Controler.CommonMethod.SDOVariables)):
+                data = self.Controler.GetCTRoot()._connector.GetSDOEntriesData(
+                           self.Controler.CommonMethod.SDOVariables[i], SlavePos)
+                self.Controler.CommonMethod.SDOVariables[i] = data
+        else :
+            SDOUploadEntries = self.Controler.CommonMethod.SDOVariables[num]        
+            data = self.Controler.GetCTRoot()._connector.GetSDOEntriesData(SDOUploadEntries, SlavePos)
+            self.Controler.CommonMethod.SDOVariables[num] = data
+
+        self.SDONoteBook.CreateNoteBook()      
+        self.Refresh()
+
+    def OnRadioBox(self, event):
+        """
+        There are two selections that are on and off.
+        If the on is selected, the monitor thread begins to run.
+        If the off is selected, the monitor thread gets off.
+        @param event: wx.EVT_RADIOBOX object 
+        """
+        on, off = range(2)
+
+        if event.GetInt() == on:
+            CheckThreadFlag = self.SDOMonitoringThreadOn()
+            if not CheckThreadFlag:
+                self.SDOMonitorRB.SetSelection(off)
+        elif event.GetInt() == off:
+            self.SDOMonitoringThreadOff()
+
+    def SDOMonitoringThreadOn(self):
+        check_connect_flag = self.Controler.CommonMethod.CheckConnect(cyclic_flag = False)
         if check_connect_flag:
-            self.SDOs = self.Controler.CommonMethod.GetSlaveSDOFromSlave()
-            # SDOFlag is "False", user click "Cancel" button
-            self.SDOFlag = self.SDOParser()
+            self.SetSDOTraceValues(self.SDOMonitorEntries)
+            self.Controler.GetCTRoot()._connector.GetSDOData()
+            self.SDOTraceThread = Thread(target=self.SDOMonitorThreadProc)
+            self.SDOMonitoringFlag = True
+            self.SDOTraceThread.start()
+        return check_connect_flag
 
-            if self.SDOFlag:
-                self.CallSDONoteBook.CreateNoteBook()
-                self.Refresh()
+    def SDOMonitoringThreadOff(self):
+        check_connect_flag = self.Controler.CommonMethod.CheckConnect(cyclic_flag = False)
+        if check_connect_flag:
+            self.SDOMonitoringFlag = False
+            if self.SDOTraceThread is not None:
+                self.SDOTraceThread.join()
+            self.SDOTraceThread = None
+            self.Controler.GetCTRoot()._connector.StopSDOThread()
 
-    def SDOParser(self):
+    def SetSDOTraceValues(self, SDOMonitorEntries):
+        SlavePos = self.Controler.GetSlavePos()
+        check_connect_flag = self.Controler.CommonMethod.CheckConnect(cyclic_flag = True)
+        if check_connect_flag:
+            self.Controler.GetCTRoot()._connector.SetSDOTraceValues(SDOMonitorEntries, SlavePos)
+
+    def SDOMonitorThreadProc(self):
+        while self.SDOMonitoringFlag and self.Controler.GetCTRoot()._connector.PLCStatus != "Started":
+            self.SDOValuesList = self.Controler.GetCTRoot()._connector.GetSDOData()
+            LocalData = self.SDOValuesList[0].items()
+            LocalData.sort()
+            if self.SDOValuesList[1] != self.Controler.GetSlavePos():
+                continue
+            row = 0
+            for (idx, subidx), data in LocalData:
+                self.SDOMonitorGrid.SetCellValue(row, 6, str(data["value"]))
+                row += 1
+            time.sleep(0.5)
+
+    def CreateSDOMonitorGrid(self):
         """
-        Parse SDO data set that obtain "SDOInfoUpdate" Method
-        @return True or False
+        It creates SDO Monitor table and specifies cell size and labels.
         """
+        self.SDOMonitorGrid.CreateGrid(0,7) 
+        SDOCellSize = [(0, 65), (1, 65), (2, 50), (3, 70), 
+                         (4, 40), (5, 450), (6, 85)]
 
-        slaveSDO_progress = wx.ProgressDialog(_("Slave SDO Monitoring"), _("Now Uploading..."),
-                                              maximum=len(self.SDOs.splitlines()),
-                                              parent=self,
-                                              style=wx.PD_CAN_ABORT | wx.PD_APP_MODAL | wx.PD_ELAPSED_TIME |
-                                              wx.PD_ESTIMATED_TIME | wx.PD_REMAINING_TIME |
-                                              wx.PD_AUTO_HIDE | wx.PD_SMOOTH)
+        for (index, size) in SDOCellSize:
+            self.SDOMonitorGrid.SetColSize(index, size)
+        
+        self.SDOMonitorGrid.SetRowLabelSize(0)
 
-        # If keep_going flag is False, SDOParser method is stop and return "False".
-        keep_going = True
-        count = 0
+        SDOTableLabel = [(0, "Index"), (1, "Subindex"), (2, "Access"),
+                         (3, "Type"), (4, "Size"), (5, "Name"), (6, "Value")]
+        
+        for (index, label) in SDOTableLabel:
+            self.SDOMonitorGrid.SetColLabelValue(index, label)
+            self.SDOMonitorGrid.SetColLabelAlignment(index, wx.ALIGN_CENTER)
 
-        # SDO data example
-        # SDO 0x1000, "Device type"
-        # 0x1000:00,r-r-r-,uint32,32 bit,"Device type",0x00020192, 131474
-        for details_line in self.SDOs.splitlines():
-            count += 1
-            line_token = details_line.split("\"")
-            # len(line_token[2]) case : SDO 0x1000, "Device type"
-            if len(line_token[2]) == 0:
-                title_name = line_token[1]
-            # else case : 0x1000:00,r-r-r-,uint32,32 bit,"Device type",0x00020192, 131474
-            else:
-                # line_token = ['0x1000:00,r-r-r-,uint32,32 bit,', 'Device type', ',0x00020192, 131474']
-                token_head, name, token_tail = line_token
-
-                # token_head = ['0x1000:00', 'r-r-r-', 'uint32', '32 bit', '']
-                token_head = token_head.split(",")
-                ful_idx, access, type, size, _empty = token_head
-                # ful_idx.split(":") = ['0x1000', '00']
-                idx, sub_idx = ful_idx.split(":")
-
-                # token_tail = ['', '0x00020192', '131474']
-                token_tail = token_tail.split(",")
-                try:
-                    _empty, hex_val, _dec_val = token_tail
-
-                # SDO data is not return "dec value"
-                # line example :
-                # 0x1702:01,rwr-r-,uint32,32 bit," 1st mapping", ----
-                except Exception:
-                    _empty, hex_val = token_tail
-
-                name_after_check = self.StringTest(name)
-
-                # convert hex type
-                sub_idx = "0x" + sub_idx
-
-                if type == "octet_string":
-                    hex_val = ' ---- '
-
-                # SResult of SlaveSDO data parsing. (data type : dictionary)
-                self.Data = {'idx': idx.strip(), 'subIdx': sub_idx.strip(), 'access': access.strip(),
-                             'type': type.strip(), 'size': size.strip(),  'name': name_after_check.strip("\""),
-                             'value': hex_val.strip(), "category": title_name.strip("\"")}
-
-                category_divide_value = [0x1000, 0x2000, 0x6000, 0xa000, 0xffff]
-
-                for count in range(len(category_divide_value)):
-                    if int(idx, 0) < category_divide_value[count]:
-                        self.Controler.CommonMethod.SaveSDOData[count].append(self.Data)
-                        break
-
-                self.Controler.CommonMethod.SaveSDOData[self.AllSDOData].append(self.Data)
-
-            if count >= len(self.SDOs.splitlines()) // 2:
-                (keep_going, _skip) = slaveSDO_progress.Update(count, "Please waiting a moment!!")
-            else:
-                (keep_going, _skip) = slaveSDO_progress.Update(count)
-
-            # If user click "Cancel" loop suspend immediately
-            if not keep_going:
-                break
-
-        slaveSDO_progress.Destroy()
-        return keep_going
-
-    def StringTest(self, check_string):
+    def onMonitorGridDoubleClick(self, event):
         """
-        Test value 'name' is alphanumeric
-        @param check_string : input data for check
-        @return result : output data after check
+        Event Handler for double click on the SDO entries table.
+        It adds the entry into the SDO monitor table.
+        If the entry is already in the SDO monitor table, 
+        then it's removed from the SDO monitor table.
+        @pram event: gridlib.EVT_GRID_CELL_LEFT_DCLICK object
         """
-        # string.printable is print this result
-        # '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
-        # !"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~ \t\n\r\x0b\x0c
-        allow_range = string.printable
-        result = check_string
-        for i in range(0, len(check_string)):
-            # string.isalnum() is check whether string is alphanumeric or not
-            if check_string[len(check_string)-1-i:len(check_string)-i] in allow_range:
-                result = check_string[:len(check_string) - i]
-                break
-        return result
+        row = event.GetRow()
+        idx = self.SDOMonitorGrid.GetCellValue(row, 0)
+        subIdx = self.SDOMonitorGrid.GetCellValue(row, 1)
+        
+        del self.SDOMonitorEntries[(idx, subIdx)]
+        self.SDOMonitorGrid.DeleteRows(row, 1)
+        # add jblee
+        self.SetSDOTraceValues(self.SDOMonitorEntries)
+        self.SDOMonitorGrid.Refresh()
 
+    def SDOParserXML(self, entries):
+        """
+        Parse SDO data set that obtain "ESI file"
+        @param entries: SDO entry list 
+        """  
+        entries_list = entries.items()
+        entries_list.sort()
+        self.ForDefaultValueFlag = False
+        self.CompareValue = ""
+        self.sub_entry_value_list = []
 
-# -------------------------------------------------------------------------------
+        for (index, subidx), entry in entries_list:
+            # exclude entry that isn't in the objects
+            check_mapping = entry["PDOMapping"]
+            if check_mapping is "T" or check_mapping is "R":
+                if "PDO index" not in entry.keys():
+                    continue
+
+            idx = "0" + entry["Index"].strip("#")
+            #subidx = hex(int(entry["SubIndex"], 0))
+            try :        
+                subidx = "0x" + entry["SubIndex"]
+            except :
+                subidx = "0x0"
+            datatype = entry["Type"]
+
+            try :
+                default_value = entry["DefaultData"]
+            except :
+                default_value = " --- "
+            # Result of SlaveSDO data parsing. (data type : dictionary)
+            self.Data = {'idx':idx, 'subIdx':subidx, 'access':entry["Access"], 
+                         'type':datatype, 'size': str(entry["BitSize"]), 
+                         'name':entry["Name"], 'value':default_value}
+            category_divide_value = [0x1000, 0x2000, 0x6000, 0xa000, 0xffff]
+                
+            for count in range(len(category_divide_value)) :
+                if int(idx, 0) < category_divide_value[count]:
+                    self.Controler.CommonMethod.SDOVariables[count].append(self.Data)
+                    break
+
+        self.Controler.CommonMethod.SDOSubEntryData = self.sub_entry_value_list
+    
+#-------------------------------------------------------------------------------
 #                    For SDO Notebook (divide category)
 # -------------------------------------------------------------------------------
 class SDONoteBook(wx.Notebook):
@@ -494,17 +586,35 @@ class SDONoteBook(wx.Notebook):
 
         self.DeleteAllPages()
 
+        self.Controler.CommonMethod.SDOVariables[5] = []
+        for i in range(4):
+            self.Controler.CommonMethod.SDOVariables[5] += self.Controler.CommonMethod.SDOVariables[i]
+            
         for txt, count in page_texts:
-            self.Data = self.Controler.CommonMethod.SaveSDOData[count]
-            self.Win = SlaveSDOTable(self, self.Data)
+            self.Data = self.Controler.CommonMethod.SDOVariables[count]
+            self.SubEntryData = self.Controler.CommonMethod.SDOSubEntryData
+            self.Win = SlaveSDOTable(self, self.Data, self.SubEntryData)
             self.AddPage(self.Win, txt)
 
+    # add jblee
+    def OnPageChanged(self, event):
+        old = event.GetOldSelection()
+        new = event.GetSelection()
+        sel = self.GetSelection()
+        self.parent.SDOPageNum = new
+        event.Skip()
+
+    def OnPageChanging(self, event):
+        old = event.GetOldSelection()
+        new = event.GetSelection()
+        sel = self.GetSelection()
+        event.Skip()
 
 # -------------------------------------------------------------------------------
 #                    For SDO Grid (fill index, subindex, etc...)
 # -------------------------------------------------------------------------------
 class SlaveSDOTable(wx.grid.Grid):
-    def __init__(self, parent, data):
+    def __init__(self, parent, data, fixed_value):
         """
         Constructor
         @param parent: Reference to the parent SDOPanelClass class
@@ -518,30 +628,31 @@ class SlaveSDOTable(wx.grid.Grid):
         self.SDOFlag = True
         if data is None:
             self.SDOs = []
-        else:
+            self.sub_entry_value = []
+        else :
             self.SDOs = data
-
-        self.CreateGrid(len(self.SDOs), 8)
-        SDOCellSize = [(0, 65), (1, 65), (2, 50), (3, 55),
-                       (4, 40), (5, 200), (6, 250), (7, 85)]
-
+            self.sub_entry_value = fixed_value
+        
+        self.CreateGrid(len(self.SDOs), 7)
+        SDOCellSize = [(0, 65), (1, 65), (2, 50), (3, 70), 
+                         (4, 40), (5, 400), (6, 135)]
+        
         for (index, size) in SDOCellSize:
             self.SetColSize(index, size)
 
         self.SetRowLabelSize(0)
 
         SDOTableLabel = [(0, "Index"), (1, "Subindex"), (2, "Access"),
-                         (3, "Type"), (4, "Size"), (5, "Category"),
-                         (6, "Name"), (7, "Value")]
+                         (3, "Type"), (4, "Size"), (5, "Name"), (6, "Value")]
 
         for (index, label) in SDOTableLabel:
             self.SetColLabelValue(index, label)
-            self.SetColLabelAlignment(index, wx.ALIGN_CENTRE)
+            self.SetColLabelAlignment(index, wx.ALIGN_CENTER)
 
         attr = wx.grid.GridCellAttr()
 
-        # for SDO download
-        self.Bind(wx.grid.EVT_GRID_CELL_LEFT_DCLICK, self.SDOModifyDialog)
+        # for SDO download and monitoring 
+        self.Bind(gridlib.EVT_GRID_CELL_LEFT_DCLICK, self.onGridDoubleClick)
 
         for i in range(7):
             self.SetColAttr(i, attr)
@@ -554,56 +665,45 @@ class SlaveSDOTable(wx.grid.Grid):
         """
         Cell is filled by new parsing data
         """
-        sdo_list = ['idx', 'subIdx', 'access', 'type', 'size', 'category', 'name', 'value']
+        sdo_list = ['idx', 'subIdx', 'access', 'type', 'size', 'name', 'value']
+        count = 0
         for row_idx in range(len(self.SDOs)):
             for col_idx in range(len(self.SDOs[row_idx])):
-                self.SetCellValue(row_idx, col_idx, self.SDOs[row_idx][sdo_list[col_idx]])
+                
+                # the top entries that have sub index is shaded.
+                if int(self.SDOs[row_idx]['subIdx'], 16) == 0x00:
+                    try:
+                        if int(self.SDOs[row_idx + 1]['subIdx'], 16) is not 0x00:
+                            self.SetCellBackgroundColour(row_idx, col_idx, \
+                                                                wx.LIGHT_GREY)
+                    except:
+                        pass
+
+                if self.SDOs[row_idx][sdo_list[col_idx]] == "modifying":
+                    if len(self.sub_entry_value) == count:
+                        continue
+                    self.SetCellValue(row_idx, col_idx, self.sub_entry_value[count])
+                    count += 1
+                else :
+                    self.SetCellValue(row_idx, col_idx, \
+                                  self.SDOs[row_idx][sdo_list[col_idx]])
+
                 self.SetReadOnly(row_idx, col_idx, True)
                 if col_idx < 5:
                     self.SetCellAlignment(row_idx, col_idx, wx.ALIGN_CENTRE, wx.ALIGN_CENTRE)
 
     def CheckSDODataAccess(self, row):
         """
-        CheckSDODataAccess method is checking that access data has "w"
-        Access field consist 6 char, if mean
-           rw      rw     rw
-        (preop) (safeop) (op)
-        Example Access field : rwrwrw, rwrw--
+        check that access field has "rw"
         @param row : Selected cell by user
         @return Write_flag : If data has "w", flag is true
         """
-        write_flag = False
         check = self.SDOs[row]['access']
-        if check[1:2] == 'w':
-            self.Controler.CommonMethod.Check_PREOP = True
-            write_flag = True
-        if check[3:4] == 'w':
-            self.Controler.CommonMethod.Check_SAFEOP = True
-            write_flag = True
-        if check[5:] == 'w':
-            self.Controler.CommonMethod.Check_OP = True
-            write_flag = True
-
-        return write_flag
-
-    def DecideSDODownload(self, state):
-        """
-        compare current state and "access" field,
-        result notify SDOModifyDialog method
-        @param state : current slave state
-        @return True or False
-        """
-        # Example of 'state' parameter : "0  0:0  PREOP  +  EL9800 (V4.30) (PIC24, SPI, ET1100)"
-        state = state[self.Controler.GetSlavePos()].split("  ")[2]
-        if state == "PREOP" and self.Controler.CommonMethod.Check_PREOP:
+        if check == "rw":
             return True
-        elif state == "SAFEOP" and self.Controler.CommonMethod.Check_SAFEOP:
-            return True
-        elif state == "OP" and self.Controler.CommonMethod.Check_OP:
-            return True
-
-        return False
-
+        else:
+            return False
+    
     def ClearStateFlag(self):
         """
         Initialize StateFlag
@@ -613,51 +713,112 @@ class SlaveSDOTable(wx.grid.Grid):
         self.Controler.CommonMethod.Check_SAFEOP = False
         self.Controler.CommonMethod.Check_OP = False
 
-    def SDOModifyDialog(self, event):
+    def onGridDoubleClick (self, event):
         """
         Create dialog for SDO value modify
-        if user enter data, perform command "ethercat download"
-        @param event : wx.grid.EVT_GRID_CELL_LEFT_DCLICK object
+        if user enter data, perform command "ethercat download"  
+        @param event : gridlib.EVT_GRID_CELL_LEFT_DCLICK object
         """
         self.ClearStateFlag()
+        
+        # CheckSDODataAccess is checking that OD(Object Dictionary) has "w" 
+        if event.GetCol() == 6 and self.CheckSDODataAccess(event.GetRow()) :    
+            dlg = wx.TextEntryDialog (self, 
+                    "Enter hex or dec value (if enter dec value, " \
+                  + "it automatically conversed hex value)",
+                    "SDOModifyDialog", style = wx.OK | wx.CANCEL)
 
-        # CheckSDODataAccess is checking that OD(Object Dictionary) has "w"
-        if event.GetCol() == 7 and self.CheckSDODataAccess(event.GetRow()):
-            dlg = wx.TextEntryDialog(
-                self,
-                _("Enter hex or dec value (if enter dec value, it automatically conversed hex value)"),
-                "SDOModifyDialog",
-                style=wx.OK | wx.CANCEL)
-
-            start_value = self.GetCellValue(event.GetRow(), event.GetCol())
+            start_value = self.GetCellValue(event.GetRow(), event.GetCol()) 
             dlg.SetValue(start_value)
-
+            
             if dlg.ShowModal() == wx.ID_OK:
-                try:
-                    int(dlg.GetValue(), 0)
-                    # check "Access" field
-                    if self.DecideSDODownload(self.Controler.CommonMethod.SlaveState[self.Controler.GetSlavePos()]):
+                # Check whether beremiz connected or not.
+                # If this method is called cyclically, set the cyclic flag true
+                check_connect_flag = self.Controler.CommonMethod.CheckConnect(cyclic_flag = False)
+                if check_connect_flag:
+                    try :
+                        input_val = hex(int(dlg.GetValue(), 0))
                         # Request "SDODownload"
-                        self.Controler.CommonMethod.SDODownload(
-                            self.SDOs[event.GetRow()]['type'],
-                            self.SDOs[event.GetRow()]['idx'],
-                            self.SDOs[event.GetRow()]['subIdx'],
-                            dlg.GetValue())
+                        return_val = self.Controler.CommonMethod.SDODownload(
+                                                self.SDOs[event.GetRow()]["type"], 
+                                                self.SDOs[event.GetRow()]["idx"], 
+                                                self.SDOs[event.GetRow()]["subIdx"], 
+                                                dlg.GetValue())
+                        if return_val is "":
+                            SDOUploadEntry = {"idx" : self.SDOs[event.GetRow()]["idx"],
+                                              "subIdx" : self.SDOs[event.GetRow()]["subIdx"],
+                                              "size" : self.SDOs[event.GetRow()]["size"]
+                                             }
+                            data = self.Controler.GetCTRoot()._connector.GetSDOEntryData(
+                                SDOUploadEntry, self.Controler.GetSlavePos())
+                            hex_val = hex(data)[:-1]                           
 
-                        self.SetCellValue(event.GetRow(), event.GetCol(), hex(int(dlg.GetValue(), 0)))
-                    else:
-                        self.Controler.CommonMethod.CreateErrorDialog(_('You cannot SDO download this state'))
-                # Error occured process of "int(variable)"
-                # User input is not hex, dec value
-                except ValueError:
-                    self.Controler.CommonMethod.CreateErrorDialog(_('You can input only hex, dec value'))
+                            # download data check
+                            if input_val == hex_val:
+                                display_val = "%s(%d)" % (hex_val, data) 
+                                self.SetCellValue(event.GetRow(), event.GetCol(), 
+                                                  display_val)
+                            else :
+                                self.Controler.CommonMethod.CreateErrorDialog(\
+                                            'SDO Value not completely download, please try again')    
+                        else:
+                            self.Controler.GetCTRoot().logger.write_error(return_val)
+                            
+                    # Error occured process of "int(variable)"
+                    # User input is not hex, dec value
+                    except ValueError:
+                        self.Controler.CommonMethod.CreateErrorDialog(\
+                                            'You can input only hex, dec value')    
+        else:
+            SDOPanel = self.parent.parent
+            row = event.GetRow() 
+            
+            idx = self.SDOs[row]["idx"]
+            subIdx = self.SDOs[row]["subIdx"]
+            SDOPanel.SDOMonitorEntries[(idx, subIdx)] = {
+                                                "access": self.SDOs[row]["access"],
+                                                "type": self.SDOs[row]["type"],
+                                                "size": self.SDOs[row]["size"],
+                                                "name": self.SDOs[row]["name"],
+                                                # add jblee
+                                                "value": ""}
+            
+            del_rows = SDOPanel.SDOMonitorGrid.GetNumberRows()
+            
+            try: 
+                SDOPanel.SDOMonitorGrid.DeleteRows(0, del_rows)
+            except:
+                pass
 
+            SDOPanel.SDOMonitorGrid.AppendRows(len(SDOPanel.SDOMonitorEntries))
+            SDOPanel.SetSDOTraceValues(SDOPanel.SDOMonitorEntries)
+            
+            SME_list = SDOPanel.SDOMonitorEntries.items()
+            SME_list.sort()
 
-# -------------------------------------------------------------------------------
-#                 For PDO Monitoring Panel
+            gridRow = 0
+            for (idx, subIdx), entry in SME_list:
+                SDOPanel.SDOMonitorGrid.SetCellValue(gridRow, 0, str(idx))
+                SDOPanel.SDOMonitorGrid.SetCellValue(gridRow, 1, str(subIdx))
+                for col, key in [(2, "access"),
+                                 (3, "type"),
+                                 (4, "size"),
+                                 (5, "name")]:
+                    SDOPanel.SDOMonitorGrid.SetCellValue(gridRow, col, entry[key])
+                for col in range(7):
+                    SDOPanel.SDOMonitorGrid.SetReadOnly(gridRow, col, True)
+                    if col < 5 :
+                        SDOPanel.SDOMonitorGrid.SetCellAlignment(\
+                                        gridRow, col, wx.ALIGN_CENTER, wx.ALIGN_CENTER)
+                gridRow += 1
+            
+            SDOPanel.SDOMonitorGrid.Refresh()
+
+#-------------------------------------------------------------------------------
+#                 For PDO Mapping Panel
 # PDO Class UI  : Panel -> Choicebook (RxPDO, TxPDO) ->
 #                 Notebook (PDO Index) -> Grid (PDO entry)
-# -------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 class PDOPanelClass(wx.Panel):
     def __init__(self, parent, controler):
         """
@@ -667,16 +828,152 @@ class PDOPanelClass(wx.Panel):
         """
         wx.Panel.__init__(self, parent, -1)
         self.Controler = controler
+        sizer = wx.FlexGridSizer(cols=1, hgap=20,rows=3, vgap=20)
+        line = wx.StaticText(self, -1, "\n In order to control Ethercat device, user must select proper PDO set.\
+                                        \n Each PDO sets describe operation modes (CSP, CSV, CST) supported by Ethercat devices.\
+                                      \n\n PDOs have two types, RxPDO and TxPDO.\
+                                        \n  - RxPDO refers to the Receive Process Data Object. It means the control parameters which sent from controller to the EtherCAT Slave device.\
+                                        \n    In general, ControlWord (0x6040), Modes of Operations (0x6060), and TargetPosition (0x607A) are regarded as RxPDO.\
+                                        \n  - TxPDO refers to the Transmit Process Data Object. It used to report status of EtherCAT Slave device to the controller in order to calibrate their next actuation.\
+                                        \n    StatusWord (0x6041), Modes of Operation Display (0x6061), and ActualPosition (0x607A) include in TxPDO.\
+                                      \n\n PDO Mapping feature provides available RxPDO and TxPDO sets which defined in Ethercat slave description XML.\
+                                        \n If there is no selection of PDO set, first set (0x1600, 0x1A00) will be chosen as default configuration.")
+        
+        sizer.Add(line)
+        self.SetSizer(sizer)
 
-        self.PDOMonitoringEditorMainSizer = wx.BoxSizer(wx.VERTICAL)
-        self.PDOMonitoringEditorInnerMainSizer = wx.FlexGridSizer(cols=1, hgap=10, rows=2, vgap=10)
+class RxPDOPanelClass(wx.Panel):
+    def __init__(self, parent, controler):
+        """
+        Constructor
+        @param parent: Reference to the parent EtherCATManagementTreebook class
+        @param controler: _EthercatSlaveCTN class in EthercatSlave.py
+        """
+        wx.Panel.__init__(self, parent, -1)
+        self.Controler = controler
 
-        self.CallPDOChoicebook = PDOChoicebook(self, controler=self.Controler)
-        self.PDOMonitoringEditorInnerMainSizer.Add(self.CallPDOChoicebook, wx.ALL)
+        # add jblee
+        #self.PDOIndexList = ["RxPDO"]
+        self.PDOIndexList = []
+        self.LoadPDOSelectData()
 
-        self.PDOMonitoringEditorMainSizer.Add(self.PDOMonitoringEditorInnerMainSizer)
+        #HSAHN ADD. 2015.7.26 PDO Select Function ADD
+        self.Controler.CommonMethod.RequestPDOInfo()
+        self.PDOcheckBox = []
+        self.rx_pdo_entries = self.Controler.CommonMethod.GetRxPDOCategory()
+        if len(self.rx_pdo_entries):
+            for i in range(len(self.rx_pdo_entries)):
+                self.PDOcheckBox.append(wx.CheckBox(self, label=str(hex(self.rx_pdo_entries[i]['pdo_index'])), size=(120,15)))
+                if not self.Controler.SelectedRxPDOIndex and self.rx_pdo_entries[i]['sm'] is not None:
+                    self.PDOcheckBox[-1].SetValue(True)
+                    self.Controler.SelectedRxPDOIndex.append(int(self.PDOcheckBox[-1].GetLabel(), 0))
+                    self.InitSavePDO()
+                elif self.rx_pdo_entries[i]['pdo_index'] in self.Controler.SelectedRxPDOIndex:
+                    self.PDOIndexList.append(str(hex(self.rx_pdo_entries[i]['pdo_index'])))
+                    self.PDOcheckBox[-1].SetValue(True)
+                    
+            for cb in self.PDOcheckBox:
+                self.Bind(wx.EVT_CHECKBOX, self.PDOSelectCheck, cb)
 
-        self.SetSizer(self.PDOMonitoringEditorMainSizer)
+            self.PDOListBox = wx.StaticBox(self, label=_("PDO Mapping Select"))
+            self.PDOListBoxSizer = wx.StaticBoxSizer(self.PDOListBox, orient=wx.HORIZONTAL)
+            self.RxPDOListBox = wx.StaticBox(self, label=_("RxPDO"))
+            self.RxPDOListBoxSizer = wx.StaticBoxSizer(self.RxPDOListBox, orient=wx.VERTICAL)
+            self.RxPDOListBoxInnerSizer = wx.FlexGridSizer(cols=3, hgap=5, rows=10, vgap=5)
+            self.RxPDOListBoxInnerSizer.AddMany(self.PDOcheckBox[0:len(self.rx_pdo_entries)])
+            self.RxPDOListBoxSizer.Add(self.RxPDOListBoxInnerSizer)
+            self.PDOListBoxSizer.Add(self.RxPDOListBoxSizer)
+            self.PDOWarningText = wx.StaticText(self, -1,
+                       "  *Warning*\n\n By default configuration, \n\n first mapping set is selected. \n\n Choose the PDO mapping!",
+                       size=(220, -1))
+            self.PDOListBoxSizer.Add(self.PDOWarningText)
+
+            self.PDOMonitoringEditorMainSizer = wx.BoxSizer(wx.VERTICAL)
+            self.PDOMonitoringEditorInnerMainSizer = wx.FlexGridSizer(cols=1, hgap=10, rows=2, vgap=10)
+
+        
+            self.CallPDOChoicebook = PDONoteBook(self, controler=self.Controler, name="Rx")
+            self.PDOMonitoringEditorInnerMainSizer.Add(self.CallPDOChoicebook, wx.ALL)
+
+            self.PDOInformationBox = wx.StaticBox(self, label=_("RxPDO Mapping List"))
+            self.PDOInformationBoxSizer = wx.StaticBoxSizer(self.PDOInformationBox, orient=wx.VERTICAL)
+            self.PDOInformationBoxSizer.Add(self.PDOMonitoringEditorInnerMainSizer)
+
+            self.PDOMonitoringEditorMainSizer.Add(self.PDOListBoxSizer)
+            self.PDOMonitoringEditorMainSizer.Add(self.PDOInformationBoxSizer)
+            self.SetSizer(self.PDOMonitoringEditorMainSizer)
+
+            # add jblee
+            self.PDOExcludeCheck()
+        else:
+            sizer = wx.FlexGridSizer(cols=1, hgap=20,rows=3, vgap=20)
+            line = wx.StaticText(self, -1, "\n  This device does not support RxPDO.")
+        
+            sizer.Add(line)
+            self.SetSizer(sizer)
+
+    def LoadPDOSelectData(self):
+        RxPDOData = self.Controler.BaseParams.getRxPDO()
+        RxPDOs = []
+        if RxPDOData != "None":
+            RxPDOs = RxPDOData.split()
+        if RxPDOs :
+            for RxPDO in RxPDOs :
+                self.Controler.SelectedRxPDOIndex.append(int(RxPDO, 0))
+
+    def PDOSelectCheck(self, event):
+        # add jblee for Save User Select
+        cb = event.GetEventObject()
+                         # prevent duplicated check
+        if cb.GetValue() and int(cb.GetLabel(), 0) not in self.Controler.SelectedRxPDOIndex:
+            self.Controler.SelectedRxPDOIndex.append(int(cb.GetLabel(), 0))
+            self.PDOIndexList.append(cb.GetLabel())
+        else:
+            self.Controler.SelectedRxPDOIndex.remove(int(cb.GetLabel(), 0))
+            self.PDOIndexList.remove(cb.GetLabel())
+
+        data = ""
+        for PDOIndex in self.PDOIndexList:            
+            data = data + " " + PDOIndex
+
+        self.Controler.BaseParams.setRxPDO(data)
+        self.Controler.GetCTRoot().CTNRequestSave()
+
+        self.PDOExcludeCheck()
+
+    def InitSavePDO(self):
+        for PDOIndex in self.Controler.SelectedRxPDOIndex:
+            self.PDOIndexList.append(str(hex(PDOIndex)))
+
+        data = ""
+        for PDOIndex in self.PDOIndexList:            
+            data = data + " " + PDOIndex
+
+        self.Controler.BaseParams.setRxPDO(data)
+
+    # 2016.06.21
+    # add jblee for check exclude pdo list
+    def PDOExcludeCheck(self):
+        #files = os.listdir(self.Controler.CTNPath())
+        #filepath = os.path.join(self.Controler.CTNPath(), "DataForPDO.txt")
+        CurIndexs = self.Controler.SelectedRxPDOIndex
+        for CB in self.PDOcheckBox:
+            if len(CB.GetLabel().split()) > 1:
+                CB.Enable()
+                CB.SetLabel(CB.GetLabel().split()[0])
+
+        for pdo in self.rx_pdo_entries:
+            for CurIndex in CurIndexs:
+                if pdo["pdo_index"] == CurIndex:
+                    ex_list = pdo["exclude_list"]
+                    for ex_item in ex_list:
+                        for CB in self.PDOcheckBox:
+                            if CB.GetLabel() == hex(ex_item):
+                                CB.SetLabel(CB.GetLabel() + " (Excluded)")
+                                CB.Disable()
+
+    def RefreshPDOInfo(self):
+        pass
 
     def PDOInfoUpdate(self):
         """
@@ -684,28 +981,142 @@ class PDOPanelClass(wx.Panel):
         """
         self.Controler.CommonMethod.RequestPDOInfo()
         self.CallPDOChoicebook.Destroy()
-        self.CallPDOChoicebook = PDOChoicebook(self, controler=self.Controler)
+        self.CallPDOChoicebook = PDOChoicebook(self, controler=self.Controler, name="Rx")
         self.Refresh()
 
-
-# -------------------------------------------------------------------------------
-#                    For PDO Choicebook (divide Tx, Rx PDO)
-# -------------------------------------------------------------------------------
-class PDOChoicebook(wx.Choicebook):
+class TxPDOPanelClass(wx.Panel):
     def __init__(self, parent, controler):
         """
         Constructor
-        @param parent: Reference to the parent PDOPanelClass class
+        @param parent: Reference to the parent EtherCATManagementTreebook class
         @param controler: _EthercatSlaveCTN class in EthercatSlave.py
         """
-        wx.Choicebook.__init__(self, parent, id=-1, size=(500, 500), style=wx.CHB_DEFAULT)
+        wx.Panel.__init__(self, parent, -1)
         self.Controler = controler
 
-        RxWin = PDONoteBook(self, controler=self.Controler, name="Rx")
-        TxWin = PDONoteBook(self, controler=self.Controler, name="Tx")
-        self.AddPage(RxWin, "RxPDO")
-        self.AddPage(TxWin, "TxPDO")
+        # add jblee
+        self.PDOIndexList = []
+        self.LoadPDOSelectData()
 
+        #HSAHN ADD. 2015.7.26 PDO Select Function ADD
+        self.Controler.CommonMethod.RequestPDOInfo()
+        self.PDOcheckBox = []
+        self.tx_pdo_entries = self.Controler.CommonMethod.GetTxPDOCategory()
+        if len(self.tx_pdo_entries):
+            for i in range(len(self.tx_pdo_entries)):
+                self.PDOcheckBox.append(wx.CheckBox(self, label=str(hex(self.tx_pdo_entries[i]['pdo_index'])), size=(120,15)))
+                if not self.Controler.SelectedTxPDOIndex and self.tx_pdo_entries[i]['sm'] is not None:
+                    self.PDOcheckBox[-1].SetValue(True)
+                    self.Controler.SelectedTxPDOIndex.append(int(self.PDOcheckBox[-1].GetLabel(), 0))
+                    self.InitSavePDO()
+                elif self.tx_pdo_entries[i]['pdo_index'] in self.Controler.SelectedTxPDOIndex:
+                    self.PDOIndexList.append(str(hex(self.tx_pdo_entries[i]['pdo_index'])))
+                    self.PDOcheckBox[-1].SetValue(True)
+            for cb in self.PDOcheckBox:
+                self.Bind(wx.EVT_CHECKBOX, self.PDOSelectCheck, cb)
+        
+            self.PDOListBox = wx.StaticBox(self, label=_("PDO Mapping Select"))
+            self.PDOListBoxSizer = wx.StaticBoxSizer(self.PDOListBox, orient=wx.HORIZONTAL)
+            self.TxPDOListBox = wx.StaticBox(self, label=_("TxPDO"))
+            self.TxPDOListBoxSizer = wx.StaticBoxSizer(self.TxPDOListBox, orient=wx.VERTICAL)
+            self.TxPDOListBoxInnerSizer = wx.FlexGridSizer(cols=3, hgap=5, rows=10, vgap=5)
+            self.TxPDOListBoxInnerSizer.AddMany(self.PDOcheckBox[0:len(self.tx_pdo_entries)])
+            self.TxPDOListBoxSizer.Add(self.TxPDOListBoxInnerSizer)
+            self.PDOListBoxSizer.Add(self.TxPDOListBoxSizer)
+            self.PDOWarningText = wx.StaticText(self, -1,
+                       "  *Warning*\n\n By default configuration, \n\n first mapping set is selected. \n\n Choose the PDO mapping!",
+                       size=(220, -1))
+            self.PDOListBoxSizer.Add(self.PDOWarningText)
+
+            self.PDOMonitoringEditorMainSizer = wx.BoxSizer(wx.VERTICAL)
+            self.PDOMonitoringEditorInnerMainSizer = wx.FlexGridSizer(cols=1, hgap=10, rows=2, vgap=10)
+
+            self.CallPDOChoicebook = PDONoteBook(self, controler=self.Controler, name="Tx")
+            self.PDOMonitoringEditorInnerMainSizer.Add(self.CallPDOChoicebook, wx.ALL)
+
+            self.PDOInformationBox = wx.StaticBox(self, label=_("TxPDO Mapping List"))
+            self.PDOInformationBoxSizer = wx.StaticBoxSizer(self.PDOInformationBox, orient=wx.VERTICAL)
+            self.PDOInformationBoxSizer.Add(self.PDOMonitoringEditorInnerMainSizer)
+
+            self.PDOMonitoringEditorMainSizer.Add(self.PDOListBoxSizer)
+            self.PDOMonitoringEditorMainSizer.Add(self.PDOInformationBoxSizer)
+            self.SetSizer(self.PDOMonitoringEditorMainSizer)
+
+            # add jblee
+            self.PDOExcludeCheck()
+        else:
+            sizer = wx.FlexGridSizer(cols=1, hgap=20,rows=3, vgap=20)
+            line = wx.StaticText(self, -1, "\n  This device does not support TxPDO.")
+        
+            sizer.Add(line)
+            self.SetSizer(sizer)
+
+    def LoadPDOSelectData(self):
+        TxPDOData = self.Controler.BaseParams.getTxPDO()
+        TxPDOs = []
+        if TxPDOData != "None":
+            TxPDOs = TxPDOData.split()
+        if TxPDOs :
+            for TxPDO in TxPDOs :
+                self.Controler.SelectedTxPDOIndex.append(int(TxPDO, 0))
+
+    def PDOSelectCheck(self, event):
+        # add jblee for Save User Select
+        cb = event.GetEventObject()
+                         # prevent duplicated check
+        if cb.GetValue() and int(cb.GetLabel(), 0) not in self.Controler.SelectedTxPDOIndex:
+            self.Controler.SelectedTxPDOIndex.append(int(cb.GetLabel(), 0))
+            self.PDOIndexList.append(cb.GetLabel())
+        else:
+            self.Controler.SelectedTxPDOIndex.remove(int(cb.GetLabel(), 0))
+            self.PDOIndexList.remove(cb.GetLabel())
+
+        data = ""
+        for PDOIndex in self.PDOIndexList:            
+            data = data + " " + PDOIndex
+
+        self.Controler.BaseParams.setTxPDO(data)
+        self.Controler.GetCTRoot().CTNRequestSave()
+
+        self.PDOExcludeCheck()
+
+    def InitSavePDO(self):
+        for PDOIndex in self.Controler.SelectedTxPDOIndex:
+            self.PDOIndexList.append(str(hex(PDOIndex)))
+
+        data = ""
+        for PDOIndex in self.PDOIndexList:            
+            data = data + " " + PDOIndex
+
+        self.Controler.BaseParams.setTxPDO(data)
+
+    # 2016.06.21
+    # add jblee for check exclude pdo list
+    def PDOExcludeCheck(self):
+        CurIndexs = self.Controler.SelectedTxPDOIndex
+        for CB in self.PDOcheckBox:
+            if len(CB.GetLabel().split()) > 1:
+                CB.Enable()
+                CB.SetLabel(CB.GetLabel().split()[0])
+
+        for pdo in self.tx_pdo_entries:
+            for CurIndex in CurIndexs:
+                if pdo["pdo_index"] == CurIndex:
+                    ex_list = pdo["exclude_list"]
+                    for ex_item in ex_list:
+                        for CB in self.PDOcheckBox:
+                            if CB.GetLabel() == hex(ex_item):
+                                CB.SetLabel(CB.GetLabel() + " (Excluded)")
+                                CB.Disable()
+
+    def PDOInfoUpdate(self):
+        """
+        Call RequestPDOInfo method and create Choicebook
+        """
+        self.Controler.CommonMethod.RequestPDOInfo()
+        self.CallPDOChoicebook.Destroy()
+        self.CallPDOChoicebook = PDOChoicebook(self, controler=self.Controler, name="Tx")
+        self.Refresh()
 
 # -------------------------------------------------------------------------------
 #                    For PDO Notebook (divide PDO index)
@@ -718,13 +1129,11 @@ class PDONoteBook(wx.Notebook):
         @param name: identifier whether RxPDO or TxPDO
         @param controler: _EthercatSlaveCTN class in EthercatSlave.py
         """
-        wx.Notebook.__init__(self, parent, id=-1, size=(640, 400))
+        wx.Notebook.__init__(self, parent, id=-1, size=(600, 400))
         self.Controler = controler
 
         count = 0
         page_texts = []
-
-        self.Controler.CommonMethod.RequestPDOInfo()
 
         if name == "Tx":
             # obtain pdo_info and pdo_entry
@@ -820,6 +1229,183 @@ class PDOEntryTable(wx.grid.Grid):
                 self.SetRowSize(row_idx, 25)
             start_value += 1
 
+#-------------------------------------------------------------------------------
+#                    For MDP Main Panel         
+#-------------------------------------------------------------------------------  
+class MDPPanel(wx.Panel):
+    def __init__(self, parent, controler):
+        """
+        Constructor
+        @param parent: Reference to the parent EtherCATManagementTreebook class
+        @param controler: _EthercatSlaveCTN class in EthercatSlave.py
+        """
+        wx.Panel.__init__(self, parent, -1)
+        self.parent = parent
+        self.Controler = controler
+
+        sizer = wx.FlexGridSizer(cols=3, hgap=20, rows=1, vgap=20)
+
+        # Include Module ListBox
+        leftInnerSizer = wx.FlexGridSizer(cols=1, hgap=10,rows=2, vgap=10)
+        # Include Add, Delete Button
+        middleInnerSizer = wx.FlexGridSizer(cols=1, hgap=10,rows=2, vgap=10)
+        # Include Slot ListBox
+        rightInnerSizer = wx.FlexGridSizer(cols=1, hgap=10,rows=2, vgap=10)
+        
+        # Get Module Name as Array
+        # MDPArray = {SlaveName, [data0, data1, ...], SlotIndexIncrement, SlotPdoIncrement}
+        # data = [ModuleName, ModuleInfo, [PDOInfo1, PDOInfo2, ...]]
+        # PDOInfo = {Index, Name, BitSize, Access, PDOMapping, SubIndex, Type}
+        slave = self.Controler.CTNParent.GetSlave(self.Controler.GetSlavePos())
+        type_infos = slave.getType()
+        MDPArray = self.Controler.CTNParent.CTNParent.GetMDPInfos(type_infos)
+
+        NameSet = []
+        if MDPArray:
+            for info in MDPArray[0][1]:
+                NameSet.append(info[0])
+
+        # Module ListBox
+        self.ModuleLabel = wx.StaticText(self, -1, "Module")
+        self.ModuleListBox = wx.ListBox(self, size = (150, 200), choices = NameSet)
+        #self.ModuleListBox = wx.ListBox(self, size = (150, 200), choices = [])
+        self.Bind(wx.EVT_LISTBOX_DCLICK, self.OnModuleListBoxDCClick, self.ModuleListBox)
+
+        # Button
+        self.AddButton = wx.Button(self, label=_(" Add Module  "))
+        self.DeleteButton = wx.Button(self, label=_("Delete Module"))
+
+        # Button Event Mapping
+        self.AddButton.Bind(wx.EVT_BUTTON, self.OnAddButton)
+        self.DeleteButton.Bind(wx.EVT_BUTTON, self.OnDeleteButton)
+
+        # Slot ListBox
+        self.SlotLabel = wx.StaticText(self, -1, "Slot")
+        self.SlotListBox = wx.ListBox(self, size = (150, 200))
+        self.Bind(wx.EVT_LISTBOX_DCLICK, self.OnSlotListBoxDCClick, self.SlotListBox)
+        self.SelectModule = []
+
+        # Add Object Each Sizer
+        leftInnerSizer.AddMany([self.ModuleLabel, self.ModuleListBox])
+        middleInnerSizer.Add(self.AddButton, 0, wx.TOP, 100)
+        middleInnerSizer.Add(self.DeleteButton, 0, wx.BOTTOM, 120)
+        rightInnerSizer.AddMany([self.SlotLabel, self.SlotListBox])
+        
+        sizer.AddMany([leftInnerSizer, middleInnerSizer, rightInnerSizer])
+        
+        self.SetSizer(sizer)
+
+        self.InitMDPSet()
+
+    def InitMDPSet(self):
+        files = os.listdir(self.Controler.CTNPath())
+        filepath = os.path.join(self.Controler.CTNPath(), "DataForMDP.txt")
+        try:
+            moduleDataFile = open(filepath, 'r')
+            lines = moduleDataFile.readlines()
+
+            for line in lines:
+                if line == "\n":
+                    continue
+                module_pos = line.split()[-1]
+                name_len_limit = len(line) - len(module_pos) - 2
+                module_name = line[0:name_len_limit]
+                
+                self.SelectModule.append((module_name, int(module_pos)))
+
+            localModuleInfo = []        
+            count = 1
+            for (item, pos) in self.SelectModule:
+                slotString = "Slot %d %s : " % (count, item.split()[1]) + item.split()[0]
+                localModuleInfo.append(slotString)
+                count += 1
+            self.SlotListBox.SetItems(localModuleInfo)
+
+        except:
+            moduleDataFile = open(filepath, 'w')
+
+        moduleDataFile.close()
+
+    def OnAddButton(self, event):
+        files = os.listdir(self.Controler.CTNPath())
+        filepath = os.path.join(self.Controler.CTNPath(), "DataForMDP.txt")
+        moduleDataFile = open(filepath, 'w')
+
+        selectNum = self.ModuleListBox.GetSelection()
+        if selectNum >= 0:
+            selectStr = self.ModuleListBox.GetString(selectNum)
+            self.SelectModule.append((selectStr, selectNum))
+            localModuleInfo = []
+            count = 1
+            for (item, pos) in self.SelectModule:
+                slotString = "Slot %d %s : " % (count, item.split()[1]) + item.split()[0]
+                localModuleInfo.append(slotString)
+                count += 1
+            self.SlotListBox.SetItems(localModuleInfo)
+
+        moduleDataFile.close()
+        
+    def OnDeleteButton(self, event):
+        files = os.listdir(self.Controler.CTNPath())
+        filepath = os.path.join(self.Controler.CTNPath(), "DataForMDP.txt")
+        moduleDataFile = open(filepath, 'w')
+
+        selectNum = self.SlotListBox.GetSelection()
+        if selectNum >= 0:
+            selectStr = self.SlotListBox.GetString(selectNum)
+            self.SelectModule.pop(selectNum)
+            localModuleInfo = []
+            count = 1
+            for (item, pos) in self.SelectModule:
+                moduleDataFile.write(item + " " + str(pos) + "\n")
+                slotString = "Slot %d %s : " % (count, item.split()[1]) + item.split()[0]
+                localModuleInfo.append(slotString)
+                count += 1
+            self.SlotListBox.SetItems(localModuleInfo)
+
+        moduleDataFile.close()
+
+    def OnModuleListBoxDCClick(self, event):
+        files = os.listdir(self.Controler.CTNPath())
+        filepath = os.path.join(self.Controler.CTNPath(), "DataForMDP.txt")
+        moduleDataFile = open(filepath, 'w')
+
+        selectNum = self.ModuleListBox.GetSelection()
+        if selectNum >= 0:
+            selectStr = self.ModuleListBox.GetString(selectNum)
+            self.SelectModule.append((selectStr, selectNum))
+            localModuleInfo = []
+            count = 1
+            for (item, pos) in self.SelectModule:
+                moduleDataFile.write(item + " " + str(pos) + "\n")
+                slotString = "Slot %d %s : " % (count, item.split()[1]) + item.split()[0]
+                localModuleInfo.append(slotString)
+                module = self.Controler.CTNParent.CTNParent.GetSelectModule(pos)
+                self.Controler.CommonMethod.SavePDOData(module)
+                count += 1
+            self.SlotListBox.SetItems(localModuleInfo)
+
+        moduleDataFile.close()
+
+    def OnSlotListBoxDCClick(self, event):
+        files = os.listdir(self.Controler.CTNPath())
+        filepath = os.path.join(self.Controler.CTNPath(), "DataForMDP.txt")
+        moduleDataFile = open(filepath, 'w')
+
+        selectNum = self.SlotListBox.GetSelection()
+        if selectNum >= 0:
+            selectStr = self.SlotListBox.GetString(selectNum)
+            self.SelectModule.pop(selectNum)
+            localModuleInfo = []
+            count = 1
+            for (item, pos) in self.SelectModule:
+                moduleDataFile.write(item + " " + str(pos) + "\n")
+                slotString = "Slot %d %s : " % (count, item.split()[1]) + item.split()[0]
+                localModuleInfo.append(slotString)
+                count += 1
+            self.SlotListBox.SetItems(localModuleInfo)
+
+        moduleDataFile.close()
 
 # -------------------------------------------------------------------------------
 #                    For EEPROM Access Main Panel
@@ -858,22 +1444,24 @@ class SlaveSiiSmartView(wx.Panel):
         self.parent = parent
         self.Controler = controler
 
-        self.PDIType = {
-            0: ['none', '00000000'],
-            4: ['Digital I/O', '00000100'],
-            5: ['SPI Slave', '00000101'],
-            7: ['EtherCAT Bridge (port3)', '00000111'],
-            8: ['uC async. 16bit', '00001000'],
-            9: ['uC async. 8bit', '00001001'],
-            10: ['uC sync. 16bit', '00001010'],
-            11: ['uC sync. 8bit', '00001011'],
-            16: ['32 Digtal Input and 0 Digital Output', '00010000'],
-            17: ['24 Digtal Input and 8 Digital Output', '00010001'],
-            18: ['16 Digtal Input and 16 Digital Output', '00010010'],
-            19: ['8 Digtal Input and 24 Digital Output', '00010011'],
-            20: ['0 Digtal Input and 32 Digital Output', '00010100'],
-            128: ['On-chip bus', '11111111']
-        }
+        # PDI Type 1, 13 unknown Type, Fix Future
+        self.PDIType = {0  :['none', '00000000'], 
+                        1  :['unknown', '00000000'],
+                        4  :['Digital I/O', '00000100'],
+                        5  :['SPI Slave', '00000101'],
+                        7  :['EtherCAT Bridge (port3)', '00000111'],
+                        8  :['uC async. 16bit', '00001000'],
+                        9  :['uC async. 8bit', '00001001'],
+                        10 :['uC sync. 16bit', '00001010'],
+                        11 :['uC sync. 8bit', '00001011'],
+                        13 :['unknown', '00000000'],
+                        16 :['32 Digtal Input and 0 Digital Output', '00010000'],
+                        17 :['24 Digtal Input and 8 Digital Output', '00010001'],
+                        18 :['16 Digtal Input and 16 Digital Output','00010010'],
+                        19 :['8 Digtal Input and 24 Digital Output', '00010011'],
+                        20 :['0 Digtal Input and 32 Digital Output', '00010100'],
+                        128:['On-chip bus', '11111111']
+                        }
 
         sizer = wx.FlexGridSizer(cols=1, hgap=5, rows=2, vgap=5)
         button_sizer = wx.FlexGridSizer(cols=2, hgap=5, rows=1, vgap=5)
@@ -935,7 +1523,8 @@ class SlaveSiiSmartView(wx.Panel):
         @param event : wx.EVT_BUTTON object
         """
         # Check whether beremiz connected or not.
-        check_connect_flag = self.Controler.CommonMethod.CheckConnect(False)
+        # If this method is called cyclically, set the cyclic flag true
+        check_connect_flag = self.Controler.CommonMethod.CheckConnect(cyclic_flag = False)
         if check_connect_flag:
             self.SiiBinary = self.Controler.CommonMethod.LoadData()
             self.SetEEPROMData()
@@ -1257,7 +1846,8 @@ class HexView(wx.Panel):
         @param event : wx.EVT_BUTTON object
         """
         # Check whether beremiz connected or not.
-        check_connect_flag = self.Controler.CommonMethod.CheckConnect(False)
+        # If this method is called cyclically, set the cyclic flag true
+        check_connect_flag = self.Controler.CommonMethod.CheckConnect(cyclic_flag = False)
         if check_connect_flag:
             # load from EEPROM data and parsing
             self.SiiBinary = self.Controler.CommonMethod.LoadData()
@@ -1274,7 +1864,8 @@ class HexView(wx.Panel):
         """
         # Check whether beremiz connected or not,
         # and whether status is "Started" or not.
-        check_connect_flag = self.Controler.CommonMethod.CheckConnect(False)
+        # If this method is called cyclically, set the cyclic flag true
+        check_connect_flag = self.Controler.CommonMethod.CheckConnect(cyclic_flag = False)
         if check_connect_flag:
             status, _log_count = self.Controler.GetCTRoot()._connector.GetPLCstatus()
             if status is not PlcStatus.Started:
@@ -1439,7 +2030,7 @@ class RegisterAccessPanel(wx.Panel):
         # flag for compact view
         self.CompactFlag = False
 
-        # main grid의 rows and cols
+        # main grid rows and cols
         self.MainRow = [512, 512, 512, 512]
         self.MainCol = 4
 
@@ -1675,7 +2266,8 @@ class RegisterAccessPanel(wx.Panel):
         @param event: wx.EVT_BUTTON object
         """
         # Check whether beremiz connected or not.
-        check_connect_flag = self.Controler.CommonMethod.CheckConnect(False)
+        # If this method is called cyclically, set the cyclic flag true
+        check_connect_flag = self.Controler.CommonMethod.CheckConnect(cyclic_flag = False)
         if check_connect_flag:
             self.LoadData()
             self.BasicSetData()
@@ -2059,8 +2651,7 @@ class MasterStatePanelClass(wx.Panel):
         @param parent: wx.ScrollWindow object
         @Param controler: _EthercatSlaveCTN class in EthercatSlave.py
         """
-        wx.Panel.__init__(self, parent, -1, (0, 0),
-                          size=wx.DefaultSize, style=wx.SUNKEN_BORDER)
+        wx.Panel.__init__(self, parent)
         self.Controler = controler
         self.parent = parent
         self.StaticBox = {}
@@ -2070,21 +2661,25 @@ class MasterStatePanelClass(wx.Panel):
         # ----------------------- Main Sizer and Update Button --------------------------------------------
         self.MasterStateSizer = {"main": wx.BoxSizer(wx.VERTICAL)}
         for key, attr in [
-                ("innerMain",           [1, 10, 2, 10]),
-                ("innerTopHalf",        [2, 10, 1, 10]),
-                ("innerBottomHalf",     [2, 10, 1, 10]),
-                ("innerMasterState",    [2, 10, 3, 10]),
-                ("innerDeviceInfo",     [4, 10, 3, 10]),
-                ("innerFrameInfo",      [4, 10, 5, 10])]:
+            ("innerTop",            [2, 10, 1, 10]),
+            ("innerMiddle",         [1, 10, 1, 10]),
+            ("innerBottom",         [1, 10, 1, 10]),
+            ("innerMasterState",    [2, 10, 3, 10]),
+            ("innerDeviceInfo",     [4, 10, 3, 10]),
+            ("innerFrameInfo",      [4, 10, 5, 10]),
+            ("innerSlaveInfo",     [1, 10, 2, 10])]:
             self.MasterStateSizer[key] = wx.FlexGridSizer(cols=attr[0], hgap=attr[1], rows=attr[2], vgap=attr[3])
 
-        self.UpdateButton = wx.Button(self, label=_('Update'))
-        self.UpdateButton.Bind(wx.EVT_BUTTON, self.OnButtonClick)
-
-        for key, label in [
-                ('masterState', 'EtherCAT Master State'),
-                ('deviceInfo', 'Ethernet Network Card Information'),
-                ('frameInfo', 'Network Frame Information')]:
+        self.MSUpdateButton = wx.Button(self, label=_("Update"))
+        self.MSUpdateButton.Bind(wx.EVT_BUTTON, self.OnMSUpdateButtonClick)
+        self.SIUpdateButton = wx.Button(self, label=_("Update"))
+        self.SIUpdateButton.Bind(wx.EVT_BUTTON, self.OnSIUpdateButtonClick)
+        
+        for key, label in [                
+            ("masterState", "EtherCAT Master State"),
+            ("deviceInfo", "Ethernet Network Card Information"),
+            ("frameInfo", "Network Frame Information"),
+            ("slaveInfo", "Slave Information")]: 
             self.StaticBox[key] = wx.StaticBox(self, label=_(label))
             self.MasterStateSizer[key] = wx.StaticBoxSizer(self.StaticBox[key])
 
@@ -2114,10 +2709,12 @@ class MasterStatePanelClass(wx.Panel):
 
         # ----------------------- Network Frame Information -----------------------------------------------
         for key, label in [
-                ('Tx frame rate [1/s]', 'Tx Frame Rate [1/s]:'),
-                ('Rx frame rate [1/s]', 'Tx Rate [kByte/s]:'),
-                ('Loss rate [1/s]', 'Loss Rate [1/s]:'),
-                ('Frame loss [%]', 'Frame Loss [%]:')]:
+            ("Tx frame rate [1/s]", "Tx Frame Rate [1/s]:"), 
+            ("Tx rate [KByte/s]", "Tx Rate [KByte/s]:"), 
+            ("Rx frame rate [1/s]", "Rx Frame Rate [1/s]:"), 
+            ("Rx rate [KByte/s]", "Rx Rate [KByte/s]:"), 
+            ("Loss rate [1/s]", "Loss Rate [1/s]:"),
+            ("Frame loss [%]", "Frame Loss [%]:")]:
             self.StaticText[key] = wx.StaticText(self, label=_(label))
             self.MasterStateSizer['innerFrameInfo'].Add(self.StaticText[key])
             self.TextCtrl[key] = {}
@@ -2127,21 +2724,30 @@ class MasterStatePanelClass(wx.Panel):
 
         self.MasterStateSizer['frameInfo'].AddSizer(self.MasterStateSizer['innerFrameInfo'])
 
+        # ------------------------------- Slave Information  -----------------------------------------------
+        self.SITreeListCtrl = SITreeListCtrl(self, self.Controler) 
+        self.MasterStateSizer["innerSlaveInfo"].AddMany([self.SIUpdateButton,
+                                                               self.SITreeListCtrl])
+        self.MasterStateSizer["slaveInfo"].AddSizer(
+                self.MasterStateSizer["innerSlaveInfo"]) 
+
         # --------------------------------- Main Sizer ----------------------------------------------------
+        self.MasterStateSizer["main"].Add(self.MSUpdateButton)
         for key, sub, in [
-                ('innerTopHalf', ['masterState', 'deviceInfo']),
-                ('innerBottomHalf', ['frameInfo']),
-                ('innerMain', ['innerTopHalf', 'innerBottomHalf'])
-        ]:
+            ("innerTop", [
+                    "masterState", "deviceInfo"]),
+            ("innerMiddle", [
+                    "frameInfo"]),
+            ("innerBottom", [
+                    "slaveInfo"]),
+            ("main", [
+                    "innerTop", "innerMiddle", "innerBottom"])]:
             for key2 in sub:
                 self.MasterStateSizer[key].AddSizer(self.MasterStateSizer[key2])
 
-        self.MasterStateSizer['main'].AddSizer(self.UpdateButton)
-        self.MasterStateSizer['main'].AddSizer(self.MasterStateSizer['innerMain'])
-
-        self.SetSizer(self.MasterStateSizer['main'])
-
-    def OnButtonClick(self, event):
+        self.SetSizer(self.MasterStateSizer["main"])
+    
+    def OnMSUpdateButtonClick(self, event):
         """
         Handle the event of the 'Update' button.
         Update the data of the master state.
@@ -2159,3 +2765,818 @@ class MasterStatePanelClass(wx.Panel):
                         self.TextCtrl[key].SetValue(self.MasterState[key][0])
         else:
             self.Controler.CommonMethod.CreateErrorDialog(_('PLC not connected!'))
+
+    def OnSIUpdateButtonClick(self, event):
+        """
+        Handle the event of the radio box in the slave information 
+        @param event: wx.EVT_RADIOBOX object
+        """
+        if self.Controler.GetCTRoot()._connector is not None:
+            self.SITreeListCtrl.UpdateSI()
+        
+        else :
+            self.Controler.CommonMethod.CreateErrorDialog('PLC not connected!')
+    
+
+#-------------------------------------------------------------------------------
+#                    For Slave Information  Panel
+#------------------------------------------------------------------------------- 
+class SITreeListCtrl(wx.Panel):
+    
+    EC_Addrs = ["0x0300", "0x0302", "0x0304", "0x0306", "0x0301", "0x0303", "0x0305", 
+                "0x0307", "0x0308", "0x0309", "0x030A", "0x030B", "0x030C", "0x030D",
+                "0x0310", "0x0311", "0x0312", "0x0313", "0x0442", "0x0443"]
+
+    def __init__(self, parent, controler):
+        """
+        Constructor
+        @param parent: Reference to the MasterStatePanel class
+        @param Controler: _EthercatCTN class in EthercatMaster.py
+        """
+
+        wx.Panel.__init__(self, parent, -1, size=wx.Size(750, 350))
+
+        self.Controler=controler
+        
+        self.Tree = wx.gizmos.TreeListCtrl(self, -1, size=wx.Size(750,350), 
+                                                            style=wx.TR_HAS_BUTTONS
+                                                            |wx.TR_HIDE_ROOT
+                                                            |wx.TR_ROW_LINES
+                                                            |wx.TR_COLUMN_LINES
+                                                            |wx.TR_FULL_ROW_HIGHLIGHT)
+        for label, width in [
+                ("name",        400),
+                ("position",    100),
+                ("state",       100),
+                ("error",       100)]:
+            self.Tree.AddColumn(label, width=width)
+        
+        self.Tree.SetMainColumn(0)
+        
+    def UpdateSI(self):
+        """
+        Update the data of the slave information.
+        """
+        position, not_used, state, not_used, name = range(5)
+        
+        slave_node = []
+        slave_info_list = []
+        error_counter= []
+        
+        # get slave informations (name, position, state)
+        slaves_infos = self.Controler.CommonMethod.GetSlaveStateFromSlave()
+        slave_info_lines = slaves_infos.splitlines()
+        
+        for line in slave_info_lines:
+            slave_info_list.append(line.split(None,4))
+
+        slave_num = len(slave_info_lines)
+        
+        reg_info = []
+        for ec in self.EC_Addrs:
+            reg_info.append(ec + ",0x001")
+        
+        # get error counts of slaves
+        err_count_list = self.Controler.CommonMethod.MultiRegRead(slave_num, reg_info)
+                
+        self.Tree.DeleteAllItems()
+        
+        root = self.Tree.AddRoot("") 
+        ec_list_idx = 0
+
+        for slave_idx in range(slave_num):
+            slave_node = self.Tree.AppendItem(root, "")
+            
+            # set name, postion, state 
+            col_num = 0 
+            for info_idx in [name, position, state]:
+                self.Tree.SetItemText(slave_node, 
+                                      slave_info_list[slave_idx][info_idx], col_num)
+                col_num += 1
+
+            error_counter = {}
+            ec_idx = 0
+            
+            # set error counter's name and default value 
+            for ec, sub_ecs in [("Port Error Counters 0/1/2/3",[
+                                    "Invaild Frame Counter 0/1/2/3",
+                                    "RX Error Counter 0/1/2/3"]),
+                                ("Forward RX Error Counter 0/1/2/3", []),       
+                                ("ECAT Processing Unit Error Counter", []),
+                                ("PDI Error Counter", []),
+                                ("Lost Link Counter 0/1/2/3", []),
+                                ("Watchdog Counter Process Data", []),
+                                ("Watchdog Counter PDI", [])]:
+                ec_sub_idx = 0
+                ec_name = ec
+                tree_node = self.Tree.AppendItem(slave_node, "%s" % ec)
+                
+                if ec_name.find("0/1/2/3") > 0:
+                    num_ports = 4
+                    err_count = [0, 0, 0, 0]
+                else:
+                    num_ports = 1
+                    err_count = [0]
+
+                error_counter[(ec_idx, ec_sub_idx)] = {
+                        "name": ec_name,
+                        "tree_node": tree_node,
+                        "num_ports": num_ports,
+                        "err_count": err_count}
+
+                for sub_ec in sub_ecs:
+                    ec_sub_idx += 1
+                    ec_name = sub_ec
+                    tree_node = self.Tree.AppendItem(\
+                        error_counter[(ec_idx, 0)]["tree_node"], 
+                            "%s" % sub_ec)
+                    
+                    if ec_name.find("0/1/2/3") > 0:
+                        num_ports = 4
+                        err_count = [0, 0, 0, 0]
+                    else:
+                        num_ports = 1
+                        err_count = [0]
+
+                    error_counter[(ec_idx, ec_sub_idx)] = {
+                            "name": ec_name,
+                            "tree_node": tree_node, 
+                            "num_ports": num_ports,
+                            "err_count": err_count}
+
+                    for port_num in range(num_ports):
+                        try:
+                            error_counter[(ec_idx, ec_sub_idx)]["err_count"][port_num] += \
+                                    int(err_count_list[ec_list_idx].split(",")[2], 16)
+                        except:
+                            error_counter[(ec_idx, ec_sub_idx)]["err_count"][port_num] = -1
+
+                        ec_list_idx += 1
+                
+                if ec_sub_idx > 0:
+                    for port_num in range(num_ports):
+                        err_sum = 0
+                        for sub_idx in range(1, ec_sub_idx+1):
+                            err_sum += error_counter[(ec_idx, sub_idx)]\
+                                                ["err_count"][port_num]
+                        error_counter[(ec_idx, 0)]["err_count"][port_num] = err_sum
+                        
+                else:
+                    for port_num in range(num_ports):
+                        try:
+                            error_counter[(ec_idx, ec_sub_idx)]["err_count"][port_num] += \
+                                    int(err_count_list[ec_list_idx].split(",")[2], 16)
+                        except:
+                            error_counter[(ec_idx, ec_sub_idx)]["err_count"][port_num] = -1
+                        ec_list_idx += 1
+
+                ec_idx += 1
+            
+            # set texts in "error" column. 
+            ec_info_list = error_counter.items()
+            ec_info_list.sort()
+            
+            err_checker = "none"
+           
+            for (idx, sub_idx), ec_info in ec_info_list:
+                ec_text = ""
+                for port_num in range(ec_info["num_ports"]):
+                    if ec_info["err_count"][port_num] != 0:
+                        err_checker = "occurred"
+
+                    if ec_info["err_count"][port_num] < 0:
+                        ec_text = "reg I/O error"
+                    else:
+                        ec_text = ec_text + "%d/" % ec_info["err_count"][port_num]
+
+                ec_text = ec_text.strip("/")
+                
+                self.Tree.SetItemText(ec_info["tree_node"], ec_text, col_num)
+            
+            self.Tree.SetItemText(slave_node, err_checker, col_num)
+
+class DCConfigPanel(wx.Panel):
+    def __init__(self, parent, controler):
+        """
+        Constructor
+        @param parent: Reference to the MasterStatePanel class
+        @param Controler: _EthercatCTN class in EthercatMaster.py
+        """
+
+        wx.Panel.__init__(self, parent, -1, size=wx.Size(750, 350))
+
+        self.Controler = controler
+        self.parent = parent
+
+        self.ESI_DC_Data = self.Controler.CommonMethod.LoadESIData()
+
+        # initialize SlaveStatePanel UI dictionaries
+        self.StaticBoxDic = {}
+        self.StaticTextDic = {}
+        self.TextCtrlDic = {}
+        self.ComboBoxDic = {}
+        self.CheckBoxDic = {}
+        self.RadioButtonDic = {}
+        OperationModeComboList = []
+        Sync1CycleComboList = []
+        
+        for ESI_Data in self.ESI_DC_Data:
+            OperationModeComboList.append(ESI_Data["desc"])
+
+        UnitComboList = [ "/100", "/ 50", "/ 40", "/ 30", "/ 25", "/ 20", "/16",
+            "/ 10", "/ 8", "/ 5", "/ 4", "/ 3", "/ 2", "x 1", "x 2", "x 3", "x 4", 
+            "x 5", "x 8", "x 10", "x 16", "x 20", "x 25", "x 30", "x 40", "x 50", 
+            "x 100"
+        ]
+
+        UnitComboListPlus = [ "/100", "/ 50", "/ 40", "/ 30", "/ 25", "/ 20", "/16",
+            "/ 10", "/ 8", "/ 5", "/ 4", "/ 3", "/ 2", "x 0", "x 1", "x 2", "x 3", 
+            "x 4", "x 5", "x 8", "x 10", "x 16", "x 20", "x 25", "x 30", "x 40", 
+            "x 50", "x 100"
+        ]
+
+        for i in range(1024):
+            Sync1CycleComboList.append("x " + str(i + 1))
+        
+        # iniitalize BoxSizer and FlexGridSizer
+        self.SizerDic = {
+            "DCConfig_main_sizer" : wx.BoxSizer(wx.VERTICAL),
+            "DCConfig_inner_main_sizer" : wx.FlexGridSizer(cols=1, hgap=50, rows=2, vgap=10),
+            "CyclicMode_InnerSizer" : wx.FlexGridSizer(cols=1, hgap=5, rows=2, vgap=5),
+            "SyncMode_InnerSizer" : wx.FlexGridSizer(cols=2, hgap=5, rows=1, vgap=5),
+            "OperationMode_InnerSizer" : wx.FlexGridSizer(cols=2, hgap=100, rows=2, vgap=10),
+            "CheckEnable_InnerSizer" : wx.FlexGridSizer(cols=2, hgap=10, rows=1, vgap=10),
+            "Sync0_InnerSizer" : wx.FlexGridSizer(cols=1, hgap=15, rows=3, vgap=10),
+            "Sync0_CycleTimeSizer" : wx.FlexGridSizer(cols=2, hgap=10, rows=2, vgap=5),
+            "Sync0_ShiftTimeSizer" : wx.FlexGridSizer(cols=2, hgap=20, rows=2, vgap=5),
+            "Sync1_InnerSizer" : wx.FlexGridSizer(cols=1, hgap=15, rows=3, vgap=10),
+            "Sync1_CycleTimeSizer" : wx.FlexGridSizer(cols=2, hgap=10, rows=2, vgap=5),
+            "Sync1_ShiftTimeSizer" : wx.FlexGridSizer(cols=2, hgap=20, rows=2, vgap=5)
+        }
+        
+        # initialize StaticBox and StaticBoxSizer
+        for box_name, box_label in [
+                ("CyclicModeBox", "Cyclic Mode"),
+                ("Sync0Box", "Sync0"),
+                ("Sync0CycleTimeBox", "Cycle Time (us):"),
+                ("Sync0ShiftTimeBox", "Shift Time (us):"),
+                ("Sync1Box", "Sync1"),
+                ("Sync1CycleTimeBox", "Cycle Time (us):"),
+                ("Sync1ShiftTimeBox", "Shift Time (us):")
+            ]:
+            self.StaticBoxDic[box_name] = wx.StaticBox(self, label=_(box_label))
+            self.SizerDic[box_name] = wx.StaticBoxSizer(self.StaticBoxDic[box_name])  
+        
+        for statictext_name, statictext_label in [
+                ("MainLabel", "Distributed Clock"),
+                ("OperationModeLabel", "Operation Mode:"),
+                ("SyncUnitCycleLabel", "Sync Unit Cycle (us)"),
+                ("Sync0ShiftTimeUserDefinedLabel", "User Defined"),
+                ("Sync1ShiftTimeUserDefinedLabel", "User Defined"),
+                ("BlankObject", ""),
+                ("BlankObject1", "")
+            ]:
+            self.StaticTextDic[statictext_name] = wx.StaticText(self, label=_(statictext_label))
+
+        for textctl_name in [
+                ("SyncUnitCycle_Ctl"),
+                ("Sync0CycleTimeUserDefined_Ctl"),
+                ("Sync0ShiftTimeUserDefined_Ctl"),
+                ("Sync1CycleTimeUserDefined_Ctl"),
+                ("Sync1ShiftTimeUserDefined_Ctl"),
+            ]:
+            self.TextCtrlDic[textctl_name] = wx.TextCtrl(
+                self, size=wx.Size(130, 24), style=wx.TE_READONLY)
+
+        for checkbox_name, checkbox_label in [
+                ("DCEnable", "Enable"),
+                ("Sync0Enable", "Enable Sync0"),
+                ("Sync1Enable", "Enable Sync1")
+            ]:
+            self.CheckBoxDic[checkbox_name] = wx.CheckBox(self, -1, checkbox_label)
+
+        for combobox_name, combobox_list, size in [
+                ("OperationModeChoice", OperationModeComboList, 250),
+                ("Sync0UnitCycleChoice", UnitComboList, 130),
+                ("Sync1UnitCycleChoice", UnitComboList, 130)
+            ]:
+            self.ComboBoxDic[combobox_name] = wx.ComboBox(self, size=wx.Size(size, 24), 
+                choices = combobox_list, style = wx.CB_DROPDOWN | wx.CB_READONLY)
+
+        for radiobutton_name, radiobutton_label in [
+                ("Sync0CycleTimeUnitRadioButton", "Sync Unit Cycle"),
+                ("Sync0CycleTimeUserDefinedRadioButton", "User Defined"),
+                ("Sync1CycleTimeUnitRadioButton", "Sync Unit Cycle"),
+                ("Sync1CycleTimeUserDefinedRadioButton", "User Defined")
+            ]:
+            self.RadioButtonDic[radiobutton_name] = wx.RadioButton(
+                self, label = radiobutton_label, style = wx.RB_SINGLE)
+
+
+        self.ApplyButton = wx.Button(self, label="Apply")
+
+        # binding event
+        self.Bind(wx.EVT_CHECKBOX, self.CheckDCEnable, self.CheckBoxDic["DCEnable"])
+        #self.Bind(wx.EVT_COMBOBOX, self.SelectOperationMode, self.ComboBoxDic["OperationModeChoice"])
+        #self.Bind(wx.EVT_COMBOBOX, self.SelectUnitCycle, self.ComboBoxDic["Sync0UnitChoice"])
+        self.Bind(wx.EVT_RADIOBUTTON, self.SelectSync0CycleTime, 
+            self.RadioButtonDic["Sync0CycleTimeUnitRadioButton"])
+        self.Bind(wx.EVT_RADIOBUTTON, self.SelectSync0CycleTime, 
+            self.RadioButtonDic["Sync0CycleTimeUserDefinedRadioButton"])
+        self.Bind(wx.EVT_RADIOBUTTON, self.SelectSync1CycleTime, 
+            self.RadioButtonDic["Sync1CycleTimeUnitRadioButton"])
+        self.Bind(wx.EVT_RADIOBUTTON, self.SelectSync1CycleTime, 
+            self.RadioButtonDic["Sync1CycleTimeUserDefinedRadioButton"])
+        self.Bind(wx.EVT_CHECKBOX, self.CheckSync0Enable, self.CheckBoxDic["Sync0Enable"])
+        self.Bind(wx.EVT_CHECKBOX, self.CheckSync1Enable, self.CheckBoxDic["Sync1Enable"])
+        self.Bind(wx.EVT_BUTTON, self.OnClickApplyButton, self.ApplyButton)
+
+        # sync1 shifttime box contents
+        self.SizerDic["Sync1_ShiftTimeSizer"].AddMany([
+            self.StaticTextDic["Sync1ShiftTimeUserDefinedLabel"],
+            self.TextCtrlDic["Sync1ShiftTimeUserDefined_Ctl"]
+        ])
+
+        # sync1 shifttime box
+        self.SizerDic["Sync1ShiftTimeBox"].Add(self.SizerDic["Sync1_ShiftTimeSizer"])
+        
+        # sync1 cycletime box contents
+        self.SizerDic["Sync1_CycleTimeSizer"].AddMany([
+            self.RadioButtonDic["Sync1CycleTimeUnitRadioButton"], 
+            self.ComboBoxDic["Sync1UnitCycleChoice"],
+            self.RadioButtonDic["Sync1CycleTimeUserDefinedRadioButton"],
+            self.TextCtrlDic["Sync1CycleTimeUserDefined_Ctl"]
+        ])
+
+        # sync0 cycletime box
+        self.SizerDic["Sync1CycleTimeBox"].Add(self.SizerDic["Sync1_CycleTimeSizer"])
+
+        self.SizerDic["Sync1_InnerSizer"].AddMany([
+            self.CheckBoxDic["Sync1Enable"], self.SizerDic["Sync1CycleTimeBox"], 
+            self.SizerDic["Sync1ShiftTimeBox"]
+        ])
+
+        # sync1 box
+        self.SizerDic["Sync1Box"].Add(self.SizerDic["Sync1_InnerSizer"])
+
+        # sync0 shifttime box contents
+        self.SizerDic["Sync0_ShiftTimeSizer"].AddMany([
+            self.StaticTextDic["Sync0ShiftTimeUserDefinedLabel"],
+            self.TextCtrlDic["Sync0ShiftTimeUserDefined_Ctl"]
+        ])
+
+        # sync0 shifttime box
+        self.SizerDic["Sync0ShiftTimeBox"].Add(self.SizerDic["Sync0_ShiftTimeSizer"])
+        
+        # sync0 cycletime box contents
+        self.SizerDic["Sync0_CycleTimeSizer"].AddMany([
+            self.RadioButtonDic["Sync0CycleTimeUnitRadioButton"], 
+            self.ComboBoxDic["Sync0UnitCycleChoice"],
+            self.RadioButtonDic["Sync0CycleTimeUserDefinedRadioButton"],
+            self.TextCtrlDic["Sync0CycleTimeUserDefined_Ctl"]
+        ])
+
+        # sync0 cycletime box
+        self.SizerDic["Sync0CycleTimeBox"].Add(self.SizerDic["Sync0_CycleTimeSizer"])
+
+        self.SizerDic["Sync0_InnerSizer"].AddMany([
+            self.CheckBoxDic["Sync0Enable"], self.SizerDic["Sync0CycleTimeBox"], 
+            self.SizerDic["Sync0ShiftTimeBox"]
+        ])
+
+        # sync0 box
+        self.SizerDic["Sync0Box"].Add(self.SizerDic["Sync0_InnerSizer"])
+
+        # sync0, sync1 box
+        self.SizerDic["SyncMode_InnerSizer"].AddMany([
+            self.SizerDic["Sync0Box"], self.SizerDic["Sync1Box"]
+        ])
+
+        # CyclicMode Box
+        self.SizerDic["CheckEnable_InnerSizer"].AddMany([
+            self.StaticTextDic["SyncUnitCycleLabel"], 
+            self.TextCtrlDic["SyncUnitCycle_Ctl"]
+        ])
+
+        self.SizerDic["OperationMode_InnerSizer"].AddMany([
+            self.StaticTextDic["OperationModeLabel"], 
+            self.ComboBoxDic["OperationModeChoice"],
+            self.CheckBoxDic["DCEnable"], self.SizerDic["CheckEnable_InnerSizer"]
+        ])
+
+        self.SizerDic["CyclicMode_InnerSizer"].AddMany([
+            self.SizerDic["OperationMode_InnerSizer"], 
+            self.SizerDic["SyncMode_InnerSizer"]
+        ])
+
+        self.SizerDic["CyclicModeBox"].Add(self.SizerDic["CyclicMode_InnerSizer"])
+
+        # Main Sizer
+        self.SizerDic["DCConfig_inner_main_sizer"].AddMany([
+            self.StaticTextDic["MainLabel"], self.ApplyButton,
+            self.SizerDic["CyclicModeBox"]
+        ])
+        
+        self.SizerDic["DCConfig_main_sizer"].Add(self.SizerDic["DCConfig_inner_main_sizer"])
+        
+        self.SetSizer(self.SizerDic["DCConfig_main_sizer"])
+        
+        self.Centre()
+
+        self.UIOnOffSet(False)
+        self.LoadProjectDCData()
+
+    def UIOnOffSet(self, activate):
+        if activate :
+            for object in self.RadioButtonDic:
+                self.RadioButtonDic[object].Enable()
+
+            for object in self.ComboBoxDic:
+                if object == "OperationModeChoice":
+                    continue
+                self.ComboBoxDic[object].Enable()
+
+            for object in self.TextCtrlDic:
+                if object in ["SyncUnitCycle_Ctl", "InputReference_Ctl"]:
+                    continue
+                self.TextCtrlDic[object].Enable()
+
+            for object in self.CheckBoxDic:
+                if object == "DCEnable":
+                    continue
+                self.CheckBoxDic[object].Enable()
+
+        # initial set or DC enable uncheck
+        else :
+            for object in self.RadioButtonDic:
+                self.RadioButtonDic[object].Disable()
+
+            for object in self.ComboBoxDic:
+                if object == "OperationModeChoice":
+                    continue
+                self.ComboBoxDic[object].Disable()
+
+            for object in self.TextCtrlDic:
+                if object == "SyncUnitCycle_Ctl":
+                    continue
+                self.TextCtrlDic[object].Disable()
+
+            for object in self.CheckBoxDic:
+                if object == "DCEnable":
+                    continue
+                self.CheckBoxDic[object].Disable()
+
+            for data in self.ESI_DC_Data:
+                index = self.Controler.ExtractHexDecValue(data["assign_activate"])
+                if index == 0:
+                    config_name = data["desc"]
+                    self.ComboBoxDic["OperationModeChoice"].SetStringSelection(config_name)
+
+    def CheckSync0Enable(self, evt):
+        if evt.GetInt():
+            self.ComboBoxDic["Sync0UnitCycleChoice"].Enable()
+            self.RadioButtonDic["Sync0CycleTimeUnitRadioButton"].Enable()
+            self.RadioButtonDic["Sync0CycleTimeUserDefinedRadioButton"].Enable()
+            self.TextCtrlDic["Sync0CycleTimeUserDefined_Ctl"].Enable()
+            self.TextCtrlDic["Sync0ShiftTimeUserDefined_Ctl"].Enable()
+        else :
+            self.ComboBoxDic["Sync0UnitCycleChoice"].Disable()
+            self.RadioButtonDic["Sync0CycleTimeUnitRadioButton"].Disable()
+            self.RadioButtonDic["Sync0CycleTimeUserDefinedRadioButton"].Disable()
+            self.TextCtrlDic["Sync0CycleTimeUserDefined_Ctl"].Disable()
+            self.TextCtrlDic["Sync0ShiftTimeUserDefined_Ctl"].Disable()
+            self.RadioButtonDic["Sync0CycleTimeUnitRadioButton"].SetValue(False)
+            self.RadioButtonDic["Sync0CycleTimeUserDefinedRadioButton"].SetValue(False)
+            self.TextCtrlDic["Sync0CycleTimeUserDefined_Ctl"].SetValue("")
+            self.TextCtrlDic["Sync0ShiftTimeUserDefined_Ctl"].SetValue("")
+
+    def CheckSync1Enable(self, evt):
+        if evt.GetInt():
+            self.ComboBoxDic["Sync1UnitCycleChoice"].Enable()
+            self.RadioButtonDic["Sync1CycleTimeUnitRadioButton"].Enable()
+            self.RadioButtonDic["Sync1CycleTimeUserDefinedRadioButton"].Enable()
+            self.TextCtrlDic["Sync1CycleTimeUserDefined_Ctl"].Enable()
+            self.TextCtrlDic["Sync1ShiftTimeUserDefined_Ctl"].Enable()
+        else :
+            self.ComboBoxDic["Sync1UnitCycleChoice"].Disable()
+            self.RadioButtonDic["Sync1CycleTimeUnitRadioButton"].Disable()
+            self.RadioButtonDic["Sync1CycleTimeUserDefinedRadioButton"].Disable()
+            self.TextCtrlDic["Sync1CycleTimeUserDefined_Ctl"].Disable()
+            self.TextCtrlDic["Sync1ShiftTimeUserDefined_Ctl"].Disable()
+            self.RadioButtonDic["Sync1CycleTimeUnitRadioButton"].SetValue(False)
+            self.RadioButtonDic["Sync1CycleTimeUserDefinedRadioButton"].SetValue(False)
+            self.TextCtrlDic["Sync1CycleTimeUserDefined_Ctl"].SetValue("")
+            self.TextCtrlDic["Sync1ShiftTimeUserDefined_Ctl"].SetValue("")
+
+    def CheckDCEnable(self, evt):
+        ns_mode = 1
+        task_cycle_ns = self.GetInterval(ns_mode)
+        sync0_cycle_factor = None
+        sync1_cycle_factor = None
+
+        #task_cycle_ns = self.Controler.GetCTRoot()._Ticktime
+        if (task_cycle_ns > 0):
+            self.UIOnOffSet(evt.GetInt())
+
+            if evt.GetInt():
+                # default select DC enable sync0
+                default_list_num = 0
+                config_name = self.ESI_DC_Data[default_list_num]["desc"]
+                assign_act = self.ESI_DC_Data[default_list_num]["assign_activate"]
+                sync0_cycle_time_ns = self.ESI_DC_Data[default_list_num]["cycletime_sync0"]
+                if sync0_cycle_time_ns == 0 :
+                    sync0_cycle_factor = self.ESI_DC_Data[default_list_num]["cycletime_sync0_factor"]
+                sync0_shift_time_ns = self.ESI_DC_Data[default_list_num]["shifttime_sync0"]
+                sync1_cycle_time_ns = self.ESI_DC_Data[default_list_num]["cycletime_sync1"]
+                if sync1_cycle_time_ns == 0 :
+                    sync1_cycle_factor = self.ESI_DC_Data[default_list_num]["cycletime_sync1_factor"]
+                sync1_shift_time_ns = self.ESI_DC_Data[default_list_num]["shifttime_sync1"]
+
+                cal_assign_act = self.Controler.ExtractHexDecValue(assign_act)
+                sync0_cycle_time_us = str(int(sync0_cycle_time_ns) / 1000)
+                sync0_shift_time_us = str(int(sync0_shift_time_ns) / 1000)
+                sync1_cycle_time_us = str(int(sync1_cycle_time_ns) / 1000)
+                sync1_shift_time_us = str(int(sync1_shift_time_ns) / 1000)
+
+                task_cycle_to_us = str(int(task_cycle_ns) / 1000)
+
+                # DC sync0 mode
+                if cal_assign_act == 768:
+                    # Disable About Sync1 Objects
+                    self.CheckBoxDic["Sync1Enable"].SetValue(False)
+                    self.RadioButtonDic["Sync1CycleTimeUnitRadioButton"].Disable()
+                    self.ComboBoxDic["Sync1UnitCycleChoice"].Disable()
+                    self.RadioButtonDic["Sync1CycleTimeUserDefinedRadioButton"].Disable()
+                    self.TextCtrlDic["Sync1CycleTimeUserDefined_Ctl"].Disable()
+                    self.TextCtrlDic["Sync1ShiftTimeUserDefined_Ctl"].Disable()
+
+                else :
+                    self.CheckBoxDic["Sync1Enable"].SetValue(True)
+                    if sync1_cycle_factor is not None:
+                        self.RadioButtonDic["Sync1CycleTimeUnitRadioButton"].SetValue(True)
+                        self.RadioButtonDic["Sync1CycleTimeUserDefinedRadioButton"].SetValue(False)
+                        self.TextCtrlDic["Sync1CycleTimeUserDefined_Ctl"].Disable()
+                        self.SetSyncUnitCycle(sync1_cycle_factor, 
+                            self.ComboBoxDic["Sync1UnitCycleChoice"])
+                    else :
+                        self.RadioButtonDic["Sync1CycleTimeUnitRadioButton"].SetValue(False)
+                        self.RadioButtonDic["Sync1CycleTimeUserDefinedRadioButton"].SetValue(True)
+                        self.ComboBoxDic["Sync1UnitCycleChoice"].Disable()
+                        self.TextCtrlDic["Sync1CycleTimeUserDefined_Ctl"].SetValue(sync1_cycle_time_us)
+
+                    self.TextCtrlDic["Sync1ShiftTimeUserDefined_Ctl"].SetValue(sync1_shift_time_us)
+
+                # Set Sync0 Objects
+                self.CheckBoxDic["Sync0Enable"].SetValue(True)
+                if sync0_cycle_factor is not None:
+                    self.RadioButtonDic["Sync0CycleTimeUnitRadioButton"].SetValue(True)
+                    self.RadioButtonDic["Sync0CycleTimeUserDefinedRadioButton"].SetValue(False)
+                    self.TextCtrlDic["Sync0CycleTimeUserDefined_Ctl"].Disable()
+                    self.SetSyncUnitCycle(sync0_cycle_factor, 
+                        self.ComboBoxDic["Sync0UnitCycleChoice"])
+                else :
+                    self.RadioButtonDic["Sync0CycleTimeUnitRadioButton"].SetValue(False)
+                    self.RadioButtonDic["Sync0CycleTimeUserDefinedRadioButton"].SetValue(True)
+                    self.ComboBoxDic["Sync0UnitCycleChoice"].Disable()
+                    self.TextCtrlDic["Sync0CycleTimeUserDefined_Ctl"].SetValue(sync0_cycle_time_us)
+
+                self.TextCtrlDic["Sync0ShiftTimeUserDefined_Ctl"].SetValue(sync0_shift_time_us)
+
+                self.ComboBoxDic["OperationModeChoice"].SetStringSelection(config_name)
+                self.TextCtrlDic["SyncUnitCycle_Ctl"].SetValue(task_cycle_to_us)
+            else :
+                self.CheckBoxDic["Sync0Enable"].SetValue(False)
+                self.CheckBoxDic["Sync1Enable"].SetValue(False)
+                self.RadioButtonDic["Sync0CycleTimeUnitRadioButton"].SetValue(False)
+                self.RadioButtonDic["Sync0CycleTimeUserDefinedRadioButton"].SetValue(False)
+                self.RadioButtonDic["Sync1CycleTimeUnitRadioButton"].SetValue(False)
+                self.RadioButtonDic["Sync1CycleTimeUserDefinedRadioButton"].SetValue(False)
+                self.TextCtrlDic["Sync0CycleTimeUserDefined_Ctl"].SetValue("")
+                self.TextCtrlDic["Sync0ShiftTimeUserDefined_Ctl"].SetValue("")
+                self.TextCtrlDic["Sync1CycleTimeUserDefined_Ctl"].SetValue("")
+                self.TextCtrlDic["Sync1ShiftTimeUserDefined_Ctl"].SetValue("")
+
+        else :
+            self.UIOnOffSet(False)
+            #error_str = "DC Enable is not possble, please set task interval"
+            error_str = "Can't Set DC Enable"
+            self.Controler.CommonMethod.CreateErrorDialog(error_str)
+
+    def SetSyncUnitCycle(self, factor, object):
+        # factor > 0 ==> * factor, factor < 0 ==> / factor
+        factor_to_int = int(factor)
+        if factor_to_int > 0:
+            lists = object.GetStrings()
+
+            for token in lists:
+                temp = token.split(" ")
+                if (temp[0] == "x") and (int(temp[1]) == factor_to_int):
+                    object.SetStringSelection(token)
+                    return True
+
+        else : 
+            lists = object.GetStrings()
+
+            for token in lists:
+                temp = token.split(" ")
+                if (temp[0] == "/") and (int(temp[1]) == factor_to_int):
+                    object.SetStringSelection(token)
+                    return True
+
+        return False
+
+    def GetInterval(self, mode):
+        project_infos = self.Controler.GetCTRoot().GetProjectInfos()
+        for project_info_list in project_infos["values"]:
+            if project_info_list["name"] == "Resources" :
+                token = project_info_list["values"][0]["tagname"]
+       
+        tasks, instances = self.Controler.GetCTRoot().GetEditedResourceInfos(token)
+        try:
+            task_cycle_ns = self.ParseTime(tasks[0]["Interval"])
+        except :
+            task_cycle_ns = 0
+        task_cycle_us = int(task_cycle_ns) / 1000
+
+        # mode == 1 ==> return ns
+        # mode == 2 ==> return us
+
+        if mode == 1:
+            return task_cycle_ns
+        if mode == 2:
+            return str(task_cycle_us)
+
+    def ParseTime(self, input):
+        # input example : 't#1ms'
+        # temp.split('#') -> ['t', '1ms']
+        temp = input.split('#')
+         
+        # temp[1] : '1ms'
+        # temp[-2:] : 'ms'
+        # temp[:-2] : '1'
+        if temp[1][-2:] == "ms":
+           # convert nanosecond unit
+           result = int(temp[1][:-2]) * 1000000
+        elif temp[1][-2:] == "us":
+           result = int(temp[1][:-2]) * 1000
+
+        return str(result)
+
+    def SelectSync0CycleTime(self, evt):
+        selected_object = evt.GetEventObject()
+
+        if selected_object.GetLabel() == "User Defined" :
+            self.RadioButtonDic["Sync0CycleTimeUnitRadioButton"].SetValue(False)
+            self.TextCtrlDic["Sync0CycleTimeUserDefined_Ctl"].Enable()
+            self.ComboBoxDic["Sync0UnitCycleChoice"].Disable()
+        elif selected_object.GetLabel() == "Sync Unit Cycle" :
+            self.RadioButtonDic["Sync0CycleTimeUserDefinedRadioButton"].SetValue(False)
+            self.ComboBoxDic["Sync0UnitCycleChoice"].Enable()
+            self.TextCtrlDic["Sync0CycleTimeUserDefined_Ctl"].Disable()
+
+    def SelectSync1CycleTime(self, evt):
+        selected_object = evt.GetEventObject()
+
+        if selected_object.GetLabel() == "User Defined" :
+            self.RadioButtonDic["Sync1CycleTimeUnitRadioButton"].SetValue(False)
+            self.TextCtrlDic["Sync1CycleTimeUserDefined_Ctl"].Enable()
+            self.ComboBoxDic["Sync1UnitCycleChoice"].Disable()
+        elif selected_object.GetLabel() == "Sync Unit Cycle" :
+            self.RadioButtonDic["Sync1CycleTimeUserDefinedRadioButton"].SetValue(False)
+            self.ComboBoxDic["Sync1UnitCycleChoice"].Enable()
+            self.TextCtrlDic["Sync1CycleTimeUserDefined_Ctl"].Disable()
+
+    def GetCycle(self, period, section):
+        temp = section.split(" ")
+
+        if temp[0] == "x":
+            result = int(period) * int(temp[1])
+        elif temp[0] == "/" :
+            result = int(period) / int(temp[1])
+        else :
+            result = ""
+
+        return result
+
+    def OnClickApplyButton(self, evt):
+        us_mode = 2
+        dc_enable = self.CheckBoxDic["DCEnable"].GetValue()
+        dc_desc = self.ComboBoxDic["OperationModeChoice"].GetStringSelection()
+        dc_assign_activate = self.ESI_DC_Data[0]["assign_activate"]
+        dc_assign_activate_mod = dc_assign_activate.split('x')[1]
+
+        if self.RadioButtonDic["Sync0CycleTimeUnitRadioButton"].GetValue():
+            temp = self.ComboBoxDic["Sync0UnitCycleChoice"].GetStringSelection()
+            dc_sync0_cycle = "1_" + str(self.GetCycle(self.GetInterval(us_mode), temp))
+        elif  self.RadioButtonDic["Sync0CycleTimeUserDefinedRadioButton"].GetValue():
+            dc_sync0_cycle = "2_" + self.TextCtrlDic["Sync0CycleTimeUserDefined_Ctl"].GetValue()
+        else :
+            dc_sync0_cycle = ""
+
+        if self.RadioButtonDic["Sync1CycleTimeUnitRadioButton"].GetValue():
+            temp = self.ComboBoxDic["Sync1UnitCycleChoice"].GetStringSelection()
+            dc_sync1_cycle = "1_" + self.GetCycle(self.GetInterval(us_mode), temp)
+        elif  self.RadioButtonDic["Sync1CycleTimeUserDefinedRadioButton"].GetValue():
+            dc_sync1_cycle = "2_" + self.TextCtrlDic["Sync1CycleTimeUserDefined_Ctl"].GetValue()
+        else :
+            dc_sync1_cycle = ""
+
+        dc_sync0_shift = self.TextCtrlDic["Sync0ShiftTimeUserDefined_Ctl"].GetValue()
+        dc_sync1_shift = self.TextCtrlDic["Sync1ShiftTimeUserDefined_Ctl"].GetValue()
+
+        self.Controler.BaseParams.setDC_Enable(dc_enable)
+        self.Controler.BaseParams.setDC_Desc(dc_desc)
+        self.Controler.BaseParams.setDC_Assign_Activate(dc_assign_activate_mod)
+        if dc_sync0_cycle:
+            self.Controler.BaseParams.setDC_Sync0_Cycle_Time(dc_sync0_cycle)
+        if dc_sync0_shift:
+            self.Controler.BaseParams.setDC_Sync0_Shift_Time(dc_sync0_shift)
+        if dc_sync1_cycle:
+            self.Controler.BaseParams.setDC_Sync1_Cycle_Time(dc_sync1_cycle)
+        if dc_sync1_shift:
+            self.Controler.BaseParams.setDC_Sync1_Shift_Time(dc_sync1_shift)
+        project_infos = self.Controler.GetCTRoot().CTNRequestSave()
+
+    def GetSymbol(self, period, cycle):
+        cmp1 = int(period)
+        cmp2 = int(cycle)
+
+        if cmp1 == cmp2 :
+            return "x 1"
+        elif cmp2 > cmp1 :
+            temp = cmp2 / cmp1
+            result = "x " + str(temp)
+        else :
+            temp = cmp1 / cmp2
+            result = "/ " + str(temp)
+
+        return result
+
+    def SetSyncCycle(self, period, sync0_cycle, sync1_cycle):
+        if sync0_cycle != "None":
+            self.CheckBoxDic["Sync0Enable"].SetValue(True)               
+            temp = sync0_cycle.split("_")
+            if temp[0] == "1":
+                symbol = self.GetSymbol(period, temp[1])
+                self.ComboBoxDic["Sync0UnitCycleChoice"].SetStringSelection(symbol)
+                self.TextCtrlDic["Sync0CycleTimeUserDefined_Ctl"].Disable()
+                self.RadioButtonDic["Sync0CycleTimeUnitRadioButton"].SetValue(True)
+            else :
+                self.TextCtrlDic["Sync0CycleTimeUserDefined_Ctl"].SetValue(temp[1])
+                self.ComboBoxDic["Sync0UnitCycleChoice"].Disable()
+                self.RadioButtonDic["Sync0CycleTimeUserDefinedRadioButton"].SetValue(True)
+
+        if sync1_cycle != "None":
+            self.CheckBoxDic["Sync1Enable"].SetValue(True)
+            temp = sync1_cycle.split("_")
+            if temp[0] == "1":
+                symbol = self.GetSymbol(period, temp[1])
+                self.ComboBoxDic["Sync1UnitChoice"].SetStringSelection(symbol)
+                self.TextCtrlDic["Sync1CycleTimeUserDefined_Ctl"].Disable()
+                self.RadioButtonDic["Sync1CycleTimeUnitRadioButton"].SetValue(True)
+            else :
+                self.TextCtrlDic["Sync1CycleTimeUserDefined_Ctl"].SetValue(temp[1])
+                self.ComboBoxDic["Sync1UnitChoice"].Disable()
+                self.RadioButtonDic["Sync1CycleTimeUserDefinedRadioButton"].SetValue(True)
+
+    def LoadProjectDCData(self):
+        ns_mode = 1
+        task_cycle_ns = self.GetInterval(ns_mode)
+        task_cycle_to_us = int(task_cycle_ns) / 1000
+        dc_enable = self.Controler.BaseParams.getDC_Enable()
+        dc_desc = self.Controler.BaseParams.getDC_Desc()
+        dc_assign_activate = self.Controler.BaseParams.getDC_Assign_Activate()
+        dc_sync0_cycle = self.Controler.BaseParams.getDC_Sync0_Cycle_Time()
+        dc_sync0_shift = self.Controler.BaseParams.getDC_Sync0_Shift_Time()
+        dc_sync1_cycle = self.Controler.BaseParams.getDC_Sync1_Cycle_Time()
+        dc_sync1_shift = self.Controler.BaseParams.getDC_Sync1_Shift_Time()
+
+        self.UIOnOffSet(dc_enable)
+
+        if dc_enable:
+            self.CheckBoxDic["DCEnable"].SetValue(dc_enable)
+            self.ComboBoxDic["OperationModeChoice"].SetStringSelection(dc_desc)
+            self.TextCtrlDic["SyncUnitCycle_Ctl"].SetValue(str(task_cycle_to_us))
+            self.SetSyncCycle(str(task_cycle_to_us), dc_sync0_cycle, dc_sync1_cycle)
+            if dc_sync0_shift != "None":
+                self.TextCtrlDic["Sync0ShiftTimeUserDefined_Ctl"].SetValue(dc_sync0_shift)
+            if dc_sync1_shift != "None":
+                self.TextCtrlDic["Sync1ShiftTimeUserDefined_Ctl"].SetValue(dc_sync1_shift)
+
+            if dc_assign_activate == "300":
+                self.CheckBoxDic["Sync1Enable"].SetValue(False)
+                self.RadioButtonDic["Sync1CycleTimeUnitRadioButton"].Disable()
+                self.ComboBoxDic["Sync1UnitCycleChoice"].Disable()
+                self.RadioButtonDic["Sync1CycleTimeUserDefinedRadioButton"].Disable()
+                self.TextCtrlDic["Sync1CycleTimeUserDefined_Ctl"].Disable()
+                self.TextCtrlDic["Sync1ShiftTimeUserDefined_Ctl"].Disable()
+
+
+
+
+
+
+
+
+
+        

@@ -7,6 +7,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 import os
 import signal
+import shlex
 import posix_spawn
 
 PIPE = "42"
@@ -104,9 +105,9 @@ def call(*args):
     cmd = []
     if isinstance(args[0], str):
         if len(args) == 1:
-            # oversimplified splitting of arguments,
-            # TODO: care about use of simple and double quotes
-            cmd = args[0].split()
+            # splitting of arguments that cares about 
+            # use of simple and double quotes
+            cmd = shlex.split(args[0])
         else:
             cmd = args
     elif isinstance(args[0], list) and len(args) == 1:

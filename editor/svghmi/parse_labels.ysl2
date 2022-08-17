@@ -1,0 +1,121 @@
+// parse_labels.ysl2
+
+
+//  Parses:
+//  "HMI:WidgetType|freq:param1:param2@path1,path1min,path1max@path2"
+//
+//  Into:
+//  widget type="WidgetType" id="blah456" {
+//      arg value="param1";
+//      arg value="param2";
+//      path value=".path1" index=".path1" min="path1min" max="path1max" type="PAGE_LOCAL";
+//      path value="/path1" index="348" type="HMI_INT";
+//      path value="path4" index="path4" type="HMI_LOCAL";
+//  }
+//
+const "pathregex",!"'^([^\[,]+)(\[[^\]]+\])?([-.\d,]*)$'"!;
+
+template "*", mode="parselabel"
+{
+    const "label","@inkscape:label";
+    const "id","@id";
+
+    const "description", "substring-after($label,'HMI:')";
+
+    const "_args", "substring-before($description,'@')";
+    const "args" choose {
+        when "$_args" value "$_args";
+        otherwise value "$description";
+    }
+
+    const "_typefreq", "substring-before($args,':')";
+    const "typefreq" choose {
+        when "$_typefreq" value "$_typefreq";
+        otherwise value "$args";
+    }
+
+    const "freq", "substring-after($typefreq,'|')";
+
+    const "_type", "substring-before($typefreq,'|')";
+    const "type" choose {
+        when "$_type" value "$_type";
+        otherwise value "$typefreq";
+    }
+    if "$type" widget {
+        attrib "id" > «$id»
+        attrib "type" > «$type»
+        if "$freq" {
+            if "not(regexp:test($freq,'^[0-9]*(\.[0-9]+)?[smh]?'))" {
+                error > Widget id:«$id» label:«$label» has wrong syntax of frequency forcing «$freq»
+            }
+            attrib "freq" > «$freq»
+        }
+        foreach "str:split(substring-after($args, ':'), ':')" {
+            arg {
+                attrib "value" > «.»
+            }
+        }
+        const "paths", "substring-after($description,'@')";
+        foreach "str:split($paths, '@')" {
+            if "string-length(.) > 0" path {
+                // 1 : global match
+                // 2 : /path
+                // 3 : [accepts]
+                // 4 : min,max
+                const "path_match", "regexp:match(.,$pathregex)";
+                const "pathminmax", "str:split($path_match[4],',')";
+                const "path", "$path_match[2]";
+                const "path_accepts", "$path_match[3]";
+                const "pathminmaxcount", "count($pathminmax)";
+                attrib "value" > «$path»
+                if "string-length($path_accepts)"
+                    attrib "accepts" > «$path_accepts»
+                choose {
+                    when "$pathminmaxcount = 2" {
+                        attrib "min" > «$pathminmax[1]»
+                        attrib "max" > «$pathminmax[2]»
+                    }
+                    when "$pathminmaxcount = 1 or $pathminmaxcount > 2" {
+                        error > Widget id:«$id» label:«$label» has wrong syntax of path section «$pathminmax»
+                    }
+                }
+                if "$indexed_hmitree" choose {
+                    when "regexp:test($path,'^\.[a-zA-Z0-9_]+$')" {
+                        attrib "type" > PAGE_LOCAL
+                    }
+                    when "regexp:test($path,'^[a-zA-Z0-9_]+$')" {
+                        attrib "type" > HMI_LOCAL
+                    }
+                    otherwise {
+                        const "item", "$indexed_hmitree/*[@hmipath = $path]";
+                        const "pathtype", "local-name($item)";
+                        if "$pathminmaxcount = 3 and not($pathtype = 'HMI_INT' or $pathtype = 'HMI_REAL')" {
+                            error > Widget id:«$id» label:«$label» path section «$pathminmax» use min and max on non mumeric value
+                        }
+                        if "count($item) = 1" {
+                            attrib "index" > «$item/@index»
+                            attrib "type" > «$pathtype»
+                        }
+                    }
+                }
+            }
+        }
+        if "svg:desc" desc value "svg:desc/text()";
+    }
+}
+
+
+// Templates to generate label back from parsed tree
+template "arg", mode="genlabel" > :«@value»
+
+template "path", mode="genlabel" {
+    > @«@value»
+    if "string-length(@min)>0 or string-length(@max)>0"  > ,«@min»,«@max»
+}
+
+template "widget", mode="genlabel" {
+    > HMI:«@type»
+    apply "arg", mode="genlabel";
+    apply "path", mode="genlabel";
+}
+

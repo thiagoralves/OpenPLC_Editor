@@ -967,10 +967,6 @@ msgstr "Change working directory"
 msgid "Character string"
 msgstr "Character string"
 
-#: ../svgui/svgui.py:136
-msgid "Choose a SVG file"
-msgstr "Choose a SVG file"
-
 #: ../etherlab/EtherCATManagementEditor.py:912
 #: ../etherlab/EtherCATManagementEditor.py:1307
 msgid "Choose a binary file"
@@ -1302,10 +1298,6 @@ msgstr "Couldn't start PLC !\n"
 #: ../ProjectController.py:1737
 msgid "Couldn't stop PLC !\n"
 msgstr "Couldn't stop PLC !\n"
-
-#: ../svgui/svgui.py:57
-msgid "Create HMI"
-msgstr "Create HMI"
 
 #: ../dialogs/PouDialog.py:48
 msgid "Create a new POU"
@@ -2079,10 +2071,6 @@ msgstr "IP is not valid!"
 msgid "Import ESI file"
 msgstr "Import ESI file"
 
-#: ../svgui/svgui.py:50 ../svgui/svgui.py:51
-msgid "Import SVG"
-msgstr "Import SVG"
-
 #: ../etherlab/ConfigEditor.py:1352
 msgid "Import file to ESI files database"
 msgstr "Import file to ESI files database"
@@ -2148,10 +2136,6 @@ msgstr "Initiate Drag'n drop of Axis ref located variable"
 #: ../etherlab/EthercatCIA402Slave.py:126
 msgid "Initiate Drag'n drop of Network position located variable"
 msgstr "Initiate Drag'n drop of Network position located variable"
-
-#: ../svgui/svgui.py:56
-msgid "Inkscape"
-msgstr "Inkscape"
 
 #: ../dialogs/SFCTransitionDialog.py:77 ../dialogs/ActionBlockDialog.py:47
 msgid "Inline"
@@ -2705,11 +2689,6 @@ msgstr "No search results available."
 msgid "No slave defined at position %d!"
 msgstr "No slave defined at position %d!"
 
-#: ../svgui/svgui.py:142
-#, python-format
-msgid "No such SVG file: %s\n"
-msgstr "No such SVG file: %s\n"
-
 #: ../etherlab/ConfigEditor.py:1245
 #, python-format
 msgid "No such XML file: %s\n"
@@ -2806,10 +2785,6 @@ msgstr "Only Elements"
 #: ../PLCOpenEditor.py:118
 msgid "Open"
 msgstr "Open"
-
-#: ../svgui/svgui.py:151
-msgid "Open Inkscape"
-msgstr "Open Inkscape"
 
 #: ../version.py:88
 msgid "Open Source framework for automation, implemented IEC 61131 IDE with constantly growing set of extensions and flexible PLC runtime."
@@ -3406,14 +3381,6 @@ msgstr "ST"
 #: ../PLCOpenEditor.py:308
 msgid "ST files (*.st)|*.st|All files|*.*"
 msgstr "ST files (*.st)|*.st|All files|*.*"
-
-#: ../svgui/svgui.py:136
-msgid "SVG files (*.svg)|*.svg|All files|*.*"
-msgstr "SVG files (*.svg)|*.svg|All files|*.*"
-
-#: ../features.py:25
-msgid "SVGUI"
-msgstr "SVGUI"
 
 #: ../BeremizIDE.py:246 ../BeremizIDE.py:277 ../PLCOpenEditor.py:84
 #: ../PLCOpenEditor.py:119
@@ -4214,14 +4181,6 @@ msgstr "You can't modify it. This register is read-only or it's not connected."
 #: ../etherlab/EtherCATManagementEditor.py:649
 msgid "You cannot SDO download this state"
 msgstr "You cannot SDO download this state"
-
-#: ../svgui/svgui.py:150
-msgid ""
-"You don't have write permissions.\n"
-"Open Inkscape anyway ?"
-msgstr ""
-"You don't have write permissions.\n"
-"Open Inkscape anyway ?"
 
 #: ../wxglade_hmi/wxglade_hmi.py:175
 msgid ""

@@ -28,9 +28,11 @@ import os
 import sys
 import subprocess
 import ctypes
-from threading import Timer, Lock, Thread, Semaphore
+import time
+from threading import Timer, Lock, Thread, Semaphore, Condition
 import signal
 
+_debug = os.path.exists("BEREMIZ_DEBUG")
 
 class outputThread(Thread):
     """
@@ -137,6 +139,9 @@ class ProcessLogger(object):
         else:
             self.timeout = None
 
+        if _debug and self.logger:
+            self.logger.write("(DEBUG) launching:\n" + self.Command_str + "\n")
+
         self.Proc = subprocess.Popen(self.Command, **popenargs)
 
         self.outt = outputThread(
@@ -153,12 +158,16 @@ class ProcessLogger(object):
         self.errt.start()
         self.startsem.release()
 
+        self.spinwakeuplock = Lock()
+        self.spinwakeupcond = Condition(self.spinwakeuplock)
+        self.spinwakeuptimer = None
+
     def output(self, v):
         if v and self.output_encoding:
             v = v.decode(self.output_encoding)
         self.outdata.append(v)
         self.outlen += 1
-        if not self.no_stdout:
+        if self.logger and not self.no_stdout:
             self.logger.write(v)
         if (self.keyword and v.find(self.keyword) != -1) or (self.outlimit and self.outlen > self.outlimit):
             self.endlog()
@@ -168,14 +177,15 @@ class ProcessLogger(object):
             v = v.decode(self.output_encoding)
         self.errdata.append(v)
         self.errlen += 1
-        if not self.no_stderr:
+        if self.logger and not self.no_stderr:
             self.logger.write_warning(v)
         if self.errlimit and self.errlen > self.errlimit:
             self.endlog()
 
     def log_the_end(self, ecode, pid):
-        self.logger.write(self.Command_str + "\n")
-        self.logger.write_warning(_("exited with status {a1} (pid {a2})\n").format(a1=str(ecode), a2=str(pid)))
+        if self.logger is not None:
+            self.logger.write(self.Command_str + "\n")
+            self.logger.write_warning(_("exited with status {a1} (pid {a2})\n").format(a1=str(ecode), a2=str(pid)))
 
     def finish(self, pid, ecode):
         # avoid running function before start is finished
@@ -190,6 +200,7 @@ class ProcessLogger(object):
             self.finish_callback(self, ecode, pid)
         self.errt.join()
         self.finishsem.release()
+        self.spinwakeup()
 
     def kill(self, gently=True):
         # avoid running kill before start is finished
@@ -220,7 +231,25 @@ class ProcessLogger(object):
             if not self.outt.finished and self.kill_it:
                 self.kill()
             self.finishsem.release()
+            self.spinwakeup()
+
+    def spinwakeup(self):
+        with self.spinwakeuplock:
+            if self.spinwakeuptimer is not None:
+                self.spinwakeuptimer.cancel()
+            self.spinwakeuptimer = None
+            self.spinwakeupcond.notify()
 
     def spin(self):
-        self.finishsem.acquire()
+        start = time.time()
+        if self.logger:
+            while not self.finishsem.acquire(0):
+                with self.spinwakeuplock:
+                    self.spinwakeuptimer = Timer(0.1, self.spinwakeup)
+                    self.spinwakeuptimer.start()
+                    self.spinwakeupcond.wait()
+                    self.logger.progress("%.3fs"%(time.time() - start))
+        else:
+            self.finishsem.acquire()
+
         return [self.exitcode, "".join(self.outdata), "".join(self.errdata)]

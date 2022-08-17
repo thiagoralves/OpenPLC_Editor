@@ -55,10 +55,6 @@ for i in xrange(26):
  STC_PLC_EMPTY] = range(11)
 [SPACE, WORD, NUMBER, STRING, WSTRING, COMMENT, PRAGMA, DPRAGMA] = range(8)
 
-[
-    ID_TEXTVIEWER, ID_TEXTVIEWERTEXTCTRL,
-] = [wx.NewId() for _init_ctrls in range(2)]
-
 re_texts = {}
 re_texts["letter"] = "[A-Za-z]"
 re_texts["digit"] = "[0-9]"
@@ -79,11 +75,8 @@ def LineStartswith(line, symbols):
 
 class TextViewer(EditorPanel):
 
-    ID = ID_TEXTVIEWER
-
     def _init_Editor(self, prnt):
-        self.Editor = CustomStyledTextCtrl(id=ID_TEXTVIEWERTEXTCTRL,
-                                           parent=prnt, name="TextViewer", size=wx.Size(0, 0), style=0)
+        self.Editor = CustomStyledTextCtrl(parent=prnt, name="TextViewer", size=wx.Size(0, 0), style=0)
         self.Editor.ParentWindow = self
 
         self.Editor.CmdKeyAssign(ord('+'), wx.stc.STC_SCMOD_CTRL, wx.stc.STC_CMD_ZOOMIN)
@@ -140,14 +133,14 @@ class TextViewer(EditorPanel):
                                     wx.stc.STC_MOD_BEFOREDELETE |
                                     wx.stc.STC_PERFORMED_USER)
 
-        self.Bind(wx.stc.EVT_STC_STYLENEEDED, self.OnStyleNeeded, id=ID_TEXTVIEWERTEXTCTRL)
+        self.Bind(wx.stc.EVT_STC_STYLENEEDED, self.OnStyleNeeded, self.Editor)
         self.Editor.Bind(wx.stc.EVT_STC_MARGINCLICK, self.OnMarginClick)
         self.Editor.Bind(wx.stc.EVT_STC_UPDATEUI, self.OnUpdateUI)
         self.Editor.Bind(wx.EVT_KEY_DOWN, self.OnKeyDown)
         if self.Controler is not None:
             self.Editor.Bind(wx.EVT_KILL_FOCUS, self.OnKillFocus)
-            self.Bind(wx.stc.EVT_STC_DO_DROP, self.OnDoDrop, id=ID_TEXTVIEWERTEXTCTRL)
-            self.Bind(wx.stc.EVT_STC_MODIFIED, self.OnModification, id=ID_TEXTVIEWERTEXTCTRL)
+            self.Bind(wx.stc.EVT_STC_DO_DROP, self.OnDoDrop, self.Editor)
+            self.Bind(wx.stc.EVT_STC_MODIFIED, self.OnModification, self.Editor)
 
     def __init__(self, parent, tagname, window, controler, debug=False, instancepath=""):
         if tagname != "" and controler is not None:
@@ -376,7 +369,8 @@ class TextViewer(EditorPanel):
                     message = _("\"%s\" pou already exists!") % var_name
                 else:
                     if not var_name.upper() in [name.upper() for name in self.Controler.GetEditedElementVariables(self.TagName, self.Debug)]:
-                        self.Controler.AddEditedElementPouExternalVar(self.TagName, values[2], var_name)
+                        kwargs = dict(description=values[4]) if len(values)>4 else {}
+                        self.Controler.AddEditedElementPouExternalVar(self.TagName, values[2], var_name, **kwargs)
                         self.RefreshVariablePanel()
                         self.RefreshVariableTree()
                     event.SetDragText(var_name)
@@ -846,16 +840,6 @@ class TextViewer(EditorPanel):
         self.Controler.SetEditedElementText(self.TagName, self.GetText())
         self.ResetSearchResults()
 
-    def cleanupForAutocomplete(self, word):
-        idxBegin = word.find('[')
-        if idxBegin < 0:
-            return word
-        mtch = re.match('([^\[]+)(\[[^\]]+\])+', word)
-        if mtch is not None:
-            word = mtch.group(1)
-        # print("CLEANUP returning word: %s" % word)
-        return word
-
     def OnKeyDown(self, event):
         key = event.GetKeyCode()
         if self.Controler is not None:
@@ -878,7 +862,6 @@ class TextViewer(EditorPanel):
 
                 words = lineText.split(" ")
                 words = [word for i, word in enumerate(words) if word != '' or i == len(words) - 1]
-                #words = [self.cleanupForAutocomplete(w) for w in words]
 
                 kw = []
 
@@ -895,33 +878,11 @@ class TextViewer(EditorPanel):
                 else:
                     kw = self.Keywords + self.Variables.keys() + self.Functions.keys()
                 if len(kw) > 0:
-                    target_word = words[-1]
-                    struct_els = target_word.split('.')
-                    #print('VARS %s' % str(self.Variables))
-                    if len(struct_els) < 2:
-                        target_word = self.cleanupForAutocomplete(target_word)
-                    else:
-                        # we have a dot-separated value -- i.e. some structured instance
-                        # we will drill down the tree to find relevant elements
-                        var_ctx = self.Variables
-                        i = 0
-                        while i < (len(struct_els) - 1) and var_ctx is not None:
-                            cur_level_word = self.cleanupForAutocomplete(struct_els[i])
-                            if len(cur_level_word) and cur_level_word.upper() in var_ctx:
-                                var_ctx = var_ctx[cur_level_word.upper()]
-                            i += 1
-                        kw = var_ctx.keys()
-                        if struct_els[-1].upper() == struct_els[-1]: 
-                            target_word = self.cleanupForAutocomplete(struct_els[-1]).upper()
-                        else:
-                            target_word = self.cleanupForAutocomplete(struct_els[-1]).lower()
-                            kw = [keyword.lower() for keyword in kw]
-                    if len(target_word) > 0:
-                        kw = [keyword for keyword in kw if keyword.startswith(target_word)]
+                    if len(words[-1]) > 0:
+                        kw = [keyword for keyword in kw if keyword.startswith(words[-1])]
                     kw.sort()
-                    if len(kw):
-                        self.Editor.AutoCompSetIgnoreCase(True)
-                        self.Editor.AutoCompShow(len(target_word), " ".join(kw))
+                    self.Editor.AutoCompSetIgnoreCase(True)
+                    self.Editor.AutoCompShow(len(words[-1]), " ".join(kw))
                 key_handled = True
             elif key == wx.WXK_RETURN or key == wx.WXK_NUMPAD_ENTER:
                 if self.TextSyntax in ["ST", "ALL"]:

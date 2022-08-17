@@ -8,6 +8,7 @@
 #include <time.h>
 #include <signal.h>
 #include <stdlib.h>
+#include <errno.h>
 #include <sys/mman.h>
 #include <sys/fcntl.h>
 
@@ -18,24 +19,12 @@
 
 unsigned int PLC_state = 0;
 #define PLC_STATE_TASK_CREATED                 1
-#define PLC_STATE_DEBUG_FILE_OPENED            2 
-#define PLC_STATE_DEBUG_PIPE_CREATED           4 
-#define PLC_STATE_PYTHON_FILE_OPENED           8 
-#define PLC_STATE_PYTHON_PIPE_CREATED          16   
-#define PLC_STATE_WAITDEBUG_FILE_OPENED        32   
-#define PLC_STATE_WAITDEBUG_PIPE_CREATED       64
-#define PLC_STATE_WAITPYTHON_FILE_OPENED       128
-#define PLC_STATE_WAITPYTHON_PIPE_CREATED      256
+#define PLC_STATE_DEBUG_PIPE_CREATED           2
+#define PLC_STATE_PYTHON_PIPE_CREATED          8
+#define PLC_STATE_WAITDEBUG_PIPE_CREATED       16
+#define PLC_STATE_WAITPYTHON_PIPE_CREATED      32
 
-#define WAITDEBUG_PIPE_DEVICE        "/dev/rtp0"
-#define WAITDEBUG_PIPE_MINOR         0
-#define DEBUG_PIPE_DEVICE            "/dev/rtp1"
-#define DEBUG_PIPE_MINOR             1
-#define WAITPYTHON_PIPE_DEVICE       "/dev/rtp2"
-#define WAITPYTHON_PIPE_MINOR        2
-#define PYTHON_PIPE_DEVICE           "/dev/rtp3"
-#define PYTHON_PIPE_MINOR            3
-#define PIPE_SIZE                    1 
+#define PIPE_SIZE                    1
 
 // rt-pipes commands
 
@@ -64,14 +53,36 @@ void PLC_GetTime(IEC_TIME *CURRENT_TIME)
 }
 
 RT_TASK PLC_task;
-RT_PIPE WaitDebug_pipe;
-RT_PIPE WaitPython_pipe;
-RT_PIPE Debug_pipe;
-RT_PIPE Python_pipe;
-int WaitDebug_pipe_fd;
-int WaitPython_pipe_fd;
-int Debug_pipe_fd;
-int Python_pipe_fd;
+void *WaitDebug_handle;
+void *WaitPython_handle;
+void *Debug_handle;
+void *Python_handle;
+void *svghmi_handle;
+
+struct RT_to_nRT_signal_s {
+    int used;
+    RT_PIPE pipe;
+    int pipe_fd;
+    char *name;
+};
+typedef struct RT_to_nRT_signal_s RT_to_nRT_signal_t;
+
+#define max_RT_to_nRT_signals 16
+
+static RT_to_nRT_signal_t RT_to_nRT_signal_pool[max_RT_to_nRT_signals];
+
+int recv_RT_to_nRT_signal(void* handle, char* payload){
+    RT_to_nRT_signal_t *sig = (RT_to_nRT_signal_t*)handle;
+    if(!sig->used) return -EINVAL;
+    return read(sig->pipe_fd, payload, 1);
+}
+
+int send_RT_to_nRT_signal(void* handle, char payload){
+    RT_to_nRT_signal_t *sig = (RT_to_nRT_signal_t*)handle;
+    if(!sig->used) return -EINVAL;
+    return rt_pipe_write(&sig->pipe, &payload, 1, P_NORMAL);
+}
+
 
 int PLC_shutdown = 0;
 
@@ -91,21 +102,102 @@ void PLC_task_proc(void *arg)
         if (PLC_shutdown) break;
         rt_task_wait_period(NULL);
     }
-    /* since xenomai 3 it is not enough to close() 
+    /* since xenomai 3 it is not enough to close()
        file descriptor to unblock read()... */
     {
         /* explicitely finish python thread */
         char msg = PYTHON_FINISH;
-        rt_pipe_write(&WaitPython_pipe, &msg, sizeof(msg), P_NORMAL);
+        send_RT_to_nRT_signal(WaitPython_handle, msg);
     }
     {
         /* explicitely finish debug thread */
         char msg = DEBUG_FINISH;
-        rt_pipe_write(&WaitDebug_pipe, &msg, sizeof(msg), P_NORMAL);
+        send_RT_to_nRT_signal(WaitDebug_handle, msg);
     }
 }
 
 static unsigned long __debug_tick;
+
+#define _Log(text, err) \
+    {\
+        char mstr[256];\
+        snprintf(mstr, 255, text " for %s (%d)", name, err);\
+        LogMessage(LOG_CRITICAL, mstr, strlen(mstr));\
+    }
+
+void *create_RT_to_nRT_signal(char* name){
+    int new_index = -1;
+    int ret;
+    RT_to_nRT_signal_t *sig;
+    char pipe_dev[64];
+
+    /* find a free slot */
+    for(int i=0; i < max_RT_to_nRT_signals; i++){
+        sig = &RT_to_nRT_signal_pool[i];
+        if(!sig->used){
+            new_index = i;
+            break;
+        }
+    }
+
+    /* fail if none found */
+    if(new_index == -1) {
+    	_Log("Maximum count of RT-PIPE reached while creating pipe", max_RT_to_nRT_signals);
+        return NULL;
+    }
+
+    /* create rt pipe */
+    if(ret = rt_pipe_create(&sig->pipe, name, new_index, PIPE_SIZE) < 0){
+    	_Log("Failed opening real-time end of RT-PIPE", ret);
+        return NULL;
+    }
+
+    /* open pipe's userland */
+    snprintf(pipe_dev, 63, "/dev/rtp%d", new_index);
+    if((sig->pipe_fd = open(pipe_dev, O_RDWR)) == -1){
+        rt_pipe_delete(&sig->pipe);
+    	_Log("Failed opening non-real-time end of RT-PIPE", errno);
+        return NULL;
+    }
+
+    sig->used = 1;
+    sig->name = name;
+
+    return sig;
+}
+
+void delete_RT_to_nRT_signal(void* handle){
+    int ret;
+    RT_to_nRT_signal_t *sig = (RT_to_nRT_signal_t*)handle;
+    char *name = sig->name;
+
+    if(!sig->used) return;
+
+    if(ret = rt_pipe_delete(&sig->pipe) != 0){
+    	_Log("Failed closing real-time end of RT-PIPE", ret);
+    }
+
+    if(close(sig->pipe_fd) != 0){
+    	_Log("Failed closing non-real-time end of RT-PIPE", errno);
+    }
+
+    sig->used = 0;
+}
+
+int wait_RT_to_nRT_signal(void* handle){
+    char cmd;
+    int ret = recv_RT_to_nRT_signal(handle, &cmd);
+    return (ret == 1) ? 0 : ((ret == 0) ? ENODATA : -ret);
+}
+
+int unblock_RT_to_nRT_signal(void* handle){
+    int ret = send_RT_to_nRT_signal(handle, 0);
+    return (ret == 1) ? 0 : ((ret == 0) ? EINVAL : -ret);
+}
+
+void nRT_reschedule(void){
+    sched_yield();
+}
 
 void PLC_cleanup_all(void)
 {
@@ -115,45 +207,24 @@ void PLC_cleanup_all(void)
     }
 
     if (PLC_state & PLC_STATE_WAITDEBUG_PIPE_CREATED) {
-        rt_pipe_delete(&WaitDebug_pipe);
+        delete_RT_to_nRT_signal(WaitDebug_handle);
         PLC_state &= ~PLC_STATE_WAITDEBUG_PIPE_CREATED;
     }
 
-    if (PLC_state & PLC_STATE_WAITDEBUG_FILE_OPENED) {
-        close(WaitDebug_pipe_fd);
-        PLC_state &= ~PLC_STATE_WAITDEBUG_FILE_OPENED;
-    }
-
     if (PLC_state & PLC_STATE_WAITPYTHON_PIPE_CREATED) {
-        rt_pipe_delete(&WaitPython_pipe);
+        delete_RT_to_nRT_signal(WaitPython_handle);
         PLC_state &= ~PLC_STATE_WAITPYTHON_PIPE_CREATED;
     }
 
-    if (PLC_state & PLC_STATE_WAITPYTHON_FILE_OPENED) {
-        close(WaitPython_pipe_fd);
-        PLC_state &= ~PLC_STATE_WAITPYTHON_FILE_OPENED;
-    }
-
     if (PLC_state & PLC_STATE_DEBUG_PIPE_CREATED) {
-        rt_pipe_delete(&Debug_pipe);
+        delete_RT_to_nRT_signal(Debug_handle);
         PLC_state &= ~PLC_STATE_DEBUG_PIPE_CREATED;
     }
 
-    if (PLC_state & PLC_STATE_DEBUG_FILE_OPENED) {
-        close(Debug_pipe_fd);
-        PLC_state &= ~PLC_STATE_DEBUG_FILE_OPENED;
-    }
-
     if (PLC_state & PLC_STATE_PYTHON_PIPE_CREATED) {
-        rt_pipe_delete(&Python_pipe);
+        delete_RT_to_nRT_signal(Python_handle);
         PLC_state &= ~PLC_STATE_PYTHON_PIPE_CREATED;
     }
-
-    if (PLC_state & PLC_STATE_PYTHON_FILE_OPENED) {
-        close(Python_pipe_fd);
-        PLC_state &= ~PLC_STATE_PYTHON_FILE_OPENED;
-    }
-
 }
 
 int stopPLC()
@@ -197,48 +268,26 @@ int startPLC(int argc,char **argv)
     /* no memory swapping for that process */
     mlockall(MCL_CURRENT | MCL_FUTURE);
 
+    /* memory initialization */
     PLC_shutdown = 0;
+    bzero(RT_to_nRT_signal_pool, sizeof(RT_to_nRT_signal_pool));
 
-    /*** RT Pipes creation and opening ***/
+    /*** RT Pipes ***/
     /* create Debug_pipe */
-    if(rt_pipe_create(&Debug_pipe, "Debug_pipe", DEBUG_PIPE_MINOR, PIPE_SIZE) < 0) 
-        _startPLCLog(FO "Debug_pipe real-time end");
+    if(!(Debug_handle = create_RT_to_nRT_signal("Debug_pipe"))) goto error;
     PLC_state |= PLC_STATE_DEBUG_PIPE_CREATED;
 
-    /* open Debug_pipe*/
-    if((Debug_pipe_fd = open(DEBUG_PIPE_DEVICE, O_RDWR)) == -1)
-        _startPLCLog(FO DEBUG_PIPE_DEVICE);
-    PLC_state |= PLC_STATE_DEBUG_FILE_OPENED;
-
     /* create Python_pipe */
-    if(rt_pipe_create(&Python_pipe, "Python_pipe", PYTHON_PIPE_MINOR, PIPE_SIZE) < 0) 
-        _startPLCLog(FO "Python_pipe real-time end");
+    if(!(Python_handle = create_RT_to_nRT_signal("Python_pipe"))) goto error;
     PLC_state |= PLC_STATE_PYTHON_PIPE_CREATED;
 
-    /* open Python_pipe*/
-    if((Python_pipe_fd = open(PYTHON_PIPE_DEVICE, O_RDWR)) == -1)
-        _startPLCLog(FO PYTHON_PIPE_DEVICE);
-    PLC_state |= PLC_STATE_PYTHON_FILE_OPENED;
-
     /* create WaitDebug_pipe */
-    if(rt_pipe_create(&WaitDebug_pipe, "WaitDebug_pipe", WAITDEBUG_PIPE_MINOR, PIPE_SIZE) < 0)
-        _startPLCLog(FO "WaitDebug_pipe real-time end");
+    if(!(WaitDebug_handle = create_RT_to_nRT_signal("WaitDebug_pipe"))) goto error;
     PLC_state |= PLC_STATE_WAITDEBUG_PIPE_CREATED;
 
-    /* open WaitDebug_pipe*/
-    if((WaitDebug_pipe_fd = open(WAITDEBUG_PIPE_DEVICE, O_RDWR)) == -1)
-        _startPLCLog(FO WAITDEBUG_PIPE_DEVICE);
-    PLC_state |= PLC_STATE_WAITDEBUG_FILE_OPENED;
-
     /* create WaitPython_pipe */
-    if(rt_pipe_create(&WaitPython_pipe, "WaitPython_pipe", WAITPYTHON_PIPE_MINOR, PIPE_SIZE) < 0)
-        _startPLCLog(FO "WaitPython_pipe real-time end");
+    if(!(WaitPython_handle = create_RT_to_nRT_signal("WaitPython_pipe"))) goto error;
     PLC_state |= PLC_STATE_WAITPYTHON_PIPE_CREATED;
-
-    /* open WaitPython_pipe*/
-    if((WaitPython_pipe_fd = open(WAITPYTHON_PIPE_DEVICE, O_RDWR)) == -1)
-        _startPLCLog(FO WAITPYTHON_PIPE_DEVICE);
-    PLC_state |= PLC_STATE_WAITPYTHON_FILE_OPENED;
 
     /*** create PLC task ***/
     if(rt_task_create(&PLC_task, "PLC_task", 0, 50, T_JOINABLE))
@@ -279,11 +328,11 @@ int TryEnterDebugSection(void)
 
 void LeaveDebugSection(void)
 {
-    if(AtomicCompareExchange( &debug_state, 
+    if(AtomicCompareExchange( &debug_state,
         DEBUG_BUSY, DEBUG_FREE) == DEBUG_BUSY){
         char msg = DEBUG_UNLOCK;
         /* signal to NRT for wakeup */
-        rt_pipe_write(&Debug_pipe, &msg, sizeof(msg), P_NORMAL);
+        send_RT_to_nRT_signal(Debug_handle, msg);
     }
 }
 
@@ -295,8 +344,8 @@ int WaitDebugData(unsigned long *tick)
     int res;
     if (PLC_shutdown) return -1;
     /* Wait signal from PLC thread */
-    res = read(WaitDebug_pipe_fd, &cmd, sizeof(cmd));
-    if (res == sizeof(cmd) && cmd == DEBUG_PENDING_DATA){
+    res = recv_RT_to_nRT_signal(WaitDebug_handle, &cmd);
+    if (res == 1 && cmd == DEBUG_PENDING_DATA){
         *tick = __debug_tick;
         return 0;
     }
@@ -311,7 +360,7 @@ void InitiateDebugTransfer()
     /* remember tick */
     __debug_tick = __tick;
     /* signal debugger thread it can read data */
-    rt_pipe_write(&WaitDebug_pipe, &msg, sizeof(msg), P_NORMAL);
+    send_RT_to_nRT_signal(WaitDebug_handle, msg);
 }
 
 int suspendDebug(int disable)
@@ -323,7 +372,7 @@ int suspendDebug(int disable)
             DEBUG_FREE,
             DEBUG_BUSY) != DEBUG_FREE &&
             cmd == DEBUG_UNLOCK){
-       if(read(Debug_pipe_fd, &cmd, sizeof(cmd)) != sizeof(cmd)){
+       if(recv_RT_to_nRT_signal(Debug_handle, &cmd) != 1){
            return -1;
        }
     }
@@ -335,6 +384,7 @@ int suspendDebug(int disable)
 
 void resumeDebug(void)
 {
+    __DEBUG = 1;
     AtomicCompareExchange( &debug_state, DEBUG_BUSY, DEBUG_FREE);
 }
 
@@ -343,11 +393,11 @@ void resumeDebug(void)
 static long python_state = PYTHON_FREE;
 
 int WaitPythonCommands(void)
-{ 
+{
     char cmd;
     if (PLC_shutdown) return -1;
     /* Wait signal from PLC thread */
-    if(read(WaitPython_pipe_fd, &cmd, sizeof(cmd))==sizeof(cmd) && cmd==PYTHON_PENDING_COMMAND){
+    if(recv_RT_to_nRT_signal(WaitPython_handle, &cmd) == 1 && cmd==PYTHON_PENDING_COMMAND){
         return 0;
     }
     return -1;
@@ -357,7 +407,7 @@ int WaitPythonCommands(void)
 void UnBlockPythonCommands(void)
 {
     char msg = PYTHON_PENDING_COMMAND;
-    rt_pipe_write(&WaitPython_pipe, &msg, sizeof(msg), P_NORMAL);
+    send_RT_to_nRT_signal(WaitPython_handle, msg);
 }
 
 int TryLockPython(void)
@@ -378,7 +428,7 @@ void LockPython(void)
             PYTHON_FREE,
             PYTHON_BUSY) != PYTHON_FREE &&
             cmd == UNLOCK_PYTHON){
-       read(Python_pipe_fd, &cmd, sizeof(cmd));
+       recv_RT_to_nRT_signal(Python_handle, &cmd);
     }
 }
 
@@ -390,7 +440,7 @@ void UnLockPython(void)
             PYTHON_FREE) == PYTHON_BUSY){
         if(rt_task_self()){/*is that the real time task ?*/
            char cmd = UNLOCK_PYTHON;
-           rt_pipe_write(&Python_pipe, &cmd, sizeof(cmd), P_NORMAL);
+           send_RT_to_nRT_signal(Python_handle, cmd);
         }/* otherwise, no signaling from non real time */
     }    /* as plc does not wait for lock. */
 }

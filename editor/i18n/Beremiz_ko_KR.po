@@ -977,10 +977,6 @@ msgstr "작업 디렉토리 변경"
 msgid "Character string"
 msgstr "문자열"
 
-#: ../svgui/svgui.py:136
-msgid "Choose a SVG file"
-msgstr "SVG 파일 선택"
-
 #: ../etherlab/EtherCATManagementEditor.py:911
 #: ../etherlab/EtherCATManagementEditor.py:1306
 msgid "Choose a binary file"
@@ -1312,10 +1308,6 @@ msgstr "PLC 를 시작 할 수 없습니다!\n"
 #: ../ProjectController.py:1725
 msgid "Couldn't stop PLC !\n"
 msgstr "PLC 를 정지 할 수 없습니다!\n"
-
-#: ../svgui/svgui.py:57
-msgid "Create HMI"
-msgstr "HMI 생성"
 
 #: ../dialogs/PouDialog.py:48
 msgid "Create a new POU"
@@ -2099,10 +2091,6 @@ msgstr "IP를 정확히 입력하세요!"
 msgid "Import ESI file"
 msgstr "ESI 파일 불러오기"
 
-#: ../svgui/svgui.py:50 ../svgui/svgui.py:51
-msgid "Import SVG"
-msgstr "SVG 가져오기"
-
 #: ../etherlab/ConfigEditor.py:1352
 msgid "Import file to ESI files database"
 msgstr "파일을 ESI 파일 데이터베이스로 불러오기"
@@ -2168,10 +2156,6 @@ msgstr "Axis ref 위치 변수의 드래그 앤 드랍 초기화"
 #: ../etherlab/EthercatCIA402Slave.py:126
 msgid "Initiate Drag'n drop of Network position located variable"
 msgstr "네트워크 위치 변수의 드래그 앤 드랍 초기화"
-
-#: ../svgui/svgui.py:56
-msgid "Inkscape"
-msgstr "Inkscape"
 
 #: ../dialogs/SFCTransitionDialog.py:77 ../dialogs/ActionBlockDialog.py:47
 msgid "Inline"
@@ -2729,11 +2713,6 @@ msgstr "검색된 결과가 없습니다"
 msgid "No slave defined at position %d!"
 msgstr "위치 %d에 정의된 슬레이브가 없습니다!"
 
-#: ../svgui/svgui.py:142
-#, python-format
-msgid "No such SVG file: %s\n"
-msgstr "선택하신 %s SVG 파일은 없습니다\n"
-
 #: ../etherlab/ConfigEditor.py:1245
 #, python-format
 msgid "No such XML file: %s\n"
@@ -2826,10 +2805,6 @@ msgstr "구성원 내부 검색"
 #: ../PLCOpenEditor.py:118
 msgid "Open"
 msgstr "프로젝트 불러오기"
-
-#: ../svgui/svgui.py:151
-msgid "Open Inkscape"
-msgstr "잉크스케이프 열기"
 
 #: ../version.py:88
 msgid ""
@@ -3431,14 +3406,6 @@ msgstr "ST"
 #: ../PLCOpenEditor.py:308
 msgid "ST files (*.st)|*.st|All files|*.*"
 msgstr "ST 파일 (*.st)|*.st|모든 파일|*.*"
-
-#: ../svgui/svgui.py:136
-msgid "SVG files (*.svg)|*.svg|All files|*.*"
-msgstr "SVG 파일 (*.svg)|*svg|모든 파일|*.*"
-
-#: ../features.py:25
-msgid "SVGUI"
-msgstr "SVGUI"
 
 #: ../BeremizIDE.py:247 ../BeremizIDE.py:278 ../PLCOpenEditor.py:84
 #: ../PLCOpenEditor.py:119
@@ -4246,14 +4213,6 @@ msgstr "수정할 수 없습니다. 이 레지스터는 읽기 권한 또는 연
 #: ../etherlab/EtherCATManagementEditor.py:648
 msgid "You cannot SDO download this state"
 msgstr "현재 상태에서는 SDO 다운로드를 할 수 없습니다."
-
-#: ../svgui/svgui.py:150
-msgid ""
-"You don't have write permissions.\n"
-"Open Inkscape anyway ?"
-msgstr ""
-"현재 쓰기 권한이 없습니다\n"
-"그래도 Inkscape를 열까요?"
 
 #: ../wxglade_hmi/wxglade_hmi.py:175
 msgid ""

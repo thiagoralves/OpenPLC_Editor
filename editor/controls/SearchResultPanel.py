@@ -49,13 +49,6 @@ def GenerateName(infos):
 #                            Search Result Panel
 # -------------------------------------------------------------------------------
 
-
-[
-    ID_SEARCHRESULTPANEL, ID_SEARCHRESULTPANELHEADERLABEL,
-    ID_SEARCHRESULTPANELSEARCHRESULTSTREE, ID_SEARCHRESULTPANELRESETBUTTON,
-] = [wx.NewId() for _init_ctrls in range(4)]
-
-
 class SearchResultPanel(wx.Panel):
 
     def _init_coll_MainSizer_Items(self, parent):
@@ -84,18 +77,15 @@ class SearchResultPanel(wx.Panel):
         self.SetSizer(self.MainSizer)
 
     def _init_ctrls(self, prnt):
-        self.HeaderLabel = wx.StaticText(id=ID_SEARCHRESULTPANELHEADERLABEL,
-                                         name='HeaderLabel', parent=self,
+        self.HeaderLabel = wx.StaticText(name='HeaderLabel', parent=self,
                                          pos=wx.Point(0, 0), size=wx.Size(0, 17), style=0)
 
         search_results_tree_style = CT.TR_HAS_BUTTONS | CT.TR_NO_LINES | CT.TR_HAS_VARIABLE_ROW_HEIGHT
-        self.SearchResultsTree = CT.CustomTreeCtrl(id=ID_SEARCHRESULTPANELSEARCHRESULTSTREE,
-                                                   name="SearchResultsTree", parent=self,
+        self.SearchResultsTree = CT.CustomTreeCtrl(name="SearchResultsTree", parent=self,
                                                    pos=wx.Point(0, 0), style=search_results_tree_style)
-        if wx.VERSION >= (2, 8, 11):
-            self.SearchResultsTree.SetAGWWindowStyleFlag(search_results_tree_style)
+        self.SearchResultsTree.SetAGWWindowStyleFlag(search_results_tree_style)
         self.Bind(wx.EVT_TREE_ITEM_ACTIVATED, self.OnSearchResultsTreeItemActivated,
-                  id=ID_SEARCHRESULTPANELSEARCHRESULTSTREE)
+                  self.SearchResultsTree)
 
         self.ResetButton = wx.lib.buttons.GenBitmapButton(
             self, bitmap=GetBitmap("reset"),
@@ -106,7 +96,7 @@ class SearchResultPanel(wx.Panel):
         self._init_sizers()
 
     def __init__(self, parent, window):
-        wx.Panel.__init__(self, id=ID_SEARCHRESULTPANEL,
+        wx.Panel.__init__(self,
                           name='SearchResultPanel', parent=parent,
                           pos=wx.Point(0, 0),
                           size=wx.Size(0, 0), style=wx.TAB_TRAVERSAL)

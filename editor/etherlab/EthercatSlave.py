@@ -73,6 +73,8 @@ class _EthercatSlaveCTN(object):
     def __init__(self):
         # ----------- call ethercat mng. function --------------
         self.CommonMethod = _CommonSlave(self)
+        self.SelectedRxPDOIndex = []
+        self.SelectedTxPDOIndex = []
 
     def GetIconName(self):
         return "Slave"

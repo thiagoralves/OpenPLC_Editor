@@ -331,12 +331,16 @@ def LoadPouInstances(xml_string, body_type):
 
 
 def SaveProject(project, filepath):
-    project_file = open(filepath, 'w')
-    project_file.write(etree.tostring(
+    content = etree.tostring(
         project,
         pretty_print=True,
         xml_declaration=True,
-        encoding='utf-8'))
+        encoding='utf-8')
+
+    assert len(content) != 0
+        
+    project_file = open(filepath, 'w')
+    project_file.write(content)
     project_file.close()
 
 
@@ -1389,8 +1393,8 @@ def _updatePouPousClass(cls):
         self.interface.setcontent(vars)
     setattr(cls, "setvars", setvars)
 
-    def addpouExternalVar(self, var_type, name):
-        self.addpouVar(var_type, name, "externalVars")
+    def addpouExternalVar(self, var_type, name, **args):
+        self.addpouVar(var_type, name, "externalVars", **args)
     setattr(cls, "addpouExternalVar", addpouExternalVar)
 
     def addpouVar(self, var_type, name, var_class="localVars", location="", description="", initval=""):

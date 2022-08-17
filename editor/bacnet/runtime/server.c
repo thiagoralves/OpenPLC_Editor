@@ -52,6 +52,10 @@
 #include "timesync.h"
 
 
+
+
+
+
 /* A utility function used by most (all?) implementations of BACnet Objects */
 /* Adds to Prop_List all entries in Prop_List_XX that are not
  * PROP_OBJECT_IDENTIFIER, PROP_OBJECT_NAME, PROP_OBJECT_TYPE, PROP_PROPERTY_LIST
@@ -454,17 +458,33 @@ int bn_server_run(server_node_t *server_node) {
     bvlc_bdt_restore_local();
     /* Initiliaze the bacnet server 'device' */    
     Device_Init(server_node->device_name);
-
-    pthread_mutex_lock(&init_done_lock);
-    init_done = 1;
-    pthread_cond_signal(&init_done_cond);
-    pthread_mutex_unlock(&init_done_lock);
-
+    
+    /* Although the default values for the following properties are hardcoded into
+     * the respective variable definition+initialization in the C code,
+     * these values may be potentially changed after compilation but before 
+     * code startup. This is done by the web interface(1), directly loading the .so file, 
+     * and changing the values in the server_node_t variable.
+     * We must therefore honor those values when we start running the BACnet device server
+     * 
+     * (1) Web interface is implemented in runtime/BACnet_config.py
+     *     which works as an extension of the web server in runtime/NevowServer.py
+     *     which in turn is initialised/run by the Beremiz_service.py deamon
+     */
+    Device_Set_Location                    (server_node->device_location,        strlen(server_node->device_location));
+    Device_Set_Description                 (server_node->device_description,     strlen(server_node->device_description));
+    Device_Set_Application_Software_Version(server_node->device_appsoftware_ver, strlen(server_node->device_appsoftware_ver));
     /* Set the password (max 31 chars) for Device Communication Control request. */
     /* Default in the BACnet stack is hardcoded as "filister" */
     /* (char *) cast is to remove the cast. The function is incorrectly declared/defined in the BACnet stack! */
     /* BACnet stack needs to change demo/handler/h_dcc.c and include/handlers.h                               */
     handler_dcc_password_set((char *)server_node->comm_control_passwd);
+
+    
+    pthread_mutex_lock(&init_done_lock);
+    init_done = 1;
+    pthread_cond_signal(&init_done_cond);
+    pthread_mutex_unlock(&init_done_lock);
+
     /* Set callbacks and configure network interface */
     res = Init_Service_Handlers();
     if (res < 0) exit(1);
@@ -659,5 +679,110 @@ int __cleanup_%(locstr)s (){
 	// Nothing to do ???
 
 	return res;
+}
+
+
+
+
+
+/**********************************************/
+/** Functions for Beremiz web interface.     **/
+/**********************************************/
+
+/*
+ * Beremiz has a program to run on the PLC (Beremiz_service.py)
+ * to handle downloading of compiled programs, start/stop of PLC, etc.
+ * (see runtime/PLCObject.py for start/stop, loading, ...)
+ * 
+ * This service also includes a web server to access PLC state (start/stop)
+ * and to change some basic confiuration parameters.
+ * (see runtime/NevowServer.py for the web server)
+ * 
+ * The web server allows for extensions, where additional configuration
+ * parameters may be changed on the running/downloaded PLC.
+ * BACnet plugin also comes with an extension to the web server, through
+ * which the basic BACnet plugin configuration parameters may be changed
+ * (basically, only the parameters in server_node_t may be changed)
+ * 
+ * The following functions are never called from other C code. They are 
+ * called instead from the python code in runtime/BACnet_config.py, that
+ * implements the web server extension for configuring BACnet parameters.
+ */
+
+
+/* The location (in the Config. Node Tree of Beremiz IDE)
+ * of the BACnet plugin.
+ * 
+ * This variable is also used by the BACnet web config code to determine 
+ * whether the current loaded PLC includes the BACnet plugin
+ * (so it should make the BACnet parameter web interface visible to the user).
+ */
+const char * __bacnet_plugin_location = "%(locstr)s";
+
+
+/* NOTE: We could have the python code in runtime/BACnet_config.py
+ *       directly access the server_node_t structure, however
+ *       this would create a tight coupling between these two
+ *       disjoint pieces of code.
+ *       Any change to the server_node_t structure would require the 
+ *       python code to be changed accordingly. I have therefore opted
+ *       to cretae get/set functions, one for each parameter.
+ *       
+ * NOTE: since the BACnet plugin can only support/allow at most one instance 
+ *       of the BACnet plugin in Beremiz (2 or more are not allowed due to 
+ *       limitations of the underlying BACnet protocol stack being used),
+ *       a single generic version of each of the following functions would work.
+ *       However, simply for the sake of keeping things general, we create
+ *       a diferent function for each plugin instance (which, as I said,
+ *       will never occur for now).
+ * 
+ *      The functions being declared are therefoe named:
+ *          __bacnet_0_get_ConfigParam_location
+ *          __bacnet_0_get_ConfigParam_device_name
+ *        etc...
+ *      where the 0 will be replaced by the location of the BACnet plugin
+ *      in the Beremiz configuration tree (will change depending on where
+ *      the user inserted the BACnet plugin into their project) 
+ */
+
+/* macro works for all data types */
+#define __bacnet_get_ConfigParam(param_type,param_name)                 \
+param_type __bacnet_%(locstr)s_get_ConfigParam_##param_name(void) {     \
+    return server_node.param_name;                                      \
+}
+
+/* macro only works for char * data types */
+/* Note that the storage space (max string size) reserved for each parameter
+ * (this storage space is reserved in device.h)
+ * is set to a minimum of 
+ *     %(BACnet_Param_String_Size)d 
+ * which is set to the value of
+ *     BACNET_PARAM_STRING_SIZE
+ * in bacnet.py
+ */
+#define __bacnet_set_ConfigParam(param_type,param_name)                 \
+void __bacnet_%(locstr)s_set_ConfigParam_##param_name(param_type val) { \
+    strncpy(server_node.param_name, val, %(BACnet_Param_String_Size)d); \
+    server_node.param_name[%(BACnet_Param_String_Size)d - 1] = '\0';    \
+}
+
+
+#define __bacnet_ConfigParam_str(param_name)        \
+__bacnet_get_ConfigParam(const char*,param_name)    \
+__bacnet_set_ConfigParam(const char*,param_name)     
+
+
+__bacnet_ConfigParam_str(location)
+__bacnet_ConfigParam_str(network_interface)
+__bacnet_ConfigParam_str(port_number)
+__bacnet_ConfigParam_str(device_name)
+__bacnet_ConfigParam_str(device_location)
+__bacnet_ConfigParam_str(device_description)
+__bacnet_ConfigParam_str(device_appsoftware_ver)
+__bacnet_ConfigParam_str(comm_control_passwd)
+
+__bacnet_get_ConfigParam(uint32_t,device_id)
+void __bacnet_%(locstr)s_set_ConfigParam_device_id(uint32_t val) {
+    server_node.device_id = val;
 }
 

@@ -458,10 +458,12 @@ class ProgramGenerator(object):
         return resrce
 
     # Generate the entire program for current project
-    def GenerateProgram(self):
+    def GenerateProgram(self, log):
+        log("Collecting data types")
         # Find all data types defined
         for datatype in self.Project.getdataTypes():
             self.DatatypeComputed[datatype.getname()] = False
+        log("Collecting POUs")
         # Find all data types defined
         for pou in self.Project.getpous():
             self.PouComputed[pou.getname()] = False
@@ -471,12 +473,15 @@ class ProgramGenerator(object):
             self.Program += [("TYPE\n", ())]
             # Generate every data types defined
             for datatype_name in self.DatatypeComputed.keys():
+                log("Generate Data Type %s"%datatype_name)
                 self.GenerateDataType(datatype_name)
             self.Program += [("END_TYPE\n\n", ())]
         # Generate every POUs defined
         for pou_name in self.PouComputed.keys():
+            log("Generate POU %s"%pou_name)
             self.GeneratePouProgram(pou_name)
         # Generate every configurations defined
+        log("Generate Config(s)")
         for config in self.Project.getconfigurations():
             self.Program += self.GenerateConfiguration(config)
 
@@ -935,7 +940,7 @@ class PouProgramGenerator(object):
             if invar.getformalParameter() == "EN":
                 if len(invar.getconnectionPointIn().getconnections()) > 0:
                     if blk.getinstanceName() is None:
-                        var_name = "%s%d_ENO" % (blk.gettypeName(), blk.getlocalId())
+                        var_name = "_TMP_%s%d_ENO" % (blk.gettypeName(), blk.getlocalId())
                     else:
                         var_name = "%s.ENO" % blk.getinstanceName()
                     return var_name
@@ -1160,7 +1165,7 @@ class PouProgramGenerator(object):
                             if variable.getformalParameter() == "":
                                 variable_name = "%s%d" % (type, block.getlocalId())
                             else:
-                                variable_name = "%s%d_%s" % (type, block.getlocalId(), parameter)
+                                variable_name = "_TMP_%s%d_%s" % (type, block.getlocalId(), parameter)
                             if self.Interface[-1][0] != "VAR" or self.Interface[-1][1] is not None or self.Interface[-1][2]:
                                 self.Interface.append(("VAR", None, False, []))
                             if variable.connectionPointOut in self.ConnectionTypes:
@@ -1253,7 +1258,7 @@ class PouProgramGenerator(object):
                     if output_parameter == "":
                         output_name = "%s%d" % (type, block.getlocalId())
                     else:
-                        output_name = "%s%d_%s" % (type, block.getlocalId(), output_parameter)
+                        output_name = "_TMP_%s%d_%s" % (type, block.getlocalId(), output_parameter)
                     output_value = [(output_name, output_info)]
                 return self.ExtractModifier(output_variable, output_value, output_info)
             if block_infos["type"] == "functionBlock":
@@ -1762,5 +1767,12 @@ class PouProgramGenerator(object):
 
 def GenerateCurrentProgram(controler, project, errors, warnings):
     generator = ProgramGenerator(controler, project, errors, warnings)
-    generator.GenerateProgram()
+    if hasattr(controler, "logger"):
+        def log(txt):
+            controler.logger.write("    "+txt+"\n")
+    else:
+        def log(txt):
+            pass
+
+    generator.GenerateProgram(log)
     return generator.GetGeneratedProgram()

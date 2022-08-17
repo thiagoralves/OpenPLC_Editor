@@ -1,0 +1,216 @@
+// widget_button.ysl2
+
+widget_desc("Button") {
+    longdesc
+    ||
+    Button widget takes one boolean variable path, and reflect current true
+    or false value by showing "active" or "inactive" labeled element
+    respectively. Pressing and releasing button changes variable to true and
+    false respectively. Potential inconsistency caused by quick consecutive
+    presses on the button is mitigated by using a state machine that wait for
+    previous state change to be reflected on variable before applying next one.
+    ||
+
+    shortdesc > Push button reflecting consistently given boolean variable
+
+    path name="value" accepts="HMI_BOOL" > Boolean variable
+    
+}
+
+// Finite state machine
+decl fsm(name);
+decl state(name);
+decl on_mouse(position);
+decl on_dispatch(value);
+decl jump(state);
+decl show(eltname);
+decl hmi_value(value);
+
+gen_index_xhtml {
+
+const "_push_button_fsm" fsm {
+    state "init" {
+        on_dispatch "false" jump "reflect_off";
+        on_dispatch "true" jump "reflect_on";
+    }
+
+    state "reflect_on" {
+        show "active";
+        on_mouse "down" jump "on";
+        on_mouse "up" jump "off";
+        on_dispatch "false" jump "reflect_off";
+    }
+
+    state "on" {
+        hmi_value "true";
+        show "active";
+        on_mouse "up" jump "off";
+        on_dispatch "false" jump "reflect_off";
+    }
+
+    state "reflect_off" {
+        show "inactive";
+        on_mouse "down" jump "on";
+        on_mouse "up" jump "off";
+        on_dispatch "true" jump "reflect_on";
+    }
+
+    state "off" {
+        hmi_value "false";
+        show "inactive";
+        on_mouse "down" jump "on";
+        on_dispatch "true" jump "reflect_on";
+    }
+}
+
+// State machine to drive HMI_BOOL on a potentially laggy connection
+const "_button_fsm" fsm {
+    state "init" {
+        on_dispatch "false" jump "released";
+        on_dispatch "true" jump "pressed";
+    }
+
+    state "pressing" {
+        // show "waitactive";
+        hmi_value "true";
+        on_dispatch "true" jump "pressed";
+        on_mouse "up" jump "shortpress";
+    }
+    state "pressed" {
+        show "active";
+        on_mouse "up" jump "releasing";
+        on_dispatch "false" jump "released";
+    }
+    state "shortpress" {
+        on_dispatch "true" jump "releasing";
+        on_mouse "down" jump "pressing";
+    }
+
+    state "releasing" {
+        // show "waitinactive";
+        hmi_value "false";
+        on_dispatch "false" jump "released";
+        on_mouse "down" jump "shortrelease";
+    }
+    state "released" {
+        show "inactive";
+        on_mouse "down" jump "pressing";
+        on_dispatch "true" jump "pressed";
+    }
+    state "shortrelease" {
+        on_dispatch "false" jump "pressing";
+        on_mouse "up" jump "releasing";
+    }
+}
+
+template "fsm", mode="dispatch_transition" {
+    |         switch (this.state) {
+    apply "state", mode="dispatch_transition";
+    |         }
+}
+template "state", mode="dispatch_transition" {
+    |           case "«@name»":
+       apply "on-dispatch";
+    |             break;
+}
+template "on-dispatch" {
+    |             if(value ==  «@value») {
+    apply "jump", mode="transition";
+    |             }
+}
+
+template "fsm", mode="mouse_transition" {
+    param "position";
+    |         switch (this.state) {
+    apply "state", mode="mouse_transition" with "position", "$position";
+    |         }
+}
+template "state", mode="mouse_transition" {
+    param "position";
+    |           case "«@name»":
+    apply "on-mouse[@position = $position]";
+    |             break;
+}
+template "on-mouse" {
+    // up or down state is already assumed because apply statement filters it
+    apply "jump", mode="transition";
+}
+
+template "jump", mode="transition" {
+    |             this.state = "«@state»";
+    |             this.«@state»_action();
+}
+
+template "fsm", mode="actions" {
+    apply "state", mode="actions";
+}
+template "state", mode="actions" {
+    |     «@name»_action(){
+    // | console.log("Entering state «@name»", this.frequency);
+    apply "*", mode="actions";
+    |     }
+}
+template "show", mode="actions" {
+    |         this.display = "«@eltname»";
+    |         this.request_animate();
+}
+template "hmi-value", mode="actions" {
+    |         this.apply_hmi_value(0, «@value»);
+}
+
+}
+
+
+function "generated_button_class" {
+    param "fsm";
+
+    |     display = "inactive";
+    |     state = "init";
+
+    |     dispatch(value) {
+    apply "$fsm", mode="dispatch_transition";
+    |     }
+
+    |     onmouseup(evt) {
+    |         svg_root.removeEventListener("pointerup", this.bound_onmouseup, true);
+    apply "$fsm", mode="mouse_transition" with "position", "'up'";
+    |     }
+    |     onmousedown(evt) {
+    |         svg_root.addEventListener("pointerup", this.bound_onmouseup, true);
+    apply "$fsm", mode="mouse_transition" with "position", "'down'";
+    |     }
+
+    apply "$fsm", mode="actions";
+
+    |     animate(){
+    |         this.set_activation_state(this.display == "active");
+    |     }
+
+    |     init() {
+    |         this.bound_onmouseup = this.onmouseup.bind(this);
+    |         this.element.addEventListener("pointerdown", this.onmousedown.bind(this));
+    |         this.set_activation_state(undefined);
+    |     }
+}
+
+
+widget_class("Button"){
+    |     frequency = 5;
+    const "fsm","exsl:node-set($_button_fsm)";
+    call "generated_button_class" with "fsm", "$fsm";
+}
+
+widget_defs("Button") {
+    activable();
+}
+
+widget_class("PushButton"){
+    |     frequency = 20;
+    const "fsm","exsl:node-set($_push_button_fsm)";
+    call "generated_button_class" with "fsm", "$fsm";
+}
+
+widget_defs("PushButton") {
+    activable();
+}
+

@@ -195,7 +195,7 @@ class FBDVariableDialog(BlockPreviewDialog):
                 self.ExecutionOrder.SetValue(value)
 
         # Refresh preview panel
-        self.RefreshPreview()
+        self.Refresh()
         self.Fit()
 
     def GetValues(self):
@@ -242,7 +242,7 @@ class FBDVariableDialog(BlockPreviewDialog):
         # Refresh name list box values
         self.RefreshNameList()
 
-        self.RefreshPreview()
+        self.Refresh()
         event.Skip()
 
     def OnNameChanged(self, event):
@@ -255,7 +255,7 @@ class FBDVariableDialog(BlockPreviewDialog):
         if self.VariableName.GetSelection() != wx.NOT_FOUND:
             self.Expression.ChangeValue(self.VariableName.GetStringSelection())
 
-        self.RefreshPreview()
+        self.Refresh()
         event.Skip()
 
     def OnExpressionChanged(self, event):
@@ -267,7 +267,7 @@ class FBDVariableDialog(BlockPreviewDialog):
         self.VariableName.SetSelection(
             self.VariableName.FindString(self.Expression.GetValue()))
 
-        self.RefreshPreview()
+        self.Refresh()
         event.Skip()
 
     def OnExecutionOrderChanged(self, event):
@@ -275,10 +275,10 @@ class FBDVariableDialog(BlockPreviewDialog):
         Called when block execution control value changed
         @param event: wx.SpinEvent
         """
-        self.RefreshPreview()
+        self.Refresh()
         event.Skip()
 
-    def RefreshPreview(self):
+    def DrawPreview(self):
         """
         Refresh preview panel of graphic element
         Override BlockPreviewDialog function
@@ -295,4 +295,4 @@ class FBDVariableDialog(BlockPreviewDialog):
             executionOrder=self.ExecutionOrder.GetValue())
 
         # Call BlockPreviewDialog function
-        BlockPreviewDialog.RefreshPreview(self)
+        BlockPreviewDialog.DrawPreview(self)

@@ -122,21 +122,18 @@ class DurationCellEditor(wx.grid.PyGridCellEditor):
         self.CellControl.SetValue(self.Table.GetValueByName(row, self.Colname))
         self.CellControl.SetFocus()
 
-    def EndEditInternal(self, row, col, grid, old_duration):
-        duration = self.CellControl.GetValue()
-        changed = duration != old_duration
+    def EndEdit(self, row, col, grid, oldval):
+        value = self.CellControl.GetValue()
+        changed = value != oldval
         if changed:
-            self.Table.SetValueByName(row, self.Colname, duration)
-        self.CellControl.Disable()
-        return changed
+            return value
+        else:
+            return None
 
-    if wx.VERSION >= (3, 0, 0):
-        def EndEdit(self, row, col, grid, oldval):
-            return self.EndEditInternal(row, col, grid, oldval)
-    else:
-        def EndEdit(self, row, col, grid):
-            oldval = self.Table.GetValueByName(row, self.Colname)
-            return self.EndEditInternal(row, col, grid, oldval)
+    def ApplyEdit(self, row, col, grid):
+        value = self.CellControl.GetValue()
+        self.Table.SetValueByName(row, self.Colname, value)
+        self.CellControl.Disable()
 
     def SetSize(self, rect):
         self.CellControl.SetDimensions(rect.x + 1, rect.y,

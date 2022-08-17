@@ -60,9 +60,9 @@ istylesheet xmlns:ppx="http://www.plcopen.org/xml/tc6_0201"
     }
     
     template "ppx:dataType" {
-        param "instance_path";
+        param "instance_path","concat('#',@name)";
         apply "ppx:baseType/*[self::ppx:derived or self::ppx:struct or self::ppx:array]" {
-            with "parent_path" > «$instance_path»
+            with "variable_path" > «$instance_path»
         }
     }
     
@@ -94,9 +94,9 @@ istylesheet xmlns:ppx="http://www.plcopen.org/xml/tc6_0201"
         param "variable_path";
         foreach "ppx:variable[ppx:type/ppx:derived or ppx:type/ppx:struct or ppx:type/ppx:array]" {
             variable "element_path" > «$variable_path».«@name»
-        }
-        apply "ppx:type/*[self::ppx:derived or self::ppx:struct or self::ppx:array]" {
-            with "variable_path" > «$element_path»
+            apply "ppx:type/*[self::ppx:derived or self::ppx:struct or self::ppx:array]" {
+                with "variable_path" > «$element_path»
+            }
         }
     }
     

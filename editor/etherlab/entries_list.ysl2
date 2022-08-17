@@ -38,17 +38,20 @@ estylesheet xmlns:ns="entries_list_ns"
         choose {
             when "$index >= $min_index and $index <= $max_index" {
                 variable "datatype_name" > «Type/text()»
+                variable "default_value" > «Info/DefaultData/text()»
                 choose {
                     when "ancestor::Dictionary/child::DataTypes/DataType[Name/text()=$datatype_name][SubItem]" {
                         apply "ancestor::Dictionary/child::DataTypes/DataType[Name/text()=$datatype_name][SubItem]" {
                             with "index" > «$index»
                             with "entry_name" > «$entry_name»
+                            with "sub_default_value" > «Info/SubItem/Info/DefaultData/text()»
                         }
                     }
                     otherwise {
                         variable "subindex" > 0
+                        variable "sub_entry_flag" > 0
                         variable "entry" {
-                            > «ns:AddEntry($index, $subindex, $entry_name, $datatype_name, BitSize/text(), Flags/Access/text(), Flags/PdoMapping/text())»
+                            > «ns:AddEntry($index, $subindex, $entry_name, $datatype_name, BitSize/text(), Flags/Access/text(), Flags/PdoMapping/text(), $default_value, $sub_entry_flag)»
                         }
                     }
                 }
@@ -59,11 +62,13 @@ estylesheet xmlns:ns="entries_list_ns"
     template "DataType" {
         param "index";
         param "entry_name";
+        param "sub_default_value"
         foreach "SubItem" {
             variable "subindex" > «ns:HexDecValue(SubIdx/text())»
             variable "subentry_name" > «$entry_name» - «ns:EntryName(DisplayName, Name/text())»
+            variable "sub_entry_flag" > 1
             variable "entry" {
-                > «ns:AddEntry($index, $subindex, $subentry_name, Type/text(), BitSize/text(), Flags/Access/text(), Flags/PdoMapping/text())»
+                > «ns:AddEntry($index, $subindex, $subentry_name, Type/text(), BitSize/text(), Flags/Access/text(), Flags/PdoMapping/text(), $sub_default_value, $sub_entry_flag)»
             }
         }
     }

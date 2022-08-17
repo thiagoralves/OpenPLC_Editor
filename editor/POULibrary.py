@@ -26,6 +26,10 @@
 from __future__ import absolute_import
 from weakref import ref
 
+# Exception type for problems that user has to take action in order to fix
+class UserAddressedException(Exception):
+    pass
+
 
 class POULibrary(object):
     def __init__(self, CTR, LibName, TypeStack):
@@ -59,6 +63,17 @@ class POULibrary(object):
         # Pure python or IEC libs doesn't produce C code
         return ((""), [], False), ""
 
+    def GlobalInstances(self):
+        """
+        @return: [(instance_name, instance_type),...]
+        """
+        return []
+
+    def FatalError(self, message):
+        """ Raise an exception that will trigger error message intended to 
+            the user, but without backtrace since it is not a software error """
+
+        raise UserAddressedException(message)
 
 def SimplePOULibraryFactory(path):
     class SimplePOULibrary(POULibrary):

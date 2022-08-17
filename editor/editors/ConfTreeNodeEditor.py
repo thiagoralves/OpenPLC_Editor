@@ -48,7 +48,7 @@ if wx.Platform == '__WXMSW__':
 else:
     faces = {
         'times': 'Times',
-        'mono':  'Courier',
+        'mono':  'FreeMono',
         'helv':  'Helvetica',
         'other': 'new century schoolbook',
         'size':  18,
@@ -385,7 +385,7 @@ class ConfTreeNodeEditor(EditorPanel):
                                            element_infos["children"],
                                            element_path)
             else:
-                boxsizer = wx.FlexGridSizer(cols=3, rows=1)
+                boxsizer = wx.FlexGridSizer(cols=4, rows=1)
                 boxsizer.AddGrowableCol(1)
                 flags = (wx.GROW | wx.BOTTOM | wx.LEFT | wx.RIGHT)
                 if first:
@@ -472,8 +472,8 @@ class ConfTreeNodeEditor(EditorPanel):
 
                 else:
                     if element_infos["type"] == "boolean":
-                        checkbox = wx.CheckBox(self.ParamsEditor, size=wx.Size(17, 25))
-                        boxsizer.AddWindow(checkbox)
+                        checkbox = wx.CheckBox(self.ParamsEditor)
+                        boxsizer.AddWindow(checkbox, flag=wx.ALIGN_CENTER_VERTICAL | wx.RIGHT)
                         if element_infos["value"] is not None:
                             checkbox.SetValue(element_infos["value"])
                         checkbox.Bind(wx.EVT_CHECKBOX,
@@ -526,6 +526,16 @@ class ConfTreeNodeEditor(EditorPanel):
                         textctrl.Bind(wx.EVT_TEXT_ENTER, callback)
                         textctrl.Bind(wx.EVT_TEXT, callback)
                         textctrl.Bind(wx.EVT_KILL_FOCUS, callback)
+
+                if not isinstance(element_infos["type"], list) and element_infos["use"] == "optional":
+                    bt = wx.BitmapButton(self.ParamsEditor, 
+                        bitmap=wx.ArtProvider.GetBitmap(wx.ART_UNDO, wx.ART_TOOLBAR, (16,16)),
+                        style=wx.BORDER_NONE)
+                    self.Bind(wx.EVT_BUTTON, 
+                              self.GetResetFunction(element_path),
+                              bt)
+
+                    boxsizer.AddWindow(bt, border=5, flag=wx.ALIGN_CENTER_VERTICAL | wx.LEFT)
             first = False
         sizer.Layout()
         self.RefreshScrollbars()
@@ -589,6 +599,13 @@ class ConfTreeNodeEditor(EditorPanel):
                 wx.CallAfter(self.ParentWindow.SelectProjectTreeItem, self.GetTagName())
             event.Skip()
         return OnTextCtrlChanged
+
+    def GetResetFunction(self, path):
+        def OnResetBt(event):
+            res = self.SetConfNodeParamsAttribute(path, None)
+            wx.CallAfter(self.RefreshView)
+            event.Skip()
+        return OnResetBt
 
     def GetCheckBoxCallBackFunction(self, chkbx, path):
         def OnCheckBoxChanged(event):

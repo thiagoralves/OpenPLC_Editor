@@ -85,14 +85,25 @@ def UnpackDebugBuffer(buff, indexes):
     for iectype in indexes:
         c_type, unpack_func, _pack_func = \
             TypeTranslator.get(iectype, (None, None, None))
-        if c_type is not None and buffoffset < buffsize:
-            cursor = c_void_p(buffptr + buffoffset)
+
+        cursor = c_void_p(buffptr + buffoffset)
+        if iectype == "STRING":
+            # strlen is stored in c_uint8 and sizeof(c_uint8) is 1
+            # first check we can read size
+            if (buffoffset + 1) <= buffsize:
+                size = 1 + cast(cursor,POINTER(c_type)).contents.len
+            else:
+                return None
+        else:
+            size = sizeof(c_type)
+
+        if c_type is not None and (buffoffset + size) <= buffsize:
             value = unpack_func(cast(cursor,
                                      POINTER(c_type)).contents)
-            buffoffset += sizeof(c_type) if iectype != "STRING" else len(value)+1
+            buffoffset += size
             res.append(value)
         else:
-            break
+            return None
     if buffoffset and buffoffset == buffsize:
         return res
     return None

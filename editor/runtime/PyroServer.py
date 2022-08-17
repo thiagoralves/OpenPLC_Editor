@@ -12,6 +12,7 @@
 from __future__ import absolute_import
 from __future__ import print_function
 import sys
+import os
 
 import Pyro
 import Pyro.core as pyro
@@ -27,6 +28,7 @@ class PyroServer(object):
         self.ip_addr = ip_addr
         self.port = port
         self.servicepublisher = None
+        self.piper, self.pipew = None, None
 
     def _to_be_published(self):
         return self.servicename is not None and \
@@ -60,8 +62,18 @@ class PyroServer(object):
             self.daemon.connect(pyro_obj, "PLCObject")
 
             when_ready()
-            self.daemon.requestLoop()
-            self.daemon.sock.close()
+
+            # "pipe to self" trick to to accelerate runtime shutdown 
+            # instead of waiting for arbitrary pyro timeout.
+            others = []
+            if not sys.platform.startswith('win'):
+                self.piper, self.pipew = os.pipe()
+                others.append(self.piper)
+
+            self.daemon.requestLoop(others=others, callback=lambda x: None)
+            self.piper, self.pipew = None, None
+            if hasattr(self, 'sock'):
+                self.daemon.sock.close()
         self.Unpublish()
 
     def Restart(self):
@@ -70,6 +82,10 @@ class PyroServer(object):
     def Quit(self):
         self.continueloop = False
         self.daemon.shutdown(True)
+        self.daemon.closedown()
+        if not sys.platform.startswith('win'):
+            if self.pipew is not None:
+                os.write(self.pipew, "goodbye")
 
     def Publish(self):
         self.servicepublisher = ServicePublisher("PYRO")

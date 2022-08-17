@@ -210,7 +210,7 @@ class ConnectionDialog(BlockPreviewDialog):
         self.RefreshPreview()
         event.Skip()
 
-    def RefreshPreview(self):
+    def DrawPreview(self):
         """
         Refresh preview panel of graphic element
         Override BlockPreviewDialog function
@@ -221,4 +221,4 @@ class ConnectionDialog(BlockPreviewDialog):
                                      self.ConnectionName.GetValue())
 
         # Call BlockPreviewDialog function
-        BlockPreviewDialog.RefreshPreview(self)
+        BlockPreviewDialog.DrawPreview(self)

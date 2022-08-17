@@ -172,7 +172,6 @@ class BeremizApplicationTest(UserApplicationTest):
     @ddt.data(
         "first_steps",
         "logging",
-        "svgui",
         "traffic_lights",
         "wxGlade",
         "python",

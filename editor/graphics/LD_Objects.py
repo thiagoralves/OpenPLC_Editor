@@ -405,6 +405,8 @@ class LD_Contact(Graphic_Element, DebugDataConsumer):
             if self.Value is None:
                 self.Value = False
             spreading = self.Input.ReceivingCurrent()
+            if spreading == "undefined":
+                spreading = False
             if self.Type == CONTACT_NORMAL:
                 spreading &= self.Value
             elif self.Type == CONTACT_REVERSE:

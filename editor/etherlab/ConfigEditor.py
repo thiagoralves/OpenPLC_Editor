@@ -33,13 +33,6 @@ from etherlab.EtherCATManagementEditor import EtherCATManagementTreebook, Master
 [ETHERCAT_VENDOR, ETHERCAT_GROUP, ETHERCAT_DEVICE] = range(3)
 
 
-def AppendMenu(parent, help, id, kind, text):
-    if wx.VERSION >= (2, 6, 0):
-        parent.Append(help=help, id=id, kind=kind, text=text)
-    else:
-        parent.Append(helpString=help, id=id, kind=kind, item=text)
-
-
 def GetVariablesTableColnames(position=False):
     _ = NoTranslate
     colname = ["#"]
@@ -149,6 +142,9 @@ class NodeVariablesSizer(wx.FlexGridSizer):
                     self.VariablesGrid.SetItemText(item, str(idx), 0)
                 else:
                     value = entry.get(colname, "")
+                    # add jblee
+                    if value is None:
+                        value = ""
                     if colname == "Access":
                         value = GetAccessValue(value, entry.get("PDOMapping", ""))
                     self.VariablesGrid.SetItemText(item, value, col)
@@ -617,9 +613,7 @@ class MasterEditor(ConfTreeNodeEditor):
         self.MasterStateEditor = wx.ScrolledWindow(prnt, style=wx.TAB_TRAVERSAL | wx.HSCROLL | wx.VSCROLL)
         self.MasterStateEditor.Bind(wx.EVT_SIZE, self.OnResize)
 
-        self.MasterStateEditor_Panel_Main_Sizer = wx.FlexGridSizer(cols=1, hgap=0, rows=2, vgap=5)
-        self.MasterStateEditor_Panel_Main_Sizer.AddGrowableCol(0)
-        self.MasterStateEditor_Panel_Main_Sizer.AddGrowableRow(0)
+        self.MasterStateEditor_Panel_Main_Sizer = wx.BoxSizer(wx.VERTICAL)
 
         self.MasterStateEditor_Panel = MasterStatePanelClass(self.MasterStateEditor, self.Controler)
 
@@ -627,6 +621,18 @@ class MasterEditor(ConfTreeNodeEditor):
 
         self.MasterStateEditor.SetSizer(self.MasterStateEditor_Panel_Main_Sizer)
         return self.MasterStateEditor
+
+    def OnResize2(self, event):
+        self.MasterStateEditor.GetBestSize()
+        xstart, ystart = self.MasterStateEditor.GetViewStart()
+        window_size = self.MasterStateEditor.GetClientSize()
+        maxx, maxy = self.MasterStateEditor.GetMinSize()
+        posx = max(0, min(xstart, (maxx - window_size[0]) / SCROLLBAR_UNIT))
+        posy = max(0, min(ystart, (maxy - window_size[1]) / SCROLLBAR_UNIT))
+        self.MasterStateEditor.Scroll(posx, posy)
+        self.MasterStateEditor.SetScrollbars(SCROLLBAR_UNIT, SCROLLBAR_UNIT, 
+                maxx / SCROLLBAR_UNIT, maxy / SCROLLBAR_UNIT, posx, posy)
+        event.Skip()
 
     def _create_EthercatMasterEditor(self, prnt):
         self.EthercatMasterEditor = wx.ScrolledWindow(prnt,

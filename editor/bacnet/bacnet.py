@@ -35,11 +35,10 @@ import wx
 from bacnet.BacnetSlaveEditor import *
 from bacnet.BacnetSlaveEditor import ObjectProperties
 from PLCControler import LOCATION_CONFNODE, LOCATION_VAR_MEMORY
+from ConfigTreeNode import ConfigTreeNode
+import util.paths as paths
 
-base_folder = os.path.split(
-    os.path.dirname(os.path.realpath(__file__)))[0]
-base_folder = os.path.join(base_folder, "..")
-BacnetPath = os.path.join(base_folder, "BACnet")
+BacnetPath = paths.ThirdPartyPath("BACnet")
 BacnetLibraryPath = os.path.join(BacnetPath, "lib")
 BacnetIncludePath = os.path.join(BacnetPath, "include")
 BacnetIncludePortPath = os.path.join(BacnetPath, "ports")
@@ -49,6 +48,10 @@ BacnetIncludePortPath = os.path.join(BacnetIncludePortPath, "linux")
 BACNET_VENDOR_ID = 9999
 BACNET_VENDOR_NAME = "Beremiz.org"
 BACNET_DEVICE_MODEL_NAME = "Beremiz PLC"
+
+
+# Max String Size of BACnet Paramaters
+BACNET_PARAM_STRING_SIZE = 64
 
 #
 #
@@ -97,6 +100,14 @@ class RootClass(object):
       </xsd:element>
     </xsd:schema>
     """
+    # NOTE; Add the following code/declaration to the aboce XSD in order to activate the
+    #          Override_Parameters_Saved_on_PLC   flag (currenty not in use as it requires further
+    #          analysis how the user would interpret this user interface option.
+    #        <--- snip --->
+    #          <xsd:attribute name="Override_Parameters_Saved_on_PLC" 
+    #                                                   type="xsd:boolean" use="optional" default="true"/>
+    #        <--- snip --->
+    #
     # NOTE: BACnet device (object) IDs are 22 bits long (not counting the 10 bits for the type ID)
     #       so the Device instance ID is limited from 0 to 22^2-1 = 4194303
     #       However, 4194303 is reserved for special use (similar to NULL pointer), so last
@@ -552,8 +563,10 @@ class RootClass(object):
             generate_file_handle  .write(generate_file_content)
             generate_file_handle  .close()
 
+
+
     #
-    # Generate the source files #
+    # Generate the C source code files
     #
     def CTNGenerate_C(self, buildpath, locations):
         # Determine the current location in Beremiz's project configuration
@@ -596,6 +609,11 @@ class RootClass(object):
         # The BACnetServerNode attribute is added dynamically by ConfigTreeNode._AddParamsMembers()
         # It will be an XML parser object created by
         # GenerateParserFromXSDstring(self.XSD).CreateRoot()
+        #
+        # Note: Override_Parameters_Saved_on_PLC is converted to an integer by int()
+        #       The above flag is not currently in use. It requires further thinking on how the 
+        #       user will interpret and interact with this user interface...
+        #loc_dict["Override_Parameters_Saved_on_PLC"] = int(self.BACnetServerNode.getOverride_Parameters_Saved_on_PLC())
         loc_dict["network_interface"] = self.BACnetServerNode.getNetwork_Interface()
         loc_dict["port_number"] = self.BACnetServerNode.getUDP_Port_Number()
         loc_dict["BACnet_Device_ID"] = self.BACnetServerNode.getBACnet_Device_ID()
@@ -607,6 +625,8 @@ class RootClass(object):
         loc_dict["BACnet_Vendor_ID"] = BACNET_VENDOR_ID
         loc_dict["BACnet_Vendor_Name"] = BACNET_VENDOR_NAME
         loc_dict["BACnet_Model_Name"] = BACNET_DEVICE_MODEL_NAME
+        loc_dict["BACnet_Param_String_Size"] = BACNET_PARAM_STRING_SIZE
+        
 
         # 2) Add the data specific to each BACnet object type
         # For each BACnet object type, start off by creating some intermediate helpful lists
@@ -726,4 +746,48 @@ class RootClass(object):
         CFLAGS = ' -I"' + BacnetIncludePath + '"'
         CFLAGS += ' -I"' + BacnetIncludePortPath + '"'
 
-        return [(Generated_BACnet_c_mainfile_name, CFLAGS)], LDFLAGS, True
+        # ----------------------------------------------------------------------
+        # Create a file containing the default configuration paramters.
+        # Beremiz will then transfer this file to the PLC, where the web server 
+        # will read it to obtain the default configuration parameters.
+        # ----------------------------------------------------------------------
+        # NOTE: This is no loner needed! The web interface will read these 
+        # parameters directly from the compiled C code (.so file)
+        #
+        ### extra_file_name   = os.path.join(buildpath, "%s_%s.%s" % ('bacnet_extrafile', postfix, 'txt'))
+        ### extra_file_handle = open(extra_file_name, 'w')
+        ### 
+        ### proplist = ["network_interface", "port_number", "BACnet_Device_ID", "BACnet_Device_Name", 
+        ###             "BACnet_Comm_Control_Password", "BACnet_Device_Location", 
+        ###             "BACnet_Device_Description", "BACnet_Device_AppSoft_Version"]
+        ### for propname in proplist:
+        ###     extra_file_handle.write("%s:%s\n" % (propname, loc_dict[propname]))
+        ### 
+        ### extra_file_handle.close()
+        ### extra_file_handle = open(extra_file_name, 'r')
+
+        # Format of data to return:
+        #   [(Cfiles, CFLAGS), ...], LDFLAGS, DoCalls, extra_files
+        # LDFLAGS     = ['flag1', 'flag2', ...]
+        # DoCalls     = true  or  false
+        # extra_files = (fname,fobject), ...
+        # fobject     = file object, already open'ed for read() !!
+        #
+        # extra_files -> files that will be downloaded to the PLC!
+
+        websettingfile = open(paths.AbsNeighbourFile(__file__, "web_settings.py"), 'r')
+        websettingcode = websettingfile.read()
+        websettingfile.close()
+
+        location_str = "_".join(map(str, self.GetCurrentLocation()))
+        websettingcode = websettingcode % locals()
+
+        runtimefile_path = os.path.join(buildpath, "runtime_bacnet_websettings.py")
+        runtimefile = open(runtimefile_path, 'w')
+        runtimefile.write(websettingcode)
+        runtimefile.close()
+
+        return ([(Generated_BACnet_c_mainfile_name, CFLAGS)], LDFLAGS, True,
+                ("runtime_%s_bacnet_websettings.py" % location_str, open(runtimefile_path, "rb")),
+        )
+        #return [(Generated_BACnet_c_mainfile_name, CFLAGS)], LDFLAGS, True, ('extrafile1.txt', extra_file_handle)

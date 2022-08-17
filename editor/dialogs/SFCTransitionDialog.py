@@ -229,7 +229,7 @@ class SFCTransitionDialog(BlockPreviewDialog):
         self.RefreshPreview()
         event.Skip()
 
-    def RefreshPreview(self):
+    def DrawPreview(self):
         """
         Refresh preview panel of graphic element
         Override BlockPreviewDialog function
@@ -240,4 +240,4 @@ class SFCTransitionDialog(BlockPreviewDialog):
         self.Element.SetPriority(self.Priority.GetValue())
 
         # Call BlockPreviewDialog function
-        BlockPreviewDialog.RefreshPreview(self)
+        BlockPreviewDialog.DrawPreview(self)

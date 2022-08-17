@@ -826,16 +826,14 @@ class VariablesEditor(wx.Panel):
             type_menu = wx.Menu(title='')
             base_menu = wx.Menu(title='')
             for base_type in self.Controler.GetBaseTypes():
-                new_id = wx.NewId()
-                base_menu.Append(help='', id=new_id, kind=wx.ITEM_NORMAL, text=base_type)
-                self.Bind(wx.EVT_MENU, self.GetVariableTypeFunction(base_type), id=new_id)
-            type_menu.AppendMenu(wx.NewId(), "Base Types", base_menu)
+                new_entry = base_menu.Append(help='', id=wx.ID_ANY, kind=wx.ITEM_NORMAL, text=base_type)
+                self.Bind(wx.EVT_MENU, self.GetVariableTypeFunction(base_type), new_entry)
+            type_menu.AppendMenu(wx.ID_ANY, "Base Types", base_menu)
             datatype_menu = wx.Menu(title='')
             for datatype in self.Controler.GetDataTypes():
-                new_id = wx.NewId()
-                datatype_menu.Append(help='', id=new_id, kind=wx.ITEM_NORMAL, text=datatype)
-                self.Bind(wx.EVT_MENU, self.GetVariableTypeFunction(datatype), id=new_id)
-            type_menu.AppendMenu(wx.NewId(), "User Data Types", datatype_menu)
+                new_entry = datatype_menu.Append(help='', id=wx.ID_ANY, kind=wx.ITEM_NORMAL, text=datatype)
+                self.Bind(wx.EVT_MENU, self.GetVariableTypeFunction(datatype), new_entry)
+            type_menu.AppendMenu(wx.ID_ANY, "User Data Types", datatype_menu)
             rect = self.VariablesGrid.BlockToDeviceRect((row, col), (row, col))
 
             self.VariablesGrid.PopupMenuXY(type_menu, rect.x + rect.width, rect.y + self.VariablesGrid.GetColLabelSize())
@@ -859,8 +857,9 @@ class VariablesEditor(wx.Panel):
             row = event.GetRow()
             data_type = self.Table.GetValueByName(row, "Type")
             var_name = self.Table.GetValueByName(row, "Name")
+            desc = self.Table.GetValueByName(row, "Description")
             data = wx.TextDataObject(str((var_name, "Global", data_type,
-                                          self.Controler.GetCurrentLocation())))
+                                          self.Controler.GetCurrentLocation(), desc)))
             dragSource = wx.DropSource(self.VariablesGrid)
             dragSource.SetData(data)
             dragSource.DoDragDrop()

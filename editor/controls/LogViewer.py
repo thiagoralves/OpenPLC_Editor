@@ -339,7 +339,7 @@ class LogViewer(DebugViewer, wx.Panel):
         if wx.Platform == '__WXMSW__':
             self.Font = wx.Font(8, wx.SWISS, wx.NORMAL, wx.NORMAL, faceName='Courier New')
         else:
-            self.Font = wx.Font(10, wx.SWISS, wx.NORMAL, wx.NORMAL, faceName='Courier')
+            self.Font = wx.Font(10, wx.SWISS, wx.NORMAL, wx.NORMAL, faceName='FreeMono')
         self.MessagePanel.Bind(wx.EVT_LEFT_UP, self.OnMessagePanelLeftUp)
         self.MessagePanel.Bind(wx.EVT_RIGHT_UP, self.OnMessagePanelRightUp)
         self.MessagePanel.Bind(wx.EVT_LEFT_DCLICK, self.OnMessagePanelLeftDCLick)
@@ -711,9 +711,8 @@ class LogViewer(DebugViewer, wx.Panel):
         if message is not None:
             menu = wx.Menu(title='')
 
-            new_id = wx.NewId()
-            menu.Append(help='', id=new_id, kind=wx.ITEM_NORMAL, text=_("Copy"))
-            self.Bind(wx.EVT_MENU, self.GetCopyMessageToClipboardFunction(message), id=new_id)
+            menu_entry = menu.Append(help='', id=wx.ID_ANY, kind=wx.ITEM_NORMAL, text=_("Copy"))
+            self.Bind(wx.EVT_MENU, self.GetCopyMessageToClipboardFunction(message), menu_entry)
 
             self.MessagePanel.PopupMenu(menu)
             menu.Destroy()

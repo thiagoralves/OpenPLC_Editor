@@ -28,7 +28,7 @@ import time
 import json
 import os
 import re
-from builtins import str as text
+from six import text_type as text
 from autobahn.twisted import wamp
 from autobahn.twisted.websocket import WampWebSocketClientFactory, connectWS
 from autobahn.wamp import types, auth
@@ -45,7 +45,6 @@ mandatoryConfigItems = ["ID", "active", "realm", "url"]
 
 _transportFactory = None
 _WampSession = None
-_PySrv = None
 WorkingDir = None
 
 # Find pre-existing project WAMP config file
@@ -61,6 +60,7 @@ ExposedCalls = [
     ("AppendChunkToBlob", {}),
     ("PurgeBlobs", {}),
     ("NewPLC", {}),
+    ("RepairPLC", {}),
     ("MatchMD5", {}),
     ("SetTraceVariablesList", {}),
     ("GetTraceVariables", {}),
@@ -74,7 +74,14 @@ defaultWampConfig = {
     "ID": "wamptest",
     "active": False,
     "realm": "Automation",
-    "url": "ws://127.0.0.1:8888"
+    "url": "ws://127.0.0.1:8888",
+    "clientFactoryOptions": {
+        "maxDelay": 300
+    },
+    "protocolOptions": {
+        "autoPingInterval": 10,
+        "autoPingTimeout": 5
+    }
 }
 
 # Those two lists are meant to be filled by customized runtime
@@ -161,6 +168,14 @@ class ReconnectingWampWebSocketClientFactory(WampWebSocketClientFactory, Reconne
         WampWebSocketClientFactory.__init__(self, *args, **kwargs)
 
         try:
+            clientFactoryOptions = config.extra.get("clientFactoryOptions")
+            if clientFactoryOptions:
+                self.setClientFactoryOptions(clientFactoryOptions)
+        except Exception as e:
+            print(_("Custom client factory options failed : "), e)
+            _transportFactory = None
+
+        try:
             protocolOptions = config.extra.get('protocolOptions', None)
             if protocolOptions:
                 self.setProtocolOptions(**protocolOptions)
@@ -168,6 +183,11 @@ class ReconnectingWampWebSocketClientFactory(WampWebSocketClientFactory, Reconne
         except Exception as e:
             print(_("Custom protocol options failed :"), e)
             _transportFactory = None
+
+    def setClientFactoryOptions(self, options):
+        for key, value in options.items():
+            if key in ["maxDelay", "initialDelay", "maxRetries", "factor", "jitter"]:
+                setattr(self, key, value)
 
     def buildProtocol(self, addr):
         self.resetDelay()
@@ -193,13 +213,23 @@ def CheckConfiguration(WampClientConf):
             {"url": "Invalid URL: {}".format(url)},
             _("WAMP configuration error:"))
 
+def UpdateWithDefault(d1, d2):
+    for k, v in d2.items():
+        d1.setdefault(k, v)
 
 def GetConfiguration():
     global lastKnownConfig
 
+    WampClientConf = None
+
     if os.path.exists(_WampConf):
-        WampClientConf = json.load(open(_WampConf))
-    else:
+        try: 
+            WampClientConf = json.load(open(_WampConf))
+            UpdateWithDefault(WampClientConf, defaultWampConfig)
+        except ValueError:
+            pass
+
+    if WampClientConf is None:
         WampClientConf = defaultWampConfig.copy()
 
     for itemName in mandatoryConfigItems:
@@ -313,7 +343,9 @@ def StopReconnectWampClient():
 
 def StartReconnectWampClient():
     if _WampSession:
-        # do reconnect
+        # do reconnect and reset continueTrying and initialDelay parameter
+        if _transportFactory is not None:
+            _transportFactory.resetDelay()
         _WampSession.disconnect()
         return True
     else:
@@ -336,11 +368,6 @@ def getWampStatus():
     return "Disconnected"
 
 
-def SetServer(pysrv):
-    global _PySrv
-    _PySrv = pysrv
-
-
 def PublishEvent(eventID, value):
     if getWampStatus() == "Attached":
         _WampSession.publish(text(eventID), value)
@@ -353,12 +380,25 @@ def PublishEventWithOwnID(eventID, value):
 
 # WEB CONFIGURATION INTERFACE
 WAMP_SECRET_URL = "secret"
-webExposedConfigItems = ['active', 'url', 'ID']
+webExposedConfigItems = [
+    'active', 'url', 'ID',
+    "clientFactoryOptions.maxDelay",
+    "protocolOptions.autoPingInterval",
+    "protocolOptions.autoPingTimeout"
+]
 
 
 def wampConfigDefault(ctx, argument):
     if lastKnownConfig is not None:
-        return lastKnownConfig.get(argument.name, None)
+        # Check if name is composed with an intermediate dot symbol and go deep in lastKnownConfig if it is
+        argument_name_path = argument.name.split(".")
+        searchValue = lastKnownConfig
+        while argument_name_path:
+            if searchValue:
+                searchValue = searchValue.get(argument_name_path.pop(0), None)
+            else:
+                break
+        return searchValue
 
 
 def wampConfig(**kwargs):
@@ -371,9 +411,16 @@ def wampConfig(**kwargs):
 
     newConfig = lastKnownConfig.copy()
     for argname in webExposedConfigItems:
+        # Check if name is composed with an intermediate dot symbol and go deep in lastKnownConfig if it is
+        #  and then set a new value.
+        argname_path = argname.split(".")
+        arg_last = argname_path.pop()
         arg = kwargs.get(argname, None)
         if arg is not None:
-            newConfig[argname] = arg
+            tmpConf = newConfig
+            while argname_path:
+                tmpConf = tmpConf.setdefault(argname_path.pop(0), {})
+            tmpConf[arg_last] = arg
 
     SetConfiguration(newConfig)
 
@@ -420,8 +467,17 @@ webFormInterface = [
                       default=wampConfigDefault)),
     ("url",
      annotate.String(label=_("WAMP Server URL"),
-                     default=wampConfigDefault))]
-
+                     default=wampConfigDefault)),
+    ("clientFactoryOptions.maxDelay",
+     annotate.Integer(label=_("Max reconnection delay (s)"),
+                      default=wampConfigDefault)),
+    ("protocolOptions.autoPingInterval",
+     annotate.Integer(label=_("Auto ping interval (s)"),
+                      default=wampConfigDefault)),
+    ("protocolOptions.autoPingTimeout",
+     annotate.Integer(label=_("Auto ping timeout (s)"),
+                      default=wampConfigDefault))
+    ]
 
 def deliverWampSecret(ctx, segments):
     # filename = segments[1].decode('utf-8')

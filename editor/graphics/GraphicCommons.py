@@ -293,8 +293,18 @@ class Graphic_Element(ToolTipProducer):
         return {}
 
     def FindNearestConnector(self, position, connectors):
+        """distances = []
+        for connector in connectors:
+            connector_pos = connector.GetRelPosition()
+            distances.append((sqrt((self.Pos.x + connector_pos.x - position.x) ** 2 +
+                                   (self.Pos.y + connector_pos.y - position.y) ** 2),
+                              connector))
+        distances.sort()
+        if len(distances) > 0:
+            return distances[0][1]
+        return None"""
+        #This version is more optimized
         min_distance = None
-
         for connector in connectors:
             connector_pos = connector.GetRelPosition()
             dis = sqrt((self.Pos.x + connector_pos.x - position.x) ** 2 +
@@ -304,7 +314,6 @@ class Graphic_Element(ToolTipProducer):
                 min_distance = (dis, connector)
 
         return min_distance[1] if min_distance is not None else None
-
 
     def IsOfType(self, type, reference):
         return self.Parent.IsOfType(type, reference)
@@ -1065,6 +1074,8 @@ class Connector(DebugDataConsumer, ToolTipProducer):
 
     # Returns the RedrawRect
     def GetRedrawRect(self, movex=0, movey=0):
+        if self.ParentBlock == None:
+            return None
         parent_pos = self.ParentBlock.GetPosition()
         x = min(parent_pos[0] + self.Pos.x, parent_pos[0] + self.Pos.x + self.Direction[0] * CONNECTOR_SIZE)
         y = min(parent_pos[1] + self.Pos.y, parent_pos[1] + self.Pos.y + self.Direction[1] * CONNECTOR_SIZE)
@@ -1966,9 +1977,23 @@ class Wire(Graphic_Element, DebugDataConsumer):
         return None
 
     # Define the wire points
-    def SetPoints(self, points, verify=True):
+    def SetPoints(self, points, merge_segments=True):
         if len(points) > 1:
-            self.Points = [wx.Point(x, y) for x, y in points]
+
+            # filter duplicates, add corner to diagonals
+            self.Points = []
+            lx, ly = None, None
+            for x, y in points:
+                ex, ey = lx == x, ly == y
+                if ex and ey:
+                    # duplicate
+                    continue
+                if (lx, ly) != (None, None) and not ex and not ey:
+                    # diagonal
+                    self.Points.append(wx.Point(lx, y))
+                self.Points.append(wx.Point(x, y))
+                lx, ly = x, y
+
             # Calculate the start and end directions
             self.StartPoint = [None, vector(self.Points[0], self.Points[1])]
             self.EndPoint = [None, vector(self.Points[-1], self.Points[-2])]
@@ -1982,22 +2007,33 @@ class Wire(Graphic_Element, DebugDataConsumer):
             # Calculate the segments directions
             self.Segments = []
             i = 0
-            while i < len(self.Points) - 1:
-                if verify and 0 < i < len(self.Points) - 2 and \
-                   self.Points[i] == self.Points[i + 1] and \
-                   self.Segments[-1] == vector(self.Points[i + 1], self.Points[i + 2]):
-                    for dummy in xrange(2):
-                        self.Points.pop(i)
-                else:
-                    segment = vector(self.Points[i], self.Points[i + 1])
-                    if is_null_vector(segment) and i > 0:
-                        segment = (self.Segments[-1][1], self.Segments[-1][0])
-                    if i < len(self.Points) - 2:
-                        next = vector(self.Points[i + 1], self.Points[i + 2])
-                        if next == segment or is_null_vector(add_vectors(segment, next)):
-                            self.Points.insert(i + 1, wx.Point(self.Points[i + 1].x, self.Points[i + 1].y))
-                    self.Segments.append(segment)
-                    i += 1
+            while True:
+                lp = len(self.Points)
+                if i > lp - 2:
+                    break
+
+                segment = vector(self.Points[i], self.Points[i + 1])
+
+                # merge segment if requested
+                if merge_segments and 0 < i and \
+                   self.Segments[-1] == segment:
+                    self.Points.pop(i)
+                    # Rollback
+                    self.Segments.pop()
+                    i -= 1
+                    continue
+
+                # remove corner when two segments are in opposite direction
+                if i < lp - 2:
+                    next = vector(self.Points[i + 1], self.Points[i + 2])
+                    if is_null_vector(add_vectors(segment, next)):
+                        self.Points.pop(i+1)
+                        continue
+
+                self.Segments.append(segment)
+
+                i += 1
+
             self.RefreshBoundingBox()
             self.RefreshRealPoints()
 

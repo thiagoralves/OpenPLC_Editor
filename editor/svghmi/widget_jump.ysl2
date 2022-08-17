@@ -1,0 +1,169 @@
+// widget_jump.ysl2
+
+widget_desc("Jump") {
+    longdesc
+    ||
+    Jump widget brings focus to a different page. Mandatory single argument
+    gives name of the page.
+
+    Optional single path is used as new reference when jumping to a relative
+    page, it must point to a HMI_NODE.
+
+    "active"+"inactive" labeled elements can be provided and reflect current
+    page being shown.
+
+    "disabled" labeled element, if provided, is shown instead of "active" or
+    "inactive" widget when pointed HMI_NODE is null.
+    ||
+
+    shortdesc > Jump to given page
+
+    arg name="page" accepts="string" > name of page to jump to
+
+    path name="reference" count="optional" accepts="HMI_NODE" > reference for relative jump
+}
+
+widget_class("Jump") {
+||
+        activable = false;
+        active = false;
+        disabled = false;
+        frequency = 2;
+
+        update_activity() {
+            if(this.active) {
+                 /* show active */ 
+                 this.active_elt.style.display = "";
+                 /* hide inactive */ 
+                 this.inactive_elt.style.display = "none";
+            } else {
+                 /* show inactive */ 
+                 this.inactive_elt.style.display = "";
+                 /* hide active */ 
+                 this.active_elt.style.display = "none";
+            }
+        }
+
+        update_disability() {
+            if(this.disabled) {
+                /* show disabled */ 
+                this.disabled_elt.style.display = "";
+                /* hide inactive */ 
+                this.inactive_elt.style.display = "none";
+                /* hide active */ 
+                this.active_elt.style.display = "none";
+            } else {
+                /* hide disabled */ 
+                this.disabled_elt.style.display = "none";
+                this.update_activity();
+            }
+        }
+
+        make_on_click() {
+            let that = this;
+            const name = this.args[0];
+            return function(evt){
+                /* TODO: in order to allow jumps to page selected through for exemple a dropdown,
+                   support path pointing to local variable whom value 
+                   would be an HMI_TREE index and then jump to a relative page not hard-coded in advance */
+                if(!that.disabled) {
+                    const index = that.indexes.length > 0 ? that.indexes[0] + that.offset : undefined;
+                    fading_page_switch(name, index);
+                }
+            }
+        }
+
+        notify_page_change(page_name, index) {
+            if(this.activable) {
+                const ref_index = this.indexes.length > 0 ? this.indexes[0] + this.offset : undefined;
+                const ref_name = this.args[0];
+                this.active = ((ref_name == undefined || ref_name == page_name) && index == ref_index);
+                this.update_state();
+            }
+        }
+
+        dispatch(value) {
+            this.disabled = !Number(value);
+            this.update_state();
+        }
+||
+}
+
+widget_defs("Jump") {
+    // TODO: ensure both active and inactive are provided
+    const "activity" optional_labels("active inactive");
+    const "have_activity","string-length($activity)>0";
+    value "$activity";
+
+    const "disability" optional_labels("disabled");
+    const "have_disability","$have_activity and string-length($disability)>0";
+    value "$disability";
+
+    |     init: function() {
+    |         this.element.onclick = this.make_on_click();
+    if "$have_activity" {
+    |         this.activable = true;
+    }
+    if "not($have_disability)" {
+    |         this.unsubscribable = true;
+    }
+    >         this.update_state = 
+    choose {
+        when "$have_disability" {
+            > this.update_disability
+        }
+        when "$have_activity" {
+            > this.update_activity
+        }
+        otherwise > null
+    }
+    > ;\n
+    |     },
+
+}
+
+widget_page("Jump"){
+    param "page_desc";
+    /* check that given path is compatible with page's reference path */
+    if "path" {
+        /* TODO: suport local variable containing an HMI_TREE index to jump to a relative page */
+        /* when no page name provided, check for same page */
+        const "target_page_name" choose {
+            when "arg" value "arg[1]/@value";
+            otherwise value "$page_desc/arg[1]/@value";
+        }
+        const "target_page_path" choose {
+            when "arg" value "$hmi_pages_descs[arg[1]/@value = $target_page_name]/path[1]/@value";
+            otherwise value "$page_desc/path[1]/@value";
+        }
+
+        if "not(func:same_class_paths($target_page_path, path[1]/@value))"
+            error > Jump id="«@id»" to page "«$target_page_name»" with incompatible path "«path[1]/@value» (must be same class as "«$target_page_path»")
+    }
+}
+
+emit "cssdefs:jump"
+||
+.fade-out-page {
+    animation: cubic-bezier(0, 0.8, 0.6, 1) fadeOut 0.6s both;
+}
+
+@keyframes fadeOut {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+||
+
+emit "declarations:jump"
+||
+var jumps_need_update = false;
+var jump_history = [[default_page, undefined]];
+
+function update_jumps() {
+    page_desc[current_visible_page].jumps.map(w=>w.notify_page_change(current_visible_page,current_page_index));
+    jumps_need_update = false;
+};
+
+||
+

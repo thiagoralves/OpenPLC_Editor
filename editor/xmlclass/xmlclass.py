@@ -1522,7 +1522,7 @@ def generateSetElementValue(factory, classinfos):
                     raise ValueError("Wrong path!")
                 if attributes[parts[0]]["attr_type"]["basename"] == "boolean":
                     setattr(self, parts[0], value)
-                elif attributes[parts[0]]["use"] == "optional" and value == "":
+                elif attributes[parts[0]]["use"] == "optional" and value == None:
                     if "default" in attributes[parts[0]]:
                         setattr(self, parts[0],
                                 attributes[parts[0]]["attr_type"]["extract"](

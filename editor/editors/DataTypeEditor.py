@@ -46,8 +46,8 @@ from util.TranslationCatalogs import NoTranslate
 DIMENSION_MODEL = re.compile(r"([0-9]+)\.\.([0-9]+)$")
 
 
-def AppendMenu(parent, help, id, kind, text):
-    parent.Append(help=help, id=id, kind=kind, text=text)
+def AppendMenu(parent, help, kind, text):
+    return parent.Append(help=help, id=wx.ID_ANY, kind=kind, text=text)
 
 
 def GetElementsTableColnames():
@@ -633,31 +633,18 @@ class DataTypeEditor(EditorPanel):
 
             base_menu = wx.Menu(title='')
             for base_type in self.Controler.GetBaseTypes():
-                new_id = wx.NewId()
-                AppendMenu(base_menu, help='', id=new_id, kind=wx.ITEM_NORMAL, text=base_type)
-                self.Bind(wx.EVT_MENU, self.GetElementTypeFunction(base_type), id=new_id)
-            type_menu.AppendMenu(wx.NewId(), _("Base Types"), base_menu)
+                new_entry = AppendMenu(base_menu, help='', kind=wx.ITEM_NORMAL, text=base_type)
+                self.Bind(wx.EVT_MENU, self.GetElementTypeFunction(base_type), new_entry)
+            type_menu.AppendMenu(wx.ID_ANY, _("Base Types"), base_menu)
 
             datatype_menu = wx.Menu(title='')
             for datatype in self.Controler.GetDataTypes(self.TagName, False):
-                new_id = wx.NewId()
-                AppendMenu(datatype_menu, help='', id=new_id, kind=wx.ITEM_NORMAL, text=datatype)
-                self.Bind(wx.EVT_MENU, self.GetElementTypeFunction(datatype), id=new_id)
-            type_menu.AppendMenu(wx.NewId(), _("User Data Types"), datatype_menu)
+                new_entry = AppendMenu(datatype_menu, help='', kind=wx.ITEM_NORMAL, text=datatype)
+                self.Bind(wx.EVT_MENU, self.GetElementTypeFunction(datatype), new_entry)
+            type_menu.AppendMenu(wx.ID_ANY, _("User Data Types"), datatype_menu)
 
-            new_id = wx.NewId()
-            AppendMenu(type_menu, help='', id=new_id, kind=wx.ITEM_NORMAL, text=_("Array"))
-            self.Bind(wx.EVT_MENU, self.ElementArrayTypeFunction, id=new_id)
-
-#            functionblock_menu = wx.Menu(title='')
-#            bodytype = self.Controler.GetEditedElementBodyType(self.TagName)
-#            pouname, poutype = self.Controler.GetEditedElementType(self.TagName)
-#            if classtype in ["Input","Output","InOut","External","Global"] or poutype != "function" and bodytype in ["ST", "IL"]:
-#                for functionblock_type in self.Controler.GetFunctionBlockTypes(self.TagName):
-#                    new_id = wx.NewId()
-#                    AppendMenu(functionblock_menu, help='', id=new_id, kind=wx.ITEM_NORMAL, text=functionblock_type)
-#                    self.Bind(wx.EVT_MENU, self.GetVariableTypeFunction(functionblock_type), id=new_id)
-#                type_menu.AppendMenu(wx.NewId(), _("Function Block Types"), functionblock_menu)
+            new_entry = AppendMenu(type_menu, help='', kind=wx.ITEM_NORMAL, text=_("Array"))
+            self.Bind(wx.EVT_MENU, self.ElementArrayTypeFunction, new_entry)
 
             rect = self.StructureElementsGrid.BlockToDeviceRect((row, col), (row, col))
             self.StructureElementsGrid.PopupMenuXY(type_menu, rect.x + rect.width, rect.y + self.StructureElementsGrid.GetColLabelSize())

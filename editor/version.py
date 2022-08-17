@@ -76,16 +76,12 @@ def GetAboutDialogInfo():
 
     info.Copyright = ""
     info.Copyright += "(C) 2019 Thiago Alves"
-    #info.Copyright += "(C) 2016-2018 Andrey Skvortsov\n"
-    #info.Copyright += "(C) 2008-2018 Eduard Tisserant\n"
-    #info.Copyright += "(C) 2008-2015 Laurent Bessard"
 
     info.WebSite = ("http://www.openplcproject.com", "openplcproject.com")
 
     info.Description = _("Open Source IDE for the OpenPLC Runtime, compliant with "
                          "the IEC 61131-3 international standard.\n\nBased on PLCOpen Editor and Beremiz by Andrey Skvortsov, Sergey Surkov, Edouard Tisserant and Laurent Bessard.")
 
-    #info.Developers = "Thiago Alves <thiagoralves@gmail.com>"
     info.Developers = (
         "Thiago Alves <thiagoralves@gmail.com>",
         "Andrey Skvortsov <andrej.skvortzov@gmail.com>",
@@ -216,8 +212,8 @@ def GetAboutDialogInfo():
     return info
 
 
-app_version = "1.3.3"
+app_version = "2.01"
 #rev = GetAppRevision()
-rev = "Release: 2022-07-06"
+rev = "Release: 2022-08-17"
 if rev is not None:
     app_version = app_version + "\n" + rev.rstrip()

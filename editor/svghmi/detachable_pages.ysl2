@@ -1,0 +1,223 @@
+// detachable_pages.ysl2
+//
+// compute what elements are required by pages
+// and decide where to cut when removing/attaching
+// pages elements on page switch
+
+const "hmi_pages_descs", "$parsed_widgets/widget[@type = 'Page']";
+const "hmi_pages", "$hmi_elements[@id = $hmi_pages_descs/@id]";
+
+const "default_page" choose {
+    when "count($hmi_pages) > 1" {
+        choose {
+            when "$hmi_pages_descs/arg[1]/@value = 'Home'" > Home
+            otherwise {
+                error > No Home page defined!
+            }
+        }
+    }
+    when "count($hmi_pages) = 0" {
+        error > No page defined!
+    }
+    otherwise > «func:widget($hmi_pages/@id)/arg[1]/@value»
+}
+
+emit "preamble:default-page" {
+    |
+    | var default_page = "«$default_page»";
+}
+
+const "keypads_descs", "$parsed_widgets/widget[@type = 'Keypad']";
+const "keypads", "$hmi_elements[@id = $keypads_descs/@id]";
+
+// returns all directly or indirectly refered elements
+def "func:refered_elements" {
+    param "elems";
+    const "descend", "$elems/descendant-or-self::svg:*";
+    const "clones", "$descend[self::svg:use]";
+    const "originals", "//svg:*[concat('#',@id) = $clones/@xlink:href]";
+    choose {
+        when "$originals"
+            result "$descend | func:refered_elements($originals)";
+        otherwise
+            result "$descend";
+    }
+}
+
+// variable "overlapping_geometry" was added for optimization.
+// It avoids calling func:overlapping_geometry 3 times for each page
+// (apparently libxml doesn't cache exslt function results)
+// in order to optimize further, func:overlapping_geometry 
+// should be implemented in python or even C,
+// as this is still the main bottleneck here
+const "_overlapping_geometry" {
+    foreach "$hmi_pages | $keypads" {
+        const "k", "concat('overlapping:', @id)";
+        value "ns:ProgressStart($k, concat('collecting membership of ', @inkscape:label))";
+        elt {
+            attrib "id" > «@id»
+            copy "func:overlapping_geometry(.)";
+        }
+        value "ns:ProgressEnd($k)";
+    }
+}
+
+const "overlapping_geometry", "exsl:node-set($_overlapping_geometry)";
+
+def "func:all_related_elements" {
+    param "page";
+    const "page_overlapping_geometry", "$overlapping_geometry/elt[@id = $page/@id]/*";
+    const "page_overlapping_elements", "//svg:*[@id = $page_overlapping_geometry/@Id]";
+    const "page_sub_elements", "func:refered_elements($page | $page_overlapping_elements)";
+    result "$page_sub_elements";
+}
+
+
+def "func:required_elements" {
+    param "pages"; 
+    choose{
+        when "$pages"{
+            result """func:all_related_elements($pages[1])
+                      | func:required_elements($pages[position()!=1])""";
+        }otherwise{
+            result "/..";
+        }
+    }
+}
+
+const "required_page_elements",
+    "func:required_elements($hmi_pages | $keypads)/ancestor-or-self::svg:*";
+
+const "required_list_elements", "func:refered_elements(($hmi_lists | $hmi_textlists)[@id = $required_page_elements/@id])/ancestor-or-self::svg:*";
+
+const "required_elements", "$defs | $required_list_elements | $required_page_elements";
+
+const "discardable_elements", "//svg:*[not(@id = $required_elements/@id)]";
+
+def "func:sumarized_elements" {
+    param "elements";
+    const "short_list", "$elements[not(ancestor::*/@id = $elements/@id)]";
+    const "filled_groups", """$short_list/parent::*[
+        not(child::*[
+            not(@id = $discardable_elements/@id) and
+            not(@id = $short_list/@id)
+        ])]""";
+    const "groups_to_add", "$filled_groups[not(ancestor::*/@id = $filled_groups/@id)]";
+    result "$groups_to_add | $short_list[not(ancestor::*/@id = $filled_groups/@id)]";
+}
+
+def "func:detachable_elements" {
+    param "pages";
+    choose{
+        when "$pages"{
+            result """func:sumarized_elements(func:all_related_elements($pages[1]))
+                      | func:detachable_elements($pages[position()!=1])""";
+        }otherwise{
+            result "/..";
+        }
+    }
+}
+
+// Avoid nested detachables
+const "_detachable_elements", "func:detachable_elements($hmi_pages | $keypads)";
+const "detachable_elements", "$_detachable_elements[not(ancestor::*/@id = $_detachable_elements/@id)]";
+
+emit "declarations:detachable-elements" {
+    |
+    | var detachable_elements = {
+    foreach "$detachable_elements"{
+    |     "«@id»":[id("«@id»"), id("«../@id»")]`if "position()!=last()" > ,`
+    }
+    | }
+}
+
+const "forEach_widgets_ids", "$parsed_widgets/widget[@type = 'ForEach']/@id";
+const "forEach_widgets", "$hmi_widgets[@id = $forEach_widgets_ids]";
+const "in_forEach_widget_ids", "func:refered_elements($forEach_widgets)[not(@id = $forEach_widgets_ids)]/@id";
+
+template "svg:*", mode="page_desc" {
+    if "ancestor::*[@id = $hmi_pages/@id]" error > HMI:Page «@id» is nested in another HMI:Page
+
+
+    const "desc", "func:widget(@id)";
+    const "pagename", "$desc/arg[1]/@value";
+    const "msg", "concat('generating page description ', $pagename)";
+    value "ns:ProgressStart($pagename, $msg)";
+    const "page", ".";
+    const "p", "$geometry[@Id = $page/@id]";
+
+    const "page_all_elements", "func:all_related_elements($page)";
+
+    const "all_page_widgets","$hmi_widgets[@id = $page_all_elements/@id and @id != $page/@id]";
+    const "page_managed_widgets","$all_page_widgets[not(@id=$in_forEach_widget_ids)]";
+    const "page_relative_widgets",
+        "$page_managed_widgets[func:is_descendant_path(func:widget(@id)/path/@value, $desc/path/@value)]";
+
+    // Take closest ancestor in detachable_elements
+    // since nested detachable elements are filtered out
+    const "sumarized_page", 
+        """func:sumarized_elements($page_all_elements)""";
+
+    const "required_detachables", 
+        """$sumarized_page/
+           ancestor-or-self::*[@id = $detachable_elements/@id]""";
+
+    |   "«$pagename»": {
+    //|     widget: hmi_widgets["«@id»"],
+    |     bbox: [«$p/@x», «$p/@y», «$p/@w», «$p/@h»],
+    if "$desc/path/@value" {
+        if "count($desc/path/@index)=0"
+            warning > Page id="«$page/@id»" : No match for path "«$desc/path/@value»" in HMI tree
+    |     page_index: «$desc/path/@index»,
+    |     page_class: "«$indexed_hmitree/*[@hmipath = $desc/path/@value]/@class»",
+    }
+    |     widgets: [
+    foreach "$page_managed_widgets" {
+        const "widget_paths_relativeness" 
+            foreach "func:widget(@id)/path" {
+                value "func:is_descendant_path(@value, $desc/path/@value)";
+                if "position()!=last()" > ,
+            }
+    |         [hmi_widgets["«@id»"], [«$widget_paths_relativeness»]]`if "position()!=last()" > ,`
+    }
+    |     ],
+    |     jumps: [
+    foreach "$parsed_widgets/widget[@id = $all_page_widgets/@id and @type='Jump']" {
+    |         hmi_widgets["«@id»"]`if "position()!=last()" > ,`
+    }
+    |     ],
+    |     required_detachables: {
+    foreach "$required_detachables" {
+    |         "«@id»": detachable_elements["«@id»"]`if "position()!=last()" > ,`
+    }
+    |     }
+    apply "$parsed_widgets/widget[@id = $all_page_widgets/@id]", mode="widget_page"{
+        with "page_desc", "$desc";
+    }
+    |   }`if "position()!=last()" > ,`
+    value "ns:ProgressEnd($pagename)";
+}
+
+emit "definitions:page-desc" {
+    |
+    | var page_desc = {
+    apply "$hmi_pages", mode="page_desc";
+    | }
+}
+
+template "*", mode="widget_page";
+
+
+emit "debug:detachable-pages" {
+    |
+    | DETACHABLES:
+    foreach "$detachable_elements"{
+        |  «@id»
+    }
+    | In Foreach:
+    foreach "$in_forEach_widget_ids"{
+        |  «.»
+    }
+    | Overlapping 
+    apply "$overlapping_geometry", mode="testtree";
+}

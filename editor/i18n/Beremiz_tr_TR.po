@@ -980,10 +980,6 @@ msgstr "Çalışma dizinini değiştir"
 msgid "Character string"
 msgstr "Karakter dizesi"
 
-#: ../svgui/svgui.py:136
-msgid "Choose a SVG file"
-msgstr "SVG dosyası seç"
-
 #: ../etherlab/EtherCATManagementEditor.py:911
 #: ../etherlab/EtherCATManagementEditor.py:1306
 msgid "Choose a binary file"
@@ -1315,10 +1311,6 @@ msgstr "PLC başlatılamadı!\n"
 #: ../ProjectController.py:1725
 msgid "Couldn't stop PLC !\n"
 msgstr "PLC durduramadı!\n"
-
-#: ../svgui/svgui.py:57
-msgid "Create HMI"
-msgstr "HMI oluştur"
 
 #: ../dialogs/PouDialog.py:48
 msgid "Create a new POU"
@@ -2114,10 +2106,6 @@ msgstr "IP geçerli değil!"
 msgid "Import ESI file"
 msgstr "ESI dosyasını içe aktar"
 
-#: ../svgui/svgui.py:50 ../svgui/svgui.py:51
-msgid "Import SVG"
-msgstr "SVG'yi içe aktar"
-
 #: ../etherlab/ConfigEditor.py:1352
 msgid "Import file to ESI files database"
 msgstr "ESI dosya veritabanına dosya içe aktar"
@@ -2184,10 +2172,6 @@ msgstr "Axis ref konum değişkeninin Drag'n düşüşünü başlat"
 #: ../etherlab/EthercatCIA402Slave.py:126
 msgid "Initiate Drag'n drop of Network position located variable"
 msgstr "Ağ konumu bulunan değişkenin Drag'n düşüşünü başlat"
-
-#: ../svgui/svgui.py:56
-msgid "Inkscape"
-msgstr "Inkscape"
 
 #: ../dialogs/SFCTransitionDialog.py:77 ../dialogs/ActionBlockDialog.py:47
 msgid "Inline"
@@ -2750,11 +2734,6 @@ msgstr "Arama sonucu yok."
 msgid "No slave defined at position %d!"
 msgstr "%d konumunda hiçbir slave tanımlanmamış!"
 
-#: ../svgui/svgui.py:142
-#, python-format
-msgid "No such SVG file: %s\n"
-msgstr "Böyle bir SVG dosyası yok: %s\n"
-
 #: ../etherlab/ConfigEditor.py:1245
 #, python-format
 msgid "No such XML file: %s\n"
@@ -2849,10 +2828,6 @@ msgstr "Sadece Eleman"
 #: ../PLCOpenEditor.py:118
 msgid "Open"
 msgstr "Açık"
-
-#: ../svgui/svgui.py:151
-msgid "Open Inkscape"
-msgstr "Inkscape'i aç"
 
 #: ../version.py:88
 msgid ""
@@ -3456,14 +3431,6 @@ msgstr "ST"
 #: ../PLCOpenEditor.py:308
 msgid "ST files (*.st)|*.st|All files|*.*"
 msgstr "ST dosyaları (* .st) | * .st | Tüm dosyalar | *. *"
-
-#: ../svgui/svgui.py:136
-msgid "SVG files (*.svg)|*.svg|All files|*.*"
-msgstr "SVG dosyaları (* .svg) | * .svg | Tüm dosyalar | *. *"
-
-#: ../features.py:25
-msgid "SVGUI"
-msgstr "SVGUI"
 
 #: ../BeremizIDE.py:247 ../BeremizIDE.py:278 ../PLCOpenEditor.py:84
 #: ../PLCOpenEditor.py:119
@@ -4279,14 +4246,6 @@ msgstr "Değiştiremezsin. Bu kayıt salt okunur veya bağlı değil."
 #: ../etherlab/EtherCATManagementEditor.py:648
 msgid "You cannot SDO download this state"
 msgstr "SDO bu durumu indiremezsiniz"
-
-#: ../svgui/svgui.py:150
-msgid ""
-"You don't have write permissions.\n"
-"Open Inkscape anyway ?"
-msgstr ""
-"Yazma yetkiniz yok.\n"
-"Yine de Inkscape'i açtın mı?"
 
 #: ../wxglade_hmi/wxglade_hmi.py:175
 msgid ""

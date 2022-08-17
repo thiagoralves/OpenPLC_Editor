@@ -30,3 +30,11 @@ def CreatePLCObjectSingleton(*args, **kwargs):
     global _PLCObjectSingleton
     from runtime.PLCObject import PLCObject  # noqa # pylint: disable=wrong-import-position
     _PLCObjectSingleton = PLCObject(*args, **kwargs)
+
+
+def default_evaluator(tocall, *args, **kwargs):
+    try:
+        res = (tocall(*args, **kwargs), None)
+    except Exception:
+        res = (None, sys.exc_info())
+    return res
