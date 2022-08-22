@@ -21,7 +21,7 @@ fi
 if [ "$INSTALLER" = "yum" ]; then
     yum clean expire-cache
     yum check-update
-    sudo yum -q -y install curl make automake gcc gcc-c++ kernel-devel pkg-config bison flex autoconf libtool openssl-devel libpng libpng-devel freetype-devel
+    sudo yum -q -y install curl make automake gcc gcc-c++ kernel-devel pkg-config bison flex autoconf libtool openssl-devel libpng libpng-devel freetype-devel libxml2 libxslt
     sudo yum -q -y install python2.7 python2-devel
     sudo yum -q -y install python2-wxpython
     if [ $? -ne 0 ]
