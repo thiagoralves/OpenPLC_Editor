@@ -55,7 +55,8 @@ else
     sudo apt-get -y -qq install python2-dev
     sudo apt-get -y -qq install python2.7-dev
     #Fix for Debian Buster
-    sudo apt-get -y -qq install libpng libpng-dev libfreetype6-dev
+    sudo apt-get -y -qq install libpng
+    sudo apt-get -y -qq install libpng-dev libfreetype6-dev
 fi
 
 #Get pip manually
