@@ -35,7 +35,9 @@ from __future__ import absolute_import
 import os
 import wx
 from wx.lib.agw.hyperlink import HyperLinkCtrl
+import util.paths as paths
 
+current_dir = paths.AbsDir(__file__)
 
 class AboutDialog(wx.Dialog):
     """
@@ -68,11 +70,13 @@ class AboutDialog(wx.Dialog):
 
         credits = wx.Button(self, id=wx.ID_ABOUT, label=_("C&redits"))
         license = wx.Button(self, label=_("&License"))
+        sponsors = wx.Button(self, label=("&Sponsors"))
         close = wx.Button(self, id=wx.ID_CANCEL, label=_("&Close"))
 
         btnSizer = wx.BoxSizer(wx.HORIZONTAL)
         btnSizer.Add(credits, flag=wx.CENTER | wx.LEFT | wx.RIGHT, border=5)
         btnSizer.Add(license, flag=wx.CENTER | wx.RIGHT, border=5)
+        btnSizer.Add(sponsors, flag=wx.CENTER | wx.RIGHT, border=5)
         btnSizer.Add(close, flag=wx.CENTER | wx.RIGHT, border=5)
 
         sizer = wx.BoxSizer(wx.VERTICAL)
@@ -95,6 +99,7 @@ class AboutDialog(wx.Dialog):
 
         credits.Bind(wx.EVT_BUTTON, self.on_credits)
         license.Bind(wx.EVT_BUTTON, self.on_license)
+        sponsors.Bind(wx.EVT_BUTTON, self.on_sponsors)
         close.Bind(wx.EVT_BUTTON, lambda evt: self.Destroy())
 
     def on_license(self, event):
@@ -102,6 +107,9 @@ class AboutDialog(wx.Dialog):
 
     def on_credits(self, event):
         CreditsDialog(self, self.info)
+    
+    def on_sponsors(self, event):
+        SponsorsDialog(self)
 
 
 class CreditsDialog(wx.Dialog):
@@ -167,9 +175,63 @@ class LicenseDialog(wx.Dialog):
 
         close.Bind(wx.EVT_BUTTON, lambda evt: self.Destroy())
 
+class SponsorsDialog(wx.Dialog):
+    def __init__( self, parent ):
+        wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = wx.EmptyString, pos = wx.DefaultPosition, size = wx.Size( 500,440 ), style = wx.DEFAULT_DIALOG_STYLE )
+
+        self.SetSizeHintsSz( wx.DefaultSize, wx.DefaultSize )
+
+        bSizer3 = wx.BoxSizer( wx.VERTICAL )
+
+        self.m_staticText2 = wx.StaticText( self, wx.ID_ANY, u"OpenPLC Gold Sponsors", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_CENTRE )
+        self.m_staticText2.Wrap( -1 )
+        self.m_staticText2.SetFont( wx.Font( 20, 74, 90, 92, False, "Arial Black" ) )
+
+        bSizer3.Add( self.m_staticText2, 0, wx.ALL|wx.EXPAND, 5 )
+
+        self.m_staticText3 = wx.StaticText( self, wx.ID_ANY, u"You can enjoy a free and open source IEC 61131-3 programming environment thanks to the help and support of the following GOLD sponsors:", wx.DefaultPosition, wx.Size( -1,40 ), 0 )
+        self.m_staticText3.Wrap( -1 )
+        self.m_staticText3.SetFont( wx.Font( 10, 74, 90, 90, False, "Arial" ) )
+
+        bSizer3.Add( self.m_staticText3, 0, wx.LEFT|wx.RIGHT, 20 )
+
+        gSizer1 = wx.GridSizer( 0, 2, 0, 0 )
+
+        self.m_bitmap1 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap(os.path.join(current_dir, "..", "images", "sponsor_logos", "facts.png"), wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+        gSizer1.Add( self.m_bitmap1, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
+
+        self.m_bitmap2 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap(os.path.join(current_dir, "..", "images", "sponsor_logos", "freewave.png"), wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+        gSizer1.Add( self.m_bitmap2, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
+
+        self.m_staticText4 = HyperLinkCtrl(self, label=u"https://facts-eng.com", URL="https://facts-eng.com")
+        gSizer1.Add( self.m_staticText4, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+
+        self.m_staticText5 = HyperLinkCtrl(self, label=u"https://www.freewave.com", URL="https://www.freewave.com")
+        gSizer1.Add( self.m_staticText5, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+
+        bSizer3.Add( gSizer1, 0, wx.EXPAND, 5 )
+
+        self.m_staticText51 = wx.StaticText( self, wx.ID_ANY, u"If you are interested in becoming an official OpenPLC Sponsor, check out our Patreon page:", wx.DefaultPosition, wx.Size( -1,40 ), 0 )
+        self.m_staticText51.Wrap( -1 )
+        self.m_staticText51.SetFont( wx.Font( 10, 74, 90, 90, False, "Arial" ) )
+
+        bSizer3.Add( self.m_staticText51, 0, wx.LEFT|wx.RIGHT, 20 )
+
+        self.m_staticText6 = HyperLinkCtrl(self, label=u"https://www.patreon.com/openplc", URL="https://www.patreon.com/openplc")
+        bSizer3.Add( self.m_staticText6, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+
+        self.close_button = wx.Button( self, wx.ID_ANY, u"Close", wx.DefaultPosition, wx.DefaultSize, 0 )
+        bSizer3.Add( self.close_button, 0, wx.ALIGN_RIGHT|wx.ALL, 10 )
+
+        self.SetSizer( bSizer3 )
+        self.Layout()
+        self.Centre( wx.BOTH )
+        self.Show()
+        self.close_button.Bind(wx.EVT_BUTTON, lambda evt: self.Destroy())
+
 
 def ShowAboutDialog(parent, info):
-    if os.name == "nt":
-        AboutDialog(parent, info)
-    else:
-        wx.AboutBox(info)
+    #if os.name == "nt":
+    AboutDialog(parent, info)
+    #else:
+    #    wx.AboutBox(info)
