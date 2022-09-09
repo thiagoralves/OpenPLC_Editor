@@ -67,12 +67,19 @@ class AboutDialog(wx.Dialog):
         font.SetWeight(wx.FONTWEIGHT_BOLD)
         font.SetPointSize(18)
         name.SetFont(font)
-
-        credits = wx.Button(self, id=wx.ID_ABOUT, label=_("C&redits"))
-        license = wx.Button(self, label=_("&License"))
-        sponsors = wx.Button(self, label=("&Sponsors"))
-        close = wx.Button(self, id=wx.ID_CANCEL, label=_("&Close"))
-
+        
+        if os.name == 'nt':
+            credits = wx.Button(self, id=wx.ID_ABOUT, label=_("C&redits"))
+            license = wx.Button(self, label=_("&License"))
+            sponsors = wx.Button(self, label=("&Sponsors"))
+            close = wx.Button(self, id=wx.ID_CANCEL, label=_("&Close"))
+        else:
+            #Linux buttons must be a little bit bigger
+            credits = wx.Button(self, id=wx.ID_ABOUT, label=_("C&redits"), size = wx.Size( -1,50 ))
+            license = wx.Button(self, label=_("&License"), size = wx.Size( -1,50 ))
+            sponsors = wx.Button(self, label=("&Sponsors"), size = wx.Size( -1,50 ))
+            close = wx.Button(self, id=wx.ID_CANCEL, label=_("&Close"), size = wx.Size( -1,50 ))
+        
         btnSizer = wx.BoxSizer(wx.HORIZONTAL)
         btnSizer.Add(credits, flag=wx.CENTER | wx.LEFT | wx.RIGHT, border=5)
         btnSizer.Add(license, flag=wx.CENTER | wx.RIGHT, border=5)
@@ -189,7 +196,7 @@ class SponsorsDialog(wx.Dialog):
 
         bSizer3.Add( self.m_staticText2, 0, wx.ALL|wx.EXPAND, 5 )
 
-        self.m_staticText3 = wx.StaticText( self, wx.ID_ANY, u"You can enjoy a free and open source IEC 61131-3 programming environment thanks to the help and support of the following GOLD sponsors:", wx.DefaultPosition, wx.Size( -1,40 ), 0 )
+        self.m_staticText3 = wx.StaticText( self, wx.ID_ANY, u"You can enjoy a free and open source IEC 61131-3 programming environment thanks to the help and support of the following GOLD sponsors:", wx.DefaultPosition, wx.Size( 450,40 ), 0 )
         self.m_staticText3.Wrap( -1 )
         self.m_staticText3.SetFont( wx.Font( 10, 74, 90, 90, False, "Arial" ) )
 
@@ -211,7 +218,7 @@ class SponsorsDialog(wx.Dialog):
 
         bSizer3.Add( gSizer1, 0, wx.EXPAND, 5 )
 
-        self.m_staticText51 = wx.StaticText( self, wx.ID_ANY, u"If you are interested in becoming an official OpenPLC Sponsor, check out our Patreon page:", wx.DefaultPosition, wx.Size( -1,40 ), 0 )
+        self.m_staticText51 = wx.StaticText( self, wx.ID_ANY, u"If you are interested in becoming an official OpenPLC Sponsor, check out our Patreon page:", wx.DefaultPosition, wx.Size( 450,40 ), 0 )
         self.m_staticText51.Wrap( -1 )
         self.m_staticText51.SetFont( wx.Font( 10, 74, 90, 90, False, "Arial" ) )
 
@@ -226,6 +233,7 @@ class SponsorsDialog(wx.Dialog):
         self.SetSizer( bSizer3 )
         self.Layout()
         self.Centre( wx.BOTH )
+        self.Fit()
         self.Show()
         self.close_button.Bind(wx.EVT_BUTTON, lambda evt: self.Destroy())
 
