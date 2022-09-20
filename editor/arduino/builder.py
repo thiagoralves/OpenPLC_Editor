@@ -249,10 +249,10 @@ extern unsigned long long common_ticktime__;
 
 #else
 
-#define MAX_DIGITAL_INPUT          24
-#define MAX_DIGITAL_OUTPUT         24
-#define MAX_ANALOG_INPUT           8
-#define MAX_ANALOG_OUTPUT          16
+#define MAX_DIGITAL_INPUT          56
+#define MAX_DIGITAL_OUTPUT         56
+#define MAX_ANALOG_INPUT           32
+#define MAX_ANALOG_OUTPUT          32
 
 #endif
 
@@ -283,28 +283,28 @@ void glueVars()
 
                 #check variable type and assign to correct buffer pointer
                 if ('QX' in var_name):
-                    if (int(var_address) > 2 or int(var_subaddress) > 7):
+                    if (int(var_address) > 6 or int(var_subaddress) > 7):
                         compiler_logs += 'Error: wrong location for var ' + var_name + '\n'
                         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
                         wx.CallAfter(scrollToEnd, txtCtrl)
                         return
                     glueVars += '    bool_output[' + var_address + '][' + var_subaddress + '] = ' + var_name + ';\n'
                 elif ('IX' in var_name):
-                    if (int(var_address) > 2 or int(var_subaddress) > 7):
+                    if (int(var_address) > 6 or int(var_subaddress) > 7):
                         compiler_logs += 'Error: wrong location for var ' + var_name + '\n'
                         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
                         wx.CallAfter(scrollToEnd, txtCtrl)
                         return
                     glueVars += '    bool_input[' + var_address + '][' + var_subaddress + '] = ' + var_name + ';\n'
                 elif ('QW' in var_name):
-                    if (int(var_address) > 16):
+                    if (int(var_address) > 32):
                         compiler_logs += 'Error: wrong location for var ' + var_name + '\n'
                         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
                         wx.CallAfter(scrollToEnd, txtCtrl)
                         return
                     glueVars += '    int_output[' + var_address + '] = ' + var_name + ';\n'
                 elif ('IW' in var_name):
-                    if (int(var_address) > 16):
+                    if (int(var_address) > 32):
                         compiler_logs += 'Error: wrong location for var ' + var_name + '\n'
                         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
                         wx.CallAfter(scrollToEnd, txtCtrl)
