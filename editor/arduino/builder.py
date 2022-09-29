@@ -1,5 +1,6 @@
 import sys
 import os
+import platform as os_platform
 import time
 import subprocess
 import wx
@@ -11,7 +12,8 @@ import json
 global compiler_logs
 compiler_logs = ''
 def scrollToEnd(txtCtrl):
-    #txtCtrl.SetInsertionPoint(-1)
+    if os_platform.system() != 'Darwin':	
+        txtCtrl.SetInsertionPoint(-1)
     txtCtrl.ShowPosition(txtCtrl.GetLastPosition())
     txtCtrl.Refresh()
     txtCtrl.Update()
@@ -33,7 +35,7 @@ def runCommand(command):
 def build(st_file, platform, source_file, port, txtCtrl, update_subsystem):
     global compiler_logs
     compiler_logs = ''
-    if (os.path.exists("editor/arduino/bin/iec2c") or os.path.exists("editor/arduino/bin/iec2c.exe")):
+    if (os.path.exists("editor/arduino/bin/iec2c") or os.path.exists("editor/arduino/bin/iec2c.exe") or os.path.exists("editor/arduino/bin/iec2c_mac")):
         #remove old files first
         if os.path.exists('editor/arduino/src/POUS.c'):
             os.remove('editor/arduino/src/POUS.c')
@@ -59,8 +61,10 @@ def build(st_file, platform, source_file, port, txtCtrl, update_subsystem):
     if (update_subsystem):
         compiler_logs += "Updating environment...\n"
         cli_command = ''
-        if (os.name == 'nt'):
+        if os_platform.system() == 'Windows':
             cli_command = 'editor\\arduino\\bin\\arduino-cli-w32'
+        elif os_platform.system() == 'Darwin':	
+            cli_command = 'editor/arduino/bin/arduino-cli-mac'
         else:
             cli_command = 'editor/arduino/bin/arduino-cli-l64'
 
@@ -202,8 +206,10 @@ def build(st_file, platform, source_file, port, txtCtrl, update_subsystem):
 
     time.sleep(0.2) #make sure plc_prog.st was written to disk
 
-    if (os.name == 'nt'):
+    if os_platform.system() == 'Windows':
         compilation = subprocess.Popen(['editor\\arduino\\bin\\iec2c.exe', 'plc_prog.st'], cwd='editor\\arduino\\src', creationflags = 0x08000000, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+    elif os_platform.system() == 'Darwin':	
+        compilation = subprocess.Popen(['../bin/iec2c_mac', 'plc_prog.st'], cwd='./editor/arduino/src', stdout = subprocess.PIPE, stderr = subprocess.PIPE)
     else:
         compilation = subprocess.Popen(['../bin/iec2c', 'plc_prog.st'], cwd='./editor/arduino/src', stdout = subprocess.PIPE, stderr = subprocess.PIPE)
     stdout, stderr = compilation.communicate()
@@ -364,7 +370,7 @@ void updateTime()
     f.close()
 
     #Copy HAL file
-    if (os.name == 'nt'):
+    if os_platform.system() == 'Windows':
         source_path = 'editor\\arduino\\src\\hal\\'
         destination = 'editor\\arduino\\src\\arduino.cpp'
     else:
@@ -415,7 +421,7 @@ void updateTime()
     #We need to write the hal specific pin size defines on the global defines.h so that it is
     #available everywhere
 
-    if (os.name == 'nt'):
+    if os_platform.system() == 'Windows':
         define_path = 'editor\\arduino\\examples\\Baremetal\\'
     else:
         define_path = 'editor/arduino/examples/Baremetal/'
@@ -434,7 +440,7 @@ void updateTime()
             define_file += line
 
     #Write defines.h file back to disk
-    if (os.name == 'nt'):
+    if os_platform.system() == 'Windows':
         define_path = 'editor\\arduino\\examples\\Baremetal\\'
     else:
         define_path = 'editor/arduino/examples/Baremetal/'
@@ -461,8 +467,10 @@ void updateTime()
     compiler_logs += platform
     compiler_logs += '\n'
 
-    if (os.name == 'nt'):
+    if os_platform.system() == 'Windows':
         compilation = subprocess.Popen(['editor\\arduino\\bin\\arduino-cli-w32', 'compile', '-v', '--libraries=editor\\arduino', '--build-property', 'compiler.c.extra_flags="-Ieditor\\arduino\\src\\lib"', '--build-property', 'compiler.cpp.extra_flags="-Ieditor\\arduino\\src\\lib"', '--export-binaries', '-b', platform, 'editor\\arduino\\examples\\Baremetal\\Baremetal.ino'], creationflags = 0x08000000, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+    elif os_platform.system() == 'Darwin':	
+        compilation = subprocess.Popen(['editor/arduino/bin/arduino-cli-mac', 'compile', '-v', '--libraries=editor/arduino', '--build-property', 'compiler.c.extra_flags="-Ieditor/arduino/src/lib"', '--build-property', 'compiler.cpp.extra_flags="-Ieditor/arduino/src/lib"', '--export-binaries', '-b', platform, 'editor/arduino/examples/Baremetal/Baremetal.ino'], stdout = subprocess.PIPE, stderr = subprocess.PIPE)
     else:
         compilation = subprocess.Popen(['editor/arduino/bin/arduino-cli-l64', 'compile', '-v', '--libraries=editor/arduino', '--build-property', 'compiler.c.extra_flags="-Ieditor/arduino/src/lib"', '--build-property', 'compiler.cpp.extra_flags="-Ieditor/arduino/src/lib"', '--export-binaries', '-b', platform, 'editor/arduino/examples/Baremetal/Baremetal.ino'], stdout = subprocess.PIPE, stderr = subprocess.PIPE)
     stdout, stderr = compilation.communicate()
@@ -478,8 +486,10 @@ void updateTime()
             compiler_logs += '\nUploading program to Arduino board at ' + port + '...\n'
             wx.CallAfter(txtCtrl.SetValue, compiler_logs)
             wx.CallAfter(scrollToEnd, txtCtrl)
-            if (os.name == 'nt'):
+            if os_platform.system() == 'Windows':
                 compiler_logs += runCommand('editor\\arduino\\bin\\arduino-cli-w32 upload --port ' + port + ' --fqbn ' + platform + ' editor\\arduino\\examples\\Baremetal/')
+            elif os_platform.system() == 'Darwin':	
+               compiler_logs += runCommand('editor/arduino/bin/arduino-cli-mac upload --port ' + port + ' --fqbn ' + platform + ' editor/arduino/examples/Baremetal/ 2>&1')
             else:
                 compiler_logs += runCommand('editor/arduino/bin/arduino-cli-l64 upload --port ' + port + ' --fqbn ' + platform + ' editor/arduino/examples/Baremetal/')
             compiler_logs += '\nDone!\n'
@@ -488,7 +498,7 @@ void updateTime()
         else:
             cwd = os.getcwd()
             compiler_logs += '\nOUTPUT DIRECTORY:\n'
-            if (os.name == 'nt'):
+            if os_platform.system() == 'Windows':
                 compiler_logs += cwd + '\\editor\\arduino\\examples\\Baremetal\\build\n'
             else:
                 compiler_logs += cwd + '/editor/arduino/examples/Baremetal/build\n'
