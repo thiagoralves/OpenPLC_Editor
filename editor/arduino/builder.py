@@ -1,6 +1,6 @@
 import sys
 import os
-import platform
+import platform as os_platform
 import time
 import subprocess
 import wx
@@ -8,20 +8,34 @@ import shutil
 import time
 import json
 
+
 global compiler_logs
 compiler_logs = ''
-
 def scrollToEnd(txtCtrl):
-    if platform.system() != 'Darwin':
+    if os_platform.system() != 'Darwin':	
         txtCtrl.SetInsertionPoint(-1)
     txtCtrl.ShowPosition(txtCtrl.GetLastPosition())
     txtCtrl.Refresh()
     txtCtrl.Update()
 
-def build(st_file, board_type, source_file, port, txtCtrl, update_subsystem):
+def runCommand(command):
+    cmd_response = None
+    try:
+        cmd_response = subprocess.check_output(command, shell=True)
+        #cmd_response = subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True)
+    except subprocess.CalledProcessError as exc:
+        cmd_response = exc.output
+
+    if cmd_response == None:
+        return ''
+
+    return cmd_response.decode('utf-8')
+
+
+def build(st_file, platform, source_file, port, txtCtrl, update_subsystem):
     global compiler_logs
     compiler_logs = ''
-    if (os.path.exists("editor/arduino/bin/iec2c") and os.path.exists("editor/arduino/bin/iec2c.exe") and os.path.exists("editor/arduino/bin/iec2c_mac")):
+    if (os.path.exists("editor/arduino/bin/iec2c") or os.path.exists("editor/arduino/bin/iec2c.exe") or os.path.exists("editor/arduino/bin/iec2c_mac")):
         #remove old files first
         if os.path.exists('editor/arduino/src/POUS.c'):
             os.remove('editor/arduino/src/POUS.c')
@@ -42,164 +56,138 @@ def build(st_file, board_type, source_file, port, txtCtrl, update_subsystem):
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
         return
-    
+
     #Update/setup environment
     if (update_subsystem):
         compiler_logs += "Updating environment...\n"
         cli_command = ''
-        if platform.system() == 'Windows':
+        if os_platform.system() == 'Windows':
             cli_command = 'editor\\arduino\\bin\\arduino-cli-w32'
-        elif platform.system() == 'Darwin':
+        elif os_platform.system() == 'Darwin':	
             cli_command = 'editor/arduino/bin/arduino-cli-mac'
         else:
             cli_command = 'editor/arduino/bin/arduino-cli-l64'
 
         #Setup boards - initial stage
-        env_setup = os.popen(cli_command + ' config init 2>&1')
-        compiler_logs += env_setup.read()
+        compiler_logs += runCommand(cli_command + ' config init')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
         #Setup boards - remove 3rd party boards to re-add them later since we don't know if they're there or not
-        env_setup = os.popen(cli_command + ' config remove board_manager.additional_urls https://arduino.esp8266.com/stable/package_esp8266com_index.json 2>&1')
-        compiler_logs += env_setup.read()
+        compiler_logs += runCommand(cli_command + ' config remove board_manager.additional_urls https://arduino.esp8266.com/stable/package_esp8266com_index.json')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
-        env_setup = os.popen(cli_command + ' config remove board_manager.additional_urls https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json 2>&1')
-        compiler_logs += env_setup.read()
+        compiler_logs += runCommand(cli_command + ' config remove board_manager.additional_urls https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
+
         #Remove STM32 Board
-        env_setup = os.popen(cli_command + ' config remove board_manager.additional_urls https://raw.githubusercontent.com/stm32duino/BoardManagerFiles/master/STM32/package_stm_index.json 2>&1')
-        compiler_logs += env_setup.read()
+        compiler_logs += runCommand(cli_command + ' config remove board_manager.additional_urls https://raw.githubusercontent.com/stm32duino/BoardManagerFiles/master/STM32/package_stm_index.json')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
 
         #Remove CONTROLLINO boards
-        env_setup = os.popen(cli_command + ' config remove board_manager.additional_urls https://raw.githubusercontent.com/CONTROLLINO-PLC/CONTROLLINO_Library/master/Boards/package_ControllinoHardware_index.json 2>&1')
-        compiler_logs += env_setup.read()
+        compiler_logs += runCommand(cli_command + ' config remove board_manager.additional_urls https://raw.githubusercontent.com/CONTROLLINO-PLC/CONTROLLINO_Library/master/Boards/package_ControllinoHardware_index.json')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
 
+
         #Setup boards - add 3rd party boards
-        env_setup = os.popen(cli_command + ' config add board_manager.additional_urls https://arduino.esp8266.com/stable/package_esp8266com_index.json 2>&1')
-        compiler_logs += env_setup.read()
+        compiler_logs += runCommand(cli_command + ' config add board_manager.additional_urls https://arduino.esp8266.com/stable/package_esp8266com_index.json')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
-        env_setup = os.popen(cli_command + ' config add board_manager.additional_urls https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json 2>&1')
-        compiler_logs += env_setup.read()
+        compiler_logs += runCommand(cli_command + ' config add board_manager.additional_urls https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
-        env_setup = os.popen(cli_command + ' config add board_manager.additional_urls https://raw.githubusercontent.com/stm32duino/BoardManagerFiles/master/STM32/package_stm_index.json 2>&1')
-        compiler_logs += env_setup.read()
+
+        #Add STM32 Board
+        compiler_logs += runCommand(cli_command + ' config add board_manager.additional_urls https://raw.githubusercontent.com/stm32duino/BoardManagerFiles/master/STM32/package_stm_index.json')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
 
         #Add CONTROLLINO Boards
-        env_setup = os.popen(cli_command + ' config add board_manager.additional_urls https://raw.githubusercontent.com/CONTROLLINO-PLC/CONTROLLINO_Library/master/Boards/package_ControllinoHardware_index.json 2>&1')
-        compiler_logs += env_setup.read()
+        compiler_logs += runCommand(cli_command + ' config add board_manager.additional_urls https://raw.githubusercontent.com/CONTROLLINO-PLC/CONTROLLINO_Library/master/Boards/package_ControllinoHardware_index.json')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
-        
+
+
         #Update
-        env_setup = os.popen(cli_command + ' core update-index 2>&1')
-        compiler_logs += env_setup.read()
+        compiler_logs += runCommand(cli_command + ' core update-index')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
-        env_setup = os.popen(cli_command + ' update 2>&1')
-        compiler_logs += env_setup.read()
+        compiler_logs += runCommand(cli_command + ' update')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
 
         #Install boards
-        env_setup = os.popen(cli_command + ' core install esp8266:esp8266 2>&1')
-        compiler_logs += env_setup.read()
+        compiler_logs += runCommand(cli_command + ' core install esp8266:esp8266')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
-        env_setup = os.popen(cli_command + ' core install esp32:esp32 2>&1')
-        compiler_logs += env_setup.read()
+        compiler_logs += runCommand(cli_command + ' core install esp32:esp32')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
-        env_setup = os.popen(cli_command + ' core install arduino:avr 2>&1')
-        compiler_logs += env_setup.read()
+        compiler_logs += runCommand(cli_command + ' core install arduino:avr')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
-        env_setup = os.popen(cli_command + ' core install arduino:samd 2>&1')
-        compiler_logs += env_setup.read()
+        compiler_logs += runCommand(cli_command + ' core install arduino:samd')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
-        env_setup = os.popen(cli_command + ' core install arduino:sam 2>&1')
-        compiler_logs += env_setup.read()
+        compiler_logs += runCommand(cli_command + ' core install arduino:sam')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
-        env_setup = os.popen(cli_command + ' core install arduino:megaavr 2>&1')
-        compiler_logs += env_setup.read()
+        compiler_logs += runCommand(cli_command + ' core install arduino:megaavr')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
-        env_setup = os.popen(cli_command + ' core install arduino:mbed_portenta 2>&1')
-        compiler_logs += env_setup.read()
+        compiler_logs += runCommand(cli_command + ' core install arduino:mbed_portenta')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
-        env_setup = os.popen(cli_command + ' core install arduino:mbed_nano 2>&1')
-        compiler_logs += env_setup.read()
+        compiler_logs += runCommand(cli_command + ' core install arduino:mbed_nano')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
-        env_setup = os.popen(cli_command + ' core install STM32:stm32 2>&1')
-        compiler_logs += env_setup.read()
+        compiler_logs += runCommand(cli_command + ' core install STM32:stm32')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
-        env_setup = os.popen(cli_command + ' lib install WiFiNINA 2>&1')
-        compiler_logs += env_setup.read()
+        compiler_logs += runCommand(cli_command + ' lib install WiFiNINA')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
-        env_setup = os.popen(cli_command + ' lib install Ethernet 2>&1')
-        compiler_logs += env_setup.read()
+        compiler_logs += runCommand(cli_command + ' lib install Ethernet')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
-        env_setup = os.popen(cli_command + ' lib install Arduino_MachineControl 2>&1')
-        compiler_logs += env_setup.read()
+        compiler_logs += runCommand(cli_command + ' lib install Arduino_MachineControl')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
-        env_setup = os.popen(cli_command + ' lib install OneWire 2>&1')
-        compiler_logs += env_setup.read()
+        compiler_logs += runCommand(cli_command + ' lib install OneWire')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
-        env_setup = os.popen(cli_command + ' lib install DallasTemperature 2>&1')
-        compiler_logs += env_setup.read()
+        compiler_logs += runCommand(cli_command + ' lib install DallasTemperature')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
-        env_setup = os.popen(cli_command + ' lib install P1AM 2>&1')
-        compiler_logs += env_setup.read()
+        compiler_logs += runCommand(cli_command + ' lib install P1AM')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
 
         # Install CONTROLLINO boards core
-        env_setup = os.popen(cli_command + ' core install CONTROLLINO_Boards:avr 2>&1')
-        compiler_logs += env_setup.read()
+        compiler_logs += runCommand(cli_command + ' core install CONTROLLINO_Boards:avr')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
         # Install CONTROLLINO library
-        env_setup = os.popen(cli_command + ' lib install CONTROLLINO 2>&1')
-        compiler_logs += env_setup.read()
+        compiler_logs += runCommand(cli_command + ' lib install CONTROLLINO')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
 
         #Install ADS115X library
-        env_setup = os.popen(cli_command + ' lib install "Adafruit ADS1X15" 2>&1')
-        compiler_logs += env_setup.read()
+        compiler_logs += runCommand(cli_command + ' lib install "Adafruit ADS1X15"')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
         #Install MQTT library
-        env_setup = os.popen(cli_command + ' lib install "PubSubClient" 2>&1')
-        compiler_logs += env_setup.read()
+        compiler_logs += runCommand(cli_command + ' lib install "PubSubClient"')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
         #Install ArduinoJson library
-        env_setup = os.popen(cli_command + ' lib install "ArduinoJson" 2>&1')
-        compiler_logs += env_setup.read()
+        compiler_logs += runCommand(cli_command + ' lib install "ArduinoJson"')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
-        env_setup = os.popen(cli_command + ' upgrade 2>&1')
-        compiler_logs += env_setup.read()
+
+        compiler_logs += runCommand(cli_command + ' upgrade')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
 
@@ -207,7 +195,7 @@ def build(st_file, board_type, source_file, port, txtCtrl, update_subsystem):
     compiler_logs += "Compiling .st file...\n"
     wx.CallAfter(txtCtrl.SetValue, compiler_logs)
     wx.CallAfter(scrollToEnd, txtCtrl)
-    if platform.system() == 'Windows':
+    if (os.name == 'nt'):
         base_path = 'editor\\arduino\\src\\'
     else:
         base_path = 'editor/arduino/src/'
@@ -218,15 +206,15 @@ def build(st_file, board_type, source_file, port, txtCtrl, update_subsystem):
 
     time.sleep(0.2) #make sure plc_prog.st was written to disk
 
-    if platform.system() == 'Windows':
+    if os_platform.system() == 'Windows':
         compilation = subprocess.Popen(['editor\\arduino\\bin\\iec2c.exe', 'plc_prog.st'], cwd='editor\\arduino\\src', creationflags = 0x08000000, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
-    elif platform.system() == 'Darwin':
+    elif os_platform.system() == 'Darwin':	
         compilation = subprocess.Popen(['../bin/iec2c_mac', 'plc_prog.st'], cwd='./editor/arduino/src', stdout = subprocess.PIPE, stderr = subprocess.PIPE)
     else:
         compilation = subprocess.Popen(['../bin/iec2c', 'plc_prog.st'], cwd='./editor/arduino/src', stdout = subprocess.PIPE, stderr = subprocess.PIPE)
     stdout, stderr = compilation.communicate()
-    compiler_logs += stdout.decode("utf-8")
-    compiler_logs += stderr.decode("utf-8")
+    compiler_logs += stdout.decode('UTF-8')
+    compiler_logs += stderr.decode('UTF-8')
     wx.CallAfter(txtCtrl.SetValue, compiler_logs)
     wx.CallAfter(scrollToEnd, txtCtrl)
 
@@ -240,7 +228,7 @@ def build(st_file, board_type, source_file, port, txtCtrl, update_subsystem):
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
         return
-    
+
     located_vars_file = open(base_path+'LOCATED_VARIABLES.h', 'r')
     located_vars = located_vars_file.readlines()
     glueVars = """
@@ -267,10 +255,10 @@ extern unsigned long long common_ticktime__;
 
 #else
 
-#define MAX_DIGITAL_INPUT          24
-#define MAX_DIGITAL_OUTPUT         24
-#define MAX_ANALOG_INPUT           8
-#define MAX_ANALOG_OUTPUT          16
+#define MAX_DIGITAL_INPUT          56
+#define MAX_DIGITAL_OUTPUT         56
+#define MAX_ANALOG_INPUT           32
+#define MAX_ANALOG_OUTPUT          32
 
 #endif
 
@@ -298,31 +286,31 @@ void glueVars()
                 var_subaddress = '0'
                 if (len(var_data) > 5):
                     var_subaddress = var_data[5]
-                
+
                 #check variable type and assign to correct buffer pointer
                 if ('QX' in var_name):
-                    if (int(var_address) > 2 or int(var_subaddress) > 7):
+                    if (int(var_address) > 6 or int(var_subaddress) > 7):
                         compiler_logs += 'Error: wrong location for var ' + var_name + '\n'
                         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
                         wx.CallAfter(scrollToEnd, txtCtrl)
                         return
                     glueVars += '    bool_output[' + var_address + '][' + var_subaddress + '] = ' + var_name + ';\n'
                 elif ('IX' in var_name):
-                    if (int(var_address) > 2 or int(var_subaddress) > 7):
+                    if (int(var_address) > 6 or int(var_subaddress) > 7):
                         compiler_logs += 'Error: wrong location for var ' + var_name + '\n'
                         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
                         wx.CallAfter(scrollToEnd, txtCtrl)
                         return
                     glueVars += '    bool_input[' + var_address + '][' + var_subaddress + '] = ' + var_name + ';\n'
                 elif ('QW' in var_name):
-                    if (int(var_address) > 16):
+                    if (int(var_address) > 32):
                         compiler_logs += 'Error: wrong location for var ' + var_name + '\n'
                         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
                         wx.CallAfter(scrollToEnd, txtCtrl)
                         return
                     glueVars += '    int_output[' + var_address + '] = ' + var_name + ';\n'
                 elif ('IW' in var_name):
-                    if (int(var_address) > 16):
+                    if (int(var_address) > 32):
                         compiler_logs += 'Error: wrong location for var ' + var_name + '\n'
                         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
                         wx.CallAfter(scrollToEnd, txtCtrl)
@@ -354,7 +342,7 @@ void updateTime()
     f.close()
 
     time.sleep(2) #make sure glueVars.c was written to disk
-    
+
     # Patch POUS.c to include POUS.h
     f = open(base_path+'POUS.c', 'r')
     pous_c = '#include "POUS.h"\n\n' + f.read()
@@ -382,7 +370,7 @@ void updateTime()
     f.close()
 
     #Copy HAL file
-    if platform.system() == 'Windows':
+    if os_platform.system() == 'Windows':
         source_path = 'editor\\arduino\\src\\hal\\'
         destination = 'editor\\arduino\\src\\arduino.cpp'
     else:
@@ -390,17 +378,17 @@ void updateTime()
         destination = 'editor/arduino/src/arduino.cpp'
 
     """
-    if board_type == 'arduino:avr:uno' or board_type == 'arduino:avr:leonardo' or board_type == 'arduino:samd:arduino_zero_native' or board_type == 'arduino:samd:arduino_zero_edbg':
+    if platform == 'arduino:avr:uno' or platform == 'arduino:avr:leonardo' or platform == 'arduino:samd:arduino_zero_native' or platform == 'arduino:samd:arduino_zero_edbg':
         source_file = 'uno_leonardo_nano_micro_zero.cpp'
-    elif board_type == 'arduino:avr:nano' or board_type == 'arduino:avr:micro':
+    elif platform == 'arduino:avr:nano' or platform == 'arduino:avr:micro':
         source_file = 'uno_leonardo_nano_micro_zero.cpp'
-    elif board_type == 'arduino:megaavr:nona4809' or board_type == 'arduino:mbed_nano:nano33ble' or board_type == 'arduino:samd:nano_33_iot':
+    elif platform == 'arduino:megaavr:nona4809' or platform == 'arduino:mbed_nano:nano33ble' or platform == 'arduino:samd:nano_33_iot':
         source_file = 'nano_every.cpp'
-    elif board_type == 'arduino:mbed_nano:nanorp2040connect':
+    elif platform == 'arduino:mbed_nano:nanorp2040connect':
         source_file = 'rp2040.cpp'
-    elif board_type == 'arduino:avr:mega' or board_type == 'arduino:sam:arduino_due_x' or board_type == 'arduino:sam:arduino_due_x_dbg':
+    elif platform == 'arduino:avr:mega' or platform == 'arduino:sam:arduino_due_x' or platform == 'arduino:sam:arduino_due_x_dbg':
         source_file = 'mega_due.cpp'
-    elif board_type == 'arduino:samd:mkrzero' or board_type == 'arduino:samd:mkrwifi1010':
+    elif platform == 'arduino:samd:mkrzero' or platform == 'arduino:samd:mkrwifi1010':
         source_file = 'mkr.cpp'
     elif platform == 'CONTROLLINO_Boards:avr:controllino_mini':
         source_file = 'controllino_mini.cpp'
@@ -410,20 +398,20 @@ void updateTime()
         source_file = 'controllino_maxi_automation.cpp'
     elif platform == 'CONTROLLINO_Boards:avr:controllino_mega':
         source_file = 'controllino_mega.cpp'
-    elif board_type == 'arduino:samd:mkrzero-p1am':
+    elif platform == 'arduino:samd:mkrzero-p1am':
         source_file = 'p1am.cpp'
-        board_type = 'arduino:samd:mkrzero'
-    elif board_type == 'arduino:mbed_portenta:envie_m7':
+        platform = 'arduino:samd:mkrzero'
+    elif platform == 'arduino:mbed_portenta:envie_m7':
         source_file = 'machine_control.cpp'
-    elif board_type == 'esp8266:esp8266:nodemcuv2' or board_type == 'esp8266:esp8266:d1_mini':
+    elif platform == 'esp8266:esp8266:nodemcuv2' or platform == 'esp8266:esp8266:d1_mini':
         source_file = 'esp8266.cpp'
-    elif board_type == 'esp32:esp32:esp32' or board_type == 'esp32:esp32:esp32s2' or board_type == 'esp32:esp32:esp32c3':
+    elif platform == 'esp32:esp32:esp32' or platform == 'esp32:esp32:esp32s2' or platform == 'esp32:esp32:esp32c3':
         source_file = 'esp32.cpp'
-    elif board_type == 'esp32:esp32:esp32escope':
-        board_type = 'esp32:esp32:esp32'
+    elif platform == 'esp32:esp32:esp32escope':
+        platform = 'esp32:esp32:esp32'
         source_file = 'esp32_escope.cpp'
-    elif board_type == 'esp32:esp32:esp32esim':
-        board_type = 'esp32:esp32:esp32'
+    elif platform == 'esp32:esp32:esp32esim':
+        platform = 'esp32:esp32:esp32'
         source_file = 'esp32_esim.cpp'
     """
 
@@ -433,7 +421,7 @@ void updateTime()
     #We need to write the hal specific pin size defines on the global defines.h so that it is
     #available everywhere
 
-    if platform.system() == 'Windows':
+    if os_platform.system() == 'Windows':
         define_path = 'editor\\arduino\\examples\\Baremetal\\'
     else:
         define_path = 'editor/arduino/examples/Baremetal/'
@@ -452,7 +440,7 @@ void updateTime()
             define_file += line
 
     #Write defines.h file back to disk
-    if platform.system() == 'Windows':
+    if os_platform.system() == 'Windows':
         define_path = 'editor\\arduino\\examples\\Baremetal\\'
     else:
         define_path = 'editor/arduino/examples/Baremetal/'
@@ -466,65 +454,62 @@ void updateTime()
     wx.CallAfter(txtCtrl.SetValue, compiler_logs)
     wx.CallAfter(scrollToEnd, txtCtrl)
 
-    #if platform.system() == 'Windows':
-    #    compilation = os.popen('editor\\arduino\\bin\\arduino-cli-w32 compile -v --libraries=editor\\arduino --build-property compiler.c.extra_flags="-Ieditor\\arduino\\src\\lib" --build-property compiler.cpp.extra_flags="-Ieditor\\arduino\\src\\lib" --export-binaries -b ' + board_type + ' editor\\arduino\\examples\\Baremetal\\Baremetal.ino 2>&1')
-        #compilation = subprocess.Popen(['editor\\arduino\\bin\\arduino-cli-w32', 'compile', '-v', '--libraries=..\\..\\', '--build-property', 'compiler.c.extra_flags="-I..\\src\\lib"', '--build-property', 'compiler.cpp.extra_flags="I..\\src\\lib"', '--export-binaries', '-b', board_type, '..\\examples\\Baremetal\\Baremetal.ino'], cwd='editor\\arduino\\src', stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+    #if (os.name == 'nt'):
+    #    compilation = subprocess.check_output('editor\\arduino\\bin\\arduino-cli-w32 compile -v --libraries=editor\\arduino --build-property compiler.c.extra_flags="-Ieditor\\arduino\\src\\lib" --build-property compiler.cpp.extra_flags="-Ieditor\\arduino\\src\\lib" --export-binaries -b ' + platform + ' editor\\arduino\\examples\\Baremetal\\Baremetal.ino 2>&1')
+        #compilation = subprocess.Popen(['editor\\arduino\\bin\\arduino-cli-w32', 'compile', '-v', '--libraries=..\\..\\', '--build-property', 'compiler.c.extra_flags="-I..\\src\\lib"', '--build-property', 'compiler.cpp.extra_flags="I..\\src\\lib"', '--export-binaries', '-b', platform, '..\\examples\\Baremetal\\Baremetal.ino'], cwd='editor\\arduino\\src', stdout = subprocess.PIPE, stderr = subprocess.PIPE)
     #else:
-    #    compilation = os.popen('editor/arduino/bin/arduino-cli-l64 compile -v --libraries=editor/arduino --build-property compiler.c.extra_flags="-Ieditor/arduino/src/lib" --build-property compiler.cpp.extra_flags="-Ieditor/arduino/src/lib" --export-binaries -b ' + board_type + ' editor/arduino/examples/Baremetal/Baremetal.ino 2>&1')
-    #compiler_logs += compilation.read()
+    #    compilation = subprocess.check_output('editor/arduino/bin/arduino-cli-l64 compile -v --libraries=editor/arduino --build-property compiler.c.extra_flags="-Ieditor/arduino/src/lib" --build-property compiler.cpp.extra_flags="-Ieditor/arduino/src/lib" --export-binaries -b ' + platform + ' editor/arduino/examples/Baremetal/Baremetal.ino 2>&1')
+    #compiler_logs += compilation.decode('utf-8')
     #wx.CallAfter(txtCtrl.SetValue, compiler_logs)
     #wx.CallAfter(scrollToEnd, txtCtrl)
 
     compiler_logs += '\nCOMPILATION START: '
-    compiler_logs += board_type
+    compiler_logs += platform
     compiler_logs += '\n'
 
-    if platform.system() == 'Windows':
-        compilation = subprocess.Popen(['editor\\arduino\\bin\\arduino-cli-w32', 'compile', '-v', '--libraries=editor\\arduino', '--build-property', 'compiler.c.extra_flags="-Ieditor\\arduino\\src\\lib"', '--build-property', 'compiler.cpp.extra_flags="-Ieditor\\arduino\\src\\lib"', '--export-binaries', '-b', board_type, 'editor\\arduino\\examples\\Baremetal\\Baremetal.ino'], creationflags = 0x08000000, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
-    elif platform.system() == 'Darwin':
-        compilation = subprocess.Popen(['editor/arduino/bin/arduino-cli-mac', 'compile', '-v', '--libraries=editor/arduino', '--build-property', 'compiler.c.extra_flags="-Ieditor/arduino/src/lib"', '--build-property', 'compiler.cpp.extra_flags="-Ieditor/arduino/src/lib"', '--export-binaries', '-b', board_type, 'editor/arduino/examples/Baremetal/Baremetal.ino'], stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+    if os_platform.system() == 'Windows':
+        compilation = subprocess.Popen(['editor\\arduino\\bin\\arduino-cli-w32', 'compile', '-v', '--libraries=editor\\arduino', '--build-property', 'compiler.c.extra_flags="-Ieditor\\arduino\\src\\lib"', '--build-property', 'compiler.cpp.extra_flags="-Ieditor\\arduino\\src\\lib"', '--export-binaries', '-b', platform, 'editor\\arduino\\examples\\Baremetal\\Baremetal.ino'], creationflags = 0x08000000, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+    elif os_platform.system() == 'Darwin':	
+        compilation = subprocess.Popen(['editor/arduino/bin/arduino-cli-mac', 'compile', '-v', '--libraries=editor/arduino', '--build-property', 'compiler.c.extra_flags="-Ieditor/arduino/src/lib"', '--build-property', 'compiler.cpp.extra_flags="-Ieditor/arduino/src/lib"', '--export-binaries', '-b', platform, 'editor/arduino/examples/Baremetal/Baremetal.ino'], stdout = subprocess.PIPE, stderr = subprocess.PIPE)
     else:
-        compilation = subprocess.Popen(['editor/arduino/bin/arduino-cli-l64', 'compile', '-v', '--libraries=editor/arduino', '--build-property', 'compiler.c.extra_flags="-Ieditor/arduino/src/lib"', '--build-property', 'compiler.cpp.extra_flags="-Ieditor/arduino/src/lib"', '--export-binaries', '-b', board_type, 'editor/arduino/examples/Baremetal/Baremetal.ino'], stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+        compilation = subprocess.Popen(['editor/arduino/bin/arduino-cli-l64', 'compile', '-v', '--libraries=editor/arduino', '--build-property', 'compiler.c.extra_flags="-Ieditor/arduino/src/lib"', '--build-property', 'compiler.cpp.extra_flags="-Ieditor/arduino/src/lib"', '--export-binaries', '-b', platform, 'editor/arduino/examples/Baremetal/Baremetal.ino'], stdout = subprocess.PIPE, stderr = subprocess.PIPE)
     stdout, stderr = compilation.communicate()
-    compiler_logs += stdout.decode("utf-8")
-    compiler_logs += stderr.decode("utf-8")
+    compiler_logs += stdout.decode('UTF-8')
+    compiler_logs += stderr.decode('UTF-8')
     if (compilation.returncode != 0):
         compiler_logs += '\nCOMPILATION FAILED!\n'
     wx.CallAfter(txtCtrl.SetValue, compiler_logs)
     wx.CallAfter(scrollToEnd, txtCtrl)
-
 
     if (compilation.returncode == 0):
         if (port != None):
             compiler_logs += '\nUploading program to Arduino board at ' + port + '...\n'
             wx.CallAfter(txtCtrl.SetValue, compiler_logs)
             wx.CallAfter(scrollToEnd, txtCtrl)
-            if platform.system() == 'Windows':
-                uploading = os.popen('editor\\arduino\\bin\\arduino-cli-w32 upload --port ' + port + ' --fqbn ' + board_type + ' editor\\arduino\\examples\\Baremetal/ 2>&1')
-            elif platform.system() == 'Darwin':
-                uploading = os.popen('editor/arduino/bin/arduino-cli-mac upload --port ' + port + ' --fqbn ' + board_type + ' editor/arduino/examples/Baremetal/ 2>&1')
+            if os_platform.system() == 'Windows':
+                compiler_logs += runCommand('editor\\arduino\\bin\\arduino-cli-w32 upload --port ' + port + ' --fqbn ' + platform + ' editor\\arduino\\examples\\Baremetal/')
+            elif os_platform.system() == 'Darwin':	
+               compiler_logs += runCommand('editor/arduino/bin/arduino-cli-mac upload --port ' + port + ' --fqbn ' + platform + ' editor/arduino/examples/Baremetal/ 2>&1')
             else:
-                uploading = os.popen('editor/arduino/bin/arduino-cli-l64 upload --port ' + port + ' --fqbn ' + board_type + ' editor/arduino/examples/Baremetal/ 2>&1')
-            compiler_logs += uploading.read()
+                compiler_logs += runCommand('editor/arduino/bin/arduino-cli-l64 upload --port ' + port + ' --fqbn ' + platform + ' editor/arduino/examples/Baremetal/')
             compiler_logs += '\nDone!\n'
             wx.CallAfter(txtCtrl.SetValue, compiler_logs)
             wx.CallAfter(scrollToEnd, txtCtrl)
         else:
             cwd = os.getcwd()
             compiler_logs += '\nOUTPUT DIRECTORY:\n'
-            if platform.system() == 'Windows':
+            if os_platform.system() == 'Windows':
                 compiler_logs += cwd + '\\editor\\arduino\\examples\\Baremetal\\build\n'
             else:
                 compiler_logs += cwd + '/editor/arduino/examples/Baremetal/build\n'
             compiler_logs += '\nCOMPILATION DONE!'
             wx.CallAfter(txtCtrl.SetValue, compiler_logs)
             wx.CallAfter(scrollToEnd, txtCtrl)
-
     time.sleep(1) #make sure files are not in use anymore
-    
+
     #no clean up
     return
-    
+
     #Clean up and return
     if os.path.exists(base_path+'POUS.c'):
         os.remove(base_path+'POUS.c')
