@@ -37,6 +37,7 @@ import shutil
 import re
 import tempfile
 import hashlib
+import codecs
 from datetime import datetime
 from weakref import WeakKeyDictionary
 from functools import reduce
@@ -824,7 +825,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
         #    plc_file.write(IECCodeContent)
         #    plc_file.write(POUsIECCodeContent)
 
-        plc_file = open(IECcodepath, "w")
+        plc_file = codecs.open(IECcodepath, "w", encoding="utf8")
         plc_file.write(self.RemoveLocatedVariables(IECCodeContent+POUsIECCodeContent))
         plc_file.close()
 
