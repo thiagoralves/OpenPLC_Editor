@@ -778,6 +778,11 @@ class ProjectController(ConfigTreeNode, PLCControler):
                 modified_program += line
         return modified_program
 
+    def remove_non_ascii(self, str):
+        if isinstance(str, unicode):
+            str = str.encode('utf-8')
+        return re.sub(r'[^\x00-\x7F]+',' ', str)
+
     def _Generate_PLC_ST(self):
         """
         Generate SoftPLC ST/IL/SFC code out of PLCOpenEditor controller, and compile it with IEC2C
@@ -808,13 +813,13 @@ class ProjectController(ConfigTreeNode, PLCControler):
 
         IECrawcodepath = self._getIECrawcodepath()
         if os.path.isfile(IECrawcodepath):
-            IECCodeContent += open(IECrawcodepath, "r").read() + "\n"
+            IECCodeContent += codecs.open(IECrawcodepath, "r", encoding="utf8").read() + "\n"
 
 
         # Compute offset before ST resulting of transformation from user POUs
         self.ProgramOffset = IECCodeContent.count("\n")
 
-        POUsIECCodeContent = open(self._getIECgeneratedcodepath(), "r").read()
+        POUsIECCodeContent = codecs.open(self._getIECgeneratedcodepath(), "r", encoding="utf8").read()
 
         IECcodepath = self._getIECcodepath()
 
@@ -826,6 +831,10 @@ class ProjectController(ConfigTreeNode, PLCControler):
         #    plc_file.write(POUsIECCodeContent)
 
         plc_file = codecs.open(IECcodepath, "w", encoding="utf8")
+        #IECCodeContent = IECCodeContent.encode('utf-8')
+        #print(type(IECCodeContent))
+        IECCodeContent = self.remove_non_ascii(IECCodeContent)
+        POUsIECCodeContent = self.remove_non_ascii(POUsIECCodeContent)
         plc_file.write(self.RemoveLocatedVariables(IECCodeContent+POUsIECCodeContent))
         plc_file.close()
 
