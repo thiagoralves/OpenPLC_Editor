@@ -5,6 +5,9 @@
   Fixed by Kocil, 2022
   - Change word to IEC_UINT
   - Prevent _frame override in writeMultipleRegisters and writeMultipleCoils
+  
+  Fixed by Thiago Alves, 2022
+  - Commented out debug Serial.print statements left over after Kocil changes
 */
 #include "Modbus.h"
 
@@ -503,6 +506,7 @@ void Modbus::writeMultipleCoils(byte* frame,IEC_UINT startreg, IEC_UINT numoutpu
     byte bitn = 0;
     IEC_UINT totoutputs = numoutputs;
     IEC_UINT i;
+    /*
     Serial.print("Write MC:");
     int n = 7+numoutputs/8;
     for (int i=0; i<n; i++) {
@@ -511,7 +515,9 @@ void Modbus::writeMultipleCoils(byte* frame,IEC_UINT startreg, IEC_UINT numoutpu
         Serial.print(" ");
     }
     Serial.println();
-	while (numoutputs) {
+    */
+    while (numoutputs) 
+    {
         i = (totoutputs - numoutputs--) / 8;
         this->Coil(startreg, bitRead(frame[6+i], bitn));
         //increment the bit index
@@ -519,7 +525,7 @@ void Modbus::writeMultipleCoils(byte* frame,IEC_UINT startreg, IEC_UINT numoutpu
         if (bitn == 8) bitn = 0;
         //increment the register
         startreg++;
-	}
+    }
     free(old_frame);
 
     _reply = MB_REPLY_NORMAL;
