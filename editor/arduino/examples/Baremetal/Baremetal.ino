@@ -19,6 +19,11 @@ unsigned long timer_ms = 0;
 ModbusSerial modbus;
 #endif
 
+extern uint8_t pinMask_DIN[];
+extern uint8_t pinMask_AIN[];
+extern uint8_t pinMask_DOUT[];
+extern uint8_t pinMask_AOUT[];
+
 /*
 extern "C" int availableMemory(char *);
 
@@ -44,11 +49,14 @@ void setupCycleDelay(unsigned long long cycle_time)
 void cycleDelay()
 {
     //just wait until it is time to start a new cycle
+    #ifdef MODBUS_ENABLED
+    syncModbusBuffers();
+    #endif
     while(timer_ms > millis())
     {
         #ifdef MODBUS_ENABLED
-        //Only run Modbus task if we have at least 1ms gap until the next cycle
-        if (timer_ms - millis() >= 1)
+        //Only run Modbus task again if we have at least 100ms gap until the next cycle
+        if (timer_ms - millis() >= 100)
         {
             syncModbusBuffers();
         }
@@ -65,51 +73,76 @@ void setup()
     config_init__();
     glueVars();
 	#ifdef MODBUS_ENABLED
-    #ifdef MBSERIAL
-	//Config Modbus Serial (port, speed, rs485 tx pin)
-	modbus.config(&MBSERIAL_IFACE, MBSERIAL_BAUD, -1);
+        #ifdef MBSERIAL
+	        //Config Modbus Serial (port, speed, rs485 tx pin)
+            #ifdef MBSERIAL_TXPIN
+                //Disable TX pin from OpenPLC hardware layer
+                for (int i = 0; i < NUM_DISCRETE_INPUT; i++)
+                {
+                    if (pinMask_DIN[i] == MBSERIAL_TXPIN)
+                        pinMask_DIN[i] = 255;
+                }
+                for (int i = 0; i < NUM_ANALOG_INPUT; i++)
+                {
+                    if (pinMask_AIN[i] == MBSERIAL_TXPIN)
+                        pinMask_AIN[i] = 255;
+                }
+                for (int i = 0; i < NUM_DISCRETE_OUTPUT; i++)
+                {
+                    if (pinMask_DOUT[i] == MBSERIAL_TXPIN)
+                        pinMask_DOUT[i] = 255;
+                }
+                for (int i = 0; i < NUM_ANALOG_OUTPUT; i++)
+                {
+                    if (pinMask_AOUT[i] == MBSERIAL_TXPIN)
+                        pinMask_AOUT[i] = 255;
+                }
+                modbus.config(&MBSERIAL_IFACE, MBSERIAL_BAUD, MBSERIAL_TXPIN);
+            #else
+                modbus.config(&MBSERIAL_IFACE, MBSERIAL_BAUD, -1);
+            #endif
 	
-	//Set the Slave ID
-	modbus.setSlaveId(0); 
-    #endif
+	        //Set the Slave ID
+	        modbus.setSlaveId(MBSERIAL_SLAVE);
+        #endif
     
-    #ifdef MBTCP
-    byte mac[] = { MBTCP_MAC };
-    byte ip[] = { MBTCP_IP };
-    byte dns[] = { MBTCP_DNS };
-    byte gateway[] = { MBTCP_GATEWAY };
-    byte subnet[] = { MBTCP_SUBNET };
-    
-    if (sizeof(ip)/sizeof(byte) < 4)
-        modbus.config(mac);
-    else if (sizeof(dns)/sizeof(byte) < 4)
-        modbus.config(mac, ip);
-    else if (sizeof(gateway)/sizeof(byte) < 4)
-        modbus.config(mac, ip, dns);
-    else if (sizeof(subnet)/sizeof(byte) < 4)
-        modbus.config(mac, ip, dns, gateway);
-    else
-        modbus.config(mac, ip, dns, gateway, subnet);
-    #endif
-	
-	//Add all modbus registers
-	for (int i = 0; i < MAX_DIGITAL_INPUT; ++i) 
-	{
-		modbus.addIsts(i);
-	}
-	for (int i = 0; i < MAX_ANALOG_INPUT; ++i) 
-	{
-		modbus.addIreg(i);
-	}
-	for (int i = 0; i < MAX_DIGITAL_OUTPUT; ++i) 
-	{
-		modbus.addCoil(i);
-	}
-	for (int i = 0; i < MAX_ANALOG_OUTPUT; ++i) 
-	{
-		modbus.addHreg(i);
-	}
-    mapEmptyBuffers();
+        #ifdef MBTCP
+        byte mac[] = { MBTCP_MAC };
+        byte ip[] = { MBTCP_IP };
+        byte dns[] = { MBTCP_DNS };
+        byte gateway[] = { MBTCP_GATEWAY };
+        byte subnet[] = { MBTCP_SUBNET };
+        
+        if (sizeof(ip)/sizeof(byte) < 4)
+            modbus.config(mac);
+        else if (sizeof(dns)/sizeof(byte) < 4)
+            modbus.config(mac, ip);
+        else if (sizeof(gateway)/sizeof(byte) < 4)
+            modbus.config(mac, ip, dns);
+        else if (sizeof(subnet)/sizeof(byte) < 4)
+            modbus.config(mac, ip, dns, gateway);
+        else
+            modbus.config(mac, ip, dns, gateway, subnet);
+        #endif
+        
+        //Add all modbus registers
+        for (int i = 0; i < MAX_DIGITAL_INPUT; ++i) 
+        {
+            modbus.addIsts(i);
+        }
+        for (int i = 0; i < MAX_ANALOG_INPUT; ++i) 
+        {
+            modbus.addIreg(i);
+        }
+        for (int i = 0; i < MAX_DIGITAL_OUTPUT; ++i) 
+        {
+            modbus.addCoil(i);
+        }
+        for (int i = 0; i < MAX_ANALOG_OUTPUT; ++i) 
+        {
+            modbus.addHreg(i);
+        }
+        mapEmptyBuffers();
 	#endif
 
     setupCycleDelay(common_ticktime__);
