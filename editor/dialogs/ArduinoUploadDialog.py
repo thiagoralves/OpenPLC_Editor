@@ -83,11 +83,11 @@ class ArduinoUploadDialog(wx.Dialog):
         self.m_staticline1 = wx.StaticLine( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
         bSizer2.Add( self.m_staticline1, 0, wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, 10 )
 
-        self.check_modbus_serial = wx.CheckBox( self, wx.ID_ANY, u"Enable Modbus Serial", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.check_modbus_serial = wx.CheckBox( self, wx.ID_ANY, u"Enable Modbus RTU (Serial)", wx.DefaultPosition, wx.DefaultSize, 0 )
         bSizer2.Add( self.check_modbus_serial, 0, wx.ALL, 10 )
         self.check_modbus_serial.Bind(wx.EVT_CHECKBOX, self.onUIChange)
 
-        fgSizer2 = wx.FlexGridSizer( 0, 2, 0, 0 )
+        fgSizer2 = wx.FlexGridSizer( 0, 4, 0, 0 )
         fgSizer2.SetFlexibleDirection( wx.BOTH )
         fgSizer2.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 
@@ -96,21 +96,32 @@ class ArduinoUploadDialog(wx.Dialog):
         fgSizer2.Add( self.m_staticText5, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 10 )
 
         serial_iface_comboChoices = [ u"Serial", u"Serial1", u"Serial2", u"Serial3" ]
-        self.serial_iface_combo = wx.ComboBox( self, wx.ID_ANY, u"Serial", wx.DefaultPosition, wx.Size( 300,-1 ), serial_iface_comboChoices, wx.CB_READONLY )
+        self.serial_iface_combo = wx.ComboBox( self, wx.ID_ANY, u"Serial", wx.DefaultPosition, wx.Size( 108,-1 ), serial_iface_comboChoices, wx.CB_READONLY )
         self.serial_iface_combo.SetSelection( 0 )
         fgSizer2.Add( self.serial_iface_combo, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_LEFT|wx.ALL, 5 )
-        self.serial_iface_combo.Enable(False)
 
-        self.m_staticText6 = wx.StaticText( self, wx.ID_ANY, u"Baud:", wx.DefaultPosition, wx.Size( 65,-1 ), 0 )
+        self.m_staticText6 = wx.StaticText( self, wx.ID_ANY, u"Baud:", wx.DefaultPosition, wx.Size( 60,-1 ), 0 )
         self.m_staticText6.Wrap( -1 )
         fgSizer2.Add( self.m_staticText6, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 10 )
 
         baud_rate_comboChoices = [ u"9600", u"14400", u"19200", u"38400", u"57600", u"115200" ]
-        self.baud_rate_combo = wx.ComboBox( self, wx.ID_ANY, u"115200", wx.DefaultPosition, wx.Size( 300,-1 ), baud_rate_comboChoices, wx.CB_READONLY )
+        self.baud_rate_combo = wx.ComboBox( self, wx.ID_ANY, u"115200", wx.DefaultPosition, wx.Size( 108,-1 ), baud_rate_comboChoices, wx.CB_READONLY )
         self.baud_rate_combo.SetSelection( 5 )
         fgSizer2.Add( self.baud_rate_combo, 0, wx.ALL, 5 )
-        self.baud_rate_combo.Enable(False)
 
+        self.m_staticText51 = wx.StaticText( self, wx.ID_ANY, u"Slave ID:", wx.DefaultPosition, wx.Size( 65,-1 ), 0 )
+        self.m_staticText51.Wrap( -1 )
+        fgSizer2.Add( self.m_staticText51, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_LEFT|wx.LEFT, 10 )
+
+        self.slaveid_txt = wx.TextCtrl( self, wx.ID_ANY, u"0", wx.DefaultPosition, wx.Size( 105,-1 ), 0 )
+        fgSizer2.Add( self.slaveid_txt, 0, wx.ALL, 5 )
+
+        self.m_staticText61 = wx.StaticText( self, wx.ID_ANY, u"Tx Pin:", wx.DefaultPosition, wx.Size( 60,-1 ), 0 )
+        self.m_staticText61.Wrap( -1 )
+        fgSizer2.Add( self.m_staticText61, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_LEFT|wx.LEFT, 10 )
+
+        self.txpin_txt = wx.TextCtrl( self, wx.ID_ANY, u"-1", wx.DefaultPosition, wx.Size( 105,-1 ), 0 )
+        fgSizer2.Add( self.txpin_txt, 0, wx.ALL, 5 )
 
         bSizer2.Add( fgSizer2, 0, wx.EXPAND, 5 )
 
@@ -242,9 +253,13 @@ class ArduinoUploadDialog(wx.Dialog):
         if (self.check_modbus_serial.GetValue() == False):
             self.serial_iface_combo.Enable(False)
             self.baud_rate_combo.Enable(False)
+            self.slaveid_txt.Enable(False)
+            self.txpin_txt.Enable(False)
         elif (self.check_modbus_serial.GetValue() == True):
             self.serial_iface_combo.Enable(True)
             self.baud_rate_combo.Enable(True)
+            self.slaveid_txt.Enable(True)
+            self.txpin_txt.Enable(True)
 
         if (self.check_compile.GetValue() == False):
             self.com_port_combo.Enable(True)
@@ -367,6 +382,7 @@ class ArduinoUploadDialog(wx.Dialog):
 
         define_file += '#define MBSERIAL_IFACE ' + str(self.serial_iface_combo.GetValue()) + '\n'
         define_file += '#define MBSERIAL_BAUD ' + str(self.baud_rate_combo.GetValue()) + '\n'
+        define_file += '#define MBSERIAL_SLAVE ' + str(self.slaveid_txt.GetValue()) + '\n'
         define_file += '#define MBTCP_MAC ' + str(self.mac_txt.GetValue()) + '\n'
         define_file += '#define MBTCP_IP ' + str(self.ip_txt.GetValue()).replace('.',',') + '\n'
         define_file += '#define MBTCP_DNS ' + str(self.dns_txt.GetValue()).replace('.',',') + '\n'
@@ -378,6 +394,9 @@ class ArduinoUploadDialog(wx.Dialog):
         if (self.check_modbus_serial.GetValue() == True):
             define_file += '#define MBSERIAL\n'
             define_file += '#define MODBUS_ENABLED\n'
+        
+        if (self.txpin_txt.GetValue() != '-1'):
+            define_file += '#define MBSERIAL_TXPIN ' + str(self.txpin_txt.GetValue()) + '\n'
             
         if (self.check_modbus_tcp.GetValue() == True):
             define_file += '#define MBTCP\n'
@@ -430,6 +449,8 @@ class ArduinoUploadDialog(wx.Dialog):
         settings['mb_serial'] = self.check_modbus_serial.GetValue()
         settings['serial_iface'] = self.serial_iface_combo.GetValue()
         settings['baud'] = self.baud_rate_combo.GetValue()
+        settings['slaveid'] = self.slaveid_txt.GetValue()
+        settings['txpin'] = self.txpin_txt.GetValue()
         settings['mb_tcp'] = self.check_modbus_tcp.GetValue()
         settings['tcp_iface'] = self.tcp_iface_combo.GetValue()
         settings['mac'] = self.mac_txt.GetValue()
@@ -483,6 +504,8 @@ class ArduinoUploadDialog(wx.Dialog):
             wx.CallAfter(self.check_modbus_serial.SetValue, settings['mb_serial'])
             wx.CallAfter(self.serial_iface_combo.SetValue, settings['serial_iface'])
             wx.CallAfter(self.baud_rate_combo.SetValue, settings['baud'])
+            wx.CallAfter(self.slaveid_txt.SetValue, settings['slaveid'])
+            wx.CallAfter(self.txpin_txt.SetValue, settings['txpin'])
             wx.CallAfter(self.check_modbus_tcp.SetValue, settings['mb_tcp'])
             wx.CallAfter(self.tcp_iface_combo.SetValue, settings['tcp_iface'])
             wx.CallAfter(self.mac_txt.SetValue, settings['mac'])
