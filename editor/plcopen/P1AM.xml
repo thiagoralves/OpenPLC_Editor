@@ -192,6 +192,31 @@
         </documentation>
       </pou>
       
+      <pou name="P1_04AD" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="SLOT"><type><SINT/></type></variable>
+          </inputVars>
+          <outputVars>
+            <variable name="I1"><type><UINT/></type></variable>
+            <variable name="I2"><type><UINT/></type></variable>
+            <variable name="I3"><type><UINT/></type></variable>
+            <variable name="I4"><type><UINT/></type></variable>
+          </outputVars>
+          <localVars>
+            <variable name="DUMMY"><type><SINT/></type></variable>
+          </localVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[DUMMY := SLOT;]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[Get all analog inputs from P1-04ADxx modules. Compatible with P1-04AD, P1-04ADL-1 and P1-04ADL-2]]></xhtml:p>
+        </documentation>
+      </pou>
+      
     </pous>
   </types>
   <instances>
