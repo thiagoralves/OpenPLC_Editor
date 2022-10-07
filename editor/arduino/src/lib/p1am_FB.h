@@ -139,6 +139,22 @@ typedef struct {
   __DECLARE_VAR(SINT,DUMMY)
 
 } P1_16TR;
+
+// P1_04AD
+// Data part
+typedef struct {
+  // FB Interface - IN, OUT, IN_OUT variables
+  __DECLARE_VAR(BOOL,EN)
+  __DECLARE_VAR(BOOL,ENO)
+  __DECLARE_VAR(SINT,SLOT)
+  __DECLARE_VAR(UINT,I1)
+  __DECLARE_VAR(UINT,I2)
+  __DECLARE_VAR(UINT,I3)
+  __DECLARE_VAR(UINT,I4)
+
+  // FB private variables - TEMP, private and located variables
+
+} P1_04AD;
 /************************************************************************
  *                      END OF P1AM LIB BLOCKS                          *
 ************************************************************************/
@@ -150,6 +166,8 @@ typedef struct {
 uint8_t p1am_init();
 void p1am_writeDiscrete(uint32_t, uint8_t, uint8_t);
 uint32_t p1am_readDiscrete(uint8_t, uint8_t);
+uint16_t p1am_readAnalog(uint8_t, uint8_t);
+void print_msg(char *);
 
 static void P1AM_INIT_init__(P1AM_INIT *data__, BOOL retain) {
   __INIT_VAR(data__->EN,__BOOL_LITERAL(TRUE),retain)
@@ -433,6 +451,43 @@ static void P1_16TR_body__(P1_16TR *data__) {
 __end:
   return;
 } // P1_16TR_body__()
+
+
+static void P1_04AD_init__(P1_04AD *data__, BOOL retain) {
+  __INIT_VAR(data__->EN,__BOOL_LITERAL(TRUE),retain)
+  __INIT_VAR(data__->ENO,__BOOL_LITERAL(TRUE),retain)
+  __INIT_VAR(data__->SLOT,0,retain)
+  __INIT_VAR(data__->I1,0,retain)
+  __INIT_VAR(data__->I2,0,retain)
+  __INIT_VAR(data__->I3,0,retain)
+  __INIT_VAR(data__->I4,0,retain)
+}
+
+// Code part
+static void P1_04AD_body__(P1_04AD *data__) {
+  // Control execution
+  if (!__GET_VAR(data__->EN)) {
+    __SET_VAR(data__->,ENO,,__BOOL_LITERAL(FALSE));
+    return;
+  }
+  else {
+    __SET_VAR(data__->,ENO,,__BOOL_LITERAL(TRUE));
+  }
+  char msg[100];
+  uint16_t input_byte = p1am_readAnalog(__GET_VAR(data__->SLOT), 1);
+  __SET_VAR(data__->,I1,,input_byte);
+  input_byte = p1am_readAnalog(__GET_VAR(data__->SLOT), 2);
+  __SET_VAR(data__->,I2,,input_byte);
+  input_byte = p1am_readAnalog(__GET_VAR(data__->SLOT), 3);
+  __SET_VAR(data__->,I3,,input_byte);
+  input_byte = p1am_readAnalog(__GET_VAR(data__->SLOT), 4);
+  __SET_VAR(data__->,I4,,input_byte);
+
+  goto __end;
+
+__end:
+  return;
+} // P1_08N_body__()
 /************************************************************************
  *                      END OF P1AM LIB BLOCKS                          *
 ************************************************************************/
