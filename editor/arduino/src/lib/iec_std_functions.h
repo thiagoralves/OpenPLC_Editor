@@ -337,27 +337,52 @@ __ANY_NBIT(__to_anyuint_)
 /***********************************/  
 
 /* workaround for va-args limitation on shorter than int params */
-#define VA_ARGS_REAL LREAL
-#define VA_ARGS_LREAL LREAL
-#define VA_ARGS_SINT DINT
-#define VA_ARGS_INT DINT
-#define VA_ARGS_DINT DINT
-#define VA_ARGS_LINT LINT
-#define VA_ARGS_USINT UDINT
-#define VA_ARGS_UINT UDINT
-#define VA_ARGS_UDINT UDINT
-#define VA_ARGS_ULINT ULINT
-#define VA_ARGS_TIME TIME
-#define VA_ARGS_BOOL DWORD
-#define VA_ARGS_BYTE DWORD
-#define VA_ARGS_WORD DWORD
-#define VA_ARGS_DWORD DWORD
-#define VA_ARGS_LWORD LWORD
-#define VA_ARGS_STRING STRING
-#define VA_ARGS_WSTRING WSTRING
-#define VA_ARGS_DATE DATE
-#define VA_ARGS_TOD TOD
-#define VA_ARGS_DT DT
+//For AVR devices, int = int16_t, for everyone else int = int32_t
+#if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega168__) || defined(__AVR_ATmega32U4__) || defined(__AVR_ATmega16U4__) || defined(__AVR_ATmega2560__)
+  #define VA_ARGS_REAL REAL
+  #define VA_ARGS_LREAL LREAL
+  #define VA_ARGS_SINT INT
+  #define VA_ARGS_INT INT
+  #define VA_ARGS_DINT DINT
+  #define VA_ARGS_LINT LINT
+  #define VA_ARGS_USINT UINT
+  #define VA_ARGS_UINT UINT
+  #define VA_ARGS_UDINT UDINT
+  #define VA_ARGS_ULINT ULINT
+  #define VA_ARGS_TIME TIME
+  #define VA_ARGS_BOOL WORD
+  #define VA_ARGS_BYTE WORD
+  #define VA_ARGS_WORD WORD
+  #define VA_ARGS_DWORD DWORD
+  #define VA_ARGS_LWORD LWORD
+  #define VA_ARGS_STRING STRING
+  #define VA_ARGS_WSTRING WSTRING
+  #define VA_ARGS_DATE DATE
+  #define VA_ARGS_TOD TOD
+  #define VA_ARGS_DT DT
+#else
+  #define VA_ARGS_REAL REAL
+  #define VA_ARGS_LREAL LREAL
+  #define VA_ARGS_SINT DINT
+  #define VA_ARGS_INT DINT
+  #define VA_ARGS_DINT DINT
+  #define VA_ARGS_LINT LINT
+  #define VA_ARGS_USINT UDINT
+  #define VA_ARGS_UINT UDINT
+  #define VA_ARGS_UDINT UDINT
+  #define VA_ARGS_ULINT ULINT
+  #define VA_ARGS_TIME TIME
+  #define VA_ARGS_BOOL DWORD
+  #define VA_ARGS_BYTE DWORD
+  #define VA_ARGS_WORD DWORD
+  #define VA_ARGS_DWORD DWORD
+  #define VA_ARGS_LWORD LWORD
+  #define VA_ARGS_STRING STRING
+  #define VA_ARGS_WSTRING WSTRING
+  #define VA_ARGS_DATE DATE
+  #define VA_ARGS_TOD TOD
+  #define VA_ARGS_DT DT
+#endif
 
 
 #define __numeric(fname,TYPENAME, FUNC) \
