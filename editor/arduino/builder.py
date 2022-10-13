@@ -68,6 +68,22 @@ def build(st_file, platform, source_file, port, txtCtrl, update_subsystem):
         else:
             cli_command = 'editor/arduino/bin/arduino-cli-l64'
 
+        """
+        ### ARDUINO-CLI CHEAT SHEET ###
+
+        1. List installed boards:
+          => arduino-cli board listall
+        
+        2. Search for a core (even if not installed yet):
+          => arduino-cli core search [search text]
+        
+        3. Dump current configuration:
+          => arduino-cli config dump
+
+        4. Get additional board parameters:
+          => arduino-cli board details -fqbn [board fqbn]
+        """
+
         #Setup boards - initial stage
         compiler_logs += runCommand(cli_command + ' config init')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
@@ -81,12 +97,17 @@ def build(st_file, platform, source_file, port, txtCtrl, update_subsystem):
         wx.CallAfter(scrollToEnd, txtCtrl)
 
         #Remove STM32 Board
-        compiler_logs += runCommand(cli_command + ' config remove board_manager.additional_urls https://raw.githubusercontent.com/stm32duino/BoardManagerFiles/master/STM32/package_stm_index.json')
+        compiler_logs += runCommand(cli_command + ' config remove board_manager.additional_urls https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectronics_index.json')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
 
         #Remove CONTROLLINO boards
         compiler_logs += runCommand(cli_command + ' config remove board_manager.additional_urls https://raw.githubusercontent.com/CONTROLLINO-PLC/CONTROLLINO_Library/master/Boards/package_ControllinoHardware_index.json')
+        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
+        wx.CallAfter(scrollToEnd, txtCtrl)
+
+        #Remove board added incorrectly by previous OpenPLC Editor versions
+        compiler_logs += runCommand(cli_command + ' config remove board_manager.additional_urls "2>&1"')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
 
@@ -100,7 +121,7 @@ def build(st_file, platform, source_file, port, txtCtrl, update_subsystem):
         wx.CallAfter(scrollToEnd, txtCtrl)
 
         #Add STM32 Board
-        compiler_logs += runCommand(cli_command + ' config add board_manager.additional_urls https://raw.githubusercontent.com/stm32duino/BoardManagerFiles/master/STM32/package_stm_index.json')
+        compiler_logs += runCommand(cli_command + ' config add board_manager.additional_urls https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectronics_index.json')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
 
@@ -143,7 +164,7 @@ def build(st_file, platform, source_file, port, txtCtrl, update_subsystem):
         compiler_logs += runCommand(cli_command + ' core install arduino:mbed_nano')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
-        compiler_logs += runCommand(cli_command + ' core install STM32:stm32')
+        compiler_logs += runCommand(cli_command + ' core install STMicroelectronics:stm32')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
         compiler_logs += runCommand(cli_command + ' lib install WiFiNINA')
@@ -376,44 +397,6 @@ void updateTime()
     else:
         source_path = 'editor/arduino/src/hal/'
         destination = 'editor/arduino/src/arduino.cpp'
-
-    """
-    if platform == 'arduino:avr:uno' or platform == 'arduino:avr:leonardo' or platform == 'arduino:samd:arduino_zero_native' or platform == 'arduino:samd:arduino_zero_edbg':
-        source_file = 'uno_leonardo_nano_micro_zero.cpp'
-    elif platform == 'arduino:avr:nano' or platform == 'arduino:avr:micro':
-        source_file = 'uno_leonardo_nano_micro_zero.cpp'
-    elif platform == 'arduino:megaavr:nona4809' or platform == 'arduino:mbed_nano:nano33ble' or platform == 'arduino:samd:nano_33_iot':
-        source_file = 'nano_every.cpp'
-    elif platform == 'arduino:mbed_nano:nanorp2040connect':
-        source_file = 'rp2040.cpp'
-    elif platform == 'arduino:avr:mega' or platform == 'arduino:sam:arduino_due_x' or platform == 'arduino:sam:arduino_due_x_dbg':
-        source_file = 'mega_due.cpp'
-    elif platform == 'arduino:samd:mkrzero' or platform == 'arduino:samd:mkrwifi1010':
-        source_file = 'mkr.cpp'
-    elif platform == 'CONTROLLINO_Boards:avr:controllino_mini':
-        source_file = 'controllino_mini.cpp'
-    elif platform == 'CONTROLLINO_Boards:avr:controllino_maxi':
-        source_file = 'controllino_maxi.cpp'
-    elif platform == 'CONTROLLINO_Boards:avr:controllino_maxi_automation':
-        source_file = 'controllino_maxi_automation.cpp'
-    elif platform == 'CONTROLLINO_Boards:avr:controllino_mega':
-        source_file = 'controllino_mega.cpp'
-    elif platform == 'arduino:samd:mkrzero-p1am':
-        source_file = 'p1am.cpp'
-        platform = 'arduino:samd:mkrzero'
-    elif platform == 'arduino:mbed_portenta:envie_m7':
-        source_file = 'machine_control.cpp'
-    elif platform == 'esp8266:esp8266:nodemcuv2' or platform == 'esp8266:esp8266:d1_mini':
-        source_file = 'esp8266.cpp'
-    elif platform == 'esp32:esp32:esp32' or platform == 'esp32:esp32:esp32s2' or platform == 'esp32:esp32:esp32c3':
-        source_file = 'esp32.cpp'
-    elif platform == 'esp32:esp32:esp32escope':
-        platform = 'esp32:esp32:esp32'
-        source_file = 'esp32_escope.cpp'
-    elif platform == 'esp32:esp32:esp32esim':
-        platform = 'esp32:esp32:esp32'
-        source_file = 'esp32_esim.cpp'
-    """
 
     shutil.copyfile(source_path + source_file, destination)
 
