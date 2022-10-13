@@ -1,0 +1,133 @@
+{
+    "Nano Every": {
+        "platform": "arduino:megaavr:nona4809",
+        "source": "nano_every.cpp"
+    },
+    "Arduino Due (native USB port)": {
+        "platform": "arduino:sam:arduino_due_x",
+        "source": "mega_due.cpp"
+    },
+    "Nano 33 IoT": {
+        "platform": "arduino:samd:nano_33_iot",
+        "define": "BOARD_WIFININA",
+        "source": "nano_every.cpp"
+    },
+    "ESP32": {
+        "platform": "esp32:esp32:esp32",
+        "define": "BOARD_ESP32",
+        "source": "esp32.cpp"
+    },
+    "STM32-F103CB (Bluepill)": {
+        "platform": "STMicroelectronics:stm32:GenF1:pnum=BLUEPILL_F103C8",
+        "define": "BOARD_STM32_F103CB",
+        "source": "stm32_f103cb.cpp"
+    },
+    "Mkr WiFi": {
+        "platform": "arduino:samd:mkrwifi1010",
+        "define": "BOARD_WIFININA",
+        "source": "mkr.cpp"
+    },
+    "Mkr Zero": {
+        "platform": "arduino:samd:mkrzero",
+        "source": "mkr.cpp"
+    },
+    "Arduino Zero (native USB port)": {
+        "platform": "arduino:samd:arduino_zero_native",
+        "source": "uno_leonardo_nano_micro_zero.cpp"
+    },
+    "Arduino Mega": {
+        "platform": "arduino:avr:mega",
+        "source": "mega_due.cpp"
+    },
+    "Portenta Machine Control H7": {
+        "platform": "arduino:mbed_portenta:envie_m7",
+        "source": "machine_control.cpp"
+    },
+    "CONTROLLINO MINI": {
+        "platform": "CONTROLLINO_Boards:avr:controllino_mini",
+        "source": "controllino_mini.cpp"
+    },
+    "Nano RP2040 Connect": {
+        "platform": "arduino:mbed_nano:nanorp2040connect",
+        "define": "BOARD_WIFININA",
+        "source": "rp2040.cpp"
+    },
+    "Arduino Uno": {
+        "platform": "arduino:avr:uno",
+        "source": "uno_leonardo_nano_micro_zero.cpp"
+    },
+    "Arduino Micro": {
+        "platform": "arduino:avr:micro",
+        "source": "uno_leonardo_nano_micro_zero.cpp"
+    },
+    "CONTROLLINO MEGA": {
+        "platform": "CONTROLLINO_Boards:avr:controllino_mega",
+        "source": "controllino_mega.cpp"
+    },
+    "Arduino Due (programming port)": {
+        "platform": "arduino:sam:arduino_due_x_dbg",
+        "source": "mega_due.cpp"
+    },
+    "Nano 33 BLE": {
+        "platform": "arduino:mbed_nano:nano33ble",
+        "source": "nano_every.cpp"
+    },
+    "ESP32-S2": {
+        "platform": "esp32:esp32:esp32s2",
+        "define": "BOARD_ESP32",
+        "source": "esp32.cpp"
+    },
+    "ESP8266 D1-mini": {
+        "platform": "esp8266:esp8266:d1_mini",
+        "define": "BOARD_ESP8266",
+        "source": "esp8266.cpp"
+    },
+    "Arduino Zero (programming port)": {
+        "platform": "arduino:samd:arduino_zero_edbg",
+        "source": "uno_leonardo_nano_micro_zero.cpp"
+    },
+    "P1AM-100": {
+        "platform": "arduino:samd:mkrzero",
+        "source": "p1am.cpp"
+    },
+    "Arduino Leonardo": {
+        "platform": "arduino:avr:leonardo",
+        "source": "uno_leonardo_nano_micro_zero.cpp"
+    },
+    "CONTROLLINO MAXI Automation": {
+        "platform": "CONTROLLINO_Boards:avr:controllino_maxi_automation",
+        "source": "controllino_maxi_automation.cpp"
+    },
+    "STM32-F411CE (Blackpill)": {
+        "platform": "STMicroelectronics:stm32:GenF4:pnum=BLACKPILL_F411CE",
+        "define": "BOARD_STM32_F411CE",
+        "source": "stm32_f411ce.cpp"
+    },
+    "ESP8266 NodeMCU": {
+        "platform": "esp8266:esp8266:nodemcuv2",
+        "define": "BOARD_ESP8266",
+        "source": "esp8266.cpp"
+    },
+    "ESP32-DOIT DEVKIT V1": {
+        "platform": "esp32:esp32:esp32doit-devkit-v1",
+        "define": "BOARD_ESP32",
+        "source": "esp32.cpp"
+    },
+    "Arduino Nano": {
+        "platform": "arduino:avr:nano",
+        "source": "uno_leonardo_nano_micro_zero.cpp"
+    },
+    "ESP32-C3": {
+        "platform": "esp32:esp32:esp32c3",
+        "define": "BOARD_ESP32",
+        "source": "esp32.cpp"
+    },
+    "CONTROLLINO MAXI": {
+        "platform": "CONTROLLINO_Boards:avr:controllino_maxi",
+        "source": "controllino_maxi.cpp"
+    },
+    "FX3U-14M / LE3U-14M": {
+        "platform": "STMicroelectronics:stm32:GenF1:pnum=GENERIC_F103VCTX,upload_method=serialMethod",
+        "source": "fx3u-14.cpp"
+    }
+}
