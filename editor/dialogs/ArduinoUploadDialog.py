@@ -300,59 +300,7 @@ class ArduinoUploadDialog(wx.Dialog):
         board_type = self.board_type_combo.GetValue()
         platform = self.hals[board_type]['platform']
         source = self.hals[board_type]['source']
-
-        # replacing these lines
-        """
-        if self.board_type_combo.GetValue() == u"P1AM-100":
-            board = 'arduino:samd:mkrzero-p1am'
-        elif self.board_type_combo.GetValue() == u"Uno":
-            board = 'arduino:avr:uno'
-        elif self.board_type_combo.GetValue() == u"Nano":
-            board = 'arduino:avr:nano'
-        elif self.board_type_combo.GetValue() == u"Leonardo":
-            board = 'arduino:avr:leonardo'
-        elif self.board_type_combo.GetValue() == u"Micro":
-            board = 'arduino:avr:micro'
-        elif self.board_type_combo.GetValue() == u"Nano Every":
-            board = 'arduino:megaavr:nona4809'
-        elif self.board_type_combo.GetValue() == u"Mega":
-            board = 'arduino:avr:mega'
-        elif self.board_type_combo.GetValue() == u"ESP8266 NodeMCU":
-            board = 'esp8266:esp8266:nodemcuv2'
-        elif self.board_type_combo.GetValue() == u"ESP8266 D1-mini":
-            board = 'esp8266:esp8266:d1_mini'
-        elif self.board_type_combo.GetValue() == u"ESP32":
-            board = 'esp32:esp32:esp32'
-        elif self.board_type_combo.GetValue() == u"ESP32-S2":
-            board = 'esp32:esp32:esp32s2'
-        elif self.board_type_combo.GetValue() == u"ESP32-C3":
-            board = 'esp32:esp32:esp32c3'
-        elif self.board_type_combo.GetValue() == u"ESP32-EScope":
-            board = 'esp32:esp32:esp32escope'
-        elif self.board_type_combo.GetValue() == u"ESP32-ESim":
-            board = 'esp32:esp32:esp32esim'
-        elif self.board_type_combo.GetValue() == u"Nano 33 IoT":
-            board = 'arduino:samd:nano_33_iot'
-        elif self.board_type_combo.GetValue() == u"Nano 33 BLE":
-            board = 'arduino:mbed_nano:nano33ble'
-        elif self.board_type_combo.GetValue() == u"Nano RP2040 Connect":
-            board = 'arduino:mbed_nano:nanorp2040connect'
-        elif self.board_type_combo.GetValue() == u"Mkr Zero":
-            board = 'arduino:samd:mkrzero'
-        elif self.board_type_combo.GetValue() == u"Mkr WiFi":
-            board = 'arduino:samd:mkrwifi1010'
-        elif self.board_type_combo.GetValue() == u"Due (native USB port)":
-            board = 'arduino:sam:arduino_due_x'
-        elif self.board_type_combo.GetValue() == u"Due (programming port)":
-            board = 'arduino:sam:arduino_due_x_dbg'
-        elif self.board_type_combo.GetValue() == u"Zero (native USB port)":
-            board = 'arduino:samd:arduino_zero_native'
-        elif self.board_type_combo.GetValue() == u"Zero (programming port)":
-            board = 'arduino:samd:arduino_zero_edbg'
-        elif self.board_type_combo.GetValue() == u"Portenta Machine Control":
-            board = 'arduino:mbed_portenta:envie_m7'
-        """
-
+        
         self.generateDefinitionsFile()
 
         port = self.com_port_combo.GetValue()
@@ -409,19 +357,7 @@ class ArduinoUploadDialog(wx.Dialog):
         # Get define from hals
         if 'define' in self.hals[self.board_type_combo.GetValue()]:
             define_file += '#define '+ self.hals[self.board_type_combo.GetValue()]['define'] +'\n'
-
-        # replacing these lines        
-        """
-        if (self.board_type_combo.GetValue() == u"ESP8266 NodeMCU" or self.board_type_combo.GetValue() == u"ESP8266 D1-mini"):
-            define_file += '#define BOARD_ESP8266\n'
-        elif (self.board_type_combo.GetValue() == u"ESP32" or self.board_type_combo.GetValue() == u"ESP32-S2" or self.board_type_combo.GetValue() == u"ESP32-C3"):
-            define_file += '#define BOARD_ESP32\n'
-        elif (self.board_type_combo.GetValue() == u"ESP32-EScope" or self.board_type_combo.GetValue() == u"ESP32-ESim"):
-            define_file += '#define BOARD_ESP32\n'
-        elif (self.board_type_combo.GetValue() == u"Nano 33 IoT" or self.board_type_combo.GetValue() == u"Mkr WiFi" or self.board_type_combo.GetValue() == u"Nano RP2040 Connect"):
-            define_file += '#define BOARD_WIFININA\n'
-        """
-
+        
         define_file += '\n\n//Arduino Libraries\n'
 
         #Generate Arduino Libraries defines
@@ -524,60 +460,8 @@ class ArduinoUploadDialog(wx.Dialog):
             jfile = 'editor\\arduino\\examples\\Baremetal\\hals.json'
         else:
             jfile = 'editor/arduino/examples/Baremetal/hals.json'
-        if (os.name == 'nt'):
-            base_path = 'editor\\arduino\\src\hal\\'
-        else:
-            base_path = 'editor/arduino/src/hal/'
-
-        # if updated, read HAL list from json file
-        if self.isHalsUpdated(jfile, base_path):
-            f = open(jfile, 'r')
-            jsonStr = f.read()
-            f.close()
-            self.hals = json.loads(jsonStr)
-            return
-
-        # read HAL configs from disk (many files)
-        # a bit slow ...
-        self.hals = {}
-        for hfile in glob.glob(base_path+'*.hal'):
-            # Read the hal file
-            f = open(hfile, 'r')
-            lines = f.readlines()
-            f.close()
-
-            # prepare the source file
-            head,tail=os.path.split(hfile)
-            sfile = os.path.splitext(tail)[0]+'.cpp'
-
-            # construct the hals configuration
-            for line in lines:
-                if line.strip():
-                    if not line.startswith('#'):
-                        fields = line.split(',')
-                        board = fields[0].strip()
-                        self.hals[board]={}
-                        self.hals[board]['platform'] = fields[1].strip()
-                        self.hals[board]['source']= sfile
-                        if (len(fields) >= 3):
-                            self.hals[board]['define']= fields[2].strip()
-
-        # write hals to json file
-        f = open(jfile, 'w')
-        f.write(json.dumps(self.hals))
-        f.flush()
+        
+        f = open(jfile, 'r')
+        jsonStr = f.read()
         f.close()
-    
-    def isHalsUpdated(self, jfile, hfolder):
-        # return true if the hals.json file is up-to-dated
-        if not os.path.exists(jfile):
-            return False
-        tm1 = os.path.getmtime(jfile)
-        tm2 = os.path.getmtime(hfolder)
-        if tm2 > tm1:
-            return False
-        for hfile in glob.glob(hfolder+'*.hal'):
-            tm2 = os.path.getmtime(hfile)
-            if (tm2 > tm1):
-                return False       
-        return True
+        self.hals = json.loads(jsonStr)
