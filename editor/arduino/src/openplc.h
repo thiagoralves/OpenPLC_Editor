@@ -31,9 +31,9 @@ typedef double   IEC_LREAL;
 #if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega168__) || defined(__AVR_ATmega32U4__) || defined(__AVR_ATmega16U4__)
 
 #define MAX_DIGITAL_INPUT          8
-#define MAX_DIGITAL_OUTPUT         8
+#define MAX_DIGITAL_OUTPUT         32
 #define MAX_ANALOG_INPUT           6
-#define MAX_ANALOG_OUTPUT          3
+#define MAX_ANALOG_OUTPUT          32
 
 #else
 
