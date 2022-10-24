@@ -43,7 +43,8 @@ else
     then
         #Manual install
         echo "Manually installing python-wxgtk3.0..."
-        sudo apt-get -y -qq install python libwxbase3.0-0v5 libwxgtk3.0-gtk3-0v5
+        sudo apt-get -y -qq install python 
+        sudo apt-get -y -qq install libwxbase3.0-0v5 libwxgtk3.0-gtk3-0v5
         sudo dpkg -i ./wxpython/python-wxversion_3.0.2.0+dfsg-8_all.deb
         sudo dpkg -i ./wxpython/python-wxgtk3.0_3.0.2.0+dfsg-8_amd64.deb
     fi
