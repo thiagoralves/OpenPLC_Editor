@@ -5,6 +5,15 @@
 #include "ModbusSlave.h"
 #endif
 
+//Include WiFi lib to turn off WiFi radio on ESP32 and ESP8266 boards if we're not using WiFi
+#ifndef MBTCP
+    #if defined(BOARD_ESP8266)
+        #include <ESP8266WiFi.h>
+    #elif defined(BOARD_ESP32)
+        #include <WiFi.h>
+    #endif
+#endif
+
 unsigned long __tick = 0;
 
 unsigned long scan_cycle;
@@ -61,7 +70,13 @@ void cycleDelay()
 }
 
 void setup() 
-{   
+{
+    //Turn off WiFi radio on ESP32 and ESP8266 boards if we're not using WiFi
+    #ifndef MBTCP
+        #if defined(BOARD_ESP8266) || defined(BOARD_ESP32)
+            WiFi.mode(WIFI_OFF);
+        #endif
+    #endif
     hardwareInit();
     config_init__();
     glueVars();
