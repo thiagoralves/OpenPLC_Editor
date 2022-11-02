@@ -339,7 +339,7 @@ __ANY_NBIT(__to_anyuint_)
 /* workaround for va-args limitation on shorter than int params */
 //For AVR devices, int = int16_t, for everyone else int = int32_t
 #if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega168__) || defined(__AVR_ATmega32U4__) || defined(__AVR_ATmega16U4__) || defined(__AVR_ATmega2560__)
-  #define VA_ARGS_REAL REAL
+  #define VA_ARGS_REAL LREAL
   #define VA_ARGS_LREAL LREAL
   #define VA_ARGS_SINT INT
   #define VA_ARGS_INT INT
@@ -361,7 +361,7 @@ __ANY_NBIT(__to_anyuint_)
   #define VA_ARGS_TOD TOD
   #define VA_ARGS_DT DT
 #else
-  #define VA_ARGS_REAL REAL
+  #define VA_ARGS_REAL LREAL
   #define VA_ARGS_LREAL LREAL
   #define VA_ARGS_SINT DINT
   #define VA_ARGS_INT DINT
