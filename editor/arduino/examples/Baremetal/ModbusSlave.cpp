@@ -231,7 +231,7 @@ void handle_tcp()
                 }
 
                 //Safety check - discard packages that lie about their size
-                if (i != mb_frame_len) return;
+                if (j != mb_frame_len) return;
 
                 //Process packet and write back
                 process_mbpacket();
