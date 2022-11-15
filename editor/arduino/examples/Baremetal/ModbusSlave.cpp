@@ -236,8 +236,8 @@ void handle_tcp()
                 //Process packet and write back
                 process_mbpacket();
                 //Calculate packet length for MBAP header (mb_frame_len + 1)
-                mb_mbap[4] = (mb_frame_len+1) >> 8;
-                mb_mbap[5] = (mb_frame_len+1) & 0x00FF;
+                mb_mbap[4] = (mb_frame_len) >> 8;
+                mb_mbap[5] = (mb_frame_len) & 0x00FF;
     
                 uint8_t sendbuffer[mb_frame_len + MBAP_SIZE];
 
@@ -287,8 +287,8 @@ void handle_tcp()
                 //Process packet and write back
                 process_mbpacket();
                 //Calculate packet length for MBAP header (mb_frame_len + 1)
-                mb_mbap[4] = (mb_frame_len+1) >> 8;
-                mb_mbap[5] = (mb_frame_len+1) & 0x00FF;
+                mb_mbap[4] = (mb_frame_len) >> 8;
+                mb_mbap[5] = (mb_frame_len) & 0x00FF;
     
                 uint8_t sendbuffer[mb_frame_len + MBAP_SIZE];
 
