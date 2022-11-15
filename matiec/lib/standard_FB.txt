@@ -45,6 +45,7 @@
 {#include "sema.txt" }
 {#include "arduino.txt" }
 {#include "p1am.txt" }
+{#include "communication_blocks.txt" }
 
 
 {enable code generation}
