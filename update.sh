@@ -11,6 +11,7 @@ git clone https://github.com/thiagoralves/OpenPLC_Editor
 if [ -d "./OpenPLC_Editor/editor" ]
 then
     mv "./OpenPLC_Editor/editor" ./new_editor
+    mv "./OpenPLC_Editor/matiec/lib" ./new_lib
     cp ./OpenPLC_Editor/revision ./
     rm -Rf OpenPLC_Editor
     echo "Update applied successfully"
