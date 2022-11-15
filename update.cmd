@@ -6,6 +6,7 @@ git clone https://github.com/thiagoralves/OpenPLC_Editor
 if exist .\OpenPLC_Editor\editor\ (
   move .\OpenPLC_Editor\editor .\new_editor
   move .\OpenPLC_Editor\matiec\lib .\new_lib
+  copy /y .\OpenPLC_Editor\revision .\
   rmdir /s /Q OpenPLC_Editor
   echo "Update applied successfully"
 ) else (
