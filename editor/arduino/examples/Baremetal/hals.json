@@ -1,4 +1,12 @@
 {
+    "Raspberry Pico": {
+        "platform": "arduino:mbed_rp2040:pico",
+        "source": "rp2040pico.cpp"
+    },
+    "Raspberry Pico W": {
+        "platform": "arduino:mbed_rp2040:pico",
+        "source": "rp2040pico.cpp"
+    },
     "Nano Every": {
         "platform": "arduino:megaavr:nona4809",
         "source": "nano_every.cpp"
