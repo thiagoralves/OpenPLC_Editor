@@ -75,4 +75,4 @@ uint8_t pinMask_AOUT[] = {4,5}; //2,3 can be used if SPI not required
 - Modified **OpenPLC_Editor\editor\arduino\builder.py** to include the required Arduino Pico build tools. These are NOT the the same as the ones for the Arduino Nano Connect.
 
 ## Other
-There is working code for including a DHT11/22/23 module and OLED on the I2C. This was added to learn how add a new FB to the OpenPLC. This entailed editing a few extra files and adding in some more code.
+There is working code (not yet available) for including a DHT11/22/23 module and OLED on the I2C. This was added to learn how add a new FB to the OpenPLC. This entailed editing a few extra files and adding in some more code.
