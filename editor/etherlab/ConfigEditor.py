@@ -10,33 +10,27 @@
 # See COPYING file for copyrights details.
 
 
+
 import os
 import re
 
 import wx
-import wx.gizmos
 import wx.grid
+import wx.adv
 import wx.lib.buttons
 
+from plcopen.structures import IEC_KEYWORDS, TestIdentifier
 from controls import CustomGrid, CustomTable, FolderTree
 from controls.CustomStyledTextCtrl import NAVIGATION_KEYS
 from editors.ConfTreeNodeEditor import ConfTreeNodeEditor, SCROLLBAR_UNIT
-# -----------------------------------------------------------------------
-from etherlab.EtherCATManagementEditor import EtherCATManagementTreebook, MasterStatePanelClass
-from plcopen.structures import IEC_KEYWORDS, TestIdentifier
 from util.BitmapLibrary import GetBitmap
 from util.TranslationCatalogs import NoTranslate
 
 # -----------------------------------------------------------------------
+from etherlab.EtherCATManagementEditor import EtherCATManagementTreebook, MasterStatePanelClass
+# -----------------------------------------------------------------------
 
-[ETHERCAT_VENDOR, ETHERCAT_GROUP, ETHERCAT_DEVICE] = range(3)
-
-
-def AppendMenu(parent, help, id, kind, text):
-    if wx.VERSION >= (2, 6, 0):
-        parent.Append(helpString=help, id=id, kind=kind, text=text)
-    else:
-        parent.Append(helpString=help, id=id, kind=kind, item=text)
+[ETHERCAT_VENDOR, ETHERCAT_GROUP, ETHERCAT_DEVICE] = list(range(3))
 
 
 def GetVariablesTableColnames(position=False):
@@ -89,7 +83,7 @@ class NodeVariablesSizer(wx.FlexGridSizer):
         self.VariablesFilter.Bind(wx.EVT_CHAR, self.OnVariablesFilterKeyDown)
         self.Add(self.VariablesFilter, flag=wx.GROW)
 
-        self.VariablesGrid = wx.gizmos.TreeListCtrl(parent,
+        self.VariablesGrid = wx.adv.TreeListCtrl(parent,
                                                     style=wx.TR_DEFAULT_STYLE |
                                                     wx.TR_ROW_LINES |
                                                     wx.TR_COLUMN_LINES |
@@ -109,18 +103,18 @@ class NodeVariablesSizer(wx.FlexGridSizer):
         self.VariablesFilterFirstCharacter = True
 
         if position_column:
-            for colname, colsize, colalign in list(zip(GetVariablesTableColnames(position_column),
-                                                       [40, 80, 350, 80, 100, 80, 150],
-                                                       [wx.ALIGN_RIGHT, wx.ALIGN_RIGHT, wx.ALIGN_LEFT,
-                                                        wx.ALIGN_RIGHT, wx.ALIGN_RIGHT, wx.ALIGN_LEFT,
-                                                        wx.ALIGN_LEFT])):
+            for colname, colsize, colalign in zip(GetVariablesTableColnames(position_column),
+                                                  [40, 80, 350, 80, 100, 80, 150],
+                                                  [wx.ALIGN_RIGHT, wx.ALIGN_RIGHT, wx.ALIGN_LEFT,
+                                                   wx.ALIGN_RIGHT, wx.ALIGN_RIGHT, wx.ALIGN_LEFT,
+                                                   wx.ALIGN_LEFT]):
                 self.VariablesGrid.AddColumn(_(colname), colsize, colalign)
             self.VariablesGrid.SetMainColumn(2)
         else:
-            for colname, colsize, colalign in list(zip(GetVariablesTableColnames(),
-                                                       [40, 350, 80, 100, 80, 150],
-                                                       [wx.ALIGN_RIGHT, wx.ALIGN_LEFT, wx.ALIGN_RIGHT,
-                                                        wx.ALIGN_RIGHT, wx.ALIGN_LEFT, wx.ALIGN_LEFT])):
+            for colname, colsize, colalign in zip(GetVariablesTableColnames(),
+                                                  [40, 350, 80, 100, 80, 150],
+                                                  [wx.ALIGN_RIGHT, wx.ALIGN_LEFT, wx.ALIGN_RIGHT,
+                                                   wx.ALIGN_RIGHT, wx.ALIGN_LEFT, wx.ALIGN_LEFT]):
                 self.VariablesGrid.AddColumn(_(colname), colsize, colalign)
             self.VariablesGrid.SetMainColumn(1)
 
@@ -148,6 +142,9 @@ class NodeVariablesSizer(wx.FlexGridSizer):
                     self.VariablesGrid.SetItemText(item, str(idx), 0)
                 else:
                     value = entry.get(colname, "")
+                    # add jblee
+                    if value is None:
+                        value = ""
                     if colname == "Access":
                         value = GetAccessValue(value, entry.get("PDOMapping", ""))
                     self.VariablesGrid.SetItemText(item, value, col)
@@ -281,7 +278,7 @@ class NodeEditor(ConfTreeNodeEditor):
 
         self.NodeVariables = NodeVariablesSizer(self.EthercatNodeEditor, self.Controler)
         main_sizer.Add(self.NodeVariables, border=10,
-                       flag=wx.GROW | wx.BOTTOM | wx.LEFT | wx.RIGHT)
+                            flag=wx.GROW | wx.BOTTOM | wx.LEFT | wx.RIGHT)
 
         self.EthercatNodeEditor.SetSizer(main_sizer)
 
@@ -452,6 +449,8 @@ class ProcessVariableDropTarget(wx.TextDropTarget):
 
         if message is not None:
             wx.CallAfter(self.ShowMessage, message)
+            return False
+        return True
 
     def ShowMessage(self, message):
         message = wx.MessageDialog(self.ParentWindow, message, _("Error"), wx.OK | wx.ICON_ERROR)
@@ -504,6 +503,8 @@ class StartupCommandDropTarget(wx.TextDropTarget):
 
         if message is not None:
             wx.CallAfter(self.ShowMessage, message)
+            return False
+        return True
 
     def ShowMessage(self, message):
         message = wx.MessageDialog(self.ParentWindow, message, _("Error"), wx.OK | wx.ICON_ERROR)
@@ -616,9 +617,7 @@ class MasterEditor(ConfTreeNodeEditor):
         self.MasterStateEditor = wx.ScrolledWindow(prnt, style=wx.TAB_TRAVERSAL | wx.HSCROLL | wx.VSCROLL)
         self.MasterStateEditor.Bind(wx.EVT_SIZE, self.OnResize)
 
-        self.MasterStateEditor_Panel_Main_Sizer = wx.FlexGridSizer(cols=1, hgap=0, rows=2, vgap=5)
-        self.MasterStateEditor_Panel_Main_Sizer.AddGrowableCol(0)
-        self.MasterStateEditor_Panel_Main_Sizer.AddGrowableRow(0)
+        self.MasterStateEditor_Panel_Main_Sizer = wx.BoxSizer(wx.VERTICAL)
 
         self.MasterStateEditor_Panel = MasterStatePanelClass(self.MasterStateEditor, self.Controler)
 
@@ -626,6 +625,18 @@ class MasterEditor(ConfTreeNodeEditor):
 
         self.MasterStateEditor.SetSizer(self.MasterStateEditor_Panel_Main_Sizer)
         return self.MasterStateEditor
+
+    def OnResize2(self, event):
+        self.MasterStateEditor.GetBestSize()
+        xstart, ystart = self.MasterStateEditor.GetViewStart()
+        window_size = self.MasterStateEditor.GetClientSize()
+        maxx, maxy = self.MasterStateEditor.GetMinSize()
+        posx = max(0, min(xstart, (maxx - window_size[0]) / SCROLLBAR_UNIT))
+        posy = max(0, min(ystart, (maxy - window_size[1]) / SCROLLBAR_UNIT))
+        self.MasterStateEditor.Scroll(posx, posy)
+        self.MasterStateEditor.SetScrollbars(SCROLLBAR_UNIT, SCROLLBAR_UNIT, 
+                maxx / SCROLLBAR_UNIT, maxy / SCROLLBAR_UNIT, posx, posy)
+        event.Skip()
 
     def _create_EthercatMasterEditor(self, prnt):
         self.EthercatMasterEditor = wx.ScrolledWindow(prnt,
@@ -645,7 +656,7 @@ class MasterEditor(ConfTreeNodeEditor):
         process_variables_label = wx.StaticText(self.EthercatMasterEditor,
                                                 label=_("Process variables mapped between nodes:"))
         process_variables_header.Add(process_variables_label, 1,
-                                     flag=wx.ALIGN_CENTER_VERTICAL)
+                                           flag=wx.ALIGN_CENTER_VERTICAL)
 
         for name, bitmap, help in [
                 ("AddVariableButton", "add_element", _("Add process variable")),
@@ -661,7 +672,7 @@ class MasterEditor(ConfTreeNodeEditor):
         self.ProcessVariablesGrid = CustomGrid(self.EthercatMasterEditor, style=wx.VSCROLL)
         self.ProcessVariablesGrid.SetMinSize(wx.Size(0, 150))
         self.ProcessVariablesGrid.SetDropTarget(ProcessVariableDropTarget(self))
-        self.ProcessVariablesGrid.Bind(wx.grid.EVT_GRID_CELL_CHANGED,
+        self.ProcessVariablesGrid.Bind(wx.grid.EVT_GRID_CELL_CHANGING,
                                        self.OnProcessVariablesGridCellChange)
         self.ProcessVariablesGrid.Bind(wx.grid.EVT_GRID_CELL_LEFT_CLICK,
                                        self.OnProcessVariablesGridCellLeftClick)
@@ -672,7 +683,7 @@ class MasterEditor(ConfTreeNodeEditor):
         startup_commands_label = wx.StaticText(self.EthercatMasterEditor,
                                                label=_("Startup service variables assignments:"))
         startup_commands_header.Add(startup_commands_label, 1,
-                                    flag=wx.ALIGN_CENTER_VERTICAL)
+                                          flag=wx.ALIGN_CENTER_VERTICAL)
 
         for name, bitmap, help in [
                 ("AddCommandButton", "add_element", _("Add startup service variable")),
@@ -686,7 +697,7 @@ class MasterEditor(ConfTreeNodeEditor):
         self.StartupCommandsGrid = CustomGrid(self.EthercatMasterEditor, style=wx.VSCROLL)
         self.StartupCommandsGrid.SetDropTarget(StartupCommandDropTarget(self))
         self.StartupCommandsGrid.SetMinSize(wx.Size(0, 150))
-        self.StartupCommandsGrid.Bind(wx.grid.EVT_GRID_CELL_CHANGED,
+        self.StartupCommandsGrid.Bind(wx.grid.EVT_GRID_CELL_CHANGING,
                                       self.OnStartupCommandsGridCellChange)
         self.StartupCommandsGrid.Bind(wx.grid.EVT_GRID_EDITOR_SHOWN,
                                       self.OnStartupCommandsGridEditorShow)
@@ -707,11 +718,11 @@ class MasterEditor(ConfTreeNodeEditor):
         main_staticbox_sizer.Add(process_variables_header, border=5,
                                       flag=wx.GROW | wx.LEFT | wx.RIGHT | wx.BOTTOM)
         main_staticbox_sizer.Add(self.ProcessVariablesGrid, 1,
-                                 border=5, flag=wx.GROW | wx.LEFT | wx.RIGHT | wx.BOTTOM)
+                                       border=5, flag=wx.GROW | wx.LEFT | wx.RIGHT | wx.BOTTOM)
         main_staticbox_sizer.Add(startup_commands_header,
-                                 border=5, flag=wx.GROW | wx.LEFT | wx.RIGHT | wx.BOTTOM)
+                                      border=5, flag=wx.GROW | wx.LEFT | wx.RIGHT | wx.BOTTOM)
         main_staticbox_sizer.Add(self.StartupCommandsGrid, 1,
-                                 border=5, flag=wx.GROW | wx.LEFT | wx.RIGHT | wx.BOTTOM)
+                                       border=5, flag=wx.GROW | wx.LEFT | wx.RIGHT | wx.BOTTOM)
 
         second_staticbox = wx.StaticBox(self.EthercatMasterEditor, label=_("Nodes variables filter:"))
         second_staticbox_sizer = wx.StaticBoxSizer(second_staticbox, wx.VERTICAL)
@@ -1107,13 +1118,13 @@ class LibraryEditorSizer(wx.FlexGridSizer):
         ESI_files_label = wx.StaticText(parent,
                                         label=_("ESI Files:"))
         self.Add(ESI_files_label, border=10,
-                 flag=wx.TOP | wx.LEFT | wx.RIGHT)
+                       flag=wx.TOP | wx.LEFT | wx.RIGHT)
 
         folder_tree_sizer = wx.FlexGridSizer(cols=2, hgap=5, rows=1, vgap=0)
         folder_tree_sizer.AddGrowableCol(0)
         folder_tree_sizer.AddGrowableRow(0)
         self.Add(folder_tree_sizer, border=10,
-                 flag=wx.GROW | wx.LEFT | wx.RIGHT)
+                      flag=wx.GROW | wx.LEFT | wx.RIGHT)
 
         self.ESIFiles = FolderTree(parent, self.GetPath(), editable=False)
         self.ESIFiles.SetFilter(".xml")
@@ -1121,7 +1132,7 @@ class LibraryEditorSizer(wx.FlexGridSizer):
 
         buttons_sizer = wx.BoxSizer(wx.VERTICAL)
         folder_tree_sizer.Add(buttons_sizer,
-                              flag=wx.ALIGN_CENTER_VERTICAL)
+                                   flag=wx.ALIGN_CENTER_VERTICAL)
 
         for idx, (name, bitmap, help, callback) in enumerate(buttons):
             button = wx.lib.buttons.GenBitmapButton(parent,
@@ -1143,9 +1154,9 @@ class LibraryEditorSizer(wx.FlexGridSizer):
         modules_label = wx.StaticText(parent,
                                       label=_("Modules library:"))
         self.Add(modules_label, border=10,
-                 flag=wx.LEFT | wx.RIGHT)
+                      flag=wx.LEFT | wx.RIGHT)
 
-        self.ModulesGrid = wx.gizmos.TreeListCtrl(parent,
+        self.ModulesGrid = wx.adv.TreeListCtrl(parent,
                                                   style=wx.TR_DEFAULT_STYLE |
                                                   wx.TR_ROW_LINES |
                                                   wx.TR_COLUMN_LINES |
@@ -1160,16 +1171,16 @@ class LibraryEditorSizer(wx.FlexGridSizer):
         self.ModulesGrid.GetHeaderWindow().Bind(wx.EVT_MOTION,
                                                 self.OnModulesGridHeaderMotion)
         self.Add(self.ModulesGrid, border=10,
-                 flag=wx.GROW | wx.BOTTOM | wx.LEFT | wx.RIGHT)
+                       flag=wx.GROW | wx.BOTTOM | wx.LEFT | wx.RIGHT)
 
-        for colname, colsize, colalign in list(zip(
+        for colname, colsize, colalign in zip(
                 [_("Name")] + [param_infos["column_label"]
                                for _param, param_infos in
                                self.ModuleLibrary.MODULES_EXTRA_PARAMS],
                 [400] + [param_infos["column_size"]
                          for _param, param_infos in
                          self.ModuleLibrary.MODULES_EXTRA_PARAMS],
-                [wx.ALIGN_LEFT] + [wx.ALIGN_RIGHT] * len(self.ModuleLibrary.MODULES_EXTRA_PARAMS))):
+                [wx.ALIGN_LEFT] + [wx.ALIGN_RIGHT] * len(self.ModuleLibrary.MODULES_EXTRA_PARAMS)):
             self.ModulesGrid.AddColumn(_(colname), colsize, colalign, edit=True)
         self.ModulesGrid.SetMainColumn(0)
 
@@ -1233,7 +1244,7 @@ class LibraryEditorSizer(wx.FlexGridSizer):
                                _("Choose an XML file"),
                                os.getcwd(), "",
                                _("XML files (*.xml)|*.xml|All files|*.*"),
-                               wx.OPEN)
+                               wx.FD_OPEN)
 
         if dialog.ShowModal() == wx.ID_OK:
             filepath = dialog.GetPath()
@@ -1353,13 +1364,14 @@ class DatabaseManagementDialog(wx.Dialog):
             ])
         self.DatabaseSizer.SetControlMinSize(wx.Size(0, 0))
         main_sizer.Add(self.DatabaseSizer, border=10,
-                       flag=wx.GROW | wx.TOP | wx.LEFT | wx.RIGHT)
+                            flag=wx.GROW | wx.TOP | wx.LEFT | wx.RIGHT)
 
         button_sizer = self.CreateButtonSizer(wx.OK | wx.CANCEL | wx.CENTRE)
+        # FIXME: find a way to change buttons label compatible with wxPython 4.x
         # button_sizer.GetAffirmativeButton().SetLabel(_("Add file to project"))
-        button_sizer.GetCancelButton().SetLabel(_("Close"))
+        # button_sizer.GetCancelButton().SetLabel(_("Close"))
         main_sizer.Add(button_sizer, border=10,
-                       flag=wx.ALIGN_RIGHT | wx.BOTTOM | wx.LEFT | wx.RIGHT)
+                            flag=wx.ALIGN_RIGHT | wx.BOTTOM | wx.LEFT | wx.RIGHT)
 
         self.SetSizer(main_sizer)
 

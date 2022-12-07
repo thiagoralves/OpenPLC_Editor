@@ -3,15 +3,16 @@
 
 # See COPYING file for copyrights details.
 
-import json
+
 import os
 import time
+import json
 from zipfile import ZipFile
 
 # PSK Management Data model :
 # [[ID,Desc, LastKnownURI, LastConnect]]
-COL_ID, COL_URI, COL_DESC, COL_LAST = range(4)
-REPLACE, REPLACE_ALL, KEEP, KEEP_ALL, CANCEL = range(5)
+COL_ID, COL_URI, COL_DESC, COL_LAST = list(range(4))
+REPLACE, REPLACE_ALL, KEEP, KEEP_ALL, CANCEL = list(range(5))
 
 
 def _pskpath(project_path):

@@ -60,7 +60,7 @@ void updateInputBuffers()
     for (int i = 0; i < NUM_ANALOG_INPUT; i++)
     {
         if (int_input[i] != NULL)
-            *int_input[i] = (analogRead(pinMask_AIN[i]) * 64);
+            *int_input[i] = (analogRead(pinMask_AIN[i]) * 16);
     }
 }
 

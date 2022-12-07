@@ -4,7 +4,7 @@
 # See COPYING.Runtime file for copyrights details.
 #
 
-# 
+
 from ctypes import CDLL, RTLD_GLOBAL, pointer, c_int, POINTER, c_char, create_string_buffer
 
 

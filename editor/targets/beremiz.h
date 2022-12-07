@@ -3,9 +3,7 @@
 
 /* Beremiz' header file for use by extensions */
 
-#include "iec_types_all.h"
-#include "POUS.h"
-#include "accessor.h"
+#include "iec_types.h"
 
 #define LOG_LEVELS 4
 #define LOG_CRITICAL 0
@@ -28,5 +26,10 @@ int     LogMessage(uint8_t level, char* buf, uint32_t size);
 #endif
 
 long AtomicCompareExchange(long* atomicvar,long compared, long exchange);
+void *create_RT_to_nRT_signal(char* name);
+void delete_RT_to_nRT_signal(void* handle);
+int wait_RT_to_nRT_signal(void* handle);
+int unblock_RT_to_nRT_signal(void* handle);
+void nRT_reschedule(void);
 
 #endif

@@ -129,9 +129,6 @@
 ../util/misc.py
 ../util/ProcessLogger.py
 ../features.py
-../svgui/svgui.py
-../svgui/svgui_server.py
-../svgui/svguilib.py
 ../plcopen/InstancesPathCollector.py
 ../plcopen/types_enums.py
 ../plcopen/InstanceTagnameCollector.py

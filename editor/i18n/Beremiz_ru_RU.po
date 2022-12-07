@@ -981,10 +981,6 @@ msgstr "Сменить рабочую директорию"
 msgid "Character string"
 msgstr "Строковые операции"
 
-#: ../svgui/svgui.py:136
-msgid "Choose a SVG file"
-msgstr "Выберите SVG-файл"
-
 #: ../etherlab/EtherCATManagementEditor.py:911
 #: ../etherlab/EtherCATManagementEditor.py:1306
 msgid "Choose a binary file"
@@ -1317,10 +1313,6 @@ msgstr "Невозможно запустить ПЛК!\n"
 #: ../ProjectController.py:1725
 msgid "Couldn't stop PLC !\n"
 msgstr "Невозможно остановить ПЛК!\n"
-
-#: ../svgui/svgui.py:57
-msgid "Create HMI"
-msgstr "Создать HMI"
 
 #: ../dialogs/PouDialog.py:48
 msgid "Create a new POU"
@@ -2118,10 +2110,6 @@ msgstr "Неверный IP-адрес"
 msgid "Import ESI file"
 msgstr "Импортировать файл ESI"
 
-#: ../svgui/svgui.py:50 ../svgui/svgui.py:51
-msgid "Import SVG"
-msgstr "Импорт SVG"
-
 #: ../etherlab/ConfigEditor.py:1352
 msgid "Import file to ESI files database"
 msgstr "Импортировать файл в базу данных файлов ESI"
@@ -2190,10 +2178,6 @@ msgstr "Инициировать перетаскивание отображае
 msgid "Initiate Drag'n drop of Network position located variable"
 msgstr ""
 "Инициировать перетаскивание отображаемой переменной сетевого положения"
-
-#: ../svgui/svgui.py:56
-msgid "Inkscape"
-msgstr "Inkscape"
 
 #: ../dialogs/SFCTransitionDialog.py:77 ../dialogs/ActionBlockDialog.py:47
 msgid "Inline"
@@ -2756,11 +2740,6 @@ msgstr "Ничего не найдено."
 msgid "No slave defined at position %d!"
 msgstr "Для позиции %d не определено ведомое устройство!"
 
-#: ../svgui/svgui.py:142
-#, python-format
-msgid "No such SVG file: %s\n"
-msgstr "Нет такого SVG файла: %s\n"
-
 #: ../etherlab/ConfigEditor.py:1245
 #, python-format
 msgid "No such XML file: %s\n"
@@ -2854,10 +2833,6 @@ msgstr "Только элементы"
 #: ../PLCOpenEditor.py:118
 msgid "Open"
 msgstr "Открыть"
-
-#: ../svgui/svgui.py:151
-msgid "Open Inkscape"
-msgstr "Открыть Inkscape"
 
 #: ../version.py:88
 msgid ""
@@ -3463,14 +3438,6 @@ msgstr "ST"
 #: ../PLCOpenEditor.py:308
 msgid "ST files (*.st)|*.st|All files|*.*"
 msgstr "ST файлы (*.st)|*.st|Все файлы|*.*"
-
-#: ../svgui/svgui.py:136
-msgid "SVG files (*.svg)|*.svg|All files|*.*"
-msgstr "SVG файлы (*.svg)|*.svg|Все файлы|*.*"
-
-#: ../features.py:25
-msgid "SVGUI"
-msgstr "SVGUI"
 
 #: ../BeremizIDE.py:247 ../BeremizIDE.py:278 ../PLCOpenEditor.py:84
 #: ../PLCOpenEditor.py:119
@@ -4292,14 +4259,6 @@ msgstr ""
 #: ../etherlab/EtherCATManagementEditor.py:648
 msgid "You cannot SDO download this state"
 msgstr "Вы не можете загрузить это состояние через SDO"
-
-#: ../svgui/svgui.py:150
-msgid ""
-"You don't have write permissions.\n"
-"Open Inkscape anyway ?"
-msgstr ""
-"У вас недостаточно прав для записи.\n"
-"Открыть Inkscape все равно?"
 
 #: ../wxglade_hmi/wxglade_hmi.py:175
 msgid ""

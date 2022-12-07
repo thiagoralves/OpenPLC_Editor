@@ -22,14 +22,13 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import getopt
+
 import os
 import sys
-import traceback
+import getopt
 
 import wx
 from wx.lib.agw.advancedsplash import AdvancedSplash, AS_NOTIMEOUT, AS_CENTER_ON_SCREEN
-from util.misc import execfile
 
 import util.paths as paths
 
@@ -48,6 +47,7 @@ class BeremizIDELauncher(object):
         self.modules = ["BeremizIDE"]
         self.debug = os.path.exists("BEREMIZ_DEBUG")
         self.handle_exception = None
+        self.logf = None
 
     def Bpath(self, *args):
         return os.path.join(self.app_dir, *args)
@@ -60,12 +60,13 @@ class BeremizIDELauncher(object):
         print("-h --help                    Print this help")
         print("-u --updatecheck URL         Retrieve update information by checking URL")
         print("-e --extend PathToExtension  Extend IDE functionality by loading at start additional extensions")
+        print("-l --log path                write content of console tab to given file")
         print("")
         print("")
 
     def SetCmdOptions(self):
-        self.shortCmdOpts = "hu:e:"
-        self.longCmdOpts = ["help", "updatecheck=", "extend="]
+        self.shortCmdOpts = "hu:e:l:"
+        self.longCmdOpts = ["help", "updatecheck=", "extend=", "log="]
 
     def ProcessOption(self, o, a):
         if o in ("-h", "--help"):
@@ -75,6 +76,8 @@ class BeremizIDELauncher(object):
             self.updateinfo_url = a
         if o in ("-e", "--extend"):
             self.extensions.append(a)
+        if o in ("-l", "--log"):
+            self.logf = open(a, 'a')
 
     def ProcessCommandLineArgs(self):
         self.SetCmdOptions()
@@ -100,13 +103,18 @@ class BeremizIDELauncher(object):
             self.buildpath = args[1]
 
     def CreateApplication(self):
-        class BeremizApp(wx.App):
+
+        BeremizAppType = wx.App if wx.VERSION >= (3, 0, 0) else wx.PySimpleApp
+
+        class BeremizApp(BeremizAppType):
             def OnInit(_self):  # pylint: disable=no-self-argument
                 self.ShowSplashScreen()
                 return True
 
         self.app = BeremizApp(redirect=self.debug)
         self.app.SetAppName('beremiz')
+        if wx.VERSION < (3, 0, 0):
+            wx.InitAllImageHandlers()
 
     def ShowSplashScreen(self):
         class Splash(AdvancedSplash):
@@ -147,7 +155,7 @@ class BeremizIDELauncher(object):
             sys.path.append(extension_folder)
             AddCatalog(os.path.join(extension_folder, "locale"))
             AddBitmapFolder(os.path.join(extension_folder, "images"))
-            execfile(extfilename, self.globals())
+            exec(compile(open(extfilename, "rb").read(), extfilename, 'exec'), self.globals())
 
     def CheckUpdates(self):
         if self.updateinfo_url is not None:
@@ -155,8 +163,8 @@ class BeremizIDELauncher(object):
 
             def updateinfoproc():
                 try:
-                    from urllib import request
-                    self.updateinfo = request.urlopen(self.updateinfo_url, None).read()
+                    import urllib.request, urllib.error, urllib.parse
+                    self.updateinfo = urllib.request.urlopen(self.updateinfo_url, None).read()
                 except Exception:
                     self.updateinfo = _("update info unavailable.")
 
@@ -175,10 +183,10 @@ class BeremizIDELauncher(object):
     def InstallExceptionHandler(self):
         import version
         import util.ExceptionHandler
-        self.handle_exception = util.ExceptionHandler.AddExceptHook(version.app_version)
+        self.handle_exception = util.ExceptionHandler.AddExceptHook(version.app_version, logf=self.logf)
 
     def CreateUI(self):
-        self.frame = self.BeremizIDE.Beremiz(None, self.projectOpen, self.buildpath)
+        self.frame = self.BeremizIDE.Beremiz(None, self.projectOpen, self.buildpath, logf=self.logf)
 
     def CloseSplash(self):
         if self.splash:
@@ -199,9 +207,7 @@ class BeremizIDELauncher(object):
             self.ShowUI()
         except (KeyboardInterrupt, SystemExit):
             raise
-        except Exception as e:
-            print(e)
-            print(traceback.print_exc())
+        except Exception:
             if self.handle_exception is not None:
                 self.handle_exception(*sys.exc_info(), exit=True)
             else:

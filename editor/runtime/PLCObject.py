@@ -22,26 +22,24 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 
-import _ctypes
+from threading import Thread, Lock, Event, Condition
 import ctypes
-import hashlib
 import os
-import shutil
 import sys
 import traceback
-from functools import wraps, partial
-from tempfile import mkstemp
-# 
-from threading import Thread, Lock, Event, Condition
+import shutil
 from time import time
+import hashlib
+from tempfile import mkstemp
+from functools import wraps, partial
+import _ctypes
 
-from runtime import MainWorker
-from runtime import PlcStatus
-from runtime import default_evaluator
-from runtime.Stunnel import getPSKID
-from runtime.loglevels import LogLevelsDefault, LogLevelsCount
 from runtime.typemapping import TypeTranslator
-from util.misc import execfile
+from runtime.loglevels import LogLevelsDefault, LogLevelsCount
+from runtime.Stunnel import getPSKID
+from runtime import PlcStatus
+from runtime import MainWorker
+from runtime import default_evaluator
 
 if os.name in ("nt", "ce"):
     dlopen = _ctypes.LoadLibrary
@@ -58,7 +56,7 @@ def get_last_traceback(tb):
 
 
 lib_ext = {
-    "linux2": ".so",
+    "linux": ".so",
     "win32":  ".dll",
 }.get(sys.platform, "")
 
@@ -82,8 +80,7 @@ class PLCObject(object):
         if os.path.exists(self.tmpdir):
             shutil.rmtree(self.tmpdir)
         os.mkdir(self.tmpdir)
-        # FIXME : is argv of any use nowadays ?
-        self.argv = [WorkingDir] + argv  # force argv[0] to be "path" to exec...
+        self.argv = []
         self.statuschange = statuschange
         self.evaluator = evaluator
         self.pyruntimevars = pyruntimevars
@@ -112,7 +109,9 @@ class PLCObject(object):
             if autostart:
                 if self.LoadPLC():
                     self.StartPLC()
-                    return
+                else:
+                    self._fail(_("Problem autostarting PLC : can't load PLC"))
+                return
         except Exception:
             self.PLCStatus = PlcStatus.Empty
             self.CurrentPLCFilename = None
@@ -124,7 +123,6 @@ class PLCObject(object):
             for callee in self.statuschange:
                 callee(self.PLCStatus)
 
-    @RunInMain
     def LogMessage(self, *args):
         if len(args) == 2:
             level, msg = args
@@ -133,7 +131,7 @@ class PLCObject(object):
             msg, = args
         PLCprint(msg)
         if self._LogMessage is not None:
-            return self._LogMessage(level, msg, len(msg))
+            return self._LogMessage(level, msg.encode(), len(msg))
         return None
 
     @RunInMain
@@ -161,8 +159,8 @@ class PLCObject(object):
                                      ctypes.byref(tv_sec),
                                      ctypes.byref(tv_nsec))
             if sz and sz <= maxsz:
-                self._log_read_buffer[sz] = '\x00'
-                return self._log_read_buffer.value, tick.value, tv_sec.value, tv_nsec.value
+                return (self._log_read_buffer[:sz].decode(), tick.value,
+                        tv_sec.value, tv_nsec.value)
         elif self._loading_error is not None and level == 0:
             return self._loading_error, 0, 0, 0
         return None
@@ -186,7 +184,7 @@ class PLCObject(object):
 
             self.PLC_ID = ctypes.c_char_p.in_dll(self.PLClibraryHandle, "PLC_ID")
             if len(md5) == 32:
-                self.PLC_ID.value = md5
+                self.PLC_ID.value = md5.encode()
 
             self._startPLC = self.PLClibraryHandle.startPLC
             self._startPLC.restype = ctypes.c_int
@@ -221,7 +219,7 @@ class PLCObject(object):
             self._ResetDebugVariables.restype = None
 
             self._RegisterDebugVariable = self.PLClibraryHandle.RegisterDebugVariable
-            self._RegisterDebugVariable.restype = None
+            self._RegisterDebugVariable.restype = ctypes.c_int
             self._RegisterDebugVariable.argtypes = [ctypes.c_int, ctypes.c_void_p]
 
             self._FreeDebugData = self.PLClibraryHandle.FreeDebugData
@@ -269,7 +267,12 @@ class PLCObject(object):
     def LoadPLC(self):
         res = self._LoadPLC()
         if res:
-            self.PythonRuntimeInit()
+            try:
+                self.PythonRuntimeInit()
+            except Exception:
+                self._loading_error = traceback.format_exc()
+                PLCprint(self._loading_error)
+                return False
         else:
             self._FreePLC()
 
@@ -287,7 +290,7 @@ class PLCObject(object):
         self._startPLC = lambda x, y: None
         self._stopPLC = lambda: None
         self._ResetDebugVariables = lambda: None
-        self._RegisterDebugVariable = lambda x, y: None
+        self._RegisterDebugVariable = lambda x, y: 0
         self._IterDebugData = lambda x, y: None
         self._FreeDebugData = lambda: None
         self._GetDebugData = lambda: -1
@@ -319,12 +322,15 @@ class PLCObject(object):
 
         return False
 
-    def PythonRuntimeCall(self, methodname, use_evaluator=True):
+    def PythonRuntimeCall(self, methodname, use_evaluator=True, reverse_order=False):
         """
         Calls init, start, stop or cleanup method provided by
         runtime python files, loaded when new PLC uploaded
         """
-        for method in self.python_runtime_vars.get("_runtime_%s" % methodname, []):
+        methods = self.python_runtime_vars.get("_runtime_%s" % methodname, [])
+        if reverse_order:
+            methods = reversed(methods)
+        for method in methods:
             if use_evaluator:
                 _res, exp = self.evaluator(method)
             else:
@@ -357,8 +363,18 @@ class PLCObject(object):
                 v = parent.python_runtime_vars["_"+name+"_pack"](t, value)
                 parent.python_runtime_vars["_PySafeSetPLCGlob_"+name](ctypes.byref(v))
 
+        class OnChangeStateClass(object):
+            def __getattr__(self, name):
+                u = parent.python_runtime_vars["_"+name+"_unpack"]
+                return type("changedesc",(),dict(
+                    count = parent.python_runtime_vars["_PyOnChangeCount_"+name].value,
+                    first = u(parent.python_runtime_vars["_PyOnChangeFirst_"+name]),
+                    last = u(parent.python_runtime_vars["_PyOnChangeLast_"+name])))
+
+
         self.python_runtime_vars.update({
             "PLCGlobals":     PLCSafeGlobals(),
+            "OnChange":       OnChangeStateClass(),
             "WorkingDir":     self.workingdir,
             "PLCObject":      self,
             "PLCBinary":      self.PLClibraryHandle,
@@ -373,7 +389,7 @@ class PLCObject(object):
             for filename in filenames:
                 name, ext = os.path.splitext(filename)
                 if name.upper().startswith("RUNTIME") and ext.upper() == ".PY":
-                    execfile(os.path.join(self.workingdir, filename), self.python_runtime_vars)
+                    exec(compile(open(os.path.join(self.workingdir, filename), "rb").read(), os.path.join(self.workingdir, filename), 'exec'), self.python_runtime_vars)
                     for methodname in MethodNames:
                         method = self.python_runtime_vars.get("_%s_%s" % (name, methodname), None)
                         if method is not None:
@@ -385,8 +401,10 @@ class PLCObject(object):
         self.PythonRuntimeCall("init", use_evaluator=False)
 
         self.PythonThreadCondLock = Lock()
-        self.PythonThreadCond = Condition(self.PythonThreadCondLock)
-        self.PythonThreadCmd = "Wait"
+        self.PythonThreadCmdCond = Condition(self.PythonThreadCondLock)
+        self.PythonThreadAckCond = Condition(self.PythonThreadCondLock)
+        self.PythonThreadCmd = None
+        self.PythonThreadAck = None
         self.PythonThread = Thread(target=self.PythonThreadProc, name="PLCPythonThread")
         self.PythonThread.start()
 
@@ -395,7 +413,7 @@ class PLCObject(object):
         if self.python_runtime_vars is not None:
             self.PythonThreadCommand("Finish")
             self.PythonThread.join()
-            self.PythonRuntimeCall("cleanup", use_evaluator=False)
+            self.PythonRuntimeCall("cleanup", use_evaluator=False, reverse_order=True)
 
         self.python_runtime_vars = None
 
@@ -403,10 +421,11 @@ class PLCObject(object):
         res, cmd, blkid = "None", "None", ctypes.c_void_p()
         compile_cache = {}
         while True:
-            cmd = self._PythonIterator(res, blkid)
+            cmd = self._PythonIterator(res.encode(), blkid)
             FBID = blkid.value
             if cmd is None:
                 break
+            cmd = cmd.decode()
             try:
                 self.python_runtime_vars["FBID"] = FBID
                 ccmd, AST = compile_cache.get(FBID, (None, None))
@@ -429,47 +448,94 @@ class PLCObject(object):
         while True:
             self.PythonThreadCondLock.acquire()
             cmd = self.PythonThreadCmd
-            while cmd == "Wait":
-                self.PythonThreadCond.wait()
+            while cmd is None:
+                self.PythonThreadCmdCond.wait()
                 cmd = self.PythonThreadCmd
-                self.PythonThreadCmd = "Wait"
+            self.PythonThreadCmd = None
             self.PythonThreadCondLock.release()
 
-            if cmd == "Activate":
+            if cmd == "PreStart":
+                self.PreStartPLC()
+                # Ack once PreStart done, must be finished before StartPLC
+                self.PythonThreadAcknowledge(cmd)
+            elif cmd == "Start":
+                # Ack Immediately, for responsiveness
+                self.PythonThreadAcknowledge(cmd)
                 self.PythonRuntimeCall("start")
+                self.LogMessage("Python extensions started")
+                self._PostStartPLC()
                 self.PythonThreadLoop()
-                self.PythonRuntimeCall("stop")
-            else:  # "Finish"
+                self.PythonRuntimeCall("stop", reverse_order=True)
+            elif cmd == "Finish":
+                self.PythonThreadAcknowledge(cmd)
                 break
+
+    def PythonThreadAcknowledge(self, ack):
+        self.PythonThreadCondLock.acquire()
+        self.PythonThreadAck = ack
+        self.PythonThreadAckCond.notify()
+        self.PythonThreadCondLock.release()
 
     def PythonThreadCommand(self, cmd):
         self.PythonThreadCondLock.acquire()
         self.PythonThreadCmd = cmd
-        self.PythonThreadCond.notify()
+        self.PythonThreadCmdCond.notify()
+        ack = None
+        while ack != cmd:
+            self.PythonThreadAckCond.wait()
+            ack = self.PythonThreadAck
+            self.PythonThreadAck = None
+
         self.PythonThreadCondLock.release()
+
+    def _fail(self, msg):
+        self.LogMessage(0, msg.decode())
+        self.PLCStatus = PlcStatus.Broken
+        self.StatusChange()
+
+    def PreStartPLC(self):
+        """ 
+        Here goes actions to be taken just before PLC starts, 
+        with all libraries and python object already created.
+        For example : restore saved proprietary parameters
+        """
+        pass
+
+    def _PostStartPLC(self):
+        try:
+            self.PostStartPLC()
+        except Exception:
+            self.LogMessage(0, 'Post Start Exception'+'\n'.join(
+                traceback.format_exception(*sys.exc_info())))
+
+    def PostStartPLC(self):
+        """ 
+        Here goes actions to be taken after PLC is started, 
+        with all libraries and python object already created,
+        and python extensions "Start" methods being called.
+        This is called before python thread processing py_eval blocks starts.
+        For example : attach additional ressource to web services
+        """
+        pass
 
     @RunInMain
     def StartPLC(self):
 
-        def fail(msg):
-            self.LogMessage(0, msg)
-            self.PLCStatus = PlcStatus.Broken
-            self.StatusChange()
-
         if self.PLClibraryHandle is None:
             if not self.LoadPLC():
-                fail(_("Problem starting PLC : can't load PLC"))
+                self._fail(_("Problem starting PLC : can't load PLC"))
 
         if self.CurrentPLCFilename is not None and self.PLCStatus == PlcStatus.Stopped:
+            self.PythonThreadCommand("PreStart")
             c_argv = ctypes.c_char_p * len(self.argv)
             res = self._startPLC(len(self.argv), c_argv(*self.argv))
             if res == 0:
+                self.LogMessage("PLC started")
                 self.PLCStatus = PlcStatus.Started
                 self.StatusChange()
-                self.PythonThreadCommand("Activate")
-                self.LogMessage("PLC started")
+                self.PythonThreadCommand("Start")
             else:
-                fail(_("Problem starting PLC : error %d" % res))
+                self._fail(_("Problem starting PLC : error %d" % res))
 
     @RunInMain
     def StopPLC(self):
@@ -492,7 +558,7 @@ class PLCObject(object):
 
     @RunInMain
     def _GetPLCstatus(self):
-        return self.PLCStatus, map(self.GetLogCount, range(LogLevelsCount))
+        return self.PLCStatus, list(map(self.GetLogCount, range(LogLevelsCount)))
 
     @RunInMain
     def GetPLCID(self):
@@ -507,8 +573,8 @@ class PLCObject(object):
     @RunInMain
     def SeedBlob(self, seed):
         blob = (mkstemp(dir=self.tmpdir) + (hashlib.new('md5'),))
-        _fobj, _path, md5sum = blob
-        md5sum.update(seed)
+        _fd, _path, md5sum = blob
+        md5sum.update(seed.encode())
         newBlobID = md5sum.digest()
         self.blobs[newBlobID] = blob
         return newBlobID
@@ -520,27 +586,34 @@ class PLCObject(object):
         if blob is None:
             return None
 
-        fobj, _path, md5sum = blob
+        fd, _path, md5sum = blob
         md5sum.update(data)
         newBlobID = md5sum.digest()
-        os.write(fobj, data)
+        os.write(fd, data)
         self.blobs[newBlobID] = blob
         return newBlobID
 
     @RunInMain
     def PurgeBlobs(self):
-        for fobj, _path, _md5sum in self.blobs:
-            os.close(fobj)
+        for fd, _path, _md5sum in list(self.blobs.values()):
+            os.close(fd)
         self._init_blobs()
 
-    def _BlobAsFile(self, blobID, newpath):
+    def BlobAsFile(self, blobID, newpath):
         blob = self.blobs.pop(blobID, None)
 
         if blob is None:
-            raise Exception(_("Missing data to create file: {}").format(newpath))
+            raise Exception(
+                _(f"Missing data to create file: {newpath}").decode())
 
-        fobj, path, _md5sum = blob
-        os.close(fobj)
+        self._BlobAsFile(blob, newpath)
+
+    def _BlobAsFile(self, blob, newpath):
+        fd, path, _md5sum = blob
+        fobj = os.fdopen(fd)
+        fobj.flush()
+        os.fsync(fd)
+        fobj.close()
         shutil.move(path, newpath)
 
     def _extra_files_log_path(self):
@@ -548,7 +621,7 @@ class PLCObject(object):
 
     def RepairPLC(self):
         self.PurgePLC()
-        MainWorker.quit()
+        MainWorker.finish()
 
     @RunInMain
     def PurgePLC(self):
@@ -559,18 +632,20 @@ class PLCObject(object):
             if self.CurrentPLCFilename is not None \
             else None
 
-        allfiles = [extra_files_log, old_PLC_filename, self._GetMD5FileName()]
-
         try:
-            allfiles.append(open(extra_files_log, "rt").readlines())
+            allfiles = open(extra_files_log, "rt").readlines()
+            allfiles.extend([extra_files_log, old_PLC_filename, self._GetMD5FileName()])
         except Exception:
-            pass
+            self.LogMessage("No files to purge")
+            allfiles = []
 
         for filename in allfiles:
-            try:
-                os.remove(os.path.join(self.workingdir, filename.strip()))
-            except Exception:
-                pass
+            if filename:
+                filename = filename.strip()
+                try:
+                    os.remove(os.path.join(self.workingdir, filename))
+                except Exception:
+                    self.LogMessage("Couldn't purge " + filename)
 
         self.PLCStatus = PlcStatus.Empty
 
@@ -592,17 +667,20 @@ class PLCObject(object):
 
             try:
                 # Create new PLC file
-                self._BlobAsFile(plc_object, new_PLC_filename)
-
-                # Store new PLC filename based on md5 key
-                open(self._GetMD5FileName(), "w").write(md5sum)
+                self.BlobAsFile(plc_object, new_PLC_filename)
 
                 # Then write the files
                 log = open(extra_files_log, "w")
                 for fname, blobID in extrafiles:
                     fpath = os.path.join(self.workingdir, fname)
-                    self._BlobAsFile(blobID, fpath)
+                    self.BlobAsFile(blobID, fpath)
                     log.write(fname+'\n')
+
+                # Store new PLC filename based on md5 key
+                with open(self._GetMD5FileName(), "w") as f:
+                    f.write(md5sum)
+                    f.flush()
+                    os.fsync(f.fileno())
 
                 # Store new PLC filename
                 self.CurrentPLCFilename = NewFileName
@@ -614,9 +692,9 @@ class PLCObject(object):
 
             if self.LoadPLC():
                 self.PLCStatus = PlcStatus.Stopped
+                self.StatusChange()
             else:
-                self.PLCStatus = PlcStatus.Broken
-            self.StatusChange()
+                self._fail(_("Problem installing new PLC : can't load PLC"))
 
             return self.PLCStatus == PlcStatus.Stopped
         return False
@@ -647,13 +725,17 @@ class PLCObject(object):
                             TypeTranslator.get(iectype,
                                                (None, None, None))
                         force = ctypes.byref(pack_func(c_type, force))
-                    self._RegisterDebugVariable(idx, force)
+                    res = self._RegisterDebugVariable(idx, force)
+                    if res != 0:
+                        self._resumeDebug()
+                        self._suspendDebug(True)
+                        return -res
                 self._TracesSwap()
                 self._resumeDebug()
                 return self.DebugToken
         else:
             self._suspendDebug(True)
-        return None
+        return 4 # DEBUG_SUSPENDED
 
     def _TracesSwap(self):
         self.LastSwapTrace = time()

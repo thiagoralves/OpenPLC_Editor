@@ -21,12 +21,19 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-from targets.toolchain_gcc import toolchain_gcc
+
+
+
+from ..toolchain_gcc import toolchain_gcc
 
 
 class Win32_target(toolchain_gcc):
     dlopen_prefix = ""
     extension = ".dll"
+
+    def getBuilderCFLAGS(self):
+        return toolchain_gcc.getBuilderCFLAGS(self) + \
+            ["-Wno-implicit-function-declaration", "-Wno-int-conversion"]
 
     def getBuilderLDFLAGS(self):
         return toolchain_gcc.getBuilderLDFLAGS(self) + ["-shared", "-lwinmm"]

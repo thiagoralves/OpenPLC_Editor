@@ -23,13 +23,13 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+
 import wx
 
-from dialogs.BlockPreviewDialog import BlockPreviewDialog
 from graphics.GraphicCommons import SELECTION_DIVERGENCE, \
     SELECTION_CONVERGENCE, SIMULTANEOUS_DIVERGENCE, SIMULTANEOUS_CONVERGENCE
 from graphics.SFC_Objects import SFC_Divergence
-
+from dialogs.BlockPreviewDialog import BlockPreviewDialog
 
 # -------------------------------------------------------------------------------
 #                         Create New Divergence Dialog

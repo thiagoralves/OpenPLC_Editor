@@ -81,11 +81,10 @@ You can get the gettext tools from the following sites:
 
 
 import os
-import re
 import sys
-from builtins import str as text
-
+import re
 import wx
+
 
 # -----------------------------------------------------------------------------
 # Global variables
@@ -413,7 +412,7 @@ def mkdir(directory):
     # translate the path separators
     directory = unixpath(directory)
     # build a list of all directory elements
-    aList = filter(lambda x: len(x) > 0, directory.split('/'))
+    aList = [x for x in directory.split('/') if len(x) > 0]
     theLen = len(aList)
     # if the first element is a Windows-style disk drive
     # concatenate it with the first directory
@@ -514,7 +513,7 @@ if __name__ == "__main__":
             makePO(appDirPath, option['domain'], option['verbose'])
             exit_code = 0
         except IOError as e:
-            printUsage(text(e) + '\n   You must write a file app.fil that contains the list of all files to parse.')
+            printUsage(str(e) + '\n   You must write a file app.fil that contains the list of all files to parse.')
     if option['mo']:
         makeMO(appDirPath, option['moTarget'], option['domain'], option['verbose'], option['forceEnglish'])
         exit_code = 0

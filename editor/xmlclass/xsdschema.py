@@ -23,7 +23,12 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
+import os
+import re
+import datetime
 from types import FunctionType
+from xml.dom import minidom
+
 from xmlclass.xmlclass import *
 
 
@@ -67,8 +72,7 @@ def GenerateFloatXMLText(extra_values=None, decimal=None):
 
 
 DEFAULT_FACETS = GenerateDictFacets(["pattern", "whiteSpace", "enumeration"])
-NUMBER_FACETS = GenerateDictFacets(
-    list(DEFAULT_FACETS.keys()) + ["maxInclusive", "maxExclusive", "minInclusive", "minExclusive"])
+NUMBER_FACETS = GenerateDictFacets(list(DEFAULT_FACETS.keys()) + ["maxInclusive", "maxExclusive", "minInclusive", "minExclusive"])
 DECIMAL_FACETS = GenerateDictFacets(list(NUMBER_FACETS.keys()) + ["totalDigits", "fractionDigits"])
 STRING_FACETS = GenerateDictFacets(list(DEFAULT_FACETS.keys()) + ["length", "minLength", "maxLength"])
 
@@ -192,11 +196,10 @@ def CreateSimpleType(factory, attributes, typeinfos):
             basevalue = basetypeinfos["facets"][facettype][0]
             if facettype in ["enumeration", "pattern"]:
                 value = basetypeinfos["extract"](value, False)
-                key = list(facets.keys())
                 if len(facets) == 0:
                     facets[facettype] = ([value], False)
                     continue
-                elif key == [facettype]:
+                elif list(facets.keys()) == [facettype]:
                     facets[facettype][0].append(value)
                     continue
                 else:
@@ -294,14 +297,14 @@ def CreateSimpleType(factory, attributes, typeinfos):
             facets[facettype] = (value, facet.get("fixed", False))
 
         # Report not redefined facet from base type to new created type
-        for facettype, facetvalue in basetypeinfos["facets"].items():
+        for facettype, facetvalue in list(basetypeinfos["facets"].items()):
             if facettype not in facets:
                 facets[facettype] = facetvalue
 
         # Generate extract value for new created type
         def ExtractSimpleTypeValue(attr, extract=True):
             value = basetypeinfos["extract"](attr, extract)
-            for facetname, (facetvalue, _facetfixed) in facets.items():
+            for facetname, (facetvalue, _facetfixed) in list(facets.items()):
                 if facetvalue is not None:
                     if facetname == "enumeration" and value not in facetvalue:
                         raise ValueError("\"%s\" not in enumerated values" % value)
@@ -320,7 +323,7 @@ def CreateSimpleType(factory, attributes, typeinfos):
                     elif facetname == "maxExclusive" and value >= facetvalue:
                         raise ValueError("value must be lesser than %s" % str(facetvalue))
                     elif facetname == "pattern":
-                        model = re.compile("(?:%s)?$" % "|".join(map(lambda x: "(?:%s)" % x, facetvalue)))
+                        model = re.compile("(?:%s)?$" % "|".join(["(?:%s)" % x for x in facetvalue]))
                         result = model.match(value)
                         if result is None:
                             if len(facetvalue) > 1:
@@ -335,7 +338,7 @@ def CreateSimpleType(factory, attributes, typeinfos):
             return value
 
         def CheckSimpleTypeValue(value):
-            for facetname, (facetvalue, _facetfixed) in facets.items():
+            for facetname, (facetvalue, _facetfixed) in list(facets.items()):
                 if facetvalue is not None:
                     if facetname == "enumeration" and value not in facetvalue:
                         return False
@@ -354,7 +357,7 @@ def CreateSimpleType(factory, attributes, typeinfos):
                     elif facetname == "maxExclusive" and value >= facetvalue:
                         return False
                     elif facetname == "pattern":
-                        model = re.compile("(?:%s)?$" % "|".join(map(lambda x: "(?:%s)" % x, facetvalue)))
+                        model = re.compile("(?:%s)?$" % "|".join(["(?:%s)" % x for x in facetvalue]))
                         result = model.match(value)
                         if result is None:
                             if len(facetvalue) > 1:
@@ -364,7 +367,7 @@ def CreateSimpleType(factory, attributes, typeinfos):
             return True
 
         def SimpleTypeInitialValue():
-            for facetname, (facetvalue, _facetfixed) in facets.items():
+            for facetname, (facetvalue, _facetfixed) in list(facets.items()):
                 if facetvalue is not None:
                     if facetname == "enumeration":
                         return facetvalue[0]
@@ -507,7 +510,7 @@ def ExtractAttributes(factory, elements, base=None):
     if base is not None:
         basetypeinfos = factory.FindSchemaElement(base)
         if not isinstance(basetypeinfos, str) and basetypeinfos["type"] == COMPLEXTYPE:
-            attrnames = dict(map(lambda x: (x["name"], True), basetypeinfos["attributes"]))
+            attrnames = dict([(x["name"], True) for x in basetypeinfos["attributes"]])
 
     for element in elements:
         if element["type"] == ATTRIBUTE:
@@ -988,7 +991,7 @@ def CompareSchema(schema, reference):
     elif isinstance(schema, dict):
         if not isinstance(reference, dict) or len(schema) != len(reference):
             return False
-        for name, value in schema.items():
+        for name, value in list(schema.items()):
             ref_value = reference.get(name, None)
             if ref_value is None and value is not None:
                 return False

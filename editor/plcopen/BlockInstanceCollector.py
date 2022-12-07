@@ -3,9 +3,9 @@
 # This file is part of Beremiz.
 # See COPYING file for copyrights details.
 
-from collections import OrderedDict, namedtuple
 
-from plcopen.XSLTModelQuery import XSLTModelQuery, _StringValue, _BoolValue, _translate_args
+from collections import OrderedDict, namedtuple
+from . XSLTModelQuery import XSLTModelQuery, _StringValue, _BoolValue, _translate_args
 
 # -------------------------------------------------------------------------------
 #           Helpers object for generating pou block instances list
@@ -88,7 +88,7 @@ class _ActionInfos(object):
     __slots__ = ["qualifier", "type", "value", "duration", "indicator"]
 
     def __init__(self, *args):
-        for attr, value in list(zip(self.__slots__, args)):
+        for attr, value in zip(self.__slots__, args):
             setattr(self, attr, value if value is not None else "")
 
     def copy(self):

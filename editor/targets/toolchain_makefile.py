@@ -23,13 +23,14 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-import hashlib
-import operator
+
 import os
 import re
+import operator
+import hashlib
 from functools import reduce
-
 from util.ProcessLogger import ProcessLogger
+
 
 includes_re = re.compile(r'\s*#include\s*["<]([^">]*)[">].*')
 
@@ -101,7 +102,7 @@ class toolchain_makefile(object):
         self.md5key = hashlib.md5(wholesrcdata).hexdigest()
 
         # Store new PLC filename based on md5 key
-        f = open(self._GetMD5FileName(), "w", encoding='utf-8')
+        f = open(self._GetMD5FileName(), "w")
         f.write(self.md5key)
         f.close()
 

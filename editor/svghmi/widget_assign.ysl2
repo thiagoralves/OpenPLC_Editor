@@ -1,0 +1,88 @@
+// widget_assign.ysl2
+
+widget_desc("Assign") {
+    longdesc
+    ||
+
+    Arguments are either:
+
+    - name=value: setting variable with literal value.
+    - name=other_name: copy variable content into another
+
+    "active"+"inactive" labeled elements can be provided to show feedback when pressed
+
+    Exemples:
+
+    HMI:Assign:notify=1@notify=/PLCVAR
+    HMI:Assign:ack=2:notify=1@ack=.local_var@notify=/PLCVAR
+
+    ||
+
+    shortdesc > Assign variables on click
+
+}
+
+widget_class("Assign") {
+||
+        frequency = 2;
+
+        onmouseup(evt) {
+            svg_root.removeEventListener("pointerup", this.bound_onmouseup, true);
+            if(this.enable_state) {
+                this.activity_state = false
+                this.request_animate();
+                this.assign();
+            }
+        }
+
+        onmousedown(){
+            if(this.enable_state) {
+                svg_root.addEventListener("pointerup", this.bound_onmouseup, true);
+                this.activity_state = true;
+                this.request_animate();
+            }
+        }
+
+||
+}
+
+widget_defs("Assign") {
+    optional_activable();
+
+    |     init: function() {
+    |         this.bound_onmouseup = this.onmouseup.bind(this);
+    |         this.element.addEventListener("pointerdown", this.onmousedown.bind(this));
+    |     },
+
+    |     assignments: {},
+    |     dispatch: function(value, oldval, varnum) {
+    const "widget", ".";
+    foreach "path" {
+        const "varid","generate-id()";
+        const "varnum","position()-1";
+        if "@assign" foreach "$widget/path[@assign]" if "$varid = generate-id()" {
+    |         if(varnum == «$varnum») this.assignments["«@assign»"] = value;
+        }
+    }
+    |     },
+    |     assign: function() {
+    const "paths","path";
+    foreach "arg[contains(@value,'=')]"{
+        const "name","substring-before(@value,'=')";
+        const "value","substring-after(@value,'=')";
+        const "index" foreach "$paths" if "@assign = $name" value "position()-1";
+        const "isVarName", "regexp:test($value,'^[a-zA-Z_][a-zA-Z0-9_]+$')";
+        choose {
+            when "$isVarName"{
+    |         const «$value» = this.assignments["«$value»"];
+    |         if(«$value» != undefined)
+    |             this.apply_hmi_value(«$index», «$value»);
+            }
+            otherwise {
+    |         this.apply_hmi_value(«$index», «$value»);
+            }
+        }
+    }
+    |     },
+}
+

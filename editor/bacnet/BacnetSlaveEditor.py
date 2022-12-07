@@ -23,16 +23,18 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+from __future__ import absolute_import
 from collections import Counter
 
 import wx
 
+# Import some libraries on Beremiz code
+from util.BitmapLibrary import GetBitmap
 from controls.CustomGrid import CustomGrid
 from controls.CustomTable import CustomTable
 from editors.ConfTreeNodeEditor import ConfTreeNodeEditor
 from graphics.GraphicCommons import ERROR_HIGHLIGHT
-# Import some libraries on Beremiz code
-from util.BitmapLibrary import GetBitmap
+
 
 # BACnet Engineering units taken from: ASHRAE 135-2016, clause/chapter 21
 BACnetEngineeringUnits = [
@@ -365,8 +367,7 @@ class AnalogObject(ObjectProperties):
         "Engineering Units": {"GridCellEditor": wx.grid.GridCellChoiceEditor,
                               # use string renderer with choice editor!
                               "GridCellRenderer": wx.grid.GridCellStringRenderer,
-                              # syntax for GridCellChoiceEditor -> comma separated values
-                              "GridCellEditorParam": ','.join([x[0] for x in BACnetEngineeringUnits])}
+                              "GridCellEditorConstructorArgs": [x[0] for x in BACnetEngineeringUnits]}
     }
 
     # obj_properties should be a dictionary, with keys "Object Identifier",
@@ -514,7 +515,7 @@ class MSIObject(MultiSObject):
 
 
 class ObjectTable(CustomTable):
-    #  A custom wx.grid.GridTableBase using user supplied data
+    #  A custom wx.grid.PyGridTableBase using user supplied data
     #
     #  This will basically store a list of BACnet objects that the slave will support/implement.
     #  There will be one instance of this ObjectTable class for each BACnet object type
@@ -574,7 +575,10 @@ class ObjectTable(CustomTable):
                 PropertyName = self.BACnetObjectType.PropertyNames[col]
                 PropertyConfig = self.BACnetObjectType.PropertyConfig[PropertyName]
                 grid.SetReadOnly(row, col, False)
-                grid.SetCellEditor(row, col, PropertyConfig["GridCellEditor"]())
+                GridCellEditorConstructorArgs = \
+                    PropertyConfig["GridCellEditorConstructorArgs"]
+                    if "GridCellEditorConstructorArgs" in PropertyConfig else []
+                grid.SetCellEditor(row, col, PropertyConfig["GridCellEditor"](*GridCellEditorConstructorArgs))
                 grid.SetCellRenderer(row, col, PropertyConfig["GridCellRenderer"]())
                 grid.SetCellBackgroundColour(row, col, wx.WHITE)
                 grid.SetCellTextColour(row, col, wx.BLACK)
@@ -712,8 +716,8 @@ class ObjectGrid(CustomGrid):
                 # More than 1 BACnet object using this ID! Let us Highlight this row with errors...
                 # TODO: change the hardcoded column number '0' to a number obtained at runtime
                 #       that is guaranteed to match the column titled "Object Identifier"
-                self.SetCellBackgroundColour(row, 0, wx.Colour(255, 255, 0))
-                self.SetCellTextColour(row, 0, wx.RED)
+                self.SetCellBackgroundColour(row, 0, ERROR_HIGHLIGHT[0])
+                self.SetCellTextColour(row, 0, ERROR_HIGHLIGHT[1])
             else:
                 self.SetCellBackgroundColour(row, 0, wx.WHITE)
                 self.SetCellTextColour(row, 0, wx.BLACK)
@@ -824,7 +828,7 @@ class ObjectEditor(wx.Panel):
         # use only to enable drag'n'drop
         # self.VariablesGrid.SetDropTarget(VariableDropTarget(self))
         self.VariablesGrid.Bind(
-            wx.grid.EVT_GRID_CELL_CHANGED, self.OnVariablesGridCellChange)
+            wx.grid.EVT_GRID_CELL_CHANGING,     self.OnVariablesGridCellChange)
         # self.VariablesGrid.Bind(wx.grid.EVT_GRID_CELL_LEFT_CLICK, self.OnVariablesGridCellLeftClick)
         # self.VariablesGrid.Bind(wx.grid.EVT_GRID_EDITOR_SHOWN,    self.OnVariablesGridEditorShown)
         self.MainSizer.Add(self.VariablesGrid, flag=wx.GROW)

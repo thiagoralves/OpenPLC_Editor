@@ -23,10 +23,9 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
+
 import wx
-
 from plcopen.structures import TestIdentifier, IEC_KEYWORDS
-
 
 # -------------------------------------------------------------------------------
 #                                POU Name Dialog
@@ -41,8 +40,7 @@ class PouNameDialog(wx.TextEntryDialog):
 
         self.PouNames = []
 
-        # self.Bind(wx.EVT_BUTTON, self.OnOK,
-        #           self.GetSizer().GetItem(2).GetSizer().GetItem(1).GetSizer().GetAffirmativeButton())
+        self.Bind(wx.EVT_BUTTON, self.OnOK, id=self.GetAffirmativeId())
 
     def OnOK(self, event):
         message = None

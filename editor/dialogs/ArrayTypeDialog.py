@@ -21,6 +21,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+
+
 import re
 
 import wx
@@ -49,7 +51,7 @@ class ArrayTypeDialog(wx.Dialog):
 
         top_sizer = wx.BoxSizer(wx.HORIZONTAL)
         main_sizer.Add(top_sizer, border=20,
-                       flag=wx.GROW | wx.TOP | wx.LEFT | wx.RIGHT)
+                            flag=wx.GROW | wx.TOP | wx.LEFT | wx.RIGHT)
 
         basetype_label = wx.StaticText(self, label=_('Base Type:'))
         top_sizer.Add(basetype_label, 1, flag=wx.ALIGN_BOTTOM)
@@ -68,10 +70,10 @@ class ArrayTypeDialog(wx.Dialog):
                      "_OnDownButton"]:
             setattr(self.Dimensions, func, self.OnDimensionsChanged)
         main_sizer.Add(self.Dimensions, border=20,
-                       flag=wx.GROW | wx.LEFT | wx.RIGHT)
+                            flag=wx.GROW | wx.LEFT | wx.RIGHT)
 
         button_sizer = self.CreateButtonSizer(wx.OK | wx.CANCEL | wx.CENTRE)
-        # self.Bind(wx.EVT_BUTTON, self.OnOK, button_sizer.GetAffirmativeButton())
+        self.Bind(wx.EVT_BUTTON, self.OnOK, id=self.GetAffirmativeId())
         main_sizer.Add(button_sizer, border=20,
                             flag=wx.ALIGN_RIGHT | wx.BOTTOM | wx.LEFT | wx.RIGHT)
 
@@ -82,7 +84,7 @@ class ArrayTypeDialog(wx.Dialog):
 
         if isinstance(infos, tuple) and infos[0] == "array":
             self.BaseType.SetStringSelection(infos[1])
-            self.Dimensions.SetStrings(map("..".join, infos[2]))
+            self.Dimensions.SetStrings(list(map("..".join, infos[2])))
         elif infos in datatypes:
             self.BaseType.SetStringSelection(infos)
 

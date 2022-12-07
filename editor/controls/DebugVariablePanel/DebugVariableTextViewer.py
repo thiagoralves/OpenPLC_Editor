@@ -23,11 +23,13 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
+
+
+
 import wx
 
 from controls.DebugVariablePanel.DebugVariableViewer import DebugVariableViewer
 from controls.DebugVariablePanel.GraphButton import GraphButton
-
 
 # -------------------------------------------------------------------------------
 #                     Debug Variable Text Viewer Drop Target
@@ -48,15 +50,6 @@ class DebugVariableTextDropTarget(wx.TextDropTarget):
         wx.TextDropTarget.__init__(self)
         self.ParentControl = parent
         self.ParentWindow = window
-
-    def __del__(self):
-        """
-        Destructor
-        """
-        # Remove reference to Debug Variable Text Viewer and Debug Variable
-        # Panel
-        self.ParentControl = None
-        self.ParentWindow = None
 
     def OnDragOver(self, x, y, d):
         """
@@ -94,6 +87,7 @@ class DebugVariableTextDropTarget(wx.TextDropTarget):
         # Display message if data is invalid
         if message is not None:
             wx.CallAfter(self.ShowMessage, message)
+            return False
 
         # Data contain a reference to a variable to debug
         elif values[1] == "debug":
@@ -116,6 +110,10 @@ class DebugVariableTextDropTarget(wx.TextDropTarget):
                 self.ParentWindow.InsertValue(values[0],
                                               target_idx,
                                               force=True)
+            return True
+        return False
+
+        return True
 
     def OnLeave(self):
         """
@@ -201,8 +199,6 @@ class DebugVariableTextViewer(DebugVariableViewer, wx.Panel):
         # rendering
         gc = wx.GCDC(dc)
 
-        # gc.BeginDrawing()
-
         # Get first item
         item = list(self.ItemsDict.values())[0]
 
@@ -229,8 +225,6 @@ class DebugVariableTextViewer(DebugVariableViewer, wx.Panel):
 
         # Draw other Viewer common elements
         self.DrawCommonElements(gc)
-
-        # gc.EndDrawing()
 
     def OnLeftDown(self, event):
         """
@@ -268,7 +262,7 @@ class DebugVariableTextViewer(DebugVariableViewer, wx.Panel):
         """
         # Execute callback on button under mouse pointer if it exists
         x, y = event.GetPosition()
-        wx.CallAfter(self.HandleButton, x, y)
+        self.HandleButton(x, y)
         event.Skip()
 
     def OnLeftDClick(self, event):

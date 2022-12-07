@@ -23,21 +23,20 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-import ctypes
 import os
-import signal
-import subprocess
 import sys
-from threading import Timer, Lock, Thread, Semaphore
+import subprocess
+import ctypes
+import time
+from threading import Timer, Lock, Thread, Semaphore, Condition
+import signal
 
-import wx
-
+_debug = os.path.exists("BEREMIZ_DEBUG")
 
 class outputThread(Thread):
     """
     Thread is used to print the output of a command to the stdout
     """
-
     def __init__(self, Proc, fd, callback=None, endcallback=None):
         Thread.__init__(self)
         self.killed = False
@@ -60,7 +59,7 @@ class outputThread(Thread):
             outchunk = self.fd.readline()
             if self.callback:
                 self.callback(outchunk)
-        while outchunk != b'' and not self.killed:
+        while outchunk != '' and not self.killed:
             outchunk = self.fd.readline()
             if self.callback:
                 self.callback(outchunk)
@@ -99,7 +98,7 @@ class ProcessLogger(object):
 
         if encoding is None:
             encoding = fsencoding
-        self.Command = [self.Command[0]] + list(map(lambda x: x, self.Command[1:]))
+        self.Command = [self.Command[0].encode(fsencoding)]+[x.encode(encoding) for x in self.Command[1:]]
 
         self.finish_callback = finish_callback
         self.no_stdout = no_stdout
@@ -119,8 +118,8 @@ class ProcessLogger(object):
         self.endlock = Lock()
 
         popenargs = {
-            "cwd": os.getcwd() if cwd is None else cwd,
-            "stdin": subprocess.PIPE,
+            "cwd":    os.getcwd() if cwd is None else cwd,
+            "stdin":  subprocess.PIPE,
             "stdout": subprocess.PIPE,
             "stderr": subprocess.PIPE
         }
@@ -138,7 +137,10 @@ class ProcessLogger(object):
         else:
             self.timeout = None
 
-        self.Proc = subprocess.Popen(self.Command, **popenargs)
+        if _debug and self.logger:
+            self.logger.write("(DEBUG) launching:\n" + self.Command_str + "\n")
+
+        self.Proc = subprocess.Popen(self.Command, encoding="utf-8", **popenargs)
 
         self.outt = outputThread(
             self.Proc,
@@ -154,14 +156,18 @@ class ProcessLogger(object):
         self.errt.start()
         self.startsem.release()
 
+        self.spinwakeuplock = Lock()
+        self.spinwakeupcond = Condition(self.spinwakeuplock)
+        self.spinwakeuptimer = None
+
     def output(self, v):
         if v and self.output_encoding:
             v = v.decode(self.output_encoding)
         self.outdata.append(v)
         self.outlen += 1
-        if not self.no_stdout:
+        if self.logger and not self.no_stdout:
             self.logger.write(v)
-        if (self.keyword and v.find(self.keyword.encode()) != -1) or (self.outlimit and self.outlen > self.outlimit):
+        if (self.keyword and v.find(self.keyword) != -1) or (self.outlimit and self.outlen > self.outlimit):
             self.endlog()
 
     def errors(self, v):
@@ -169,14 +175,15 @@ class ProcessLogger(object):
             v = v.decode(self.output_encoding)
         self.errdata.append(v)
         self.errlen += 1
-        if not self.no_stderr:
+        if self.logger and not self.no_stderr:
             self.logger.write_warning(v)
         if self.errlimit and self.errlen > self.errlimit:
             self.endlog()
 
     def log_the_end(self, ecode, pid):
-        self.logger.write(self.Command_str + "\n")
-        self.logger.write_warning(_("exited with status {a1} (pid {a2})\n").format(a1=str(ecode), a2=str(pid)))
+        if self.logger is not None:
+            self.logger.write(self.Command_str + "\n")
+            self.logger.write_warning(_("exited with status {a1} (pid {a2})\n").format(a1=str(ecode), a2=str(pid)))
 
     def finish(self, pid, ecode):
         # avoid running function before start is finished
@@ -191,6 +198,7 @@ class ProcessLogger(object):
             self.finish_callback(self, ecode, pid)
         self.errt.join()
         self.finishsem.release()
+        self.spinwakeup()
 
     def kill(self, gently=True):
         # avoid running kill before start is finished
@@ -221,14 +229,25 @@ class ProcessLogger(object):
             if not self.outt.finished and self.kill_it:
                 self.kill()
             self.finishsem.release()
+            self.spinwakeup()
+
+    def spinwakeup(self):
+        with self.spinwakeuplock:
+            if self.spinwakeuptimer is not None:
+                self.spinwakeuptimer.cancel()
+            self.spinwakeuptimer = None
+            self.spinwakeupcond.notify()
 
     def spin(self):
-        while not self.finishsem.acquire(blocking=False):
-            eventLoop = wx.GUIEventLoop()
-            #eventLoop.Dispatch()
-        try:
-            return [self.exitcode, "".join([x.decode('gbk', errors='ignore') for x in self.outdata]),
-                    "".join([x.decode('gbk', errors='ignore') for x in self.errdata])]
-        except:
-            return [self.exitcode, "".join([x.decode() for x in self.outdata]),
-                    "".join([x.decode(errors='ignore') for x in self.errdata])]
+        start = time.time()
+        if self.logger:
+            while not self.finishsem.acquire(0):
+                with self.spinwakeuplock:
+                    self.spinwakeuptimer = Timer(0.1, self.spinwakeup)
+                    self.spinwakeuptimer.start()
+                    self.spinwakeupcond.wait()
+                    self.logger.progress("%.3fs"%(time.time() - start))
+        else:
+            self.finishsem.acquire()
+
+        return [self.exitcode, "".join(self.outdata), "".join(self.errdata)]

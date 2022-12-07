@@ -974,10 +974,6 @@ msgstr ""
 msgid "Character string"
 msgstr ""
 
-#: ../svgui/svgui.py:136
-msgid "Choose a SVG file"
-msgstr ""
-
 #: ../etherlab/EtherCATManagementEditor.py:911
 #: ../etherlab/EtherCATManagementEditor.py:1306
 msgid "Choose a binary file"
@@ -1300,10 +1296,6 @@ msgstr ""
 
 #: ../ProjectController.py:1725
 msgid "Couldn't stop PLC !\n"
-msgstr ""
-
-#: ../svgui/svgui.py:57
-msgid "Create HMI"
 msgstr ""
 
 #: ../dialogs/PouDialog.py:48
@@ -2086,10 +2078,6 @@ msgstr ""
 msgid "Import ESI file"
 msgstr ""
 
-#: ../svgui/svgui.py:50 ../svgui/svgui.py:51
-msgid "Import SVG"
-msgstr ""
-
 #: ../etherlab/ConfigEditor.py:1352
 msgid "Import file to ESI files database"
 msgstr ""
@@ -2154,10 +2142,6 @@ msgstr ""
 
 #: ../etherlab/EthercatCIA402Slave.py:126
 msgid "Initiate Drag'n drop of Network position located variable"
-msgstr ""
-
-#: ../svgui/svgui.py:56
-msgid "Inkscape"
 msgstr ""
 
 #: ../dialogs/SFCTransitionDialog.py:77 ../dialogs/ActionBlockDialog.py:47
@@ -2708,11 +2692,6 @@ msgstr ""
 msgid "No slave defined at position %d!"
 msgstr ""
 
-#: ../svgui/svgui.py:142
-#, python-format
-msgid "No such SVG file: %s\n"
-msgstr ""
-
 #: ../etherlab/ConfigEditor.py:1245
 #, python-format
 msgid "No such XML file: %s\n"
@@ -2804,10 +2783,6 @@ msgstr ""
 #: ../BeremizIDE.py:243 ../BeremizIDE.py:277 ../PLCOpenEditor.py:77
 #: ../PLCOpenEditor.py:118
 msgid "Open"
-msgstr ""
-
-#: ../svgui/svgui.py:151
-msgid "Open Inkscape"
 msgstr ""
 
 #: ../version.py:88
@@ -3400,14 +3375,6 @@ msgstr ""
 
 #: ../PLCOpenEditor.py:308
 msgid "ST files (*.st)|*.st|All files|*.*"
-msgstr ""
-
-#: ../svgui/svgui.py:136
-msgid "SVG files (*.svg)|*.svg|All files|*.*"
-msgstr ""
-
-#: ../features.py:25
-msgid "SVGUI"
 msgstr ""
 
 #: ../BeremizIDE.py:247 ../BeremizIDE.py:278 ../PLCOpenEditor.py:84
@@ -4202,12 +4169,6 @@ msgstr ""
 
 #: ../etherlab/EtherCATManagementEditor.py:648
 msgid "You cannot SDO download this state"
-msgstr ""
-
-#: ../svgui/svgui.py:150
-msgid ""
-"You don't have write permissions.\n"
-"Open Inkscape anyway ?"
 msgstr ""
 
 #: ../wxglade_hmi/wxglade_hmi.py:175

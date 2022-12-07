@@ -25,24 +25,25 @@
 
 
 import socket
-
 import wx
 import wx.lib.mixins.listctrl as listmix
 from zeroconf import ServiceBrowser, Zeroconf, get_all_addresses
 
+service_type = '_Beremiz._tcp.local.'
+
 
 class AutoWidthListCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
-    def __init__(self, parent, id, name, pos=wx.DefaultPosition,
+    def __init__(self, parent, name, pos=wx.DefaultPosition,
                  size=wx.DefaultSize, style=0):
-        wx.ListCtrl.__init__(self, parent, id, pos, size, style, name=name)
+        wx.ListCtrl.__init__(self, parent, wx.ID_ANY, pos, size, style, name=name)
         listmix.ListCtrlAutoWidthMixin.__init__(self)
 
 
 class DiscoveryPanel(wx.Panel, listmix.ColumnSorterMixin):
 
     def _init_coll_MainSizer_Items(self, parent):
-        parent.Add(self.staticText1, 0, border=20, flag=wx.TOP | wx.LEFT | wx.RIGHT | wx.GROW)
-        parent.Add(self.ServicesList, 0, border=20, flag=wx.LEFT | wx.RIGHT | wx.GROW)
+        parent.Add(self.staticText1,    0, border=20, flag=wx.TOP | wx.LEFT | wx.RIGHT | wx.GROW)
+        parent.Add(self.ServicesList,   0, border=20, flag=wx.LEFT | wx.RIGHT | wx.GROW)
         parent.Add(self.ButtonGridSizer, 0, border=20, flag=wx.LEFT | wx.RIGHT | wx.BOTTOM | wx.GROW)
 
     def _init_coll_MainSizer_Growables(self, parent):
@@ -70,9 +71,7 @@ class DiscoveryPanel(wx.Panel, listmix.ColumnSorterMixin):
 
     def _init_list_ctrl(self):
         # Set up list control
-        listID = wx.NewIdRef()
         self.ServicesList = AutoWidthListCtrl(
-            id=listID,
             name='ServicesList', parent=self, pos=wx.Point(0, 0), size=wx.Size(0, 0),
             style=wx.LC_REPORT | wx.LC_EDIT_LABELS | wx.LC_SORT_ASCENDING | wx.LC_SINGLE_SEL)
         self.ServicesList.InsertColumn(0, _('NAME'))
@@ -84,8 +83,8 @@ class DiscoveryPanel(wx.Panel, listmix.ColumnSorterMixin):
         self.ServicesList.SetColumnWidth(2, 150)
         self.ServicesList.SetColumnWidth(3, 150)
         self.ServicesList.SetInitialSize(wx.Size(-1, 300))
-        self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnItemSelected, id=listID)
-        self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.OnItemActivated, id=listID)
+        self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnItemSelected, self.ServicesList)
+        self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.OnItemActivated, self.ServicesList)
 
     def _init_ctrls(self, prnt):
         self.staticText1 = wx.StaticText(
@@ -103,11 +102,10 @@ class DiscoveryPanel(wx.Panel, listmix.ColumnSorterMixin):
         self._init_sizers()
         self.Fit()
 
-    def __init__(self, parent, service_type='_Beremiz._udp.local.'):
+    def __init__(self, parent):
         wx.Panel.__init__(self, parent)
 
         self.parent = parent
-        self.service_type = service_type
 
         self._init_list_ctrl()
         listmix.ColumnSorterMixin.__init__(self, 4)
@@ -130,15 +128,12 @@ class DiscoveryPanel(wx.Panel, listmix.ColumnSorterMixin):
         self.Bind(wx.EVT_TIMER, self.IfacesMonitor, self.IfacesMonitorTimer)
 
     def __del__(self):
-        self.close()
-
-    def close(self):
         self.IfacesMonitorTimer.Stop()
         self.Browser.cancel()
         self.ZeroConfInstance.close()
 
     def IfacesMonitor(self, event):
-        NewState = get_all_addresses()
+        NewState = get_all_addresses(socket.AF_INET)
 
         if self.IfacesMonitorState != NewState:
             if self.IfacesMonitorState is not None:
@@ -157,7 +152,7 @@ class DiscoveryPanel(wx.Panel, listmix.ColumnSorterMixin):
         if self.ZeroConfInstance is not None:
             self.ZeroConfInstance.close()
         self.ZeroConfInstance = Zeroconf()
-        self.Browser = ServiceBrowser(self.ZeroConfInstance, self.service_type, self)
+        self.Browser = ServiceBrowser(self.ZeroConfInstance, service_type, self)
 
     def OnRefreshButton(self, event):
         self.RefreshList()
@@ -171,20 +166,20 @@ class DiscoveryPanel(wx.Panel, listmix.ColumnSorterMixin):
         return item.GetText()
 
     def OnItemSelected(self, event):
-        self.SetURI(event.Index)
+        self.SetURI(event.m_itemIndex)
         event.Skip()
 
     def OnItemActivated(self, event):
-        self.SetURI(event.Index)
+        self.SetURI(event.m_itemIndex)
         self.parent.EndModal(wx.ID_OK)
         event.Skip()
 
-    #    def SetURI(self, idx):
-    #        connect_type = self.getColumnText(idx, 1)
-    #        connect_address = self.getColumnText(idx, 2)
-    #        connect_port = self.getColumnText(idx, 3)
-    #
-    #        self.URI = "%s://%s:%s"%(connect_type, connect_address, connect_port)
+#    def SetURI(self, idx):
+#        connect_type = self.getColumnText(idx, 1)
+#        connect_address = self.getColumnText(idx, 2)
+#        connect_port = self.getColumnText(idx, 3)
+#
+#        self.URI = "%s://%s:%s"%(connect_type, connect_address, connect_port)
 
     def SetURI(self, idx):
         self.LatestSelection = idx
@@ -193,8 +188,7 @@ class DiscoveryPanel(wx.Panel, listmix.ColumnSorterMixin):
         if self.LatestSelection is not None:
             # if self.ByIPCheck.IsChecked():
             svcname, scheme, host, port = \
-                list(map(lambda col: self.getColumnText(self.LatestSelection, col),
-                         range(4)))
+                [self.getColumnText(self.LatestSelection, col) for col in range(4)]
             return ("%s://%s:%s#%s" % (scheme, host, port, svcname)) \
                 if scheme[-1] == "S" \
                 else ("%s://%s:%s" % (scheme, host, port))
@@ -242,10 +236,10 @@ class DiscoveryPanel(wx.Panel, listmix.ColumnSorterMixin):
         num_items = self.ServicesList.GetItemCount()
 
         # display the new data in the list
-        new_item = self.ServicesList.InsertItem(num_items, svcname)
-        self.ServicesList.SetItem(new_item, 1, "%s" % typename)
-        self.ServicesList.SetItem(new_item, 2, "%s" % ip)
-        self.ServicesList.SetItem(new_item, 3, "%s" % port)
+        new_item = self.ServicesList.InsertStringItem(num_items, svcname)
+        self.ServicesList.SetStringItem(new_item, 1, "%s" % typename)
+        self.ServicesList.SetStringItem(new_item, 2, "%s" % ip)
+        self.ServicesList.SetStringItem(new_item, 3, "%s" % port)
 
         # record the new data for the ColumnSorterMixin
         # we assign every list item a unique id (that won't change when items

@@ -24,16 +24,14 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-# 
-
-
 import re
 from collections import OrderedDict
 
 from lxml import etree
 
-import util.paths as paths
 from xmlclass import *
+import util.paths as paths
+
 
 #: Dictionary that makes the relation between var names
 #: in plcopen and displayed values
@@ -182,9 +180,9 @@ LOAD_POU_PROJECT_TEMPLATE = """
               creationDateTime="1970-01-01T00:00:00"/>
   <contentHeader name="paste_project">
     <coordinateInfo>
-      <fbd><scaling x="10" y="10"/></fbd>
-      <ld><scaling x="10" y="10"/></ld>
-      <sfc><scaling x="10" y="10"/></sfc>
+      <fbd><scaling x="0" y="0"/></fbd>
+      <ld><scaling x="0" y="0"/></ld>
+      <sfc><scaling x="0" y="0"/></sfc>
     </coordinateInfo>
   </contentHeader>
   <types>
@@ -330,12 +328,16 @@ def LoadPouInstances(xml_string, body_type):
 
 
 def SaveProject(project, filepath):
-    project_file = open(filepath, 'w', encoding='utf-8')
-    project_file.write(etree.tostring(
+    content = etree.tostring(
         project,
         pretty_print=True,
         xml_declaration=True,
-        encoding='utf-8').decode())
+        encoding='utf-8').decode()
+
+    assert len(content) != 0
+        
+    project_file = open(filepath, 'w', encoding='utf-8')
+    project_file.write(content)
     project_file.close()
 
 
@@ -490,7 +492,7 @@ def _updateProjectClass(cls):
             "ppx:types/ppx:pous/ppx:pou%s%s" %
             (("[@name!='%s']" % exclude) if exclude is not None else '',
              ("[%s]" % " or ".join(
-                 list(map(lambda x: "@pouType='%s'" % x, filter))))
+                 ["@pouType='%s'" % x for x in filter]))
              if len(filter) > 0 else ""),
             namespaces=PLCOpenParser.NSMAP)
     setattr(cls, "getpous", getpous)
@@ -645,7 +647,7 @@ def _updateContentHeaderProjectClass(cls):
     setattr(cls, "getpageSize", getpageSize)
 
     def setscaling(self, scaling):
-        for language, (x, y) in scaling.items():
+        for language, (x, y) in list(scaling.items()):
             self.coordinateInfo.setscaling(language, x, y)
     setattr(cls, "setscaling", setscaling)
 
@@ -744,7 +746,7 @@ def _updateConfigurationResourceElementAddress(self, address_model, new_leading)
 def _removeConfigurationResourceVariableByAddress(self, address):
     for varlist in self.getglobalVars():
         variables = varlist.getvariable()
-        for i in range(len(variables) - 1, -1, -1):
+        for i in range(len(variables)-1, -1, -1):
             if variables[i].getaddress() == address:
                 variables.remove(variables[i])
 
@@ -752,7 +754,7 @@ def _removeConfigurationResourceVariableByAddress(self, address):
 def _removeConfigurationResourceVariableByFilter(self, address_model):
     for varlist in self.getglobalVars():
         variables = varlist.getvariable()
-        for i in range(len(variables) - 1, -1, -1):
+        for i in range(len(variables)-1, -1, -1):
             var_address = variables[i].getaddress()
             if var_address is not None:
                 result = address_model.match(var_address)
@@ -966,7 +968,7 @@ def _updateVariableVarListPlain(cls):
             # Array derived directly from an elementary type
             else:
                 basetype_name = base_type_name
-            return "ARRAY [%s] OF %s" % (",".join(map(lambda x: "%s..%s" % (x.getlower(), x.getupper()), vartype_content.getdimension())), basetype_name)
+            return "ARRAY [%s] OF %s" % (",".join(["%s..%s" % (x.getlower(), x.getupper()) for x in vartype_content.getdimension()]), basetype_name)
         # Variable type is an elementary type
         return vartype_content_name
     setattr(cls, "gettypeAsText", gettypeAsText)
@@ -1375,7 +1377,7 @@ def _updatePouPousClass(cls):
         vars = []
         if self.interface is not None:
             reverse_types = {}
-            for name, value in VarTypes.items():
+            for name, value in list(VarTypes.items()):
                 reverse_types[value] = name
             for varlist in self.interface.getcontent():
                 vars.append((reverse_types[varlist.getLocalTag()], varlist))
@@ -1388,8 +1390,8 @@ def _updatePouPousClass(cls):
         self.interface.setcontent(vars)
     setattr(cls, "setvars", setvars)
 
-    def addpouExternalVar(self, var_type, name):
-        self.addpouVar(var_type, name, "externalVars")
+    def addpouExternalVar(self, var_type, name, **args):
+        self.addpouVar(var_type, name, "externalVars", **args)
     setattr(cls, "addpouExternalVar", addpouExternalVar)
 
     def addpouVar(self, var_type, name, var_class="localVars", location="", description="", initval=""):

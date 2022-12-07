@@ -5,5 +5,5 @@
 
 LogLevels = ["CRITICAL", "WARNING", "INFO", "DEBUG"]
 LogLevelsCount = len(LogLevels)
-LogLevelsDict = dict(list(zip(LogLevels, range(LogLevelsCount))))
+LogLevelsDict = dict(zip(LogLevels, range(LogLevelsCount)))
 LogLevelsDefault = LogLevelsDict["DEBUG"]

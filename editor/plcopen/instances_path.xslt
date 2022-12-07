@@ -62,9 +62,9 @@
     </xsl:apply-templates>
   </xsl:template>
   <xsl:template match="ppx:dataType">
-    <xsl:param name="instance_path"/>
+    <xsl:param name="instance_path" select="concat('#',@name)"/>
     <xsl:apply-templates select="ppx:baseType/*[self::ppx:derived or self::ppx:struct or self::ppx:array]">
-      <xsl:with-param name="parent_path">
+      <xsl:with-param name="variable_path">
         <xsl:value-of select="$instance_path"/>
       </xsl:with-param>
     </xsl:apply-templates>
@@ -108,12 +108,12 @@
         <xsl:text>.</xsl:text>
         <xsl:value-of select="@name"/>
       </xsl:variable>
+      <xsl:apply-templates select="ppx:type/*[self::ppx:derived or self::ppx:struct or self::ppx:array]">
+        <xsl:with-param name="variable_path">
+          <xsl:value-of select="$element_path"/>
+        </xsl:with-param>
+      </xsl:apply-templates>
     </xsl:for-each>
-    <xsl:apply-templates select="ppx:type/*[self::ppx:derived or self::ppx:struct or self::ppx:array]">
-      <xsl:with-param name="variable_path">
-        <xsl:value-of select="$element_path"/>
-      </xsl:with-param>
-    </xsl:apply-templates>
   </xsl:template>
   <xsl:template match="ppx:array">
     <xsl:param name="variable_path"/>

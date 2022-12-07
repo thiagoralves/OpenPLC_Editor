@@ -22,32 +22,33 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import wx
-from networkeditortemplate import NetworkEditorTemplate
 
+import wx
+
+from networkeditortemplate import NetworkEditorTemplate
 from editors.ConfTreeNodeEditor import ConfTreeNodeEditor
 
 [
     ID_NETWORKEDITOR,
-] = [wx.NewIdRef() for _init_ctrls in range(1)]
+] = [wx.NewId() for _init_ctrls in range(1)]
 
 [
     ID_NETWORKEDITORCONFNODEMENUADDSLAVE,
     ID_NETWORKEDITORCONFNODEMENUREMOVESLAVE,
     ID_NETWORKEDITORCONFNODEMENUMASTER,
-] = [wx.NewIdRef() for _init_coll_ConfNodeMenu_Items in range(3)]
+] = [wx.NewId() for _init_coll_ConfNodeMenu_Items in range(3)]
 
 [
     ID_NETWORKEDITORMASTERMENUNODEINFOS, ID_NETWORKEDITORMASTERMENUDS301PROFILE,
     ID_NETWORKEDITORMASTERMENUDS302PROFILE, ID_NETWORKEDITORMASTERMENUDSOTHERPROFILE,
     ID_NETWORKEDITORMASTERMENUADD,
-] = [wx.NewIdRef() for _init_coll_MasterMenu_Items in range(5)]
+] = [wx.NewId() for _init_coll_MasterMenu_Items in range(5)]
 
 [
     ID_NETWORKEDITORADDMENUSDOSERVER, ID_NETWORKEDITORADDMENUSDOCLIENT,
     ID_NETWORKEDITORADDMENUPDOTRANSMIT, ID_NETWORKEDITORADDMENUPDORECEIVE,
     ID_NETWORKEDITORADDMENUMAPVARIABLE, ID_NETWORKEDITORADDMENUUSERTYPE,
-] = [wx.NewIdRef() for _init_coll_AddMenu_Items in range(6)]
+] = [wx.NewId() for _init_coll_AddMenu_Items in range(6)]
 
 
 class NetworkEditor(ConfTreeNodeEditor, NetworkEditorTemplate):
@@ -96,7 +97,7 @@ class NetworkEditor(ConfTreeNodeEditor, NetworkEditorTemplate):
             other_profile_text = _("%s Profile") % profile
             add_menu.append((wx.ITEM_SEPARATOR, None))
             for text, _indexes in self.Manager.GetCurrentSpecificMenu():
-                add_menu.append((wx.ITEM_NORMAL, (text, wx.NewIdRef(), '', self.GetProfileCallBack(text))))
+                add_menu.append((wx.ITEM_NORMAL, (text, wx.NewId(), '', self.GetProfileCallBack(text))))
         else:
             other_profile_text = _('Other Profile')
 

@@ -23,14 +23,15 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+
+
 import re
 
 import wx
 
+from graphics.FBD_Objects import FBD_Block
 from controls.LibraryPanel import LibraryPanel
 from dialogs.BlockPreviewDialog import BlockPreviewDialog
-from graphics.FBD_Objects import FBD_Block
-
 
 # -------------------------------------------------------------------------------
 #                                    Helpers
@@ -77,7 +78,7 @@ class FBDBlockDialog(BlockPreviewDialog):
         setattr(self.LibraryPanel, "_OnTreeItemSelected",
                 self.OnLibraryTreeItemSelected)
         left_staticboxsizer.Add(self.LibraryPanel, 1, border=5,
-                                flag=wx.GROW | wx.TOP)
+                                      flag=wx.GROW | wx.TOP)
 
         # Create sizer for other block parameters
         top_right_gridsizer = wx.FlexGridSizer(cols=2, hgap=0, rows=4, vgap=5)
@@ -87,7 +88,7 @@ class FBDBlockDialog(BlockPreviewDialog):
         # Create label for block name
         name_label = wx.StaticText(self, label=_('Name:'))
         top_right_gridsizer.Add(name_label,
-                                flag=wx.ALIGN_CENTER_VERTICAL)
+                                      flag=wx.ALIGN_CENTER_VERTICAL)
 
         # Create text control for defining block name
         self.BlockName = wx.TextCtrl(self)
@@ -97,7 +98,7 @@ class FBDBlockDialog(BlockPreviewDialog):
         # Create label for extended block input number
         inputs_label = wx.StaticText(self, label=_('Inputs:'))
         top_right_gridsizer.Add(inputs_label,
-                                flag=wx.ALIGN_CENTER_VERTICAL)
+                                      flag=wx.ALIGN_CENTER_VERTICAL)
 
         # Create spin control for defining extended block input number
         self.Inputs = wx.SpinCtrl(self, min=2, max=20,
@@ -109,7 +110,7 @@ class FBDBlockDialog(BlockPreviewDialog):
         execution_order_label = wx.StaticText(self,
                                               label=_('Execution Order:'))
         top_right_gridsizer.Add(execution_order_label,
-                                flag=wx.ALIGN_CENTER_VERTICAL)
+                                      flag=wx.ALIGN_CENTER_VERTICAL)
 
         # Create spin control for defining block execution order
         self.ExecutionOrder = wx.SpinCtrl(self, min=0, style=wx.SP_ARROW_KEYS)
@@ -121,7 +122,7 @@ class FBDBlockDialog(BlockPreviewDialog):
         execution_control_label = wx.StaticText(self,
                                                 label=_('Execution Control:'))
         top_right_gridsizer.Add(execution_control_label,
-                                flag=wx.ALIGN_CENTER_VERTICAL)
+                                      flag=wx.ALIGN_CENTER_VERTICAL)
 
         # Create check box to enable block execution control
         self.ExecutionControl = wx.CheckBox(self)
@@ -135,7 +136,7 @@ class FBDBlockDialog(BlockPreviewDialog):
 
         # Add buttons sizer to sizers
         self.MainSizer.Add(self.ButtonSizer, border=20,
-                           flag=wx.ALIGN_RIGHT | wx.BOTTOM | wx.LEFT | wx.RIGHT)
+                                flag=wx.ALIGN_RIGHT | wx.BOTTOM | wx.LEFT | wx.RIGHT)
 
         # Dictionary containing correspondence between parameter exchanged and
         # control to fill with parameter value
@@ -176,7 +177,7 @@ class FBDBlockDialog(BlockPreviewDialog):
         default_name_model = GetBlockTypeDefaultNameModel(blocktype)
 
         # For each parameters defined, set corresponding control value
-        for name, value in values.items():
+        for name, value in list(values.items()):
 
             # Parameter is block name
             if name == "name":

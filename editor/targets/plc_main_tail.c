@@ -8,7 +8,7 @@
 #ifndef TARGET_LOGGING_DISABLE
 
 #ifndef LOG_BUFFER_SIZE
-#define LOG_BUFFER_SIZE (1<<6) /*16Ko*/
+#define LOG_BUFFER_SIZE (1<<14) /*16Ko*/
 #endif
 #ifndef LOG_BUFFER_ATTRS
 #define LOG_BUFFER_ATTRS

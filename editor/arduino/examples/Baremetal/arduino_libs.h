@@ -18,7 +18,7 @@ extern uint8_t pinMask_AOUT[];
         //Disable pin
         //disabled_pins[disabled_pins[0]] = pin;
         //if (disabled_pins[0] < 10) disabled_pins[0]++;
-
+        
         for (int i = 0; i < NUM_DISCRETE_INPUT; i++)
         {
             if (pinMask_DIN[i] == pin)
@@ -64,6 +64,7 @@ extern uint8_t pinMask_AOUT[];
     extern "C" uint8_t p1am_init();
     extern "C" void p1am_writeDiscrete(uint32_t, uint8_t, uint8_t);
     extern "C" uint32_t p1am_readDiscrete(uint8_t, uint8_t);
+    extern "C" uint16_t p1am_readAnalog(uint8_t, uint8_t);
     
     uint8_t modules_initialized = 0;
     
@@ -87,6 +88,11 @@ extern uint8_t pinMask_AOUT[];
     uint32_t p1am_readDiscrete(uint8_t slot, uint8_t channel)
     {
         return P1.readDiscrete(slot, channel);
+    }
+    
+    uint16_t p1am_readAnalog(uint8_t slot, uint8_t channel)
+    {
+        return (uint16_t)P1.readAnalog(slot, channel);
     }
 #endif
 

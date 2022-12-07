@@ -3,15 +3,18 @@
 
 # See COPYING file for copyrights details.
 
+
+
 from itertools import repeat, islice, chain
 
 from connectors.SchemeEditor import SchemeEditor
+
 
 model = [('host', _("Host:")),
          ('port', _("Port:"))]
 
 # (scheme, model, secure)
-models = [("LOCAL", [], False), ("PYRO", model, False), ("PYROS", model, True)]
+models = [("LOCAL", [], False), ("PYRO", model, False)]
 
 Schemes = list(zip(*models))[0]
 

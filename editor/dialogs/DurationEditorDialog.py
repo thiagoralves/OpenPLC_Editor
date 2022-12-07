@@ -24,6 +24,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
+
+
 import re
 
 import wx
@@ -67,7 +69,7 @@ class DurationEditorDialog(wx.Dialog):
 
         controls_sizer = wx.FlexGridSizer(cols=len(CONTROLS), hgap=10, rows=2, vgap=10)
         main_sizer.Add(controls_sizer, border=20,
-                       flag=wx.TOP | wx.LEFT | wx.RIGHT | wx.GROW)
+                            flag=wx.TOP | wx.LEFT | wx.RIGHT | wx.GROW)
 
         controls = []
         for i, (name, label) in enumerate(CONTROLS):
@@ -89,7 +91,7 @@ class DurationEditorDialog(wx.Dialog):
             controls_sizer.Add(txtctrl, flag=wx.GROW)
 
         button_sizer = self.CreateButtonSizer(wx.OK | wx.CANCEL | wx.CENTRE)
-        # self.Bind(wx.EVT_BUTTON, self.OnOK, button_sizer.GetAffirmativeButton())
+        self.Bind(wx.EVT_BUTTON, self.OnOK, id=self.GetAffirmativeId())
         main_sizer.Add(button_sizer, border=20,
                             flag=wx.ALIGN_RIGHT | wx.BOTTOM | wx.LEFT | wx.RIGHT)
 
@@ -151,6 +153,7 @@ class DurationEditorDialog(wx.Dialog):
         return duration
 
     def OnOK(self, event):
+        event.Skip()
         self.OnCloseDialog()
 
     def OnCloseDialog(self):

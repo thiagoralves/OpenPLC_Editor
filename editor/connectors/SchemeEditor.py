@@ -3,8 +3,9 @@
 
 # See COPYING file for copyrights details.
 
-from functools import partial
 
+
+from functools import partial
 import wx
 
 from controls.IDBrowser import IDBrowser

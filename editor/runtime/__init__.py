@@ -1,14 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# 
 
 
-import sys
 import traceback
+import sys
 
 from runtime.Worker import worker
-
 MainWorker = worker()
 
 _PLCObjectSingleton = None

@@ -23,12 +23,12 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-import binascii
+
 from datetime import timedelta
-
-import numpy
-
+import binascii
+import numpy as np
 from graphics.DebugDataConsumer import DebugDataConsumer, TYPE_TRANSLATOR
+from controls.DebugVariablePanel.RingBuffer import RingBuffer
 
 # -------------------------------------------------------------------------------
 #                 Constant for calculate CRC for string variables
@@ -62,13 +62,6 @@ class DebugVariableItem(DebugDataConsumer):
 
         # Get Variable data type
         self.RefreshVariableType()
-
-    def __del__(self):
-        """
-        Destructor
-        """
-        # Reset reference to debug variable panel
-        self.Parent = None
 
     def SetVariable(self, variable):
         """
@@ -104,7 +97,7 @@ class DebugVariableItem(DebugDataConsumer):
             # Init masked variable path
             variable = ""
 
-            for m, p in list(zip(mask, parts)):
+            for m, p in zip(mask, parts):
                 # Part is not masked, add part prefixed with '.' is previous
                 # wasn't masked
                 if m == '*':
@@ -143,8 +136,8 @@ class DebugVariableItem(DebugDataConsumer):
         @return: Data as numpy.array([(tick, value, forced),...])
         """
         # Return immediately if data empty or none
-        if self.Data is None or len(self.Data) == 0:
-            return self.Data
+        if self.Data is None or self.Data.count == 0:
+            return None
 
         # Find nearest data outside given range indexes
         start_idx = (self.GetNearestData(start_tick, -1)
@@ -152,10 +145,10 @@ class DebugVariableItem(DebugDataConsumer):
                      else 0)
         end_idx = (self.GetNearestData(end_tick, 1)
                    if end_tick is not None
-                   else len(self.Data))
+                   else self.Data.count)
 
         # Return data between indexes
-        return self.Data[start_idx:end_idx]
+        return self.Data.view[start_idx:end_idx]
 
     def GetRawValue(self, index):
         """
@@ -187,6 +180,9 @@ class DebugVariableItem(DebugDataConsumer):
         # Get data in given tick range
         data = self.GetData(start_tick, end_tick)
 
+        if data is None:
+            return None, None, None
+
         # Value range is calculated on whole data
         if full_range:
             return data, self.MinValue, self.MaxValue
@@ -196,8 +192,8 @@ class DebugVariableItem(DebugDataConsumer):
         if len(values) > 0:
             # Return value range for data in given tick range
             return (data,
-                    data[numpy.argmin(values), 1],
-                    data[numpy.argmax(values), 1])
+                    data[np.argmin(values), 1],
+                    data[np.argmax(values), 1])
 
         # Return default values
         return data, None, None
@@ -208,7 +204,7 @@ class DebugVariableItem(DebugDataConsumer):
         """
         if self.StoreData and self.IsNumVariable():
             # Init table storing data
-            self.Data = numpy.array([]).reshape(0, 3)
+            self.Data = RingBuffer(3)
 
             # Init table storing raw data if variable is strin
             self.RawData = ([]
@@ -253,13 +249,13 @@ class DebugVariableItem(DebugDataConsumer):
                 last_raw_data_idx = len(self.RawData) - 1
 
             data_values = []
-            for tick, (value, forced) in list(zip(ticks, values)):
+            for tick, (value, forced) in zip(ticks, values):
                 # Translate forced flag to float for storing in Data table
                 forced_value = float(forced)
 
                 if self.VariableType in ["STRING", "WSTRING"]:
                     # String data value is CRC
-                    num_value = (binascii.crc32(value) & STRING_CRC_MASK)
+                    num_value = (binascii.crc32(value.encode()) & STRING_CRC_MASK)
                 elif self.VariableType in ["TIME", "TOD", "DT", "DATE"]:
                     # Numeric value of time type variables
                     # is represented in seconds
@@ -295,7 +291,7 @@ class DebugVariableItem(DebugDataConsumer):
                     [float(tick), num_value, extra_value])
 
             # Add New data to stored data table
-            self.Data = numpy.append(self.Data, data_values, axis=0)
+            self.Data.append(data_values)
 
             # Signal to debug variable panel to refresh
             self.Parent.HasNewData = True
@@ -338,7 +334,7 @@ class DebugVariableItem(DebugDataConsumer):
         if tick is not None and self.Data is not None:
 
             # Return current value and forced flag if data empty
-            if len(self.Data) == 0:
+            if self.Data.count == 0:
                 return self.Value, self.IsForced()
 
             # Get index of nearest data from tick given
@@ -346,9 +342,9 @@ class DebugVariableItem(DebugDataConsumer):
 
             # Get value and forced flag at given index
             value, forced = \
-                self.RawData[int(self.Data[idx, 2])] \
+                self.RawData[int(self.Data.view[idx, 2])] \
                 if self.VariableType in ["STRING", "WSTRING"] \
-                else self.Data[idx, 1:3]
+                else self.Data.view[idx, 1:3]
 
             if self.VariableType in ["TIME", "TOD", "DT", "DATE"]:
                 value = timedelta(seconds=value)
@@ -381,10 +377,10 @@ class DebugVariableItem(DebugDataConsumer):
             return None
 
         # Extract data ticks
-        ticks = self.Data[:, 0]
+        ticks = self.Data.view[:, 0]
 
         # Get nearest data from tick
-        idx = numpy.argmin(abs(ticks - tick))
+        idx = min(np.searchsorted(ticks, tick), self.Data.count - 1)
 
         # Adjust data index according to constraint
         if adjust < 0 and ticks[idx] > tick and idx > 0 or \

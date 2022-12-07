@@ -136,7 +136,6 @@ class LogScrollBar(wx.Panel):
     def OnPaint(self, event):
         dc = wx.BufferedPaintDC(self)
         dc.Clear()
-        # dc.BeginDrawing()
 
         gc = wx.GCDC(dc)
 
@@ -176,7 +175,6 @@ class LogScrollBar(wx.Panel):
         gc.DrawRectangle(thumb_rect.x, thumb_rect.y,
                          thumb_rect.width, thumb_rect.height)
 
-        # dc.EndDrawing()
         event.Skip()
 
 
@@ -191,9 +189,6 @@ class LogButton(object):
         self.Label = label
         self.Shown = True
         self.Callback = callback
-
-    def __del__(self):
-        self.callback = None
 
     def GetSize(self):
         return self.Size
@@ -241,10 +236,10 @@ class LogMessage(object):
         self.Message = msg
         self.DrawDate = True
 
-    def __cmp__(self, other):
+    def __lt__(self, other):
         if self.Date == other.Date:
-            return operator.eq(self.Seconds, other.Seconds)
-        return operator.eq(self.Date, other.Date)
+            return self.Seconds < other.Seconds
+        return self.Date < other.Date
 
     def GetFullText(self):
         date = self.Date.replace(second=int(self.Seconds))
@@ -336,7 +331,7 @@ class LogViewer(DebugViewer, wx.Panel):
         if wx.Platform == '__WXMSW__':
             self.Font = wx.Font(8, wx.SWISS, wx.NORMAL, wx.NORMAL, faceName='Courier New')
         else:
-            self.Font = wx.Font(10, wx.SWISS, wx.NORMAL, wx.NORMAL, faceName='Courier')
+            self.Font = wx.Font(10, wx.SWISS, wx.NORMAL, wx.NORMAL, faceName='FreeMono')
         self.MessagePanel.Bind(wx.EVT_LEFT_UP, self.OnMessagePanelLeftUp)
         self.MessagePanel.Bind(wx.EVT_RIGHT_UP, self.OnMessagePanelRightUp)
         self.MessagePanel.Bind(wx.EVT_LEFT_DCLICK, self.OnMessagePanelLeftDCLick)
@@ -369,7 +364,7 @@ class LogViewer(DebugViewer, wx.Panel):
         self.ParentWindow = window
 
         self.LevelIcons = [GetBitmap("LOG_" + level) for level in LogLevels]
-        self.LevelFilters = [range(i) for i in range(4, 0, -1)]
+        self.LevelFilters = [list(range(i)) for i in range(4, 0, -1)]
         self.CurrentFilter = self.LevelFilters[0]
         self.CurrentSearchValue = ""
 
@@ -382,9 +377,6 @@ class LogViewer(DebugViewer, wx.Panel):
         self.MessageToolTip = None
         self.MessageToolTipTimer = wx.Timer(self, -1)
         self.Bind(wx.EVT_TIMER, self.OnMessageToolTipTimer, self.MessageToolTipTimer)
-
-    def __del__(self):
-        self.ScrollTimer.Stop()
 
     def ResetLogMessages(self):
         self.ResetLogCounters()
@@ -414,14 +406,14 @@ class LogViewer(DebugViewer, wx.Panel):
 
     def SetLogCounters(self, log_count):
         new_messages = []
-        for level, count, prev in list(zip(range(LogLevelsCount), log_count, self.previous_log_count)):
+        for level, count, prev in zip(range(LogLevelsCount), log_count, self.previous_log_count):
             if count is not None and prev != count:
                 if prev is None:
                     dump_end = max(-1, count - 10)
                     oldest_message = (-1, None)
                 else:
                     dump_end = prev - 1
-                for msgidx in range(count - 1, dump_end, -1):
+                for msgidx in range(count-1, dump_end, -1):
                     new_message = self.GetLogMessageFromSource(msgidx, level)
                     if new_message is None:
                         if prev is None:
@@ -438,7 +430,7 @@ class LogViewer(DebugViewer, wx.Panel):
                 if prev is None and len(self.OldestMessages) <= level:
                     self.OldestMessages.append(oldest_message)
                 self.previous_log_count[level] = count
-        sorted(new_messages)
+        new_messages.sort()
         if len(new_messages) > 0:
             self.HasNewData = True
             if self.CurrentMessage is not None:
@@ -534,7 +526,6 @@ class LogViewer(DebugViewer, wx.Panel):
         bitmap = wx.Bitmap(width, height)
         dc = wx.BufferedDC(wx.ClientDC(self.MessagePanel), bitmap)
         dc.Clear()
-        # dc.BeginDrawing()
 
         if self.CurrentMessage is not None:
 
@@ -556,13 +547,11 @@ class LogViewer(DebugViewer, wx.Panel):
                     draw_date = message.Date != previous_message.Date
                 message = previous_message
 
-        # dc.EndDrawing()
-
         self.MessageScrollBar.RefreshThumbPosition()
 
     def IsPLCLogEmpty(self):
         empty = True
-        for _level, prev in list(zip(range(LogLevelsCount), self.previous_log_count)):
+        for _level, prev in zip(range(LogLevelsCount), self.previous_log_count):
             if prev is not None:
                 empty = False
                 break
@@ -708,9 +697,8 @@ class LogViewer(DebugViewer, wx.Panel):
         if message is not None:
             menu = wx.Menu(title='')
 
-            new_id = wx.NewIdRef()
-            menu.Append(helpString='', id=new_id, kind=wx.ITEM_NORMAL, text=_("Copy"))
-            self.Bind(wx.EVT_MENU, self.GetCopyMessageToClipboardFunction(message), id=new_id)
+            menu_entry = menu.Append(wx.ID_ANY, _("Copy"))
+            self.Bind(wx.EVT_MENU, self.GetCopyMessageToClipboardFunction(message), menu_entry)
 
             self.MessagePanel.PopupMenu(menu)
             menu.Destroy()

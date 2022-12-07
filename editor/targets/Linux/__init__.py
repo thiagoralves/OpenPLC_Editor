@@ -21,8 +21,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-from targets.toolchain_gcc import toolchain_gcc
-import platform
+
+
+
+from ..toolchain_gcc import toolchain_gcc
 
 
 class Linux_target(toolchain_gcc):
@@ -30,10 +32,9 @@ class Linux_target(toolchain_gcc):
     extension = ".so"
 
     def getBuilderCFLAGS(self):
-        return toolchain_gcc.getBuilderCFLAGS(self) + ["-fPIC"]
+        return toolchain_gcc.getBuilderCFLAGS(self) + \
+            ["-fPIC", "-Wno-implicit-function-declaration",
+             "-Wno-int-conversion"]
 
     def getBuilderLDFLAGS(self):
-        if platform.system() == 'Darwin':
-            return toolchain_gcc.getBuilderLDFLAGS(self) + ["-shared"]
-        else:
-            return toolchain_gcc.getBuilderLDFLAGS(self) + ["-shared", "-lrt"]
+        return toolchain_gcc.getBuilderLDFLAGS(self) + ["-shared", "-lrt"]

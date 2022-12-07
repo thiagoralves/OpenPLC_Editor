@@ -22,19 +22,20 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+
 import os
 import re
 import traceback
-from builtins import str as text
 from copy import deepcopy
 
 from lxml import etree
-
-from ConfigTreeNode import XSDSchemaErrorMessage
-from PLCControler import UndoBuffer
-from editors.CodeFileEditor import GetSectionsText
-from plcopen.plcopen import TestTextElement
 from xmlclass import GenerateParserFromXSDstring
+
+from PLCControler import UndoBuffer
+from ConfigTreeNode import XSDSchemaErrorMessage
+
+from plcopen.plcopen import TestTextElement
+from editors.CodeFileEditor import GetSectionsText
 
 CODEFILE_XSD = """<?xml version="1.0" encoding="ISO-8859-1" ?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
@@ -125,7 +126,7 @@ class CodeFile(object):
                     self.GetCTRoot().logger.write_warning(XSDSchemaErrorMessage.format(a1=fname, a2=lnum, a3=src))
                 self.CreateCodeFileBuffer(True)
             except Exception as exc:
-                msg = _("Couldn't load confnode parameters {a1} :\n {a2}").format(a1=self.CTNName(), a2=text(exc))
+                msg = _("Couldn't load confnode parameters {a1} :\n {a2}").format(a1=self.CTNName(), a2=str(exc))
                 self.GetCTRoot().logger.write_error(msg)
                 self.GetCTRoot().logger.write_error(traceback.format_exc())
                 raise Exception
@@ -187,12 +188,12 @@ class CodeFile(object):
     def OnCTNSave(self, from_project_path=None):
         filepath = self.CodeFileName()
 
-        xmlfile = open(filepath, "w", encoding='utf-8')
+        xmlfile = open(filepath, "w")
         xmlfile.write(etree.tostring(
             self.CodeFile,
             pretty_print=True,
             xml_declaration=True,
-            encoding='utf-8').decode())
+            encoding='utf-8'))
         xmlfile.close()
 
         self.MarkCodeFileAsSaved()
@@ -204,9 +205,6 @@ class CodeFile(object):
                 variable.gettype(),
                 variable.getinitial())
                for variable in variables]
-        ret.extend([("On"+variable.getname()+"Change", "python_poll", "")
-                    for variable in variables
-                    if variable.getonchange()])
         return ret
 
     def CTNSearch(self, criteria):

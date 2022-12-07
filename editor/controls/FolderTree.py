@@ -23,20 +23,20 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-import operator
+from functools import cmp_to_key
+from operator import eq
 import os
 
 import wx
 
 from util.BitmapLibrary import GetBitmap
 
-
-DRIVE, FOLDER, FILE = range(3)
+DRIVE, FOLDER, FILE = list(range(3))
 
 
 def sort_folder(x, y):
     if x[1] == y[1]:
-        return operator.eq(x[0], y[0])
+        return eq(x[0], y[0])
     elif x[1] != FILE:
         return -1
     else:
@@ -99,7 +99,7 @@ class FolderTree(wx.Panel):
         self.Filters = {}
         if self.Filter is not None:
             filter_parts = filter.split("|")
-            for idx in list(range(0, len(filter_parts), 2)):
+            for idx in range(0, len(filter_parts), 2):
                 if filter_parts[idx + 1] == "*.*":
                     self.Filters[filter_parts[idx]] = ""
                 else:
@@ -115,10 +115,10 @@ class FolderTree(wx.Panel):
     def _GetFolderChildren(self, folderpath, recursive=True):
         items = []
         if wx.Platform == '__WXMSW__' and folderpath == "/":
-            for c in list(range(ord('a'), ord('z'))):
+            for c in range(ord('a'), ord('z')):
                 drive = os.path.join("%s:\\" % chr(c))
                 if os.path.exists(drive):
-                    items.append((drive, DRIVE, len(self._GetFolderChildren(drive, False))))
+                    items.append((drive, DRIVE, self._GetFolderChildren(drive, False)))
         else:
             try:
                 files = os.listdir(folderpath)
@@ -136,8 +136,8 @@ class FolderTree(wx.Panel):
                     elif (self.CurrentFilter == "" or
                           os.path.splitext(filename)[1] == self.CurrentFilter):
                         items.append((filename, FILE, None))
-        # if recursive:
-        #     items.sort(key=sort_folder)
+        if recursive:
+            items.sort(key=cmp_to_key(sort_folder))
         return items
 
     def SetFilter(self, filter):
@@ -160,7 +160,7 @@ class FolderTree(wx.Panel):
                 if wx.Platform != '__WXMSW__':
                     item, item_cookie = self.Tree.GetNextChild(root, item_cookie)
             elif self.Tree.GetItemText(item) != filename:
-                item = self.Tree.InsertItemBefore(root, idx, filename, self.TreeImageDict[item_type])
+                item = self.Tree.InsertItem(root, idx, filename, self.TreeImageDict[item_type])
             filepath = os.path.join(folderpath, filename)
             if item_type != FILE:
                 if self.Tree.IsExpanded(item):

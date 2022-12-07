@@ -23,7 +23,6 @@
 # used in safety-critical situations without a full and competent review.
 
 
-
 # dictionary implementing:
 # key   - string with the description we want in the request plugin GUI
 # tuple - (modbus function number, request type, max count value,
@@ -46,7 +45,7 @@ def GetCTVal(child, index):
 
 # Configuration tree value acces helper, for multiple values
 def GetCTVals(child, indexes):
-    return list(map(lambda index: GetCTVal(child, index), indexes))
+    return [GetCTVal(child, index) for index in indexes]
 
 
 def GetTCPServerNodePrinted(self, child):
@@ -55,20 +54,19 @@ def GetTCPServerNodePrinted(self, child):
     params: child - the correspondent subplugin in Beremiz
     """
     node_init_template = '''/*node %(locnodestr)s*/
-{"%(locnodestr)s", %(slaveid)s, {naf_tcp, {.tcp = {%(host)s, "%(port)s", DEF_CLOSE_ON_SILENCE}}}, -1 /* mb_nd */, 0 /* init_state */}'''
+{"%(locnodestr)s", "%(config_name)s", "%(host)s", "%(port)s", %(slaveid)s, {naf_tcp, {.tcp = {NULL, NULL, DEF_CLOSE_ON_SILENCE}}}, -1 /* mb_nd */, 0 /* init_state */}'''
 
     location = ".".join(map(str, child.GetCurrentLocation()))
-    host, port, slaveid = GetCTVals(child, range(3))
+    config_name, host, port, slaveid = GetCTVals(child, list(range(4)))
     if host == "#ANY#":
-        host = 'INADDR_ANY'
-    else:
-        host = '"' + host + '"'
+        host = ''
     # slaveid = GetCTVal(child, 2)
-    # if int(slaveid) not in range(256):
+    # if int(slaveid) not in xrange(256):
         # self.GetCTRoot().logger.write_error("Error: Wrong slave ID in %s server node\nModbus Plugin C code returns empty\n"%location)
         # return None
 
     node_dict = {"locnodestr": location,
+                 "config_name": config_name,
                  "host": host,
                  "port": port,
                  "slaveid": slaveid}
@@ -94,7 +92,7 @@ def GetTCPServerMemAreaPrinted(self, child, nodeid):
             "Modbus plugin: Invalid Start Address in server memory area node %(locreqstr)s (Must be in the range [0..65535])\nModbus plugin: Aborting C code generation for this node\n" % request_dict)
         return None
     request_dict["count"] = GetCTVal(child, 1)
-    if int(request_dict["count"]) not in range(1, 65536):
+    if int(request_dict["count"]) not in range(1, 65537):
         self.GetCTRoot().logger.write_error(
             "Modbus plugin: Invalid number of channels in server memory area node %(locreqstr)s (Must be in the range [1..65536-start_address])\nModbus plugin: Aborting C code generation for this node\n" % request_dict)
         return None
@@ -118,12 +116,13 @@ def GetRTUSlaveNodePrinted(self, child):
     params: child - the correspondent subplugin in Beremiz
     """
     node_init_template = '''/*node %(locnodestr)s*/
-{"%(locnodestr)s", %(slaveid)s, {naf_rtu, {.rtu = {"%(device)s", %(baud)s /*baud*/, %(parity)s /*parity*/, 8 /*data bits*/, %(stopbits)s, 0 /* ignore echo */}}}, -1 /* mb_nd */, 0 /* init_state */}'''
+{"%(locnodestr)s", "%(config_name)s", "%(device)s", "",%(slaveid)s, {naf_rtu, {.rtu = {NULL, %(baud)s /*baud*/, %(parity)s /*parity*/, 8 /*data bits*/, %(stopbits)s, 0 /* ignore echo */}}}, -1 /* mb_nd */, 0 /* init_state */}'''
 
     location = ".".join(map(str, child.GetCurrentLocation()))
-    device, baud, parity, stopbits, slaveid = GetCTVals(child, range(5))
+    config_name, device, baud, parity, stopbits, slaveid = GetCTVals(child, list(range(6)))
 
     node_dict = {"locnodestr": location,
+                 "config_name": config_name,
                  "device": device,
                  "baud": baud,
                  "parity": modbus_serial_parity_dict[parity],
@@ -138,12 +137,13 @@ def GetRTUClientNodePrinted(self, child):
     params: child - the correspondent subplugin in Beremiz
     """
     node_init_template = '''/*node %(locnodestr)s*/
-{"%(locnodestr)s", {naf_rtu, {.rtu = {"%(device)s", %(baud)s /*baud*/, %(parity)s /*parity*/, 8 /*data bits*/, %(stopbits)s, 0 /* ignore echo */}}}, -1 /* mb_nd */, 0 /* init_state */, %(coms_period)s /* communication period */}'''
+{"%(locnodestr)s", "%(config_name)s", "%(device)s", "", {naf_rtu, {.rtu = {NULL, %(baud)s /*baud*/, %(parity)s /*parity*/, 8 /*data bits*/, %(stopbits)s, 0 /* ignore echo */}}}, -1 /* mb_nd */, 0 /* init_state */, %(coms_period)s /* communication period */}'''
 
     location = ".".join(map(str, child.GetCurrentLocation()))
-    device, baud, parity, stopbits, coms_period = GetCTVals(child, range(5))
+    config_name, device, baud, parity, stopbits, coms_period = GetCTVals(child, list(range(6)))
 
     node_dict = {"locnodestr": location,
+                 "config_name": config_name,
                  "device": device,
                  "baud": baud,
                  "parity": modbus_serial_parity_dict[parity],
@@ -158,12 +158,13 @@ def GetTCPClientNodePrinted(self, child):
     params: child - the correspondent subplugin in Beremiz
     """
     node_init_template = '''/*node %(locnodestr)s*/
-{"%(locnodestr)s", {naf_tcp, {.tcp = {"%(host)s", "%(port)s", DEF_CLOSE_ON_SILENCE}}}, -1 /* mb_nd */, 0 /* init_state */, %(coms_period)s /* communication period */, 0 /* prev_error */}'''
+{"%(locnodestr)s", "%(config_name)s", "%(host)s", "%(port)s", {naf_tcp, {.tcp = {NULL, NULL, DEF_CLOSE_ON_SILENCE}}}, -1 /* mb_nd */, 0 /* init_state */, %(coms_period)s /* communication period */, 0 /* prev_error */}'''
 
     location = ".".join(map(str, child.GetCurrentLocation()))
-    host, port, coms_period = GetCTVals(child, range(3))
+    config_name, host, port, coms_period = GetCTVals(child, list(range(4)))
 
     node_dict = {"locnodestr": location,
+                 "config_name": config_name,
                  "host": host,
                  "port": port,
                  "coms_period": coms_period}
@@ -182,7 +183,7 @@ def GetClientRequestPrinted(self, child, nodeid):
 
     req_init_template = '''/*request %(locreqstr)s*/
 {"%(locreqstr)s", %(nodeid)s, %(slaveid)s, %(iotype)s, %(func_nr)s, %(address)s , %(count)s,
-DEF_REQ_SEND_RETRIES, 0 /* error_code */, 0 /* prev_code */, {%(timeout_s)d, %(timeout_ns)d} /* timeout */,
+DEF_REQ_SEND_RETRIES, 0 /* mb_error_code */, 0 /* tn_error_code */, 0 /* prev_code */, {%(timeout_s)d, %(timeout_ns)d} /* timeout */, %(write_on_change)d /* write_on_change */, 
 {%(buffer)s}, {%(buffer)s}}'''
 
     timeout = int(GetCTVal(child, 4))
@@ -196,6 +197,7 @@ DEF_REQ_SEND_RETRIES, 0 /* error_code */, 0 /* prev_code */, {%(timeout_s)d, %(t
         "slaveid": GetCTVal(child, 1),
         "address": GetCTVal(child, 3),
         "count": GetCTVal(child, 2),
+        "write_on_change": GetCTVal(child, 5),
         "timeout": timeout,
         "timeout_s": timeout_s,
         "timeout_ns": timeout_ns,
@@ -220,5 +222,11 @@ DEF_REQ_SEND_RETRIES, 0 /* error_code */, 0 /* prev_code */, {%(timeout_s)d, %(t
         self.GetCTRoot().logger.write_error(
             "Modbus plugin: Invalid number of channels in TCP client request node %(locreqstr)s (start_address + nr_channels must be less than 65536)\nModbus plugin: Aborting C code generation for this node\n" % request_dict)
         return None
+    if (request_dict["write_on_change"] and (request_dict["iotype"] == 'req_input')):
+        self.GetCTRoot().logger.write_error(
+            "Modbus plugin: (warning) MB client request node %(locreqstr)s has option 'write_on_change' enabled.\nModbus plugin: This option will be ignored by the Modbus read function.\n" % request_dict)
+        # NOTE: this is only a warning (we don't wish to abort code generation) so following line must be left commented out!
+        # return None
+    
 
     return req_init_template % request_dict

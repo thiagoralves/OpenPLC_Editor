@@ -24,13 +24,12 @@
 
 
 
-
 from threading import Lock, Timer
 from time import time as gettime
 
 import wx
 
-REFRESH_PERIOD = 0.5  # Minimum time between 2 refresh
+REFRESH_PERIOD = 0.1         # Minimum time between 2 refresh
 DEBUG_REFRESH_LOCK = Lock()  # Common refresh lock for all debug viewers
 
 # -------------------------------------------------------------------------------
@@ -79,24 +78,6 @@ class DebugViewer(object):
 
         # Set DataProducer and subscribe tick if needed
         self.SetDataProducer(producer)
-
-    def __del__(self):
-        """
-        Destructor
-        """
-        # Unsubscribe all data consumers
-        self.UnsubscribeAllDataConsumers()
-
-        # Delete reference to DataProducer
-        self.DataProducer = None
-
-        # Stop last refresh timer
-        if self.LastRefreshTimer is not None:
-            self.LastRefreshTimer.cancel()
-
-        # Release Common debug lock if DebugViewer has acquired it
-        if self.HasAcquiredLock:
-            DEBUG_REFRESH_LOCK.release()
 
     def SetDataProducer(self, producer):
         """

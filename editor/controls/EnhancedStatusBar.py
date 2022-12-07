@@ -55,6 +55,8 @@ Latest Revision before Latest Revision before Latest Revision: 31 May 2005, 23.1
 
 """
 
+
+
 import wx
 
 # Horizontal Alignment Constants
@@ -83,12 +85,12 @@ class EnhancedStatusBarItem(object):
 
 class EnhancedStatusBar(wx.StatusBar):
 
-    def __init__(self, parent, id=wx.ID_ANY, style=0,
+    def __init__(self, parent, id=wx.ID_ANY, style=wx.STB_SIZEGRIP,
                  name="EnhancedStatusBar"):
         """Default Class Constructor.
 
         EnhancedStatusBar.__init__(self, parent, id=wx.ID_ANY,
-                                   style=wx.ST_SIZEGRIP,
+                                   style=wx.STB_SIZEGRIP,
                                    name="EnhancedStatusBar")
         """
 
@@ -107,7 +109,7 @@ class EnhancedStatusBar(wx.StatusBar):
         Actually, All The Calculations Linked To HorizontalAlignment And
         VerticalAlignment Are Done In This Function."""
 
-        for pos, item in self._items.items():
+        for pos, item in list(self._items.items()):
             widget, horizontalalignment, verticalalignment = item.widget, item.horizontalalignment, item.verticalalignment
 
             rect = self.GetFieldRect(pos)

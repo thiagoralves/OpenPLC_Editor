@@ -23,29 +23,30 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-import base64
+from functools import cmp_to_key
 import pickle
+from operator import eq
+import base64
 
-import wx.aui
+import wx
 import wx.grid
+import wx.aui
 
+from editors.EditorPanel import EditorPanel
+from editors.SFCViewer import SFC_Viewer
+from editors.LDViewer import LD_Viewer
+from editors.TextViewer import TextViewer
+from editors.Viewer import Viewer, ZOOM_FACTORS
+from editors.ResourceEditor import ConfigurationEditor, ResourceEditor
+from editors.DataTypeEditor import DataTypeEditor
 from PLCControler import *
 from controls import CustomTree, LibraryPanel, PouInstanceVariablesPanel, SearchResultPanel
 from controls.DebugVariablePanel import DebugVariablePanel
-from dialogs import ProjectDialog, PouDialog, PouTransitionDialog, PouActionDialog, FindInPouDialog, \
-    SearchInProjectDialog, EditorUpdateDialog
-from editors.DataTypeEditor import DataTypeEditor
-from editors.EditorPanel import EditorPanel
-from editors.LDViewer import LD_Viewer
-from editors.ResourceEditor import ConfigurationEditor, ResourceEditor
-from editors.SFCViewer import SFC_Viewer
-from editors.TextViewer import TextViewer
-from editors.Viewer import Viewer, ZOOM_FACTORS
-# Define PLCOpenEditor controls id
-from graphics.GraphicCommons import ERROR_HIGHLIGHT, SEARCH_RESULT_HIGHLIGHT
-from plcopen.types_enums import *
+from dialogs import ProjectDialog, PouDialog, PouTransitionDialog, PouActionDialog, FindInPouDialog, SearchInProjectDialog, EditorUpdateDialog
 from util.BitmapLibrary import GetBitmap
+from plcopen.types_enums import *
 
+# Define PLCOpenEditor controls id
 [
     ID_PLCOPENEDITOR, ID_PLCOPENEDITORLEFTNOTEBOOK,
     ID_PLCOPENEDITORBOTTOMNOTEBOOK, ID_PLCOPENEDITORRIGHTNOTEBOOK,
@@ -98,31 +99,25 @@ from util.BitmapLibrary import GetBitmap
 
 
 def EncodeFileSystemPath(path, use_base64=True):
-    if not isinstance(path, bytes):
-        import sys  # 首部导入会被优化掉
-        encod = sys.getfilesystemencoding()
-        path = path.encode(encod)
     if use_base64:
-        return base64.encodebytes(path)
+        path = base64.b64encode(path.encode()).decode()
     return path
 
 
 def DecodeFileSystemPath(path, is_base64=True):
     if is_base64:
-        path = base64.decodebytes(path)
-    if not isinstance(path, str):
-        path = path.decode()
+        path = base64.b64decode(path.encode()).decode()
     return path
 
 
-def AppendMenu(parent, help, id, kind, text):
-    parent.Append(helpString=help, id=id, kind=kind, item=text)
+def AppendMenu(parent, help, kind, text, id=wx.ID_ANY):
+    return parent.Append(wx.MenuItem(helpString=help, kind=kind, text=text, id=id))
 
 
 [
     TITLE, EDITORTOOLBAR, FILEMENU, EDITMENU, DISPLAYMENU, PROJECTTREE,
     POUINSTANCEVARIABLESPANEL, LIBRARYTREE, SCALING, PAGETITLES
-] = range(10)
+] = list(range(10))
 
 
 def GetShortcutKeyCallbackFunction(viewer_function):
@@ -134,7 +129,6 @@ def GetShortcutKeyCallbackFunction(viewer_function):
             getattr(control, viewer_function)()
         elif isinstance(control, wx.TextCtrl):
             control.ProcessEvent(event)
-
     return ShortcutKeyFunction
 
 
@@ -143,12 +137,11 @@ def GetDeleteElementFunction(remove_function, parent_type=None, check_function=N
         name = self.ProjectTree.GetItemText(selected)
         if check_function is None or check_function(name):
             if parent_type is not None:
-                item_infos = self.ProjectTree.GetItemData(selected)
+                item_infos = self.ProjectTree.GetPyData(selected)
                 parent_name = item_infos["tagname"].split("::")[1]
                 remove_function(self.Controler, parent_name, name)
             else:
                 remove_function(self.Controler, name)
-
     return DeleteElementFunction
 
 
@@ -164,11 +157,12 @@ def SimplifyTabLayout(tabs, rect):
     for tab in tabs:
         if tab["pos"][0] == rect.x:
             others = [t for t in tabs if t != tab]
-            others.sort(lambda x, y: operator.eq(x["pos"][0], y["pos"][0]))
+            others.sort(key=cmp_to_key(lambda x, y: eq(x["pos"][0],
+                                                       y["pos"][0])))
             for other in others:
                 if other["pos"][1] == tab["pos"][1] and \
-                        other["size"][1] == tab["size"][1] and \
-                        other["pos"][0] == tab["pos"][0] + tab["size"][0] + TAB_BORDER:
+                   other["size"][1] == tab["size"][1] and \
+                   other["pos"][0] == tab["pos"][0] + tab["size"][0] + TAB_BORDER:
 
                     tab["size"] = (tab["size"][0] + other["size"][0] + TAB_BORDER, tab["size"][1])
                     tab["pages"].extend(other["pages"])
@@ -179,11 +173,12 @@ def SimplifyTabLayout(tabs, rect):
 
         elif tab["pos"][1] == rect.y:
             others = [t for t in tabs if t != tab]
-            others.sort(lambda x, y: operator.eq(x["pos"][1], y["pos"][1]))
+            others.sort(key=cmp_to_key(lambda x, y: eq(x["pos"][1],
+                                                       y["pos"][1])))
             for other in others:
                 if other["pos"][0] == tab["pos"][0] and \
-                        other["size"][0] == tab["size"][0] and \
-                        other["pos"][1] == tab["pos"][1] + tab["size"][1] + TAB_BORDER:
+                   other["size"][0] == tab["size"][0] and \
+                   other["pos"][1] == tab["pos"][1] + tab["size"][1] + TAB_BORDER:
 
                     tab["size"] = (tab["size"][0], tab["size"][1] + other["size"][1] + TAB_BORDER)
                     tab["pages"].extend(other["pages"])
@@ -254,151 +249,151 @@ class IDEFrame(wx.Frame):
         #  - Item icon filename
         #  - Item tooltip text
         self.EditorToolBarItems = {
-            "FBD": [(True, FREEDRAWING_MODE | DRIVENDRAWING_MODE,
-                     ID_PLCOPENEDITOREDITORTOOLBARMOTION, "OnMotionTool",
-                     "move", _("Move the view")),
-                    (True, FREEDRAWING_MODE | DRIVENDRAWING_MODE,
-                     ID_PLCOPENEDITOREDITORTOOLBARCOMMENT, "OnCommentTool",
-                     "add_comment", _("Create a new comment")),
-                    (True, FREEDRAWING_MODE | DRIVENDRAWING_MODE,
-                     ID_PLCOPENEDITOREDITORTOOLBARVARIABLE, "OnVariableTool",
-                     "add_variable", _("Create a new variable")),
-                    (True, FREEDRAWING_MODE | DRIVENDRAWING_MODE,
-                     ID_PLCOPENEDITOREDITORTOOLBARBLOCK, "OnBlockTool",
-                     "add_block", _("Create a new block")),
-                    (True, FREEDRAWING_MODE | DRIVENDRAWING_MODE,
-                     ID_PLCOPENEDITOREDITORTOOLBARCONNECTION, "OnConnectionTool",
-                     "add_connection", _("Create a new connection"))],
-            "LD": [(True, FREEDRAWING_MODE | DRIVENDRAWING_MODE,
-                    ID_PLCOPENEDITOREDITORTOOLBARMOTION, "OnMotionTool",
-                    "move", _("Move the view")),
-                   (True, FREEDRAWING_MODE,
-                    ID_PLCOPENEDITOREDITORTOOLBARCOMMENT, "OnCommentTool",
-                    "add_comment", _("Create a new comment")),
-                   (True, FREEDRAWING_MODE,
-                    ID_PLCOPENEDITOREDITORTOOLBARPOWERRAIL, "OnPowerRailTool",
-                    "add_powerrail", _("Create a new power rail")),
-                   (False, DRIVENDRAWING_MODE,
-                    ID_PLCOPENEDITOREDITORTOOLBARRUNG, "OnRungTool",
-                    "add_rung", _("Create a new rung")),
-                   (True, FREEDRAWING_MODE,
-                    ID_PLCOPENEDITOREDITORTOOLBARCOIL, "OnCoilTool",
-                    "add_coil", _("Create a new coil")),
-                   (False, FREEDRAWING_MODE | DRIVENDRAWING_MODE,
-                    ID_PLCOPENEDITOREDITORTOOLBARCONTACT, "OnContactTool",
-                    "add_contact", _("Create a new contact")),
-                   (False, DRIVENDRAWING_MODE,
-                    ID_PLCOPENEDITOREDITORTOOLBARBRANCH, "OnBranchTool",
-                    "add_branch", _("Create a new branch")),
-                   (True, FREEDRAWING_MODE,
-                    ID_PLCOPENEDITOREDITORTOOLBARVARIABLE, "OnVariableTool",
-                    "add_variable", _("Create a new variable")),
-                   (False, FREEDRAWING_MODE | DRIVENDRAWING_MODE,
-                    ID_PLCOPENEDITOREDITORTOOLBARBLOCK, "OnBlockTool",
-                    "add_block", _("Create a new block")),
-                   (True, FREEDRAWING_MODE,
-                    ID_PLCOPENEDITOREDITORTOOLBARCONNECTION, "OnConnectionTool",
-                    "add_connection", _("Create a new connection"))],
-            "SFC": [(True, FREEDRAWING_MODE | DRIVENDRAWING_MODE,
-                     ID_PLCOPENEDITOREDITORTOOLBARMOTION, "OnMotionTool",
-                     "move", _("Move the view")),
-                    (True, FREEDRAWING_MODE | DRIVENDRAWING_MODE,
-                     ID_PLCOPENEDITOREDITORTOOLBARCOMMENT, "OnCommentTool",
-                     "add_comment", _("Create a new comment")),
-                    (True, FREEDRAWING_MODE | DRIVENDRAWING_MODE,
-                     ID_PLCOPENEDITOREDITORTOOLBARINITIALSTEP, "OnInitialStepTool",
-                     "add_initial_step", _("Create a new initial step")),
-                    (False, FREEDRAWING_MODE | DRIVENDRAWING_MODE,
-                     ID_PLCOPENEDITOREDITORTOOLBARSTEP, "OnStepTool",
-                     "add_step", _("Create a new step")),
-                    (True, FREEDRAWING_MODE,
-                     ID_PLCOPENEDITOREDITORTOOLBARTRANSITION, "OnTransitionTool",
-                     "add_transition", _("Create a new transition")),
-                    (False, FREEDRAWING_MODE | DRIVENDRAWING_MODE,
-                     ID_PLCOPENEDITOREDITORTOOLBARACTIONBLOCK, "OnActionBlockTool",
-                     "add_action", _("Create a new action block")),
-                    (False, FREEDRAWING_MODE | DRIVENDRAWING_MODE,
-                     ID_PLCOPENEDITOREDITORTOOLBARDIVERGENCE, "OnDivergenceTool",
-                     "add_divergence", _("Create a new divergence")),
-                    (False, FREEDRAWING_MODE | DRIVENDRAWING_MODE,
-                     ID_PLCOPENEDITOREDITORTOOLBARJUMP, "OnJumpTool",
-                     "add_jump", _("Create a new jump")),
-                    (True, FREEDRAWING_MODE,
-                     ID_PLCOPENEDITOREDITORTOOLBARVARIABLE, "OnVariableTool",
-                     "add_variable", _("Create a new variable")),
-                    (True, FREEDRAWING_MODE,
-                     ID_PLCOPENEDITOREDITORTOOLBARBLOCK, "OnBlockTool",
-                     "add_block", _("Create a new block")),
-                    (True, FREEDRAWING_MODE,
-                     ID_PLCOPENEDITOREDITORTOOLBARCONNECTION, "OnConnectionTool",
-                     "add_connection", _("Create a new connection")),
-                    (True, FREEDRAWING_MODE,
-                     ID_PLCOPENEDITOREDITORTOOLBARPOWERRAIL, "OnPowerRailTool",
-                     "add_powerrail", _("Create a new power rail")),
-                    (True, FREEDRAWING_MODE,
-                     ID_PLCOPENEDITOREDITORTOOLBARCONTACT, "OnContactTool",
-                     "add_contact", _("Create a new contact"))],
-            "ST": [],
-            "IL": [],
+            "FBD":   [(True, FREEDRAWING_MODE | DRIVENDRAWING_MODE,
+                       ID_PLCOPENEDITOREDITORTOOLBARMOTION, "OnMotionTool",
+                       "move", _("Move the view")),
+                      (True, FREEDRAWING_MODE | DRIVENDRAWING_MODE,
+                       ID_PLCOPENEDITOREDITORTOOLBARCOMMENT, "OnCommentTool",
+                       "add_comment", _("Create a new comment")),
+                      (True, FREEDRAWING_MODE | DRIVENDRAWING_MODE,
+                       ID_PLCOPENEDITOREDITORTOOLBARVARIABLE, "OnVariableTool",
+                       "add_variable", _("Create a new variable")),
+                      (True, FREEDRAWING_MODE | DRIVENDRAWING_MODE,
+                       ID_PLCOPENEDITOREDITORTOOLBARBLOCK, "OnBlockTool",
+                       "add_block", _("Create a new block")),
+                      (True, FREEDRAWING_MODE | DRIVENDRAWING_MODE,
+                       ID_PLCOPENEDITOREDITORTOOLBARCONNECTION, "OnConnectionTool",
+                       "add_connection", _("Create a new connection"))],
+            "LD":    [(True, FREEDRAWING_MODE | DRIVENDRAWING_MODE,
+                       ID_PLCOPENEDITOREDITORTOOLBARMOTION, "OnMotionTool",
+                       "move", _("Move the view")),
+                      (True, FREEDRAWING_MODE,
+                       ID_PLCOPENEDITOREDITORTOOLBARCOMMENT, "OnCommentTool",
+                       "add_comment", _("Create a new comment")),
+                      (True, FREEDRAWING_MODE,
+                       ID_PLCOPENEDITOREDITORTOOLBARPOWERRAIL, "OnPowerRailTool",
+                       "add_powerrail", _("Create a new power rail")),
+                      (False, DRIVENDRAWING_MODE,
+                       ID_PLCOPENEDITOREDITORTOOLBARRUNG, "OnRungTool",
+                       "add_rung", _("Create a new rung")),
+                      (True, FREEDRAWING_MODE,
+                       ID_PLCOPENEDITOREDITORTOOLBARCOIL, "OnCoilTool",
+                       "add_coil", _("Create a new coil")),
+                      (False, FREEDRAWING_MODE | DRIVENDRAWING_MODE,
+                       ID_PLCOPENEDITOREDITORTOOLBARCONTACT, "OnContactTool",
+                       "add_contact", _("Create a new contact")),
+                      (False, DRIVENDRAWING_MODE,
+                       ID_PLCOPENEDITOREDITORTOOLBARBRANCH, "OnBranchTool",
+                       "add_branch", _("Create a new branch")),
+                      (True, FREEDRAWING_MODE,
+                       ID_PLCOPENEDITOREDITORTOOLBARVARIABLE, "OnVariableTool",
+                       "add_variable", _("Create a new variable")),
+                      (False, FREEDRAWING_MODE | DRIVENDRAWING_MODE,
+                       ID_PLCOPENEDITOREDITORTOOLBARBLOCK, "OnBlockTool",
+                       "add_block", _("Create a new block")),
+                      (True, FREEDRAWING_MODE,
+                       ID_PLCOPENEDITOREDITORTOOLBARCONNECTION, "OnConnectionTool",
+                       "add_connection", _("Create a new connection"))],
+            "SFC":   [(True, FREEDRAWING_MODE | DRIVENDRAWING_MODE,
+                       ID_PLCOPENEDITOREDITORTOOLBARMOTION, "OnMotionTool",
+                       "move", _("Move the view")),
+                      (True, FREEDRAWING_MODE | DRIVENDRAWING_MODE,
+                       ID_PLCOPENEDITOREDITORTOOLBARCOMMENT, "OnCommentTool",
+                       "add_comment", _("Create a new comment")),
+                      (True, FREEDRAWING_MODE | DRIVENDRAWING_MODE,
+                       ID_PLCOPENEDITOREDITORTOOLBARINITIALSTEP, "OnInitialStepTool",
+                       "add_initial_step", _("Create a new initial step")),
+                      (False, FREEDRAWING_MODE | DRIVENDRAWING_MODE,
+                       ID_PLCOPENEDITOREDITORTOOLBARSTEP, "OnStepTool",
+                       "add_step", _("Create a new step")),
+                      (True, FREEDRAWING_MODE,
+                       ID_PLCOPENEDITOREDITORTOOLBARTRANSITION, "OnTransitionTool",
+                       "add_transition", _("Create a new transition")),
+                      (False, FREEDRAWING_MODE | DRIVENDRAWING_MODE,
+                       ID_PLCOPENEDITOREDITORTOOLBARACTIONBLOCK, "OnActionBlockTool",
+                       "add_action", _("Create a new action block")),
+                      (False, FREEDRAWING_MODE | DRIVENDRAWING_MODE,
+                       ID_PLCOPENEDITOREDITORTOOLBARDIVERGENCE, "OnDivergenceTool",
+                       "add_divergence", _("Create a new divergence")),
+                      (False, FREEDRAWING_MODE | DRIVENDRAWING_MODE,
+                       ID_PLCOPENEDITOREDITORTOOLBARJUMP, "OnJumpTool",
+                       "add_jump", _("Create a new jump")),
+                      (True, FREEDRAWING_MODE,
+                       ID_PLCOPENEDITOREDITORTOOLBARVARIABLE, "OnVariableTool",
+                       "add_variable", _("Create a new variable")),
+                      (True, FREEDRAWING_MODE,
+                       ID_PLCOPENEDITOREDITORTOOLBARBLOCK, "OnBlockTool",
+                       "add_block", _("Create a new block")),
+                      (True, FREEDRAWING_MODE,
+                       ID_PLCOPENEDITOREDITORTOOLBARCONNECTION, "OnConnectionTool",
+                       "add_connection", _("Create a new connection")),
+                      (True, FREEDRAWING_MODE,
+                       ID_PLCOPENEDITOREDITORTOOLBARPOWERRAIL, "OnPowerRailTool",
+                       "add_powerrail", _("Create a new power rail")),
+                      (True, FREEDRAWING_MODE,
+                       ID_PLCOPENEDITOREDITORTOOLBARCONTACT, "OnContactTool",
+                       "add_contact", _("Create a new contact"))],
+            "ST":    [],
+            "IL":    [],
             "debug": [(True, FREEDRAWING_MODE | DRIVENDRAWING_MODE,
                        ID_PLCOPENEDITOREDITORTOOLBARMOTION, "OnMotionTool",
                        "move", _("Move the view"))],
         }
 
     def _init_coll_MenuBar_Menus(self, parent):
-        parent.Append(menu=self.FileMenu, title=_(u'&File'))
-        parent.Append(menu=self.EditMenu, title=_(u'&Edit'))
-        parent.Append(menu=self.DisplayMenu, title=_(u'&Display'))
-        parent.Append(menu=self.HelpMenu, title=_(u'&Help'))
+        parent.Append(menu=self.FileMenu, title=_('&File'))
+        parent.Append(menu=self.EditMenu, title=_('&Edit'))
+        parent.Append(menu=self.DisplayMenu, title=_('&Display'))
+        parent.Append(menu=self.HelpMenu, title=_('&Help'))
 
     def _init_coll_FileMenu_Items(self, parent):
         pass
 
     def _init_coll_AddMenu_Items(self, parent, add_config=True):
         AppendMenu(parent, help='', id=ID_PLCOPENEDITOREDITMENUADDDATATYPE,
-                   kind=wx.ITEM_NORMAL, text=_(u'&Data Type'))
+                   kind=wx.ITEM_NORMAL, text=_('&Data Type'))
         AppendMenu(parent, help='', id=ID_PLCOPENEDITOREDITMENUADDFUNCTION,
-                   kind=wx.ITEM_NORMAL, text=_(u'&Function'))
+                   kind=wx.ITEM_NORMAL, text=_('&Function'))
         AppendMenu(parent, help='', id=ID_PLCOPENEDITOREDITMENUADDFUNCTIONBLOCK,
-                   kind=wx.ITEM_NORMAL, text=_(u'Function &Block'))
+                   kind=wx.ITEM_NORMAL, text=_('Function &Block'))
         AppendMenu(parent, help='', id=ID_PLCOPENEDITOREDITMENUADDPROGRAM,
-                   kind=wx.ITEM_NORMAL, text=_(u'&Program'))
+                   kind=wx.ITEM_NORMAL, text=_('&Program'))
         AppendMenu(parent, help='', id=ID_PLCOPENEDITOREDITMENUADDRESOURCE,
-                   kind=wx.ITEM_NORMAL, text=_(u'&Resource'))
+                   kind=wx.ITEM_NORMAL, text=_('&Resource'))
         if add_config:
             AppendMenu(parent, help='', id=ID_PLCOPENEDITOREDITMENUADDCONFIGURATION,
-                       kind=wx.ITEM_NORMAL, text=_(u'&Configuration'))
+                       kind=wx.ITEM_NORMAL, text=_('&Configuration'))
 
     def _init_coll_EditMenu_Items(self, parent):
         AppendMenu(parent, help='', id=wx.ID_UNDO,
-                   kind=wx.ITEM_NORMAL, text=_(u'Undo') + '\tCTRL+Z')
+                   kind=wx.ITEM_NORMAL, text=_('Undo') + '\tCTRL+Z')
         AppendMenu(parent, help='', id=wx.ID_REDO,
-                   kind=wx.ITEM_NORMAL, text=_(u'Redo') + '\tCTRL+Y')
+                   kind=wx.ITEM_NORMAL, text=_('Redo') + '\tCTRL+Y')
         parent.AppendSeparator()
         AppendMenu(parent, help='', id=wx.ID_CUT,
-                   kind=wx.ITEM_NORMAL, text=_(u'Cut') + '\tCTRL+X')
+                   kind=wx.ITEM_NORMAL, text=_('Cut') + '\tCTRL+X')
         AppendMenu(parent, help='', id=wx.ID_COPY,
-                   kind=wx.ITEM_NORMAL, text=_(u'Copy') + '\tCTRL+C')
+                   kind=wx.ITEM_NORMAL, text=_('Copy') + '\tCTRL+C')
         AppendMenu(parent, help='', id=wx.ID_PASTE,
-                   kind=wx.ITEM_NORMAL, text=_(u'Paste') + '\tCTRL+V')
+                   kind=wx.ITEM_NORMAL, text=_('Paste') + '\tCTRL+V')
         parent.AppendSeparator()
         AppendMenu(parent, help='', id=wx.ID_FIND,
-                   kind=wx.ITEM_NORMAL, text=_(u'Find') + '\tCTRL+F')
+                   kind=wx.ITEM_NORMAL, text=_('Find') + '\tCTRL+F')
         AppendMenu(parent, help='', id=ID_PLCOPENEDITOREDITMENUFINDNEXT,
-                   kind=wx.ITEM_NORMAL, text=_(u'Find Next') + '\tCTRL+K')
+                   kind=wx.ITEM_NORMAL, text=_('Find Next') + '\tCTRL+K')
         AppendMenu(parent, help='', id=ID_PLCOPENEDITOREDITMENUFINDPREVIOUS,
-                   kind=wx.ITEM_NORMAL, text=_(u'Find Previous') + '\tCTRL+SHIFT+K')
+                   kind=wx.ITEM_NORMAL, text=_('Find Previous') + '\tCTRL+SHIFT+K')
         parent.AppendSeparator()
         AppendMenu(parent, help='', id=ID_PLCOPENEDITOREDITMENUSEARCHINPROJECT,
-                   kind=wx.ITEM_NORMAL, text=_(u'Search in Project') + '\tCTRL+SHIFT+F')
+                   kind=wx.ITEM_NORMAL, text=_('Search in Project') + '\tCTRL+SHIFT+F')
         parent.AppendSeparator()
         add_menu = wx.Menu(title='')
         self._init_coll_AddMenu_Items(add_menu)
-        AppendMenu(parent, id=wx.ID_ADD, text=_(u"&Add Element"), kind=wx.ITEM_NORMAL, help='')
+        parent.Append(wx.ID_ADD, _("&Add Element"), add_menu)
         AppendMenu(parent, help='', id=wx.ID_SELECTALL,
-                   kind=wx.ITEM_NORMAL, text=_(u'Select All') + '\tCTRL+A')
+                   kind=wx.ITEM_NORMAL, text=_('Select All') + '\tCTRL+A')
         AppendMenu(parent, help='', id=wx.ID_DELETE,
-                   kind=wx.ITEM_NORMAL, text=_(u'&Delete'))
+                   kind=wx.ITEM_NORMAL, text=_('&Delete'))
         self.Bind(wx.EVT_MENU, self.OnUndoMenu, id=wx.ID_UNDO)
         self.Bind(wx.EVT_MENU, self.OnRedoMenu, id=wx.ID_REDO)
         # self.Bind(wx.EVT_MENU, self.OnEnableUndoRedoMenu, id=ID_PLCOPENEDITOREDITMENUENABLEUNDOREDO)
@@ -427,43 +422,41 @@ class IDEFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnSelectAllMenu, id=wx.ID_SELECTALL)
         self.Bind(wx.EVT_MENU, self.OnDeleteMenu, id=wx.ID_DELETE)
 
-        self.AddToMenuToolBar([(wx.ID_UNDO, "undo", _(u'Undo'), None),
-                               (wx.ID_REDO, "redo", _(u'Redo'), None),
+        self.AddToMenuToolBar([(wx.ID_UNDO, "undo", _('Undo'), None),
+                               (wx.ID_REDO, "redo", _('Redo'), None),
                                None,
-                               (wx.ID_CUT, "cut", _(u'Cut'), None),
-                               (wx.ID_COPY, "copy", _(u'Copy'), None),
-                               (wx.ID_PASTE, "paste", _(u'Paste'), None),
+                               (wx.ID_CUT, "cut", _('Cut'), None),
+                               (wx.ID_COPY, "copy", _('Copy'), None),
+                               (wx.ID_PASTE, "paste", _('Paste'), None),
                                None,
-                               (ID_PLCOPENEDITOREDITMENUSEARCHINPROJECT, "find", _(u'Search in Project'), None),
-                               (ID_PLCOPENEDITORDISPLAYMENUFULLSCREEN, "fullscreen", _(u'Toggle fullscreen mode'),
-                                None)])
+                               (ID_PLCOPENEDITOREDITMENUSEARCHINPROJECT, "find", _('Search in Project'), None),
+                               (ID_PLCOPENEDITORDISPLAYMENUFULLSCREEN, "fullscreen", _('Toggle fullscreen mode'), None)])
 
     def _init_coll_DisplayMenu_Items(self, parent):
         AppendMenu(parent, help='', id=wx.ID_REFRESH,
-                   kind=wx.ITEM_NORMAL, text=_(u'Refresh') + '\tCTRL+R')
+                   kind=wx.ITEM_NORMAL, text=_('Refresh') + '\tCTRL+R')
         if self.EnableDebug:
             AppendMenu(parent, help='', id=wx.ID_CLEAR,
-                       kind=wx.ITEM_NORMAL, text=_(u'Clear Errors') + '\tCTRL+K')
+                       kind=wx.ITEM_NORMAL, text=_('Clear Errors') + '\tCTRL+K')
         parent.AppendSeparator()
         zoommenu = wx.Menu(title='')
         parent.Append(wx.ID_ZOOM_FIT, _("Zoom"), zoommenu)
         for idx, value in enumerate(ZOOM_FACTORS):
-            new_id = wx.NewIdRef()
-            AppendMenu(zoommenu, help='', id=new_id,
+            new_item = AppendMenu(zoommenu, help='',
                        kind=wx.ITEM_RADIO, text=str(int(round(value * 100))) + "%")
-            self.Bind(wx.EVT_MENU, self.GenerateZoomFunction(idx), id=new_id)
+            self.Bind(wx.EVT_MENU, self.GenerateZoomFunction(idx), new_item)
 
         parent.AppendSeparator()
         AppendMenu(parent, help='', id=ID_PLCOPENEDITORDISPLAYMENUSWITCHPERSPECTIVE,
-                   kind=wx.ITEM_NORMAL, text=_(u'Switch perspective') + '\tF12')
+                   kind=wx.ITEM_NORMAL, text=_('Switch perspective') + '\tF12')
         self.Bind(wx.EVT_MENU, self.SwitchPerspective, id=ID_PLCOPENEDITORDISPLAYMENUSWITCHPERSPECTIVE)
 
         AppendMenu(parent, help='', id=ID_PLCOPENEDITORDISPLAYMENUFULLSCREEN,
-                   kind=wx.ITEM_NORMAL, text=_(u'Full screen') + '\tShift-F12')
+                   kind=wx.ITEM_NORMAL, text=_('Full screen') + '\tShift-F12')
         self.Bind(wx.EVT_MENU, self.SwitchFullScrMode, id=ID_PLCOPENEDITORDISPLAYMENUFULLSCREEN)
 
         AppendMenu(parent, help='', id=ID_PLCOPENEDITORDISPLAYMENURESETPERSPECTIVE,
-                   kind=wx.ITEM_NORMAL, text=_(u'Reset Perspective'))
+                   kind=wx.ITEM_NORMAL, text=_('Reset Perspective'))
         self.Bind(wx.EVT_MENU, self.OnResetPerspective, id=ID_PLCOPENEDITORDISPLAYMENURESETPERSPECTIVE)
 
         self.Bind(wx.EVT_MENU, self.OnRefreshMenu, id=wx.ID_REFRESH)
@@ -521,7 +514,7 @@ class IDEFrame(wx.Frame):
         self.AUIManager.AddPane(
             self.LeftNoteBook,
             wx.aui.AuiPaneInfo().Name("ProjectPane").Left().Layer(1).
-                BestSize(wx.Size(300, 500)).CloseButton(False))
+            BestSize(wx.Size(300, 500)).CloseButton(False))
 
         self.BottomNoteBook = wx.aui.AuiNotebook(
             self, ID_PLCOPENEDITORBOTTOMNOTEBOOK,
@@ -535,7 +528,7 @@ class IDEFrame(wx.Frame):
         self.AUIManager.AddPane(
             self.BottomNoteBook,
             wx.aui.AuiPaneInfo().Name("ResultPane").Bottom().Layer(0).
-                BestSize(wx.Size(800, 300)).CloseButton(False))
+            BestSize(wx.Size(800, 300)).CloseButton(False))
 
         self.RightNoteBook = wx.aui.AuiNotebook(
             self, ID_PLCOPENEDITORRIGHTNOTEBOOK,
@@ -549,7 +542,7 @@ class IDEFrame(wx.Frame):
         self.AUIManager.AddPane(
             self.RightNoteBook,
             wx.aui.AuiPaneInfo().Name("LibraryPane").Right().Layer(0).
-                BestSize(wx.Size(250, 400)).CloseButton(False))
+            BestSize(wx.Size(250, 400)).CloseButton(False))
 
         self.TabsOpened = wx.aui.AuiNotebook(
             self, ID_PLCOPENEDITORTABSOPENED,
@@ -575,7 +568,7 @@ class IDEFrame(wx.Frame):
         self.ProjectPanel = wx.SplitterWindow(
             id=ID_PLCOPENEDITORPROJECTPANEL,
             name='ProjectPanel', parent=self.LeftNoteBook,
-            size=wx.Size(0, 0), style=wx.SP_3D)
+            size=wx.Size(0, 0))
 
         self.ProjectTree = CustomTree(id=ID_PLCOPENEDITORPROJECTTREE,
                                       name='ProjectTree',
@@ -609,8 +602,7 @@ class IDEFrame(wx.Frame):
         #        Creating PLCopen Project POU Instance Variables Panel
         # -----------------------------------------------------------------------
 
-        self.PouInstanceVariablesPanel = PouInstanceVariablesPanel(self.ProjectPanel, self, self.Controler,
-                                                                   self.EnableDebug)
+        self.PouInstanceVariablesPanel = PouInstanceVariablesPanel(self.ProjectPanel, self, self.Controler, self.EnableDebug)
 
         self.MainTabs["ProjectPanel"] = (self.ProjectPanel, _("Project"))
         self.LeftNoteBook.AddPage(*self.MainTabs["ProjectPanel"])
@@ -623,7 +615,7 @@ class IDEFrame(wx.Frame):
 
         MenuToolBar = wx.ToolBar(self, ID_PLCOPENEDITOREDITORMENUTOOLBAR,
                                  wx.DefaultPosition, wx.DefaultSize,
-                                 wx.TB_FLAT | wx.TB_NODIVIDER | wx.NO_BORDER)
+                                 wx.TB_FLAT | wx.TB_HORIZONTAL | wx.NO_BORDER)
         MenuToolBar.SetToolBitmapSize(wx.Size(25, 25))
         MenuToolBar.Realize()
         self.Panes["MenuToolBar"] = MenuToolBar
@@ -634,9 +626,10 @@ class IDEFrame(wx.Frame):
 
         EditorToolBar = wx.ToolBar(self, ID_PLCOPENEDITOREDITORTOOLBAR,
                                    wx.DefaultPosition, wx.DefaultSize,
-                                   wx.TB_FLAT | wx.TB_NODIVIDER | wx.NO_BORDER)
+                                   wx.TB_FLAT | wx.TB_HORIZONTAL | wx.NO_BORDER)
         EditorToolBar.SetToolBitmapSize(wx.Size(25, 25))
-        EditorToolBar.AddRadioTool(ID_PLCOPENEDITOREDITORTOOLBARSELECTION, 'label',
+        EditorToolBar.AddRadioTool(ID_PLCOPENEDITOREDITORTOOLBARSELECTION,
+                                   _("Select"),
                                    GetBitmap("select"),
                                    wx.NullBitmap,
                                    _("Select an object"))
@@ -701,32 +694,32 @@ class IDEFrame(wx.Frame):
 
         # Icons for other items
         for imgname, itemtype in [
-            # editables
-            ("PROJECT", ITEM_PROJECT),
-            # ("POU",          ITEM_POU),
-            # ("VARIABLE",     ITEM_VARIABLE),
-            ("TRANSITION", ITEM_TRANSITION),
-            ("ACTION", ITEM_ACTION),
-            ("CONFIGURATION", ITEM_CONFIGURATION),
-            ("RESOURCE", ITEM_RESOURCE),
-            ("DATATYPE", ITEM_DATATYPE),
-            # uneditables
-            ("DATATYPES", ITEM_DATATYPES),
-            ("FUNCTION", ITEM_FUNCTION),
-            ("FUNCTIONBLOCK", ITEM_FUNCTIONBLOCK),
-            ("PROGRAM", ITEM_PROGRAM),
-            ("VAR_LOCAL", ITEM_VAR_LOCAL),
-            ("VAR_LOCAL", ITEM_VAR_GLOBAL),
-            ("VAR_LOCAL", ITEM_VAR_EXTERNAL),
-            ("VAR_LOCAL", ITEM_VAR_TEMP),
-            ("VAR_INPUT", ITEM_VAR_INPUT),
-            ("VAR_OUTPUT", ITEM_VAR_OUTPUT),
-            ("VAR_INOUT", ITEM_VAR_INOUT),
-            ("TRANSITIONS", ITEM_TRANSITIONS),
-            ("ACTIONS", ITEM_ACTIONS),
-            ("CONFIGURATIONS", ITEM_CONFIGURATIONS),
-            ("RESOURCES", ITEM_RESOURCES),
-            ("PROPERTIES", ITEM_PROPERTIES)]:
+                # editables
+                ("PROJECT",        ITEM_PROJECT),
+                # ("POU",          ITEM_POU),
+                # ("VARIABLE",     ITEM_VARIABLE),
+                ("TRANSITION",     ITEM_TRANSITION),
+                ("ACTION",         ITEM_ACTION),
+                ("CONFIGURATION",  ITEM_CONFIGURATION),
+                ("RESOURCE",       ITEM_RESOURCE),
+                ("DATATYPE",       ITEM_DATATYPE),
+                # uneditables
+                ("DATATYPES",      ITEM_DATATYPES),
+                ("FUNCTION",       ITEM_FUNCTION),
+                ("FUNCTIONBLOCK",  ITEM_FUNCTIONBLOCK),
+                ("PROGRAM",        ITEM_PROGRAM),
+                ("VAR_LOCAL",      ITEM_VAR_LOCAL),
+                ("VAR_LOCAL",      ITEM_VAR_GLOBAL),
+                ("VAR_LOCAL",      ITEM_VAR_EXTERNAL),
+                ("VAR_LOCAL",      ITEM_VAR_TEMP),
+                ("VAR_INPUT",      ITEM_VAR_INPUT),
+                ("VAR_OUTPUT",     ITEM_VAR_OUTPUT),
+                ("VAR_INOUT",      ITEM_VAR_INOUT),
+                ("TRANSITIONS",    ITEM_TRANSITIONS),
+                ("ACTIONS",        ITEM_ACTIONS),
+                ("CONFIGURATIONS", ITEM_CONFIGURATIONS),
+                ("RESOURCES",      ITEM_RESOURCES),
+                ("PROPERTIES",     ITEM_PROPERTIES)]:
             self.TreeImageDict[itemtype] = self.TreeImageList.Add(GetBitmap(imgname))
 
         # Assign icon list to TreeCtrls
@@ -765,11 +758,9 @@ class IDEFrame(wx.Frame):
         self.SetRefreshFunctions()
         self.SetDeleteFunctions()
 
-        wx.CallAfter(self.InitFindDialog)
+        self.Bind(wx.EVT_CLOSE, self.OnCloseFrame)
 
-    def __del__(self):
-        # self.FindDialog.Destroy()
-        pass
+        wx.CallAfter(self.InitFindDialog)
 
     def InitFindDialog(self):
         self.FindDialog = FindInPouDialog(self)
@@ -809,7 +800,7 @@ class IDEFrame(wx.Frame):
                     pos = child.GetPosition()
                     tab = {"pos": (pos.x, pos.y), "pages": []}
                     tab_size = child.GetSize()
-                    for page_idx in list(range(child.GetPageCount())):
+                    for page_idx in range(child.GetPageCount()):
                         page = child.GetWindowFromIdx(page_idx)
                         if "size" not in tab:
                             tab["size"] = (tab_size[0], tab_size[1] + page.GetSize()[1])
@@ -817,7 +808,7 @@ class IDEFrame(wx.Frame):
                         if tab_infos is not None:
                             tab["pages"].append((tab_infos, page_idx == child.GetActivePage()))
                     tabs.append(tab)
-        sorted(tabs)
+        tabs.sort(key=cmp_to_key(lambda x, y: eq(x["pos"], y["pos"])))
         size = notebook.GetSize()
         return ComputeTabsLayout(tabs, wx.Rect(1, 1, size[0] - NOTEBOOK_BORDER, size[1] - NOTEBOOK_BORDER))
 
@@ -838,8 +829,7 @@ class IDEFrame(wx.Frame):
             instance_path = page_infos[1]
             instance_infos = self.Controler.GetInstanceInfos(instance_path, self.EnableDebug)
             if instance_infos is not None:
-                return notebook.GetPageIndex(
-                    self.OpenDebugViewer(instance_infos["class"], instance_path, instance_infos["type"]))
+                return notebook.GetPageIndex(self.OpenDebugViewer(instance_infos["class"], instance_path, instance_infos["type"]))
         return None
 
     def LoadTabLayout(self, notebook, tabs, mode="all", first_index=None):
@@ -876,7 +866,7 @@ class IDEFrame(wx.Frame):
             self.AUIManager.LoadPerspective(self.DefaultPerspective["perspective"])
 
             for notebook in [self.LeftNoteBook, self.BottomNoteBook, self.RightNoteBook]:
-                for dummy in list(range(notebook.GetPageCount())):
+                for dummy in range(notebook.GetPageCount()):
                     notebook.RemovePage(0)
 
             notebooks = self.DefaultPerspective["notebooks"]
@@ -927,12 +917,8 @@ class IDEFrame(wx.Frame):
 
         :param elements: List of elements to refresh.
         """
-        try:
-            for element in elements:
-                self.RefreshFunctions[element]()
-        except:
-            # ignore exceptions caused by refresh while quitting
-            pass
+        for element in elements:
+            self.RefreshFunctions[element]()
 
     def OnPageClose(self, event):
         """Callback function when AUINotebook Page closed with CloseButton
@@ -991,7 +977,7 @@ class IDEFrame(wx.Frame):
         return self.DrawingMode
 
     def RefreshScaling(self):
-        for i in list(range(self.TabsOpened.GetPageCount())):
+        for i in range(self.TabsOpened.GetPageCount()):
             editor = self.TabsOpened.GetPage(i)
             editor.RefreshScaling()
 
@@ -1023,7 +1009,7 @@ class IDEFrame(wx.Frame):
         self.RefreshTabCtrlEvent()
 
     def DeletePage(self, window):
-        for idx in list(range(self.TabsOpened.GetPageCount())):
+        for idx in range(self.TabsOpened.GetPageCount()):
             if self.TabsOpened.GetPage(idx) == window:
                 self.TabsOpened.DeletePage(idx)
                 self.RefreshTabCtrlEvent()
@@ -1033,7 +1019,7 @@ class IDEFrame(wx.Frame):
         """Function that fix difference in deleting all tabs between
         wx.Notebook and wx.aui.AUINotebook.
         """
-        for dummy in list(range(self.TabsOpened.GetPageCount())):
+        for dummy in range(self.TabsOpened.GetPageCount()):
             self.TabsOpened.DeletePage(0)
         self.RefreshTabCtrlEvent()
 
@@ -1066,8 +1052,7 @@ class IDEFrame(wx.Frame):
         :returns: False if closing cancelled.
         """
         if not self.Controler.ProjectIsSaved():
-            dialog = wx.MessageDialog(self, _("There are changes, do you want to save?"), title,
-                                      wx.YES_NO | wx.CANCEL | wx.ICON_QUESTION)
+            dialog = wx.MessageDialog(self, _("There are changes, do you want to save?"), title, wx.YES_NO | wx.CANCEL | wx.ICON_QUESTION)
             answer = dialog.ShowModal()
             dialog.Destroy()
             if answer == wx.ID_YES:
@@ -1075,7 +1060,7 @@ class IDEFrame(wx.Frame):
             elif answer == wx.ID_CANCEL:
                 return False
 
-        for idx in list(range(self.TabsOpened.GetPageCount())):
+        for idx in range(self.TabsOpened.GetPageCount()):
             window = self.TabsOpened.GetPage(idx)
             if not window.CheckSaveBeforeClosing():
                 return False
@@ -1131,8 +1116,7 @@ class IDEFrame(wx.Frame):
             preview = wx.PrintPreview(printout, printout2, data)
 
             if preview.Ok():
-                preview_frame = wx.PreviewFrame(preview, self, _("Print preview"),
-                                                style=wx.DEFAULT_FRAME_STYLE | wx.FRAME_FLOAT_ON_PARENT)
+                preview_frame = wx.PreviewFrame(preview, self, _("Print preview"), style=wx.DEFAULT_FRAME_STYLE | wx.FRAME_FLOAT_ON_PARENT)
 
                 preview_frame.Initialize()
 
@@ -1155,8 +1139,7 @@ class IDEFrame(wx.Frame):
             printout = GraphicPrintout(window, page_size, margins)
 
             if not printer.Print(self, printout, True) and printer.GetLastError() != wx.PRINTER_CANCELLED:
-                self.ShowErrorMessage(
-                    _("There was a problem printing.\nPerhaps your current printer is not set correctly?"))
+                self.ShowErrorMessage(_("There was a problem printing.\nPerhaps your current printer is not set correctly?"))
             printout.Destroy()
 
     def OnUpdateMenu(self, event):
@@ -1168,6 +1151,9 @@ class IDEFrame(wx.Frame):
 
     def OnQuitMenu(self, event):
         self.Close()
+
+    def OnCloseFrame(self, event):
+        self.AUIManager.UnInit()
 
     # -------------------------------------------------------------------------------
     #                            Edit Menu Functions
@@ -1311,7 +1297,7 @@ class IDEFrame(wx.Frame):
         if window == self.ProjectTree or window is None:
             selected = self.ProjectTree.GetSelection()
             if selected is not None and selected.IsOk():
-                function = self.DeleteFunctions.get(self.ProjectTree.GetItemData(selected)["type"], None)
+                function = self.DeleteFunctions.get(self.ProjectTree.GetPyData(selected)["type"], None)
                 if function is not None:
                     function(self, selected)
                     self.CloseTabsWithoutModel()
@@ -1402,7 +1388,6 @@ class IDEFrame(wx.Frame):
                 window.RefreshVisibleElements()
                 window.RefreshScrollBars()
             event.Skip()
-
         return ZoomFunction
 
     def OnResetPerspective(self, event):
@@ -1429,8 +1414,9 @@ class IDEFrame(wx.Frame):
         self.AuiTabCtrl = auitabctrl
         if self.TabsOpened.GetPageCount() == 0:
             pane = self.AUIManager.GetPane(self.TabsOpened)
-            # if pane.IsMaximized():
-            #     self.AUIManager.RestorePane(pane)
+            # on wxPython 4.1.0, AuiPaneInfo has no "IsMaximized" attribute...
+            if (not hasattr(pane, "IsMaximized")) or pane.IsMaximized():
+                self.AUIManager.RestorePane(pane)
             self.AUIManager.Update()
 
     def EnsureTabVisible(self, tab):
@@ -1488,7 +1474,7 @@ class IDEFrame(wx.Frame):
             self._Refresh(FILEMENU, EDITMENU, DISPLAYMENU, EDITORTOOLBAR)
 
     def RefreshEditorNames(self, old_tagname, new_tagname):
-        for i in list(range(self.TabsOpened.GetPageCount())):
+        for i in range(self.TabsOpened.GetPageCount()):
             editor = self.TabsOpened.GetPage(i)
             if editor.GetTagName() == old_tagname:
                 editor.SetTagName(new_tagname)
@@ -1500,7 +1486,7 @@ class IDEFrame(wx.Frame):
         return None
 
     def RefreshPageTitles(self):
-        for idx in list(range(self.TabsOpened.GetPageCount())):
+        for idx in range(self.TabsOpened.GetPageCount()):
             window = self.TabsOpened.GetPage(idx)
             icon = window.GetIcon()
             if icon is not None:
@@ -1510,18 +1496,23 @@ class IDEFrame(wx.Frame):
     def GetTabsOpenedDClickFunction(self, tabctrl):
         def OnTabsOpenedDClick(event):
             pos = event.GetPosition()
-            if tabctrl.TabHitTest(pos.x, pos.y, None):
+            if tabctrl.TabHitTest(pos.x, pos.y):
                 self.SwitchPerspective(event)
             event.Skip()
-
         return OnTabsOpenedDClick
 
     def SwitchPerspective(self, evt):
         pane = self.AUIManager.GetPane(self.TabsOpened)
-        # if pane.IsMaximized():
-        #     self.AUIManager.RestorePane(pane)
-        # else:
-        #     self.AUIManager.MaximizePane(pane)
+        # on wxPython 4.1.0, AuiPaneInfo has no "IsMaximized" attribute...
+        IsMaximized = pane.IsMaximized() if hasattr(pane, "IsMaximized") \
+            else (self.TabBookIsMaximized if hasattr(self, "TabBookIsMaximized") \
+                else False)
+        if IsMaximized:
+            self.AUIManager.RestorePane(pane)
+            self.TabBookIsMaximized = False
+        else:
+            self.AUIManager.MaximizePane(pane)
+            self.TabBookIsMaximized = True
         self.AUIManager.Update()
 
     def SwitchFullScrMode(self, evt):
@@ -1536,7 +1527,7 @@ class IDEFrame(wx.Frame):
         # Extract current selected item tagname
         selected = self.ProjectTree.GetSelection()
         if selected is not None and selected.IsOk():
-            item_infos = self.ProjectTree.GetItemData(selected)
+            item_infos = self.ProjectTree.GetPyData(selected)
             tagname = item_infos.get("tagname", None)
         else:
             tagname = None
@@ -1562,7 +1553,7 @@ class IDEFrame(wx.Frame):
                 return self.GenerateProjectTreeBranch(root, infos["values"][0], True)
             item_name = _(item_name)
         self.ProjectTree.SetItemText(root, item_name)
-        self.ProjectTree.SetItemData(root, infos)
+        self.ProjectTree.SetPyData(root, infos)
         highlight_colours = self.Highlights.get(infos.get("tagname", None), (wx.Colour(255, 255, 255, 0), wx.BLACK))
         self.ProjectTree.SetItemBackgroundColour(root, highlight_colours[0])
         self.ProjectTree.SetItemTextColour(root, highlight_colours[1])
@@ -1616,7 +1607,7 @@ class IDEFrame(wx.Frame):
         found = False
         item, root_cookie = self.ProjectTree.GetFirstChild(root)
         while item is not None and item.IsOk() and not found:
-            item_infos = self.ProjectTree.GetItemData(item)
+            item_infos = self.ProjectTree.GetPyData(item)
             if (item_infos["name"].split(":")[-1].strip(), item_infos["type"]) == items[0]:
                 if len(items) == 1:
                     self.SelectedItem = item
@@ -1637,7 +1628,7 @@ class IDEFrame(wx.Frame):
         selected_item = (self.SelectedItem
                          if self.SelectedItem is not None
                          else event.GetItem())
-        if selected_item.IsOk() and self.ProjectTree.GetItemData(selected_item)["type"] == ITEM_POU:
+        if selected_item.IsOk() and self.ProjectTree.GetPyData(selected_item)["type"] == ITEM_POU:
             block_name = self.ProjectTree.GetItemText(selected_item)
             block_type = self.Controler.GetPouType(block_name)
             if block_type != "program":
@@ -1649,7 +1640,7 @@ class IDEFrame(wx.Frame):
 
     def OnProjectTreeItemBeginEdit(self, event):
         selected = event.GetItem()
-        if self.ProjectTree.GetItemData(selected)["type"] in ITEMS_UNEDITABLE:
+        if self.ProjectTree.GetPyData(selected)["type"] in ITEMS_UNEDITABLE:
             event.Veto()
         else:
             event.Skip()
@@ -1666,12 +1657,11 @@ class IDEFrame(wx.Frame):
             else:
                 item = event.GetItem()
                 old_name = self.ProjectTree.GetItemText(item)
-                item_infos = self.ProjectTree.GetItemData(item)
+                item_infos = self.ProjectTree.GetPyData(item)
                 if item_infos["type"] == ITEM_PROJECT:
                     self.Controler.SetProjectProperties(name=new_name)
                 elif item_infos["type"] == ITEM_DATATYPE:
-                    if new_name.upper() in [name.upper() for name in self.Controler.GetProjectDataTypeNames() if
-                                            name != old_name]:
+                    if new_name.upper() in [name.upper() for name in self.Controler.GetProjectDataTypeNames() if name != old_name]:
                         message = _("\"%s\" data type already exists!") % new_name
                         abort = True
                     if not abort:
@@ -1680,14 +1670,11 @@ class IDEFrame(wx.Frame):
                                                 ComputeDataTypeName(new_name))
                         self.RefreshPageTitles()
                 elif item_infos["type"] == ITEM_POU:
-                    if new_name.upper() in [name.upper() for name in self.Controler.GetProjectPouNames() if
-                                            name != old_name]:
+                    if new_name.upper() in [name.upper() for name in self.Controler.GetProjectPouNames() if name != old_name]:
                         message = _("\"%s\" pou already exists!") % new_name
                         abort = True
                     elif new_name.upper() in [name.upper() for name in self.Controler.GetProjectPouVariableNames()]:
-                        messageDialog = wx.MessageDialog(self, _(
-                            "A POU has an element named \"%s\". This could cause a conflict. Do you wish to continue?") % new_name,
-                                                         _("Error"), wx.YES_NO | wx.ICON_QUESTION)
+                        messageDialog = wx.MessageDialog(self, _("A POU has an element named \"%s\". This could cause a conflict. Do you wish to continue?") % new_name, _("Error"), wx.YES_NO | wx.ICON_QUESTION)
                         if messageDialog.ShowModal() == wx.ID_NO:
                             abort = True
                         messageDialog.Destroy()
@@ -1702,8 +1689,7 @@ class IDEFrame(wx.Frame):
                     pou_name = self.ProjectTree.GetItemText(pou_item)
                     if new_name.upper() in [name.upper() for name in self.Controler.GetProjectPouNames()]:
                         message = _("A POU named \"%s\" already exists!") % new_name
-                    elif new_name.upper() in [name.upper() for name in
-                                              self.Controler.GetProjectPouVariableNames(pou_name) if name != old_name]:
+                    elif new_name.upper() in [name.upper() for name in self.Controler.GetProjectPouVariableNames(pou_name) if name != old_name]:
                         message = _("A variable with \"%s\" as name already exists in this pou!") % new_name
                     else:
                         words = item_infos["tagname"].split("::")
@@ -1716,8 +1702,7 @@ class IDEFrame(wx.Frame):
                     pou_name = self.ProjectTree.GetItemText(pou_item)
                     if new_name.upper() in [name.upper() for name in self.Controler.GetProjectPouNames()]:
                         message = _("A POU named \"%s\" already exists!") % new_name
-                    elif new_name.upper() in [name.upper() for name in
-                                              self.Controler.GetProjectPouVariableNames(pou_name) if name != old_name]:
+                    elif new_name.upper() in [name.upper() for name in self.Controler.GetProjectPouVariableNames(pou_name) if name != old_name]:
                         message = _("A variable with \"%s\" as name already exists in this pou!") % new_name
                     else:
                         words = item_infos["tagname"].split("::")
@@ -1726,21 +1711,16 @@ class IDEFrame(wx.Frame):
                                                 ComputePouActionName(words[1], new_name))
                         self.RefreshPageTitles()
                 elif item_infos["type"] == ITEM_CONFIGURATION:
-                    if new_name.upper() in [name.upper() for name in self.Controler.GetProjectConfigNames() if
-                                            name != old_name]:
+                    if new_name.upper() in [name.upper() for name in self.Controler.GetProjectConfigNames() if name != old_name]:
                         message = _("\"%s\" config already exists!") % new_name
                         abort = True
                     elif new_name.upper() in [name.upper() for name in self.Controler.GetProjectPouNames()]:
-                        messageDialog = wx.MessageDialog(self, _(
-                            "There is a POU named \"%s\". This could cause a conflict. Do you wish to continue?") % new_name,
-                                                         _("Error"), wx.YES_NO | wx.ICON_QUESTION)
+                        messageDialog = wx.MessageDialog(self, _("There is a POU named \"%s\". This could cause a conflict. Do you wish to continue?") % new_name, _("Error"), wx.YES_NO | wx.ICON_QUESTION)
                         if messageDialog.ShowModal() == wx.ID_NO:
                             abort = True
                         messageDialog.Destroy()
                     elif new_name.upper() in [name.upper() for name in self.Controler.GetProjectPouVariableNames()]:
-                        messageDialog = wx.MessageDialog(self, _(
-                            "A POU has an element named \"%s\". This could cause a conflict. Do you wish to continue?") % new_name,
-                                                         _("Error"), wx.YES_NO | wx.ICON_QUESTION)
+                        messageDialog = wx.MessageDialog(self, _("A POU has an element named \"%s\". This could cause a conflict. Do you wish to continue?") % new_name, _("Error"), wx.YES_NO | wx.ICON_QUESTION)
                         if messageDialog.ShowModal() == wx.ID_NO:
                             abort = True
                         messageDialog.Destroy()
@@ -1754,16 +1734,12 @@ class IDEFrame(wx.Frame):
                         message = _("\"%s\" config already exists!") % new_name
                         abort = True
                     elif new_name.upper() in [name.upper() for name in self.Controler.GetProjectPouNames()]:
-                        messageDialog = wx.MessageDialog(self, _(
-                            "There is a POU named \"%s\". This could cause a conflict. Do you wish to continue?") % new_name,
-                                                         _("Error"), wx.YES_NO | wx.ICON_QUESTION)
+                        messageDialog = wx.MessageDialog(self, _("There is a POU named \"%s\". This could cause a conflict. Do you wish to continue?") % new_name, _("Error"), wx.YES_NO | wx.ICON_QUESTION)
                         if messageDialog.ShowModal() == wx.ID_NO:
                             abort = True
                         messageDialog.Destroy()
                     elif new_name.upper() in [name.upper() for name in self.Controler.GetProjectPouVariableNames()]:
-                        messageDialog = wx.MessageDialog(self, _(
-                            "A POU has an element named \"%s\". This could cause a conflict. Do you wish to continue?") % new_name,
-                                                         _("Error"), wx.YES_NO | wx.ICON_QUESTION)
+                        messageDialog = wx.MessageDialog(self, _("A POU has an element named \"%s\". This could cause a conflict. Do you wish to continue?") % new_name, _("Error"), wx.YES_NO | wx.ICON_QUESTION)
                         if messageDialog.ShowModal() == wx.ID_NO:
                             abort = True
                         messageDialog.Destroy()
@@ -1785,7 +1761,7 @@ class IDEFrame(wx.Frame):
 
     def OnProjectTreeItemActivated(self, event):
         selected = event.GetItem()
-        item_infos = self.ProjectTree.GetItemData(selected)
+        item_infos = self.ProjectTree.GetPyData(selected)
         if item_infos["type"] == ITEM_PROJECT:
             self.EditProjectSettings()
         else:
@@ -1797,7 +1773,7 @@ class IDEFrame(wx.Frame):
 
     def ProjectTreeItemSelect(self, select_item):
         if select_item is not None and select_item.IsOk():
-            item_infos = self.ProjectTree.GetItemData(select_item)
+            item_infos = self.ProjectTree.GetPyData(select_item)
             if item_infos["type"] in [ITEM_DATATYPE, ITEM_POU,
                                       ITEM_CONFIGURATION, ITEM_RESOURCE,
                                       ITEM_TRANSITION, ITEM_ACTION]:
@@ -1816,12 +1792,12 @@ class IDEFrame(wx.Frame):
             pt = wx.Point(event.GetX(), event.GetY())
             item, flags = self.ProjectTree.HitTest(pt)
             if item is not None and item.IsOk() and flags & wx.TREE_HITTEST_ONITEMLABEL:
-                item_infos = self.ProjectTree.GetItemData(item)
+                item_infos = self.ProjectTree.GetPyData(item)
                 if item != self.LastToolTipItem and self.LastToolTipItem is not None:
                     self.ProjectTree.SetToolTip(None)
                     self.LastToolTipItem = None
                 if self.LastToolTipItem != item and \
-                        item_infos["type"] in [ITEM_POU, ITEM_TRANSITION, ITEM_ACTION]:
+                   item_infos["type"] in [ITEM_POU, ITEM_TRANSITION, ITEM_ACTION]:
                     bodytype = self.Controler.GetEditedElementBodyType(
                         item_infos["tagname"])
                     if item_infos["type"] == ITEM_POU:
@@ -1844,7 +1820,7 @@ class IDEFrame(wx.Frame):
         event.Skip()
 
     def OnProjectTreeItemChanging(self, event):
-        if self.ProjectTree.GetItemData(event.GetItem())["type"] not in ITEMS_UNEDITABLE and self.SelectedItem is None:
+        if self.ProjectTree.GetPyData(event.GetItem())["type"] not in ITEMS_UNEDITABLE and self.SelectedItem is None:
             self.SelectedItem = event.GetItem()
             event.Veto()
         else:
@@ -1926,10 +1902,10 @@ class IDEFrame(wx.Frame):
         self.ProjectTree.SelectItem(item)
         self.ProjectTreeItemSelect(item)
         name = self.ProjectTree.GetItemText(item)
-        item_infos = self.ProjectTree.GetItemData(item)
+        item_infos = self.ProjectTree.GetPyData(item)
 
         menu = None
-        if item_infos["type"] in list(ITEMS_UNEDITABLE) + [ITEM_PROJECT]:
+        if item_infos["type"] in ITEMS_UNEDITABLE + [ITEM_PROJECT]:
             if item_infos["type"] == ITEM_PROJECT:
                 name = "Project"
             else:
@@ -1937,64 +1913,54 @@ class IDEFrame(wx.Frame):
 
             if name == "Data Types":
                 menu = wx.Menu(title='')
-                new_id = wx.NewIdRef()
-                AppendMenu(menu, help='', id=new_id, kind=wx.ITEM_NORMAL, text=_("Add DataType"))
-                self.Bind(wx.EVT_MENU, self.OnAddDataTypeMenu, id=new_id)
+                new_item = AppendMenu(menu, help='', kind=wx.ITEM_NORMAL, text=_("Add DataType"))
+                self.Bind(wx.EVT_MENU, self.OnAddDataTypeMenu, new_item)
 
             elif name in ["Functions", "Function Blocks", "Programs", "Project"]:
                 menu = wx.Menu(title='')
 
                 if name != "Project":
-                    new_id = wx.NewIdRef()
-                    AppendMenu(menu, help='', id=new_id, kind=wx.ITEM_NORMAL, text=_("Add POU"))
-                    self.Bind(wx.EVT_MENU, self.GenerateAddPouFunction(
-                        {"Functions": "function", "Function Blocks": "functionBlock", "Programs": "program"}[name]),
-                              id=new_id)
+                    new_item = AppendMenu(menu, help='', kind=wx.ITEM_NORMAL, text=_("Add POU"))
+                    self.Bind(wx.EVT_MENU, self.GenerateAddPouFunction({"Functions": "function", "Function Blocks": "functionBlock", "Programs": "program"}[name]), new_item)
 
-                new_id = wx.NewIdRef()
-                AppendMenu(menu, help='', id=new_id, kind=wx.ITEM_NORMAL, text=_("Paste POU"))
-                self.Bind(wx.EVT_MENU, self.OnPastePou, id=new_id)
+                new_item = AppendMenu(menu, help='', kind=wx.ITEM_NORMAL, text=_("Paste POU"))
+                self.Bind(wx.EVT_MENU, self.OnPastePou, new_item)
                 if self.GetCopyBuffer() is None:
-                    menu.Enable(new_id, False)
+                    menu.Enable(new_item, False)
 
             elif name == "Configurations":
                 menu = wx.Menu(title='')
-                new_id = wx.NewIdRef()
-                AppendMenu(menu, help='', id=new_id, kind=wx.ITEM_NORMAL, text=_("Add Configuration"))
-                self.Bind(wx.EVT_MENU, self.OnAddConfigurationMenu, id=new_id)
+                new_item = AppendMenu(menu, help='', kind=wx.ITEM_NORMAL, text=_("Add Configuration"))
+                self.Bind(wx.EVT_MENU, self.OnAddConfigurationMenu, new_item)
 
             elif name == "Transitions":
                 menu = wx.Menu(title='')
-                new_id = wx.NewIdRef()
-                AppendMenu(menu, help='', id=new_id, kind=wx.ITEM_NORMAL, text=_("Add Transition"))
+                new_item = AppendMenu(menu, help='', kind=wx.ITEM_NORMAL, text=_("Add Transition"))
                 parent = self.ProjectTree.GetItemParent(item)
-                parent_type = self.ProjectTree.GetItemData(parent)["type"]
+                parent_type = self.ProjectTree.GetPyData(parent)["type"]
                 while parent_type != ITEM_POU:
                     parent = self.ProjectTree.GetItemParent(parent)
-                    parent_type = self.ProjectTree.GetItemData(parent)["type"]
-                self.Bind(wx.EVT_MENU, self.GenerateAddTransitionFunction(self.ProjectTree.GetItemText(parent)),
-                          id=new_id)
+                    parent_type = self.ProjectTree.GetPyData(parent)["type"]
+                self.Bind(wx.EVT_MENU, self.GenerateAddTransitionFunction(self.ProjectTree.GetItemText(parent)), new_item)
 
             elif name == "Actions":
                 menu = wx.Menu(title='')
-                new_id = wx.NewIdRef()
-                AppendMenu(menu, help='', id=new_id, kind=wx.ITEM_NORMAL, text=_("Add Action"))
+                new_item = AppendMenu(menu, help='', kind=wx.ITEM_NORMAL, text=_("Add Action"))
                 parent = self.ProjectTree.GetItemParent(item)
-                parent_type = self.ProjectTree.GetItemData(parent)["type"]
+                parent_type = self.ProjectTree.GetPyData(parent)["type"]
                 while parent_type != ITEM_POU:
                     parent = self.ProjectTree.GetItemParent(parent)
-                    parent_type = self.ProjectTree.GetItemData(parent)["type"]
-                self.Bind(wx.EVT_MENU, self.GenerateAddActionFunction(self.ProjectTree.GetItemText(parent)), id=new_id)
+                    parent_type = self.ProjectTree.GetPyData(parent)["type"]
+                self.Bind(wx.EVT_MENU, self.GenerateAddActionFunction(self.ProjectTree.GetItemText(parent)), new_item)
 
             elif name == "Resources":
                 menu = wx.Menu(title='')
-                new_id = wx.NewIdRef()
-                AppendMenu(menu, help='', id=new_id, kind=wx.ITEM_NORMAL, text=_("Add Resource"))
+                new_item = AppendMenu(menu, help='', kind=wx.ITEM_NORMAL, text=_("Add Resource"))
                 parent = self.ProjectTree.GetItemParent(item)
-                parent_type = self.ProjectTree.GetItemData(parent)["type"]
+                parent_type = self.ProjectTree.GetPyData(parent)["type"]
                 while parent_type not in [ITEM_CONFIGURATION, ITEM_PROJECT]:
                     parent = self.ProjectTree.GetItemParent(parent)
-                    parent_type = self.ProjectTree.GetItemData(parent)["type"]
+                    parent_type = self.ProjectTree.GetPyData(parent)["type"]
                 parent_name = None
                 if parent_type == ITEM_PROJECT:
                     config_names = self.Controler.GetProjectConfigNames()
@@ -2003,52 +1969,44 @@ class IDEFrame(wx.Frame):
                 else:
                     parent_name = self.ProjectTree.GetItemText(parent)
                 if parent_name is not None:
-                    self.Bind(wx.EVT_MENU, self.GenerateAddResourceFunction(parent_name), id=new_id)
+                    self.Bind(wx.EVT_MENU, self.GenerateAddResourceFunction(parent_name), new_item)
 
         else:
             if item_infos["type"] == ITEM_POU:
                 menu = wx.Menu(title='')
                 if self.Controler.GetPouBodyType(name) == "SFC":
-                    new_id = wx.NewIdRef()
-                    AppendMenu(menu, help='', id=new_id, kind=wx.ITEM_NORMAL, text=_("Add Transition"))
-                    self.Bind(wx.EVT_MENU, self.GenerateAddTransitionFunction(name), id=new_id)
-                    new_id = wx.NewIdRef()
-                    AppendMenu(menu, help='', id=new_id, kind=wx.ITEM_NORMAL, text=_("Add Action"))
-                    self.Bind(wx.EVT_MENU, self.GenerateAddActionFunction(name), id=new_id)
+                    new_item = AppendMenu(menu, help='', kind=wx.ITEM_NORMAL, text=_("Add Transition"))
+                    self.Bind(wx.EVT_MENU, self.GenerateAddTransitionFunction(name), new_item)
+                    new_item = AppendMenu(menu, help='', kind=wx.ITEM_NORMAL, text=_("Add Action"))
+                    self.Bind(wx.EVT_MENU, self.GenerateAddActionFunction(name), new_item)
                     menu.AppendSeparator()
 
-                new_id = wx.NewIdRef()
-                AppendMenu(menu, help='', id=new_id, kind=wx.ITEM_NORMAL, text=_("Copy POU"))
-                self.Bind(wx.EVT_MENU, self.OnCopyPou, id=new_id)
+                new_item = AppendMenu(menu, help='', kind=wx.ITEM_NORMAL, text=_("Copy POU"))
+                self.Bind(wx.EVT_MENU, self.OnCopyPou, new_item)
 
                 pou_type = self.Controler.GetPouType(name)
                 if pou_type in ["function", "functionBlock"]:
                     change_menu = wx.Menu(title='')
                     if pou_type == "function":
-                        new_id = wx.NewIdRef()
-                        AppendMenu(change_menu, help='', id=new_id, kind=wx.ITEM_NORMAL, text=_("Function Block"))
-                        self.Bind(wx.EVT_MENU, self.GenerateChangePouTypeFunction(name, "functionBlock"), id=new_id)
-                    new_id = wx.NewIdRef()
-                    AppendMenu(change_menu, help='', id=new_id, kind=wx.ITEM_NORMAL, text=_("Program"))
-                    self.Bind(wx.EVT_MENU, self.GenerateChangePouTypeFunction(name, "program"), id=new_id)
-                    menu.Append(wx.NewIdRef(), _("Change POU Type To"), change_menu)
-                new_id = wx.NewIdRef()
-                AppendMenu(menu, help='', id=new_id, kind=wx.ITEM_NORMAL, text=_("Rename"))
-                self.Bind(wx.EVT_MENU, self.OnRenamePouMenu, id=new_id)
+                        new_item = AppendMenu(change_menu, help='', kind=wx.ITEM_NORMAL, text=_("Function Block"))
+                        self.Bind(wx.EVT_MENU, self.GenerateChangePouTypeFunction(name, "functionBlock"), new_item)
+                    new_item = AppendMenu(change_menu, help='', kind=wx.ITEM_NORMAL, text=_("Program"))
+                    self.Bind(wx.EVT_MENU, self.GenerateChangePouTypeFunction(name, "program"), new_item)
+                    menu.AppendMenu(wx.ID_ANY, _("Duplicate as..."), change_menu)
+                new_item = AppendMenu(menu, help='', kind=wx.ITEM_NORMAL, text=_("Rename"))
+                self.Bind(wx.EVT_MENU, self.OnRenamePouMenu, new_item)
 
             elif item_infos["type"] == ITEM_CONFIGURATION:
                 menu = wx.Menu(title='')
-                new_id = wx.NewIdRef()
-                AppendMenu(menu, help='', id=new_id, kind=wx.ITEM_NORMAL, text=_("Add Resource"))
-                self.Bind(wx.EVT_MENU, self.GenerateAddResourceFunction(name), id=new_id)
+                new_item = AppendMenu(menu, help='', kind=wx.ITEM_NORMAL, text=_("Add Resource"))
+                self.Bind(wx.EVT_MENU, self.GenerateAddResourceFunction(name), new_item)
 
             elif item_infos["type"] in [ITEM_DATATYPE, ITEM_TRANSITION, ITEM_ACTION, ITEM_RESOURCE]:
                 menu = wx.Menu(title='')
 
             if menu is not None:
-                new_id = wx.NewIdRef()
-                AppendMenu(menu, help='', id=new_id, kind=wx.ITEM_NORMAL, text=_("Delete"))
-                self.Bind(wx.EVT_MENU, self.OnDeleteMenu, id=new_id)
+                new_item = AppendMenu(menu, help='', kind=wx.ITEM_NORMAL, text=_("Delete"))
+                self.Bind(wx.EVT_MENU, self.OnDeleteMenu, new_item)
 
         if menu is not None:
             self.FindFocus().PopupMenu(menu)
@@ -2163,7 +2121,7 @@ class IDEFrame(wx.Frame):
                 MenuToolBar.AddSeparator()
             else:
                 id, bitmap, help, callback = toolbar_item
-                MenuToolBar.AddTool(toolId=id, label='tppl', shortHelp=help, bitmap=GetBitmap(bitmap))
+                MenuToolBar.AddTool(id, help, GetBitmap(bitmap), help)
                 if callback is not None:
                     self.Bind(wx.EVT_TOOL, callback, id=id)
         MenuToolBar.Realize()
@@ -2198,24 +2156,15 @@ class IDEFrame(wx.Frame):
             self.ResetEditorToolBar()
             self.CurrentMenu = menu
             self.CurrentEditorToolBar = []
-            EditorToolBar: wx.ToolBar = self.Panes["EditorToolBar"]
-            if EditorToolBar is not None:
-                for radio, modes, id, method, picture, help in self.EditorToolBarItems[menu]:
+            EditorToolBar = self.Panes["EditorToolBar"]
+            if EditorToolBar:
+                for radio, modes, id, method_name, picture, help in self.EditorToolBarItems[menu]:
                     if modes & self.DrawingMode:
                         if radio or self.DrawingMode == FREEDRAWING_MODE:
-                            EditorToolBar.AddRadioTool(
-                                toolId=id,
-                                label="",
-                                bitmap1=GetBitmap(picture),
-                                bmpDisabled=wx.NullBitmap,
-                                shortHelp=help)
+                            EditorToolBar.AddRadioTool(id, method_name, GetBitmap(picture), wx.NullBitmap, help)
                         else:
-                            EditorToolBar.AddTool(
-                                toolId=id,
-                                label="",
-                                bitmap=GetBitmap(picture),
-                                shortHelp=help)
-                        self.Bind(wx.EVT_MENU, getattr(self, method), id=id)
+                            EditorToolBar.AddTool(id, method_name, GetBitmap(picture), help)
+                        self.Bind(wx.EVT_MENU, getattr(self, method_name), id=id)
                         self.CurrentEditorToolBar.append(id)
                 EditorToolBar.Realize()
                 self.AUIManager.GetPane("EditorToolBar").Show()
@@ -2242,8 +2191,8 @@ class IDEFrame(wx.Frame):
             EditorToolBar.ToggleTool(ID_PLCOPENEDITOREDITORTOOLBARSELECTION, True)
 
     def ResetToolToggle(self, id):
-        tool: wx.ToolBarToolBase = self.Panes["EditorToolBar"].FindById(id)
-        tool.SetToggle(False)
+        tool = self.Panes["EditorToolBar"]
+        tool.ToggleTool(toolId=id, toggle=False)
 
     def OnSelectionTool(self, event):
         selected = self.TabsOpened.GetSelection()
@@ -2256,31 +2205,31 @@ class IDEFrame(wx.Frame):
             self.TabsOpened.GetPage(selected).SetMode(MODE_MOTION)
 
     def OnCommentTool(self, event):
-        # self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARCOMMENT)
+        self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARCOMMENT)
         selected = self.TabsOpened.GetSelection()
         if selected != -1:
             self.TabsOpened.GetPage(selected).SetMode(MODE_COMMENT)
 
     def OnVariableTool(self, event):
-        # self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARVARIABLE)
+        self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARVARIABLE)
         selected = self.TabsOpened.GetSelection()
         if selected != -1:
             self.TabsOpened.GetPage(selected).SetMode(MODE_VARIABLE)
 
     def OnBlockTool(self, event):
-        # self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARBLOCK)
+        self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARBLOCK)
         selected = self.TabsOpened.GetSelection()
         if selected != -1:
             self.TabsOpened.GetPage(selected).SetMode(MODE_BLOCK)
 
     def OnConnectionTool(self, event):
-        # self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARCONNECTION)
+        self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARCONNECTION)
         selected = self.TabsOpened.GetSelection()
         if selected != -1:
             self.TabsOpened.GetPage(selected).SetMode(MODE_CONNECTION)
 
     def OnPowerRailTool(self, event):
-        # self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARPOWERRAIL)
+        self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARPOWERRAIL)
         selected = self.TabsOpened.GetSelection()
         if selected != -1:
             self.TabsOpened.GetPage(selected).SetMode(MODE_POWERRAIL)
@@ -2292,15 +2241,15 @@ class IDEFrame(wx.Frame):
         event.Skip()
 
     def OnCoilTool(self, event):
-        # self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARCOIL)
+        self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARCOIL)
         selected = self.TabsOpened.GetSelection()
         if selected != -1:
             self.TabsOpened.GetPage(selected).SetMode(MODE_COIL)
         event.Skip()
 
     def OnContactTool(self, event):
-        # if self.DrawingMode == FREEDRAWING_MODE:
-        #     self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARCONTACT)
+        if self.DrawingMode == FREEDRAWING_MODE:
+            self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARCONTACT)
         selected = self.TabsOpened.GetSelection()
         if selected != -1:
             if self.DrawingMode == FREEDRAWING_MODE:
@@ -2314,14 +2263,14 @@ class IDEFrame(wx.Frame):
             self.TabsOpened.GetPage(selected).AddLadderBranch()
 
     def OnInitialStepTool(self, event):
-        # self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARINITIALSTEP)
+        self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARINITIALSTEP)
         selected = self.TabsOpened.GetSelection()
         if selected != -1:
             self.TabsOpened.GetPage(selected).SetMode(MODE_INITIALSTEP)
 
     def OnStepTool(self, event):
-        # if self.GetDrawingMode() == FREEDRAWING_MODE:
-        #     self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARSTEP)
+        if self.GetDrawingMode() == FREEDRAWING_MODE:
+            self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARSTEP)
         selected = self.TabsOpened.GetSelection()
         if selected != -1:
             if self.GetDrawingMode() == FREEDRAWING_MODE:
@@ -2330,8 +2279,8 @@ class IDEFrame(wx.Frame):
                 self.TabsOpened.GetPage(selected).AddStep()
 
     def OnActionBlockTool(self, event):
-        # if self.GetDrawingMode() == FREEDRAWING_MODE:
-        #     self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARACTIONBLOCK)
+        if self.GetDrawingMode() == FREEDRAWING_MODE:
+            self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARACTIONBLOCK)
         selected = self.TabsOpened.GetSelection()
         if selected != -1:
             if self.GetDrawingMode() == FREEDRAWING_MODE:
@@ -2340,14 +2289,14 @@ class IDEFrame(wx.Frame):
                 self.TabsOpened.GetPage(selected).AddStepAction()
 
     def OnTransitionTool(self, event):
-        # self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARTRANSITION)
+        self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARTRANSITION)
         selected = self.TabsOpened.GetSelection()
         if selected != -1:
             self.TabsOpened.GetPage(selected).SetMode(MODE_TRANSITION)
 
     def OnDivergenceTool(self, event):
-        # if self.GetDrawingMode() == FREEDRAWING_MODE:
-        #     self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARDIVERGENCE)
+        if self.GetDrawingMode() == FREEDRAWING_MODE:
+            self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARDIVERGENCE)
         selected = self.TabsOpened.GetSelection()
         if selected != -1:
             if self.GetDrawingMode() == FREEDRAWING_MODE:
@@ -2356,8 +2305,8 @@ class IDEFrame(wx.Frame):
                 self.TabsOpened.GetPage(selected).AddDivergence()
 
     def OnJumpTool(self, event):
-        # if self.GetDrawingMode() == FREEDRAWING_MODE:
-        #     self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARJUMP)
+        if self.GetDrawingMode() == FREEDRAWING_MODE:
+            self.ResetToolToggle(ID_PLCOPENEDITOREDITORTOOLBARJUMP)
         selected = self.TabsOpened.GetSelection()
         if selected != -1:
             if self.GetDrawingMode() == FREEDRAWING_MODE:
@@ -2399,7 +2348,6 @@ class IDEFrame(wx.Frame):
                     pou_created = True
             dialog.Destroy()
             return pou_created
-
         return OnAddPouMenu
 
     def GenerateAddTransitionFunction(self, pou_name):
@@ -2415,7 +2363,6 @@ class IDEFrame(wx.Frame):
                     self._Refresh(TITLE, FILEMENU, EDITMENU, PROJECTTREE)
                     self.EditProjectElement(ITEM_TRANSITION, tagname)
             dialog.Destroy()
-
         return OnAddTransitionMenu
 
     def GenerateAddActionFunction(self, pou_name):
@@ -2431,7 +2378,6 @@ class IDEFrame(wx.Frame):
                     self._Refresh(TITLE, FILEMENU, EDITMENU, PROJECTTREE)
                     self.EditProjectElement(ITEM_ACTION, tagname)
             dialog.Destroy()
-
         return OnAddActionMenu
 
     def OnAddConfigurationMenu(self, event):
@@ -2454,16 +2400,14 @@ class IDEFrame(wx.Frame):
             if tagname is not None:
                 self._Refresh(TITLE, FILEMENU, EDITMENU, PROJECTTREE, POUINSTANCEVARIABLESPANEL)
                 self.EditProjectElement(ITEM_RESOURCE, tagname)
-
         return OnAddResourceMenu
 
     def GenerateChangePouTypeFunction(self, name, new_type):
         def OnChangePouTypeMenu(event):
             selected = self.ProjectTree.GetSelection()
-            if self.ProjectTree.GetItemData(selected)["type"] == ITEM_POU:
+            if self.ProjectTree.GetPyData(selected)["type"] == ITEM_POU:
                 self.Controler.ProjectChangePouType(name, new_type)
                 self._Refresh(TITLE, EDITORTOOLBAR, FILEMENU, EDITMENU, PROJECTTREE, LIBRARYTREE)
-
         return OnChangePouTypeMenu
 
     def OnCopyPou(self, event):
@@ -2478,7 +2422,7 @@ class IDEFrame(wx.Frame):
     def OnPastePou(self, event):
         selected = self.ProjectTree.GetSelection()
 
-        if self.ProjectTree.GetItemData(selected)["type"] != ITEM_PROJECT:
+        if self.ProjectTree.GetPyData(selected)["type"] != ITEM_PROJECT:
             pou_type = self.ProjectTree.GetItemText(selected)
             pou_type = self.UNEDITABLE_NAMES_DICT[pou_type]  # one of 'Functions', 'Function Blocks' or 'Programs'
             pou_type = {'Functions': 'function', 'Function Blocks': 'functionBlock', 'Programs': 'program'}[pou_type]
@@ -2523,7 +2467,7 @@ class IDEFrame(wx.Frame):
 
     def OnRemoveDataTypeMenu(self, event):
         selected = self.ProjectTree.GetSelection()
-        if self.ProjectTree.GetItemData(selected)["type"] == ITEM_DATATYPE:
+        if self.ProjectTree.GetPyData(selected)["type"] == ITEM_DATATYPE:
             name = self.ProjectTree.GetItemText(selected)
             if self.CheckDataTypeIsUsedBeforeDeletion(name):
                 self.Controler.ProjectRemoveDataType(name)
@@ -2535,12 +2479,12 @@ class IDEFrame(wx.Frame):
 
     def OnRenamePouMenu(self, event):
         selected = self.ProjectTree.GetSelection()
-        if self.ProjectTree.GetItemData(selected)["type"] == ITEM_POU:
+        if self.ProjectTree.GetPyData(selected)["type"] == ITEM_POU:
             wx.CallAfter(self.ProjectTree.EditLabel, selected)
 
     def OnRemovePouMenu(self, event):
         selected = self.ProjectTree.GetSelection()
-        if self.ProjectTree.GetItemData(selected)["type"] == ITEM_POU:
+        if self.ProjectTree.GetPyData(selected)["type"] == ITEM_POU:
             name = self.ProjectTree.GetItemText(selected)
             if self.CheckPouIsUsedBeforeDeletion(name):
                 self.Controler.ProjectRemovePou(name)
@@ -2548,12 +2492,11 @@ class IDEFrame(wx.Frame):
                 idx = self.IsOpened(tagname)
                 if idx is not None:
                     self.TabsOpened.DeletePage(idx)
-                self._Refresh(TITLE, EDITORTOOLBAR, FILEMENU, EDITMENU, PROJECTTREE, POUINSTANCEVARIABLESPANEL,
-                              LIBRARYTREE)
+                self._Refresh(TITLE, EDITORTOOLBAR, FILEMENU, EDITMENU, PROJECTTREE, POUINSTANCEVARIABLESPANEL, LIBRARYTREE)
 
     def OnRemoveTransitionMenu(self, event):
         selected = self.ProjectTree.GetSelection()
-        item_infos = self.ProjectTree.GetItemData(selected)
+        item_infos = self.ProjectTree.GetPyData(selected)
         if item_infos["type"] == ITEM_TRANSITION:
             transition = self.ProjectTree.GetItemText(selected)
             pou_name = item_infos["tagname"].split("::")[1]
@@ -2566,7 +2509,7 @@ class IDEFrame(wx.Frame):
 
     def OnRemoveActionMenu(self, event):
         selected = self.ProjectTree.GetSelection()
-        item_infos = self.ProjectTree.GetItemData(selected)
+        item_infos = self.ProjectTree.GetPyData(selected)
         if item_infos["type"] == ITEM_ACTION:
             action = self.ProjectTree.GetItemText(selected)
             pou_name = item_infos["tagname"].split("::")[1]
@@ -2579,7 +2522,7 @@ class IDEFrame(wx.Frame):
 
     def OnRemoveConfigurationMenu(self, event):
         selected = self.ProjectTree.GetSelection()
-        if self.ProjectTree.GetItemData(selected)["type"] == ITEM_CONFIGURATION:
+        if self.ProjectTree.GetPyData(selected)["type"] == ITEM_CONFIGURATION:
             name = self.ProjectTree.GetItemText(selected)
             self.Controler.ProjectRemoveConfiguration(name)
             tagname = ComputeConfigurationName(name)
@@ -2590,7 +2533,7 @@ class IDEFrame(wx.Frame):
 
     def OnRemoveResourceMenu(self, event):
         selected = self.ProjectTree.GetSelection()
-        item_infos = self.ProjectTree.GetItemData(selected)
+        item_infos = self.ProjectTree.GetPyData(selected)
         if item_infos["type"] == ITEM_RESOURCE:
             resource = self.ProjectTree.GetItemText(selected)
             config_name = item_infos["tagname"].split("::")[1]
@@ -2628,19 +2571,17 @@ class IDEFrame(wx.Frame):
         if highlight_type is None:
             self.Highlights = {}
         else:
-            self.Highlights = dict(
-                [(name, highlight) for name, highlight in self.Highlights.items() if highlight != highlight_type])
+            self.Highlights = dict([(name, highlight) for name, highlight in self.Highlights.items() if highlight != highlight_type])
         self.RefreshProjectTree()
-        for i in list(range(self.TabsOpened.GetPageCount())):
+        for i in range(self.TabsOpened.GetPageCount()):
             viewer = self.TabsOpened.GetPage(i)
             viewer.ClearHighlights(highlight_type)
 
     def ClearErrors(self):
-        self.ClearHighlights('ERROR_HIGHLIGHT')
+        self.ClearHighlights(ERROR_HIGHLIGHT)
 
     def ClearSearchResults(self):
         self.ClearHighlights(SEARCH_RESULT_HIGHLIGHT)
-
 
 # -------------------------------------------------------------------------------
 #                               Viewer Printout

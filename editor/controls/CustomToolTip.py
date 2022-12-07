@@ -22,6 +22,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+
 import wx
 
 from controls.CustomStyledTextCtrl import faces
@@ -174,7 +175,6 @@ class CustomToolTip(wx.PopupWindow):
         dc.SetFont(self.Font)
 
         # Draw Tool tip
-        # dc.BeginDrawing()
         tip_width, tip_height = self.GetToolTipSize()
 
         # Draw background rectangle
@@ -187,6 +187,5 @@ class CustomToolTip(wx.PopupWindow):
             _line_width, line_height = dc.GetTextExtent(line)
             line_offset += line_height
 
-        # dc.EndDrawing()
 
         event.Skip()

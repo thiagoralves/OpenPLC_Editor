@@ -23,23 +23,23 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 
-# 
 
 
 import os
+import collections
 import platform as platform_module
-
-from formless import annotate
-from formless import configurable
-from formless import webform
+from zope.interface import implements
 from nevow import appserver, inevow, tags, loaders, athena, url, rend
 from nevow.page import renderer
 from nevow.static import File
+from formless import annotate
+from formless import webform
+from formless import configurable
 from twisted.internet import reactor
-from zope.interface import implements
 
 import util.paths as paths
 from runtime.loglevels import LogLevels, LogLevelsDict
+from runtime import MainWorker, GetPLCObjectSingleton
 
 PAGE_TITLE = 'Beremiz Runtime Web Interface'
 
@@ -49,7 +49,6 @@ xhtml_header = '''<?xml version="1.0" encoding="utf-8"?>
 '''
 
 WorkingDir = None
-_PySrv = None
 
 
 class PLCHMI(athena.LiveElement):
@@ -78,7 +77,7 @@ class PLCStoppedHMI(PLCHMI):
 
 
 class MainPage(athena.LiveElement):
-    jsClass = u"WebInterface.PLC"
+    jsClass = "WebInterface.PLC"
     docFactory = loaders.stan(
         tags.invisible[
             tags.div(render=tags.directive('liveElement'))[
@@ -182,10 +181,19 @@ class ConfigurableBindings(configurable.Configurable):
         setattr(self, 'action_' + name, callback)
 
         self.bindingsNames.append(name)
-
+            
 
 ConfigurableSettings = ConfigurableBindings()
 
+def newExtensionSetting(display, token):
+    global extensions_settings_od
+    settings = ConfigurableBindings()
+    extensions_settings_od[token] = (settings, display)
+    return settings
+
+def removeExtensionSetting(token):
+    global extensions_settings_od
+    extensions_settings_od.pop(token)
 
 class ISettings(annotate.TypedInterface):
     platform = annotate.String(label=_("Platform"),
@@ -209,10 +217,23 @@ class ISettings(annotate.TypedInterface):
                                                "Send a message to the log"),
                                            action=_("Send"))
 
+    # pylint: disable=no-self-argument
+    def restartOrRepairPLC(
+            ctx=annotate.Context(),
+            action=annotate.Choice(["Restart", "Repair"],
+                                  required=True,
+                                  label=_("Action"))):
+        pass
+
+    restartOrRepairPLC = annotate.autocallable(restartOrRepairPLC,
+                                           label=_(
+                                               "Restart or Repair"),
+                                           action=_("Do"))
 
 customSettingsURLs = {
 }
 
+extensions_settings_od = collections.OrderedDict()
 
 class SettingsPage(rend.Page):
     # We deserve a slash
@@ -223,6 +244,27 @@ class SettingsPage(rend.Page):
     child_webinterface_css = File(paths.AbsNeighbourFile(__file__, 'webinterface.css'), 'text/css')
 
     implements(ISettings)
+   
+    def __getattr__(self, name):
+        global extensions_settings_od
+        if name.startswith('configurable_'):
+            token = name[13:]
+            def configurable_something(ctx):
+                settings, _display = extensions_settings_od[token]
+                return settings
+            return configurable_something
+        raise AttributeError
+    
+    def extensions_settings(self, context, data):
+        """ Project extensions settings
+        Extensions added to Configuration Tree in IDE have their setting rendered here
+        """
+        global extensions_settings_od
+        res = []
+        for token in extensions_settings_od:
+            _settings, display = extensions_settings_od[token]
+            res += [tags.h2[display], webform.renderForms(token)] 
+        return res
 
     docFactory = loaders.stan([tags.html[
         tags.head[
@@ -240,19 +282,30 @@ class SettingsPage(rend.Page):
             webform.renderForms('staticSettings'),
             tags.h1["Extensions settings:"],
             webform.renderForms('dynamicSettings'),
+            extensions_settings
         ]]])
 
     def configurable_staticSettings(self, ctx):
         return configurable.TypedInterfaceConfigurable(self)
 
     def configurable_dynamicSettings(self, ctx):
+        """ Runtime Extensions settings
+        Extensions loaded through Beremiz_service -e or optional runtime features render setting forms here
+        """
         return ConfigurableSettings
 
     def sendLogMessage(self, level, message, **kwargs):
         level = LogLevelsDict[level]
-        if _PySrv.plcobj is not None:
-            _PySrv.plcobj.LogMessage(
-                level, "Web form log message: " + message)
+        GetPLCObjectSingleton().LogMessage(
+            level, "Web form log message: " + message)
+
+    def restartOrRepairPLC(self, action, **kwargs):
+        if(action == "Repair"):
+            GetPLCObjectSingleton().RepairPLC()
+        else:
+            MainWorker.quit()
+            
+        
 
     def locateChild(self, ctx, segments):
         if segments[0] in customSettingsURLs:
@@ -284,7 +337,7 @@ class WebInterface(athena.LivePage):
 
     def __init__(self, plcState=False, *a, **kw):
         super(WebInterface, self).__init__(*a, **kw)
-        self.jsModules.mapping[u'WebInterface'] = paths.AbsNeighbourFile(
+        self.jsModules.mapping['WebInterface'] = paths.AbsNeighbourFile(
             __file__, 'webinterface.js')
         self.plcState = plcState
         self.MainPage.setPLCState(plcState)
@@ -293,7 +346,7 @@ class WebInterface(athena.LivePage):
         return self.MainPage.getHMI()
 
     def LoadHMI(self, hmi, jsmodules):
-        for name, path in jsmodules.iteritems():
+        for name, path in jsmodules.items():
             self.jsModules.mapping[name] = os.path.join(WorkingDir, path)
         self.MainPage.setPLCStartedHMI(hmi)
 
@@ -363,6 +416,3 @@ def website_statuslistener_factory(site):
     return statuslistener(site).listen
 
 
-def SetServer(pysrv):
-    global _PySrv
-    _PySrv = pysrv

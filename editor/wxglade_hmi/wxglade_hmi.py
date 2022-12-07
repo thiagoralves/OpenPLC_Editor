@@ -24,14 +24,14 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
+
 import os
-import shutil
 import sys
+import shutil
 from xml.dom import minidom
 
 import wx
 
-import util.paths as paths
 from py_ext import PythonFileCTNMixin
 
 
@@ -48,9 +48,6 @@ class WxGladeHMI(PythonFileCTNMixin):
 
     def GetIconName(self):
         return "wxGlade"
-
-    def ConfNodePath(self):
-        return paths.AbsDir(__file__)
 
     def _getWXGLADEpath(self, project_path=None):
         if project_path is None:
@@ -171,7 +168,7 @@ def CleanupHMI():
             self.GetCTRoot().logger.write_warning(
                 _("Warning: WxGlade HMI has no object with name identical to extension name, and no python code is provided in start section to create object.\n"))
 
-        return PythonFileCTNMixin.CTNGenerate_C(self, buildpath, locations), []
+        return PythonFileCTNMixin.CTNGenerate_C(self, buildpath, locations)
 
     def _editWXGLADE(self):
         wxg_filename = self._getWXGLADEpath()

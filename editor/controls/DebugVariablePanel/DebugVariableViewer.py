@@ -23,11 +23,15 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
+
+
 from collections import OrderedDict
 from functools import reduce
 
 import wx
 from matplotlib.backends.backend_wxagg import _convert_agg_to_wx_bitmap
+
+from dialogs.ForceVariableDialog import ForceVariableDialog
 
 # Viewer highlight types
 [HIGHLIGHT_NONE,
@@ -35,7 +39,7 @@ from matplotlib.backends.backend_wxagg import _convert_agg_to_wx_bitmap
  HIGHLIGHT_AFTER,
  HIGHLIGHT_LEFT,
  HIGHLIGHT_RIGHT,
- HIGHLIGHT_RESIZE] = range(6)
+ HIGHLIGHT_RESIZE] = list(range(6))
 
 # Viewer highlight styles
 HIGHLIGHT = {
@@ -69,13 +73,6 @@ class DebugVariableViewer(object):
         # List of buttons
         self.Buttons = []
         self.InitHighlightPensBrushes()
-
-    def __del__(self):
-        """
-        Destructor
-        """
-        # Remove reference to Debug Variable Panel
-        self.ParentWindow = None
 
     def InitHighlightPensBrushes(self):
         """
@@ -146,7 +143,7 @@ class DebugVariableViewer(object):
         Function that unsubscribe and remove every item that store values of
         a variable that doesn't exist in PLC anymore
         """
-        for item in list(self.ItemsDict.values())[:]:
+        for item in self.ItemsDict.values():
             iec_path = item.GetVariable()
 
             # Check that variablepath exist in PLC
@@ -416,7 +413,7 @@ class DebugVariableViewer(object):
         # Return immediately if not found
         if iec_type is None:
             return
-        from dialogs.ForceVariableDialog import ForceVariableDialog
+
         # Open a dialog to enter varaible forced value
         dialog = ForceVariableDialog(self, iec_type, str(item.GetValue()))
         if dialog.ShowModal() == wx.ID_OK:

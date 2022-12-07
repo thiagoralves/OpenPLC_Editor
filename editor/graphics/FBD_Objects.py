@@ -23,14 +23,15 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
+import wx
 
 from graphics.GraphicCommons import *
+from plcopen.structures import *
+
+
 # -------------------------------------------------------------------------------
 #                         Function Block Diagram Block
 # -------------------------------------------------------------------------------
-from .Graphic_Element import Graphic_Element, Connector
-
-
 
 
 def TestConnectorName(name, block_type):
@@ -388,7 +389,7 @@ class FBD_Block(Graphic_Element):
 #            pos = event.GetLogicalPosition(dc)
 #            for input in self.Inputs:
 #                rect = input.GetRedrawRect()
-    #                if rect.Contains(pos.x, pos.y):
+#                if rect.Contains(pos.x, pos.y):
 #                    print "Find input"
 #                    tip = wx.TipWindow(self.Parent, "Test")
 #                    tip.SetBoundingRect(rect)
@@ -447,7 +448,7 @@ class FBD_Block(Graphic_Element):
         if highlight_type is None:
             self.Highlights = {}
         else:
-            highlight_items = self.Highlights.items()
+            highlight_items = list(self.Highlights.items())
             for name, highlights in highlight_items:
                 highlights = ClearHighlights(highlights, highlight_type)
                 if len(highlights) == 0:
@@ -767,6 +768,7 @@ class FBD_Variable(Graphic_Element):
         Graphic_Element.Draw(self, dc)
         dc.SetPen(MiterPen(wx.BLACK))
         dc.SetBrush(wx.WHITE_BRUSH)
+        dc.SetTextForeground(wx.BLACK)
 
         if getattr(dc, "printing", False):
             name_size = dc.GetTextExtent(self.Name)
@@ -1007,6 +1009,7 @@ class FBD_Connector(Graphic_Element):
         Graphic_Element.Draw(self, dc)
         dc.SetPen(MiterPen(wx.BLACK))
         dc.SetBrush(wx.WHITE_BRUSH)
+        dc.SetTextForeground(wx.BLACK)
 
         if getattr(dc, "printing", False):
             name_size = dc.GetTextExtent(self.Name)

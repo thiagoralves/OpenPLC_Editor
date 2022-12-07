@@ -23,11 +23,19 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-# pylint: disable=wrong-import-position
-import matplotlib
+
+
+from functools import reduce
+import numpy as np
+
+import wx
 import wx.lib.buttons
 
+
+# pylint: disable=wrong-import-position
+import matplotlib
 matplotlib.use('WX')   # noqa
+import matplotlib.pyplot
 
 from editors.DebugViewer import DebugViewer
 from util.BitmapLibrary import GetBitmap
@@ -35,6 +43,7 @@ from util.BitmapLibrary import GetBitmap
 from controls.DebugVariablePanel.DebugVariableItem import DebugVariableItem
 from controls.DebugVariablePanel.DebugVariableTextViewer import DebugVariableTextViewer
 from controls.DebugVariablePanel.DebugVariableGraphicViewer import *
+from controls.DebugVariablePanel.RingBuffer import RingBuffer
 
 
 MILLISECOND = 1000000        # Number of nanosecond in a millisecond
@@ -49,7 +58,7 @@ SCROLLBAR_UNIT = 10
 
 def compute_mask(x, y):
     return [(xp if xp == yp else "*")
-            for xp, yp in list(zip(x, y))]
+            for xp, yp in zip(x, y)]
 
 
 def NextTick(variables):
@@ -82,13 +91,6 @@ class DebugVariableDropTarget(wx.TextDropTarget):
         """
         wx.TextDropTarget.__init__(self)
         self.ParentWindow = window
-
-    def __del__(self):
-        """
-        Destructor
-        """
-        # Remove reference to Debug Variable Panel
-        self.ParentWindow = None
 
     def OnDragOver(self, x, y, d):
         """
@@ -125,6 +127,7 @@ class DebugVariableDropTarget(wx.TextDropTarget):
         # Display message if data is invalid
         if message is not None:
             wx.CallAfter(self.ShowMessage, message)
+            return False
 
         # Data contain a reference to a variable to debug
         elif values[1] == "debug":
@@ -137,6 +140,9 @@ class DebugVariableDropTarget(wx.TextDropTarget):
             # Drag'n Drop was initiated by another control of Beremiz
             else:
                 self.ParentWindow.InsertValue(values[0], force=True)
+
+            return True
+        return False
 
     def OnLeave(self):
         """
@@ -193,11 +199,10 @@ class DebugVariablePanel(wx.Panel, DebugViewer):
         # data is available
         self.Force = False
 
-        self.SetBackgroundColour(wx.WHITE)
 
         main_sizer = wx.BoxSizer(wx.VERTICAL)
 
-        self.Ticks = numpy.array([])  # List of tick received
+        self.Ticks = RingBuffer()  # List of tick received
         self.StartTick = 0            # Tick starting range of data displayed
         self.Fixed = False            # Flag that range of data is fixed
         self.CursorTick = None        # Tick of cursor for displaying values
@@ -220,8 +225,8 @@ class DebugVariablePanel(wx.Panel, DebugViewer):
         self.CanvasRange = wx.ComboBox(self, style=wx.CB_READONLY)
         self.Bind(wx.EVT_COMBOBOX, self.OnRangeChanged, self.CanvasRange)
         graphics_button_sizer.Add(self.CanvasRange, 1,
-                                  border=5,
-                                  flag=wx.LEFT | wx.ALIGN_CENTER_VERTICAL)
+                                        border=5,
+                                        flag=wx.LEFT | wx.ALIGN_CENTER_VERTICAL)
 
         self.CanvasRange.Clear()
         default_range_idx = 0
@@ -336,11 +341,11 @@ class DebugVariablePanel(wx.Panel, DebugViewer):
             tick = ticks[-1]
 
             # Save tick as start tick for range if data is still empty
-            if len(self.Ticks) == 0:
+            if self.Ticks.count == 0:
                 self.StartTick = ticks[0]
 
             # Add tick to list of ticks received
-            self.Ticks = numpy.append(self.Ticks, ticks)
+            self.Ticks.append(ticks)
 
             # Update start tick for range if range follow ticks received
             if not self.Fixed or tick < self.StartTick + self.CurrentRange:
@@ -348,9 +353,13 @@ class DebugVariablePanel(wx.Panel, DebugViewer):
 
             # Force refresh if graph is fixed because range of data received
             # is too small to fill data range selected
-            if self.Fixed and \
-               self.Ticks[-1] - self.Ticks[0] < self.CurrentRange:
-                self.Force = True
+            if self.Fixed :
+                if self.Ticks.view[-1] - self.Ticks.view[0] < self.CurrentRange:
+                    self.Force = True
+                if self.Ticks.view[0] > self.StartTick:
+                    self.StartTick = self.Ticks.view[0]
+                    self.Force = True
+
 
             self.HasNewData = False
             self.RefreshView()
@@ -377,17 +386,16 @@ class DebugVariablePanel(wx.Panel, DebugViewer):
 
     def MoveCursorTick(self, move):
         if self.CursorTick is not None:
-            cursor_tick = max(self.Ticks[0],
-                              min(self.CursorTick + move, self.Ticks[-1]))
-            cursor_tick_idx = numpy.argmin(numpy.abs(self.Ticks - cursor_tick))
-            if self.Ticks[cursor_tick_idx] == self.CursorTick:
+            cursor_tick = max(self.Ticks.view[0],
+                              min(self.CursorTick + move, self.Ticks.view[-1]))
+            cursor_tick_idx = min(np.searchsorted(self.Ticks.view, cursor_tick), self.Ticks.count - 1)
+            if self.Ticks.view[cursor_tick_idx] == self.CursorTick:
                 cursor_tick_idx = max(0,
                                       min(cursor_tick_idx + abs(move) // move,
-                                          len(self.Ticks) - 1))
-            self.CursorTick = self.Ticks[cursor_tick_idx]
+                                          self.Ticks.count - 1))
+            self.CursorTick = self.Ticks.view[cursor_tick_idx]
             self.StartTick = max(
-                self.Ticks[numpy.argmin(
-                    numpy.abs(self.Ticks - self.CursorTick + self.CurrentRange))],
+                self.Ticks.view[min(np.searchsorted(self.Ticks.view,  self.CursorTick - self.CurrentRange), self.Ticks.count - 1)],
                 min(self.StartTick, self.CursorTick))
             self.RefreshCanvasPosition()
             self.UpdateCursorTick()
@@ -430,8 +438,8 @@ class DebugVariablePanel(wx.Panel, DebugViewer):
             width, height = panel.GetSize()
             rect = wx.Rect(x, y, width, height)
             if rect.Contains(x_mouse, y_mouse) or \
-                    idx == 0 and y_mouse < 0 or \
-                    idx == len(self.GraphicPanels) - 1 and y_mouse > panel.GetPosition()[1]:
+               idx == 0 and y_mouse < 0 or \
+               idx == len(self.GraphicPanels) - 1 and y_mouse > panel.GetPosition()[1]:
                 panel.RefreshHighlight(x_mouse - x, y_mouse - y)
             else:
                 panel.SetHighlight(HIGHLIGHT_NONE)
@@ -539,8 +547,8 @@ class DebugVariablePanel(wx.Panel, DebugViewer):
 
         if self.CursorTick is not None:
             tick = self.CursorTick
-        elif len(self.Ticks) > 0:
-            tick = self.Ticks[-1]
+        elif self.Ticks.count > 0:
+            tick = self.Ticks.view[-1]
         else:
             tick = None
         if tick is not None:
@@ -596,16 +604,16 @@ class DebugVariablePanel(wx.Panel, DebugViewer):
         self.RefreshGraphicsSizer()
 
     def SetCanvasPosition(self, tick):
-        tick = max(self.Ticks[0], min(tick, self.Ticks[-1] - self.CurrentRange))
-        self.StartTick = self.Ticks[numpy.argmin(numpy.abs(self.Ticks - tick))]
+        tick = max(self.Ticks.view[0], min(tick, self.Ticks.view[-1] - self.CurrentRange))
+        self.StartTick = self.Ticks.view[min(np.searchsorted(self.Ticks.view, tick), self.Ticks.count - 1)]
         self.Fixed = True
         self.RefreshCanvasPosition()
         self.ForceRefresh()
 
     def RefreshCanvasPosition(self):
-        if len(self.Ticks) > 0:
-            pos = int(self.StartTick - self.Ticks[0])
-            range = int(self.Ticks[-1] - self.Ticks[0])
+        if len(self.Ticks.view) > 0:
+            pos = int(self.StartTick - self.Ticks.view[0])
+            range = int(self.Ticks.view[-1] - self.Ticks.view[0])
         else:
             pos = 0
             range = 0
@@ -618,23 +626,23 @@ class DebugVariablePanel(wx.Panel, DebugViewer):
         if new_range_idx != current_range_idx:
             self.CanvasRange.SetSelection(new_range_idx)
             self.CurrentRange = self.RANGE_VALUES[new_range_idx][1] / self.Ticktime
-            if len(self.Ticks) > 0:
+            if self.Ticks.count > 0:
                 if tick is None:
                     tick = self.StartTick + self.CurrentRange / 2.
                 new_start_tick = min(tick - (tick - self.StartTick) * self.CurrentRange / current_range,
-                                     self.Ticks[-1] - self.CurrentRange)
-                self.StartTick = self.Ticks[numpy.argmin(numpy.abs(self.Ticks - new_start_tick))]
-                self.Fixed = new_start_tick < self.Ticks[-1] - self.CurrentRange
+                                     self.Ticks.view[-1] - self.CurrentRange)
+                self.StartTick = self.Ticks.view[min(np.searchsorted(self.Ticks.view, new_start_tick), self.Ticks.count - 1)]
+                self.Fixed = new_start_tick < self.Ticks.view[-1] - self.CurrentRange
             self.ForceRefresh()
 
     def RefreshRange(self):
-        if len(self.Ticks) > 0:
-            if self.Fixed and self.Ticks[-1] - self.Ticks[0] < self.CurrentRange:
+        if self.Ticks.count > 0:
+            if self.Fixed and self.Ticks.view[-1] - self.Ticks.view[0] < self.CurrentRange:
                 self.Fixed = False
             if self.Fixed:
-                self.StartTick = min(self.StartTick, self.Ticks[-1] - self.CurrentRange)
+                self.StartTick = min(self.StartTick, self.Ticks.view[-1] - self.CurrentRange)
             else:
-                self.StartTick = max(self.Ticks[0], self.Ticks[-1] - self.CurrentRange)
+                self.StartTick = max(self.Ticks.view[0], self.Ticks.view[-1] - self.CurrentRange)
         self.ForceRefresh()
 
     def OnRangeChanged(self, event):
@@ -646,8 +654,8 @@ class DebugVariablePanel(wx.Panel, DebugViewer):
         event.Skip()
 
     def OnCurrentButton(self, event):
-        if len(self.Ticks) > 0:
-            self.StartTick = max(self.Ticks[0], self.Ticks[-1] - self.CurrentRange)
+        if self.Ticks.count > 0:
+            self.StartTick = max(self.Ticks.view[0], self.Ticks.view[-1] - self.CurrentRange)
             self.ResetCursorTick()
         event.Skip()
 
@@ -687,8 +695,8 @@ class DebugVariablePanel(wx.Panel, DebugViewer):
         event.Skip()
 
     def OnPositionChanging(self, event):
-        if len(self.Ticks) > 0:
-            self.StartTick = self.Ticks[0] + event.GetPosition()
+        if self.Ticks.count > 0:
+            self.StartTick = self.Ticks.view[0] + event.GetPosition()
             self.Fixed = True
             self.ForceRefresh()
         event.Skip()
@@ -846,7 +854,7 @@ class DebugVariablePanel(wx.Panel, DebugViewer):
                 target_panel = None
 
             if target_panel is not None:
-                target_panel.Add(source_item)
+                target_panel.AddItem(source_item)
                 target_panel.GraphType = merge_type
                 size = target_panel.GetSize()
                 if merge_type == GRAPH_ORTHOGONAL:
@@ -900,7 +908,7 @@ class DebugVariablePanel(wx.Panel, DebugViewer):
         self.ForceRefresh()
 
     def ResetGraphicsValues(self):
-        self.Ticks = numpy.array([])
+        self.Ticks = RingBuffer()
         self.StartTick = 0
         for panel in self.GraphicPanels:
             panel.ResetItemsData()

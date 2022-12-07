@@ -23,17 +23,17 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
+import sys
 import traceback
 from functools import partial
 from threading import Thread, Event
 
+from twisted.internet import reactor, threads
 from autobahn.twisted import wamp
 from autobahn.twisted.websocket import WampWebSocketClientFactory, connectWS
 from autobahn.wamp import types
 from autobahn.wamp.exception import TransportLost
 from autobahn.wamp.serializer import MsgPackSerializer
-from six import text_type as text
-from twisted.internet import reactor, threads
 
 from runtime import PlcStatus
 
@@ -59,7 +59,7 @@ class WampSession(wamp.ApplicationSession):
 PLCObjDefaults = {
     "StartPLC":          False,
     "GetTraceVariables": ("Broken", None),
-    "GetPLCstatus": '%s %d' % (PlcStatus.Broken, 0),
+    "GetPLCstatus":      (PlcStatus.Broken, None),
     "RemoteExec":        (-1, "RemoteExec script failed!")
 }
 
@@ -70,10 +70,7 @@ def _WAMP_connector_factory(cls, uri, confnodesroot):
     WAMPS://127.0.0.1:12345/path#realm#ID
     """
     scheme, location = uri.split("://")
-    scheme = "WAMP"
-    urlpath = location
-    realm = "Beremiz"
-    ID = "kt1260"
+    urlpath, realm, ID = location.split('#')
     urlprefix = {"WAMP":  "ws",
                  "WAMPS": "wss"}[scheme]
     url = urlprefix+"://"+urlpath
@@ -85,7 +82,7 @@ def _WAMP_connector_factory(cls, uri, confnodesroot):
 
         # create a WAMP application session factory
         component_config = types.ComponentConfig(
-            realm=text(realm),
+            realm=str(realm),
             extra={"ID": ID})
         session_factory = wamp.ApplicationSessionFactory(
             config=component_config)
@@ -111,7 +108,7 @@ def _WAMP_connector_factory(cls, uri, confnodesroot):
         reactor.run(installSignalHandlers=False)
 
     def WampSessionProcMapper(funcname):
-        wampfuncname = funcname  # text('.'.join((ID, funcname)))
+        wampfuncname = str('.'.join((ID, funcname)))
 
         def catcher_func(*args, **kwargs):
             if _WampSession is not None:

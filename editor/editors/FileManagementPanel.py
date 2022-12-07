@@ -23,15 +23,16 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
+
 import os
 import shutil
 
 import wx
 import wx.lib.buttons
 
-from controls import FolderTree
 from editors.EditorPanel import EditorPanel
 from util.BitmapLibrary import GetBitmap
+from controls import FolderTree
 
 
 class FileManagementPanel(EditorPanel):
@@ -58,7 +59,7 @@ class FileManagementPanel(EditorPanel):
 
         button_sizer = wx.BoxSizer(wx.VERTICAL)
         main_sizer.Add(button_sizer, border=5,
-                       flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL)
+                            flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL)
 
         for idx, (name, bitmap, help) in enumerate([
                 ("DeleteButton", "remove_element", _("Remove file from left folder")),
@@ -112,9 +113,6 @@ class FileManagementPanel(EditorPanel):
         self.EditButton.Hide()
 
         self.SetIcon(GetBitmap("FOLDER"))
-
-    def __del__(self):
-        self.Controler.OnCloseEditor(self)
 
     def GetTitle(self):
         return _(self.TagName)

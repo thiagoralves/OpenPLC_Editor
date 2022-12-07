@@ -1,0 +1,6 @@
+
+                  <xsd:element name="OSX">
+                    <xsd:complexType>
+                      %(toolchain_gcc)s
+                    </xsd:complexType>
+                  </xsd:element>

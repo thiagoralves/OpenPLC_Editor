@@ -1,5 +1,6 @@
-import wx
 
+
+import wx
 from controls.IDBrowser import IDBrowser
 
 

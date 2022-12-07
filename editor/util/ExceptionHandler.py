@@ -24,14 +24,14 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-import os
-import platform
-import sys
-import tempfile
-import threading
-import time
-import traceback
 
+import os
+import sys
+import time
+import tempfile
+import platform
+import traceback
+import threading
 import wx
 
 Max_Traceback_List_Size = 20
@@ -81,8 +81,14 @@ Traceback:
 
 
 def get_last_traceback(tb):
-    while tb and tb.tb_next:
-        tb = tb.tb_next
+    while True:
+        if not hasattr(tb, "tb_next"):
+            break
+        if tb.tb_next:
+            tb = tb.tb_next
+        else:
+            break
+
     return tb
 
 
@@ -93,7 +99,7 @@ def format_namespace(d, indent='    '):
 ignored_exceptions = []  # a problem with a line in a module is only reported once per session
 
 
-def AddExceptHook(app_version='[No version]'):
+def AddExceptHook(app_version='[No version]', logf = None):
 
     def save_bug_report(e_type, e_value, e_traceback, bug_report_path, date):
         info = {
@@ -111,7 +117,8 @@ def AddExceptHook(app_version='[No version]'):
         if e_traceback:
             info['traceback'] = ''.join(traceback.format_tb(e_traceback)) + '%s: %s' % (e_type, e_value)
             last_tb = get_last_traceback(e_traceback)
-            exception_locals = last_tb.tb_frame.f_locals  # the locals at the level of the stack trace where the exception actually occurred
+            # save locals at the level of the stack trace where the exception actually occurred
+            exception_locals = last_tb.tb_frame.f_locals if last_tb else {};
             info['locals'] = format_namespace(exception_locals)
             if 'self' in exception_locals:
                 try:
@@ -121,21 +128,21 @@ def AddExceptHook(app_version='[No version]'):
         path = os.path.dirname(bug_report_path)
         if not os.path.exists(path):
             os.mkdir(path)
-        output = open(bug_report_path, 'w', encoding='utf-8')
+        output = open(bug_report_path, 'w')
         lst = list(info.keys())
-        sorted(lst)
+        lst.sort()
         for a in lst:
-            output.write(a + ":\n" + str(info[a]) + "\n\n")
+            line = a + ":\n" + str(info[a]) + "\n\n"
+            output.write(line)
+            if logf is not None:
+                logf.write(line)
         output.close()
 
     def handle_exception(e_type, e_value, e_traceback, exit=False):
         traceback.print_exception(e_type, e_value, e_traceback)  # this is very helpful when there's an exception in the rest of this func
         last_tb = get_last_traceback(e_traceback)
-
-        if last_tb is None:
-            return
-
-        ex = (last_tb.tb_frame.f_code.co_filename, last_tb.tb_frame.f_lineno)
+        ex = (last_tb.tb_frame.f_code.co_filename if last_tb else "unknown",
+              last_tb.tb_frame.f_lineno if last_tb else None)
         if ex not in ignored_exceptions:
             ignored_exceptions.append(ex)
             date = time.ctime()

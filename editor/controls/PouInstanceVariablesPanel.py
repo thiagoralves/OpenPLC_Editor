@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#.!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # This file is part of Beremiz, a Integrated Development Environment for
@@ -23,6 +23,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
+
+
 from collections import namedtuple
 
 import wx
@@ -30,7 +32,9 @@ import wx.lib.agw.customtreectrl as CT
 import wx.lib.buttons
 
 from plcopen.types_enums import *
+
 from util.BitmapLibrary import GetBitmap
+
 
 # Customize CustomTreeItem for adding icon on item right
 CT.GenericTreeItem._rightimages = []
@@ -170,6 +174,19 @@ class PouInstanceVariablesPanel(wx.Panel):
             self.DebugInstanceImage: _ButtonCallbacks(
                 self.DebugButtonCallback, self.DebugButtonDClickCallback)}
 
+        self.FilterCtrl = wx.SearchCtrl(self)
+        self.FilterCtrl.ShowCancelButton(True)
+        self.FilterCtrl.Bind(wx.EVT_TEXT, self.OnFilterUpdate)
+        self.FilterCtrl.Bind(wx.EVT_SEARCHCTRL_CANCEL_BTN, self.OnFilterCancel)
+
+        searchMenu = wx.Menu()
+        item = searchMenu.AppendCheckItem(-1, _("Match Case"))
+        self.Bind(wx.EVT_MENU, self.OnSearchMenu, item)
+        item = searchMenu.AppendCheckItem(-1, _("Whole Words"))
+        self.Bind(wx.EVT_MENU, self.OnSearchMenu, item)
+        self.FilterCtrl.SetMenu(searchMenu)
+
+
         buttons_sizer = wx.FlexGridSizer(cols=3, hgap=0, rows=1, vgap=0)
         buttons_sizer.Add(self.ParentButton)
         buttons_sizer.Add(self.InstanceChoice, flag=wx.GROW)
@@ -177,9 +194,10 @@ class PouInstanceVariablesPanel(wx.Panel):
         buttons_sizer.AddGrowableCol(1)
         buttons_sizer.AddGrowableRow(0)
 
-        main_sizer = wx.FlexGridSizer(cols=1, hgap=0, rows=2, vgap=0)
+        main_sizer = wx.FlexGridSizer(cols=1, hgap=0, rows=3, vgap=0)
         main_sizer.Add(buttons_sizer, flag=wx.GROW)
         main_sizer.Add(self.VariablesList, flag=wx.GROW)
+        main_sizer.Add(self.FilterCtrl, flag=wx.GROW)
         main_sizer.AddGrowableCol(0)
         main_sizer.AddGrowableRow(1)
 
@@ -195,8 +213,9 @@ class PouInstanceVariablesPanel(wx.Panel):
         self.PouInfos = None
         self.PouInstance = None
 
-    def __del__(self):
-        self.Controller = None
+        self.Filter = None
+        self.FilterCaseSensitive = False
+        self.FilterWholeWord = False
 
     def SetTreeImageList(self, tree_image_list):
         self.VariablesList.SetImageList(tree_image_list)
@@ -232,6 +251,21 @@ class PouInstanceVariablesPanel(wx.Panel):
 
         self.RefreshView()
 
+    def OnSearchMenu(self, event):
+        searchMenu = self.FilterCtrl.GetMenu().GetMenuItems()
+        self.FilterCaseSensitive = searchMenu[0].IsChecked()
+        self.FilterWholeWord = searchMenu[1].IsChecked()
+        self.RefreshView()
+
+    def OnFilterUpdate(self, event):
+        self.Filter = self.FilterCtrl.GetValue()
+        self.RefreshView()
+        event.Skip()
+
+    def OnFilterCancel(self, event):
+        self.FilterCtrl.SetValue('')
+        event.Skip()
+
     def RefreshView(self):
         self.Freeze()
         self.VariablesList.DeleteAllItems()
@@ -248,6 +282,15 @@ class PouInstanceVariablesPanel(wx.Panel):
         if self.PouInfos is not None:
             root = self.VariablesList.AddRoot("", data=self.PouInfos)
             for var_infos in self.PouInfos.variables:
+                if self.Filter:
+                    pattern = self.Filter
+                    varname = var_infos.name
+                    if not self.FilterCaseSensitive:
+                        pattern = pattern.upper()
+                        varname = varname.upper()
+                    if ((pattern != varname) if self.FilterWholeWord else
+                        (pattern not in varname)):
+                        continue
                 if var_infos.type is not None:
                     text = "%s (%s)" % (var_infos.name, var_infos.type)
                 else:
@@ -263,7 +306,7 @@ class PouInstanceVariablesPanel(wx.Panel):
                 item = self.VariablesList.AppendItem(root, text)
                 item.SetRightImages(right_images)
                 self.VariablesList.SetItemImage(item, self.ParentWindow.GetTreeImage(var_infos.var_class))
-                self.VariablesList.SetItemData(item, var_infos)
+                self.VariablesList.SetPyData(item, var_infos)
 
         self.RefreshInstanceChoice()
         self.RefreshButtons()
@@ -397,7 +440,7 @@ class PouInstanceVariablesPanel(wx.Panel):
     def OnVariablesListItemActivated(self, event):
         selected_item = event.GetItem()
         if selected_item is not None and selected_item.IsOk():
-            item_infos = self.VariablesList.GetItemData(selected_item)
+            item_infos = self.VariablesList.GetPyData(selected_item)
             if item_infos is not None:
 
                 item_button = self.VariablesList.IsOverItemRightImage(
@@ -417,7 +460,7 @@ class PouInstanceVariablesPanel(wx.Panel):
                         else:
                             tagname = None
                     else:
-                        parent_infos = self.VariablesList.GetItemData(selected_item.GetParent())
+                        parent_infos = self.VariablesList.GetPyData(selected_item.GetParent())
                         if item_infos.var_class == ITEM_ACTION:
                             tagname = ComputePouActionName(parent_infos.type, item_infos.name)
                         elif item_infos.var_class == ITEM_TRANSITION:
@@ -440,7 +483,7 @@ class PouInstanceVariablesPanel(wx.Panel):
             instance_path = self.InstanceChoice.GetStringSelection()
             item, flags = self.VariablesList.HitTest(event.GetPosition())
             if item is not None:
-                item_infos = self.VariablesList.GetItemData(item)
+                item_infos = self.VariablesList.GetPyData(item)
                 if item_infos is not None:
 
                     item_button = self.VariablesList.IsOverItemRightImage(

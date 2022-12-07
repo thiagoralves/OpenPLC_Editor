@@ -71,7 +71,7 @@ def GetAppRevision():
     return rev
 
 
-def GetAboutDialogInfo():
+def GetAboutDialogInfo(info):
     import wx
     info = wx.adv.AboutDialogInfo()
 
@@ -217,8 +217,8 @@ def GetAboutDialogInfo():
     return info
 
 
-app_version = "2.01 beta"
+app_version = "3.0 beta"
 #rev = GetAppRevision()
-rev = "Release: 2022-09-29 dev-python3"
+rev = "Release: 2022-12-07 dev-python3"
 if rev is not None:
     app_version = app_version + "\n" + rev.rstrip()

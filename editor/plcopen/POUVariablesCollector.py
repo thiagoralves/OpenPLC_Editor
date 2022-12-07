@@ -3,8 +3,9 @@
 # This file is part of Beremiz.
 # See COPYING file for copyrights details.
 
-from plcopen.XSLTModelQuery import XSLTModelQuery, _StringValue, _BoolValue, _translate_args
-from plcopen.types_enums import CLASS_TYPES, POU_TYPES, VAR_CLASS_INFOS
+
+from . XSLTModelQuery import XSLTModelQuery, _StringValue, _BoolValue, _translate_args
+from . types_enums import CLASS_TYPES, POU_TYPES, VAR_CLASS_INFOS
 
 
 def class_extraction(value):
@@ -27,7 +28,7 @@ class _VariablesTreeItemInfos(object):
     __slots__ = ["name", "var_class", "type", "edit", "debug", "variables"]
 
     def __init__(self, *args):
-        for attr, value in list(zip(self.__slots__, args)):
+        for attr, value in zip(self.__slots__, args):
             setattr(self, attr, value if value is not None else "")
 
     def copy(self):

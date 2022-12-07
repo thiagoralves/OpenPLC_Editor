@@ -24,12 +24,12 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
+
 import wx
 
-from dialogs.BlockPreviewDialog import BlockPreviewDialog
-from graphics.FBD_Objects import FBD_Connector
 from graphics.GraphicCommons import CONNECTOR, CONTINUATION
-
+from graphics.FBD_Objects import FBD_Connector
+from dialogs.BlockPreviewDialog import BlockPreviewDialog
 
 # -------------------------------------------------------------------------------
 #                       Set Connection Parameters Dialog
@@ -127,7 +127,7 @@ class ConnectionDialog(BlockPreviewDialog):
         @param values: Connection parameters values
         """
         # For each parameters defined, set corresponding control value
-        for name, value in values.items():
+        for name, value in list(values.items()):
 
             # Parameter is connection type
             if name == "type":

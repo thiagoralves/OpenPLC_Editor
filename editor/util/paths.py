@@ -23,18 +23,16 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 
-
 import os
-
+import sys
 
 def AbsFile(file):
-    # if isinstance(file, str):
-    #     file = text(file, sys.getfilesystemencoding())
+    if isinstance(file, str):
+        file = str(file, sys.getfilesystemencoding())
     return file
 
 
 def AbsDir(file):
-    file = AbsFile(file)
     return os.path.dirname(os.path.realpath(file))
 
 
@@ -47,3 +45,15 @@ def AbsParentDir(file, level=1):
     for dummy in range(0, level):
         path = os.path.dirname(path)
     return path
+
+def ThirdPartyPath(name):
+    """
+    Return folder where to find sibling projects like Modbus, CanFestival, BACnet
+    """
+    return os.path.join(AbsParentDir(__file__, 2), name)
+
+def Bpath(*names):
+    """
+    Return path of files in Beremiz project
+    """
+    return os.path.join(AbsParentDir(__file__, 1), *names)

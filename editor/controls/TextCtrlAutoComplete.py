@@ -22,8 +22,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import pickle
 
+import pickle
 import wx
 
 MAX_ITEM_COUNT = 10
@@ -197,10 +197,9 @@ class TextCtrlAutoComplete(wx.TextCtrl):
     def OnControlChanged(self, event):
         res = self.GetValue()
         config = wx.ConfigBase.Get()
-        det = pickle.dumps([], 0)
-        val = config.Read(self.element_path, det)
-        val = val.encode()
-        listentries = pickle.loads(val)
+        listentries = pickle.loads(config.Read(self.element_path,
+                                               pickle.dumps([], 0).decode()
+                                              ).encode())
         if res and res not in listentries:
             listentries = (listentries + [res])[-MAX_ITEM_COUNT:]
             config.Write(self.element_path, pickle.dumps(listentries, 0))

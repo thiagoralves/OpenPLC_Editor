@@ -7,11 +7,9 @@
 #
 # See COPYING.Runtime file for copyrights details.
 
-# 
-import sys
-from threading import Lock, Condition
 
-import six
+from threading import Lock, Condition, Thread
+
 import _thread
 
 
@@ -24,7 +22,6 @@ class job(object):
         self.result = None
         self.success = None
         self.exc_info = None
-        self.enabled = False
 
     def do(self):
         """
@@ -34,9 +31,9 @@ class job(object):
             call, args, kwargs = self.job
             self.result = call(*args, **kwargs)
             self.success = True
-        except Exception:
+        except Exception as e:
             self.success = False
-            self.exc_info = sys.exc_info()
+            self.exc_info = e
 
 
 class worker(object):
@@ -52,17 +49,16 @@ class worker(object):
         self.done = Condition(self.mutex)
         self.free = Condition(self.mutex)
         self.job = None
-        self.enabled = True
+        self.enabled = False
+        self.stopper = None
+        self.own_thread = None
 
     def reraise(self, job):
         """
         reraise exception happend in a job
         @param job: job where original exception happend
         """
-        exc_type = job.exc_info[0]
-        exc_value = job.exc_info[1]
-        exc_traceback = job.exc_info[2]
-        six.reraise(exc_type, exc_value, exc_traceback)
+        raise job.exc_info
 
     def runloop(self, *args, **kwargs):
         """
@@ -87,6 +83,61 @@ class worker(object):
                 break
 
         self.mutex.release()
+
+    def interleave(self, waker, stopper, *args, **kwargs):
+        """
+        as for twisted reactor's interleave, it passes all jobs to waker func
+        additionaly, it creates a new thread to wait for new job.
+        """
+        self.feed = Condition(self.mutex)
+        self._threadID = _thread.get_ident()
+        self.stopper = stopper
+
+        def wakerfeedingloop():
+            self.mutex.acquire()
+            self.enabled = True
+            if args or kwargs:
+                def first_job_todo():
+                    _job = job(*args, **kwargs)
+                    _job.do()
+                    if not _job.success:
+                        self.reraise(_job)
+                    self.mutex.acquire()
+                    self.feed.notify()
+                    self.mutex.release()
+                waker(first_job_todo)
+                self.feed.wait()
+
+            while not self._finish:
+                self.todo.wait()
+                def job_todo():
+                    self.mutex.acquire()
+                    if self.job is not None:
+                        self.job.do()
+                        self.feed.notify()
+                        self.done.notify()
+                    self.mutex.release()
+                if self._finish:
+                    break
+                waker(job_todo)
+                self.feed.wait()
+
+            self.mutex.release()
+        self.own_thread = Thread(target = wakerfeedingloop)
+        self.own_thread.start()
+
+    def stop(self):
+        """
+        !interleave
+        """
+        self.mutex.acquire()
+        self._finish = True
+        self.enabled = False
+        self.job = None
+        self.todo.notify()
+        self.done.notify()
+        self.mutex.release()
+        self.own_thread.join()
 
     def call(self, *args, **kwargs):
         """
@@ -138,3 +189,9 @@ class worker(object):
         self.todo.notify()
         self.done.notify()
         self.mutex.release()
+
+    def finish(self):
+        if self.own_thread is None:
+            self.quit()
+        if self.stopper is not None:
+            self.stopper()

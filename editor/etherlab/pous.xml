@@ -110,13 +110,13 @@ CASE STATE OF
       VALUE := 'None';
     END_IF;
   1:
-    {if (AcquireSDOLock()) __SET_VAR(data__->,STATE,, 2)}
+    {if (AcquireSDOLock()) __SET_VAR(data__->,STATE, 2)}
   2:
     IF PY0.ACK THEN
       STATE := 3;
     END_IF;
   3:
-    {if (HasAnswer()) __SET_VAR(data__->,STATE,, 4)}
+    {if (HasAnswer()) __SET_VAR(data__->,STATE, 4)}
   4:
     IF PY1.ACK THEN
       ACK := 1;
@@ -231,13 +231,13 @@ CASE STATE OF
       ERROR := 0;
     END_IF;
   1:
-    {if (AcquireSDOLock()) __SET_VAR(data__->,STATE,, 2)}
+    {if (AcquireSDOLock()) __SET_VAR(data__->,STATE, 2)}
   2:
     IF PY0.ACK THEN
       STATE := 3;
     END_IF;
   3:
-    {if (HasAnswer()) __SET_VAR(data__->,STATE,, 4)}
+    {if (HasAnswer()) __SET_VAR(data__->,STATE, 4)}
   4:
     IF PY1.ACK THEN
       ACK := 1;

@@ -28,15 +28,17 @@ The TLS-PSK adapter that handles SSL connections instead of regular sockets,
 but using Pre Shared Keys instead of Certificates
 """
 
-import re
-import socket
-import ssl
 
-import Pyro4
-from Pyro4.core import PyroURI
-from Pyro4.errors import ConnectionDeniedError, ProtocolError
-from Pyro4.protocol import _connect_socket, TCPConnection, PYROAdapter
-from Pyro4.util import Log
+
+
+import socket
+import re
+import ssl
+import Pyro
+from Pyro.core import PyroURI
+from Pyro.protocol import _connect_socket, TCPConnection, PYROAdapter
+from Pyro.errors import ConnectionDeniedError, ProtocolError
+from Pyro.util import Log
 
 try:
     import sslpsk
@@ -47,9 +49,9 @@ except ImportError as e:
 
 class PYROPSKAdapter(PYROAdapter):
     """
-    This is essentialy the same as in Pyro4/protocol.py
+    This is essentialy the same as in Pyro/protocol.py
     only raw_sock wrapping into sock through sslpsk.wrap_socket was added
-    Pyro4 unfortunately doesn't allow cleaner customization
+    Pyro unfortunately doesn't allow cleaner customization
     """
 
     def bindToURI(self, URI):
@@ -57,14 +59,14 @@ class PYROPSKAdapter(PYROAdapter):
             try:
                 self.URI = URI
 
-                # This are the statements that differ from Pyro4/protocol.py
+                # This are the statements that differ from Pyro/protocol.py
                 raw_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 _connect_socket(raw_sock, URI.address, URI.port, self.timeout)
                 sock = sslpsk.wrap_socket(
-                    raw_sock, psk=Pyro4.config.PYROPSK, server_side=False,
+                    raw_sock, psk=Pyro.config.PYROPSK, server_side=False,
                     ciphers="PSK-AES256-CBC-SHA",  # available in openssl 1.0.2
                     ssl_version=ssl.PROTOCOL_TLSv1)
-                # all the rest is the same as in Pyro4/protocol.py
+                # all the rest is the same as in Pyro/protocol.py
 
                 conn = TCPConnection(sock, sock.getpeername())
                 # receive the authentication challenge string, and use that to build the actual identification string.
@@ -73,7 +75,7 @@ class PYROPSKAdapter(PYROAdapter):
                 except ProtocolError as x:
                     # check if we were denied
                     if hasattr(x, "partialMsg") and x.partialMsg[:len(self.denyMSG)] == self.denyMSG:
-                        raise ConnectionDeniedError(Pyro4.constants.deniedReasons[int(x.partialMsg[-1])])
+                        raise ConnectionDeniedError(Pyro.constants.deniedReasons[int(x.partialMsg[-1])])
                     else:
                         raise
                 # reply with our ident token, generated from the ident passphrase and the challenge
@@ -86,7 +88,7 @@ class PYROPSKAdapter(PYROAdapter):
                         self.resolvePYROLOC_URI("PYROPSK")  # updates self.URI
                 elif msg[:len(self.denyMSG)] == self.denyMSG:
                     try:
-                        raise ConnectionDeniedError(Pyro4.constants.deniedReasons[int(msg[-1])])
+                        raise ConnectionDeniedError(Pyro.constants.deniedReasons[int(msg[-1])])
                     except (KeyError, ValueError):
                         raise ConnectionDeniedError('invalid response')
             except socket.error:
@@ -94,7 +96,7 @@ class PYROPSKAdapter(PYROAdapter):
                 raise ProtocolError('connection failed')
 
 
-_getProtocolAdapter = Pyro4.protocol.getProtocolAdapter
+_getProtocolAdapter = Pyro.protocol.getProtocolAdapter
 
 
 def getProtocolAdapter(protocol):
@@ -103,7 +105,7 @@ def getProtocolAdapter(protocol):
     return _getProtocolAdapter(protocol)
 
 
-_processStringURI = Pyro4.core.processStringURI
+_processStringURI = Pyro.core.processStringURI
 
 
 def processStringURI(URI):
@@ -124,13 +126,13 @@ def processStringURI(URI):
 def setupPSKAdapter():
     """
     Add PyroAdapter to the list of available in
-    Pyro4 adapters and handle new supported protocols
+    Pyro adapters and handle new supported protocols
 
     This function should be called after
-    reimport of Pyro4 module to enable PYROS:// again.
+    reimport of Pyro module to enable PYROS:// again.
     """
     if sslpsk is not None:
-        Pyro4.protocol.getProtocolAdapter = getProtocolAdapter
-        Pyro4.core.processStringURI = processStringURI
+        Pyro.protocol.getProtocolAdapter = getProtocolAdapter
+        Pyro.core.processStringURI = processStringURI
     else:
         raise Exception("sslpsk python module unavailable")

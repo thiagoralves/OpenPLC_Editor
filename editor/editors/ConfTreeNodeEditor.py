@@ -28,12 +28,13 @@
 
 
 import wx
-from wx import Size
+
+from editors.EditorPanel import EditorPanel
 
 from IDEFrame import TITLE, FILEMENU, PROJECTTREE, PAGETITLES
+
 from controls import TextCtrlAutoComplete
 from dialogs import BrowseValuesLibraryDialog, UriEditor
-from editors.EditorPanel import EditorPanel
 from util.BitmapLibrary import GetBitmap
 
 if wx.Platform == '__WXMSW__':
@@ -47,7 +48,7 @@ if wx.Platform == '__WXMSW__':
 else:
     faces = {
         'times': 'Times',
-        'mono':  'Courier',
+        'mono':  'FreeMono',
         'helv':  'Helvetica',
         'other': 'new century schoolbook',
         'size':  18,
@@ -148,18 +149,18 @@ class ConfTreeNodeEditor(EditorPanel):
             if self.SHOW_BASE_PARAMS:
                 baseparamseditor_sizer = wx.BoxSizer(wx.HORIZONTAL)
                 self.MainSizer.Add(baseparamseditor_sizer, border=5,
-                                   flag=wx.GROW | wx.ALL)
+                                        flag=wx.GROW | wx.ALL)
 
                 self.FullIECChannel = wx.StaticText(self.Editor, -1)
                 self.FullIECChannel.SetFont(
                     wx.Font(faces["size"], wx.DEFAULT, wx.NORMAL,
                             wx.BOLD, faceName=faces["helv"]))
                 baseparamseditor_sizer.Add(self.FullIECChannel,
-                                           flag=wx.ALIGN_CENTER_VERTICAL)
+                                                 flag=wx.ALIGN_CENTER_VERTICAL)
 
                 updownsizer = wx.BoxSizer(wx.VERTICAL)
                 baseparamseditor_sizer.Add(updownsizer, border=5,
-                                           flag=wx.LEFT | wx.ALIGN_CENTER_VERTICAL)
+                                                flag=wx.LEFT | wx.ALIGN_CENTER_VERTICAL)
 
                 self.IECCUpButton = wx.lib.buttons.GenBitmapTextButton(
                     self.Editor,
@@ -232,7 +233,7 @@ class ConfTreeNodeEditor(EditorPanel):
 
             self.ConfNodeParamsSizer = wx.BoxSizer(wx.VERTICAL)
             self.ParamsEditorSizer.Add(self.ConfNodeParamsSizer, border=5,
-                                       flag=wx.LEFT | wx.RIGHT | wx.BOTTOM)
+                                            flag=wx.LEFT | wx.RIGHT | wx.BOTTOM)
 
             self.RefreshConfNodeParamsSizer()
 
@@ -253,9 +254,6 @@ class ConfTreeNodeEditor(EditorPanel):
             self.SetIcon(GetBitmap(icon_name))
         else:
             self.SetIcon(GetBitmap("Extension"))
-
-    def __del__(self):
-        self.Controler.OnCloseEditor(self)
 
     def GetTagName(self):
         return self.Controler.CTNFullName()
@@ -355,7 +353,7 @@ class ConfTreeNodeEditor(EditorPanel):
                 CTR_AppFrame.RefreshFileMenu()
                 CTR_AppFrame.RefreshEditMenu()
                 CTR_AppFrame.RefreshPageTitles()
-        dialog.close()
+
         dialog.Destroy()
 
     def GenerateSizerElements(self, sizer, elements, path, clean=True):
@@ -384,7 +382,7 @@ class ConfTreeNodeEditor(EditorPanel):
                                            element_infos["children"],
                                            element_path)
             else:
-                boxsizer = wx.FlexGridSizer(rows=1, cols=3, gap=Size(0, 0))
+                boxsizer = wx.FlexGridSizer(cols=4, rows=1, gap=wx.Size(0,0))
                 boxsizer.AddGrowableCol(1)
                 flags = (wx.GROW | wx.BOTTOM | wx.LEFT | wx.RIGHT)
                 if first:
@@ -399,7 +397,7 @@ class ConfTreeNodeEditor(EditorPanel):
                 statictext = wx.StaticText(self.ParamsEditor,
                                            label="%s:" % _(element_infos["name"]))
                 boxsizer.Add(statictext, border=5,
-                             flag=wx.ALIGN_CENTER_VERTICAL | wx.RIGHT)
+                                   flag=wx.ALIGN_CENTER_VERTICAL | wx.RIGHT)
 
                 if isinstance(element_infos["type"], list):
                     if isinstance(element_infos["value"], tuple):
@@ -434,13 +432,16 @@ class ConfTreeNodeEditor(EditorPanel):
                             name = element_infos["name"]
                             value = element_infos["value"]
 
-                            staticbox = wx.StaticBox(self.ParamsEditor,
-                                                     label="%s - %s" % (_(name), _(value)),
-                                                     size=wx.Size(10, 0))
-                            staticboxsizer = wx.StaticBoxSizer(staticbox, wx.VERTICAL)
-                            sizer.Add(staticboxsizer, border=5, flag=wx.GROW | wx.BOTTOM | wx.LEFT | wx.RIGHT)
-                            self.GenerateSizerElements(staticboxsizer, element_infos["children"], element_path)
-                            callback = self.GetChoiceContentCallBackFunction(combobox, staticboxsizer, element_path)
+                            staticboxsizer = None
+                            if element_infos["children"]:
+                                staticbox = wx.StaticBox(self.ParamsEditor,
+                                                         label="%s - %s" % (_(name), _(value)),
+                                                         size=wx.Size(10, 0))
+                                staticboxsizer = wx.StaticBoxSizer(staticbox, wx.VERTICAL)
+                                sizer.Add(staticboxsizer, border=5, flag=wx.GROW | wx.BOTTOM | wx.LEFT | wx.RIGHT)
+                                self.GenerateSizerElements(staticboxsizer, element_infos["children"], element_path)
+
+                            callback = self.GetChoiceContentCallBackFunction(combobox, element_path)
                         else:
                             for choice in element_infos["type"]:
                                 combobox.Append(choice)
@@ -471,8 +472,8 @@ class ConfTreeNodeEditor(EditorPanel):
 
                 else:
                     if element_infos["type"] == "boolean":
-                        checkbox = wx.CheckBox(self.ParamsEditor, size=wx.Size(17, 25))
-                        boxsizer.Add(checkbox)
+                        checkbox = wx.CheckBox(self.ParamsEditor)
+                        boxsizer.Add(checkbox, flag=wx.ALIGN_CENTER_VERTICAL | wx.RIGHT)
                         if element_infos["value"] is not None:
                             checkbox.SetValue(element_infos["value"])
                         checkbox.Bind(wx.EVT_CHECKBOX,
@@ -525,6 +526,16 @@ class ConfTreeNodeEditor(EditorPanel):
                         textctrl.Bind(wx.EVT_TEXT_ENTER, callback)
                         textctrl.Bind(wx.EVT_TEXT, callback)
                         textctrl.Bind(wx.EVT_KILL_FOCUS, callback)
+
+                if not isinstance(element_infos["type"], list) and element_infos.get("use", None) == "optional":
+                    bt = wx.BitmapButton(self.ParamsEditor, 
+                        bitmap=wx.ArtProvider.GetBitmap(wx.ART_UNDO, wx.ART_TOOLBAR, (16,16)),
+                        style=wx.BORDER_NONE)
+                    self.Bind(wx.EVT_BUTTON, 
+                              self.GetResetFunction(element_path),
+                              bt)
+
+                    boxsizer.Add(bt, border=5, flag=wx.ALIGN_CENTER_VERTICAL | wx.LEFT)
             first = False
         sizer.Layout()
         self.RefreshScrollbars()
@@ -568,7 +579,7 @@ class ConfTreeNodeEditor(EditorPanel):
             event.Skip()
         return OnChoiceChanged
 
-    def GetChoiceContentCallBackFunction(self, choicectrl, staticboxsizer, path):
+    def GetChoiceContentCallBackFunction(self, choicectrl, path):
         def OnChoiceContentChanged(event):
             self.SetConfNodeParamsAttribute(path, choicectrl.GetStringSelection())
             wx.CallAfter(self.RefreshConfNodeParamsSizer)
@@ -588,6 +599,13 @@ class ConfTreeNodeEditor(EditorPanel):
                 wx.CallAfter(self.ParentWindow.SelectProjectTreeItem, self.GetTagName())
             event.Skip()
         return OnTextCtrlChanged
+
+    def GetResetFunction(self, path):
+        def OnResetBt(event):
+            res = self.SetConfNodeParamsAttribute(path, None)
+            wx.CallAfter(self.RefreshView)
+            event.Skip()
+        return OnResetBt
 
     def GetCheckBoxCallBackFunction(self, chkbx, path):
         def OnCheckBoxChanged(event):

@@ -161,11 +161,12 @@ typedef struct object_functions {
  * Maximum sizes excluding nul terminator .
  */
 #define STRLEN_X(minlen, str)  (((minlen)>sizeof(str))?(minlen):sizeof(str))
-#define MAX_DEV_NAME_LEN STRLEN_X(32, "%(BACnet_Device_Name)s")     /* Device name         */
-#define MAX_DEV_LOC_LEN  STRLEN_X(64, BACNET_DEVICE_LOCATION)       /* Device location     */
-#define MAX_DEV_MOD_LEN  STRLEN_X(32, BACNET_DEVICE_MODEL_NAME)     /* Device model name   */
-#define MAX_DEV_VER_LEN  STRLEN_X(16, BACNET_DEVICE_APPSOFT_VER)    /* Device application software version */
-#define MAX_DEV_DESC_LEN STRLEN_X(64, BACNET_DEVICE_DESCRIPTION)    /* Device description  */
+#define MAX_DEV_NAME_LEN STRLEN_X(%(BACnet_Param_String_Size)d, "%(BACnet_Device_Name)s")     /* Device name         */
+#define MAX_DEV_LOC_LEN  STRLEN_X(%(BACnet_Param_String_Size)d, BACNET_DEVICE_LOCATION)       /* Device location     */
+#define MAX_DEV_MOD_LEN  STRLEN_X(%(BACnet_Param_String_Size)d, BACNET_DEVICE_MODEL_NAME)     /* Device model name   */
+#define MAX_DEV_VER_LEN  STRLEN_X(%(BACnet_Param_String_Size)d, BACNET_DEVICE_APPSOFT_VER)    /* Device application software version */
+#define MAX_DEV_DESC_LEN STRLEN_X(%(BACnet_Param_String_Size)d, BACNET_DEVICE_DESCRIPTION)    /* Device description  */
+
 
 /** Structure to define the Object Properties common to all Objects. */
 typedef struct commonBacObj_s {

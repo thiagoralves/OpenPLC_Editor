@@ -23,17 +23,18 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
+from functools import cmp_to_key
+from operator import eq
+import wx
 
-
-
-from graphics.DebugDataConsumer import DebugDataConsumer
 from graphics.GraphicCommons import *
+from graphics.DebugDataConsumer import DebugDataConsumer
+from plcopen.structures import *
+
+
 # -------------------------------------------------------------------------------
 #                         Ladder Diagram PowerRail
 # -------------------------------------------------------------------------------
-from .Graphic_Element import Graphic_Element, Connector
-
-
 
 
 class LD_PowerRail(Graphic_Element):
@@ -71,7 +72,7 @@ class LD_PowerRail(Graphic_Element):
 
     def GetConnectorTranslation(self, element):
         return dict(list(zip([connector for connector in self.Connectors],
-                             [connector for connector in element.Connectors])))
+                        [connector for connector in element.Connectors])))
 
     # Returns the RedrawRect
     def GetRedrawRect(self, movex=0, movey=0):
@@ -158,7 +159,7 @@ class LD_PowerRail(Graphic_Element):
             for connect in self.Connectors:
                 connect_pos = connect.GetRelPosition()
                 connect.SetPosition(wx.Point(connect_pos.x, connect_pos.y - miny))
-        self.Connectors.sort(lambda x, y: operator.eq(x.Pos.y, y.Pos.y))
+        self.Connectors.sort(key=cmp_to_key(lambda x, y: eq(x.Pos.y, y.Pos.y)))
         maxy = 0
         for connect in self.Connectors:
             connect_pos = connect.GetRelPosition()
@@ -252,7 +253,7 @@ class LD_PowerRail(Graphic_Element):
                 position = connector.GetRelPosition()
                 self.RealConnectors.append(max(0., min((position.y - self.Extensions[0]) / height, 1.)))
         elif len(self.Connectors) > 1:
-            self.RealConnectors = list(map(lambda x: x * 1 / (len(self.Connectors) - 1), range(len(self.Connectors))))
+            self.RealConnectors = [x * 1 / (len(self.Connectors) - 1) for x in range(len(self.Connectors))]
         else:
             self.RealConnectors = [0.5]
         Graphic_Element.OnLeftDown(self, event, dc, scaling)
@@ -402,6 +403,8 @@ class LD_Contact(Graphic_Element, DebugDataConsumer):
             if self.Value is None:
                 self.Value = False
             spreading = self.Input.ReceivingCurrent()
+            if spreading == "undefined":
+                spreading = False
             if self.Type == CONTACT_NORMAL:
                 spreading &= self.Value
             elif self.Type == CONTACT_REVERSE:
@@ -588,7 +591,7 @@ class LD_Contact(Graphic_Element, DebugDataConsumer):
         dc.SetUserScale(1, 1)
         dc.SetPen(MiterPen(HIGHLIGHTCOLOR))
         dc.SetBrush(wx.Brush(HIGHLIGHTCOLOR))
-        #dc.SetLogicalFunction(wx.AND)
+        dc.SetLogicalFunction(wx.AND)
         # Draw two rectangles for representing the contact
         left_left = (self.Pos.x - 1) * scalex - 2
         right_left = (self.Pos.x + self.Size[0] - 2) * scalex - 2
@@ -598,7 +601,7 @@ class LD_Contact(Graphic_Element, DebugDataConsumer):
 
         dc.DrawRectangle(left_left, top, width, height)
         dc.DrawRectangle(right_left, top, width, height)
-        #dc.SetLogicalFunction(wx.COPY)
+        dc.SetLogicalFunction(wx.COPY)
         dc.SetUserScale(scalex, scaley)
 
     # Adds an highlight to the connection
@@ -621,7 +624,7 @@ class LD_Contact(Graphic_Element, DebugDataConsumer):
         if highlight_type is None:
             self.Highlights = {}
         else:
-            highlight_items = self.Highlights.items()
+            highlight_items = list(self.Highlights.items())
             for name, highlights in highlight_items:
                 highlights = ClearHighlights(highlights, highlight_type)
                 if len(highlights) == 0:
@@ -908,7 +911,7 @@ class LD_Coil(Graphic_Element):
         dc.SetUserScale(1, 1)
         dc.SetPen(MiterPen(HIGHLIGHTCOLOR, (3 * scalex + 5), wx.SOLID))
         dc.SetBrush(wx.TRANSPARENT_BRUSH)
-        #dc.SetLogicalFunction(wx.AND)
+        dc.SetLogicalFunction(wx.AND)
         # Draw a two circle arcs for representing the coil
         dc.DrawEllipticArc(round(self.Pos.x * scalex),
                            round((self.Pos.y - int(self.Size[1] * (sqrt(2) - 1.) / 2.) + 1) * scaley),
@@ -920,7 +923,7 @@ class LD_Coil(Graphic_Element):
                            round(self.Size[0] * scalex),
                            round((int(self.Size[1] * sqrt(2)) - 1) * scaley),
                            -45, 45)
-        #dc.SetLogicalFunction(wx.COPY)
+        dc.SetLogicalFunction(wx.COPY)
         dc.SetUserScale(scalex, scaley)
 
     # Adds an highlight to the connection
@@ -943,7 +946,7 @@ class LD_Coil(Graphic_Element):
         if highlight_type is None:
             self.Highlights = {}
         else:
-            highlight_items = self.Highlights.items()
+            highlight_items = list(self.Highlights.items())
             for name, highlights in highlight_items:
                 highlights = ClearHighlights(highlights, highlight_type)
                 if len(highlights) == 0:

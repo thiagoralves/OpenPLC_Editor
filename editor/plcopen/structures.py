@@ -23,14 +23,13 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-# 
 
 import re
 from collections import OrderedDict
 from functools import reduce
 
-from plcopen.definitions import *
-from plcopen.plcopen import LoadProject
+from . plcopen import LoadProject
+from . definitions import *
 
 TypeHierarchy = dict(TypeHierarchy_list)
 
@@ -54,7 +53,7 @@ def GetSubTypes(type):
     """
     Returns list of all types that correspont to the ANY* meta type
     """
-    return [typename for typename, _parenttype in TypeHierarchy.items() if not typename.startswith("ANY") and IsOfType(typename, type)]
+    return [typename for typename, _parenttype in list(TypeHierarchy.items()) if not typename.startswith("ANY") and IsOfType(typename, type)]
 
 
 DataTypeRange = dict(DataTypeRange_list)
@@ -132,7 +131,7 @@ def get_standard_funtions_input_variables(table):
     fields = [True, True]
     while fields[1]:
         fields = table.pop(0)
-        variable_from_csv = dict([(champ, val) for champ, val in list(zip(variables, fields[1:])) if champ != ''])
+        variable_from_csv = dict([(champ, val) for champ, val in zip(variables, fields[1:]) if champ != ''])
         standard_funtions_input_variables[variable_from_csv['name']] = variable_from_csv['type']
     return standard_funtions_input_variables
 
@@ -200,7 +199,7 @@ def get_standard_funtions(table):
                 Current_section = {"name": section_name, "list": []}
                 Standard_Functions_Decl.append(Current_section)
             if Current_section:
-                Function_decl = dict([(champ, val) for champ, val in list(zip(fonctions, fields[1:])) if champ])
+                Function_decl = dict([(champ, val) for champ, val in zip(fonctions, fields[1:]) if champ])
                 baseinputnumber = int(Function_decl.get("baseinputnumber", 1))
                 Function_decl["baseinputnumber"] = baseinputnumber
                 for param, value in Function_decl.items():
@@ -251,13 +250,13 @@ def get_standard_funtions(table):
                         store = True
                         for (InTypes, OutTypes) in ANY_TO_ANY_FILTERS.get(filter_name, []):
                             outs = reduce(lambda a, b: a or b,
-                                          list(map(lambda testtype: IsOfType(
+                                          [IsOfType(
                                               Function_decl["outputs"][0][1],
-                                              testtype), OutTypes)))
+                                              testtype) for testtype in OutTypes])
                             inps = reduce(lambda a, b: a or b,
-                                          list(map(lambda testtype: IsOfType(
+                                          [IsOfType(
                                               Function_decl["inputs"][0][1],
-                                              testtype), InTypes)))
+                                              testtype) for testtype in InTypes])
                             if inps and outs and Function_decl["outputs"][0][1] != Function_decl["inputs"][0][1]:
                                 store = True
                                 break

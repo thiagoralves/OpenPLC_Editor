@@ -22,25 +22,26 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
-from time import time as gettime
 
+from time import time as gettime
+from cycler import cycler
+
+import numpy
+import wx
 import matplotlib
 import matplotlib.pyplot
-import numpy
-from cycler import cycler
-from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
 from matplotlib.backends.backend_wxagg import _convert_agg_to_wx_bitmap
+from matplotlib.backends.backend_agg import FigureCanvasAgg
 from mpl_toolkits.mplot3d import Axes3D
 
+from editors.DebugViewer import REFRESH_PERIOD
 from controls.DebugVariablePanel.DebugVariableViewer import *
 from controls.DebugVariablePanel.GraphButton import GraphButton
-from editors.DebugViewer import REFRESH_PERIOD
-
 
 
 # Graph variable display type
-GRAPH_PARALLEL, GRAPH_ORTHOGONAL = range(2)
+GRAPH_PARALLEL, GRAPH_ORTHOGONAL = list(range(2))
 
 # Canvas height
 [SIZE_MINI, SIZE_MIDDLE, SIZE_MAXI] = [0, 100, 200]
@@ -117,15 +118,6 @@ class DebugVariableGraphicDropTarget(wx.TextDropTarget):
         self.ParentControl = parent
         self.ParentWindow = window
 
-    def __del__(self):
-        """
-        Destructor
-        """
-        # Remove reference to Debug Variable Graphic Viewer and Debug Variable
-        # Panel
-        self.ParentControl = None
-        self.ParentWindow = None
-
     def OnDragOver(self, x, y, d):
         """
         Function called when mouse is dragged over Drop Target
@@ -162,6 +154,7 @@ class DebugVariableGraphicDropTarget(wx.TextDropTarget):
         # Display message if data is invalid
         if message is not None:
             wx.CallAfter(self.ShowMessage, message)
+            return False
 
         # Data contain a reference to a variable to debug
         elif values[1] == "debug":
@@ -205,6 +198,8 @@ class DebugVariableGraphicDropTarget(wx.TextDropTarget):
                     self.ParentWindow.InsertValue(values[0],
                                                   target_idx,
                                                   force=True)
+            return True
+        return False
 
     def OnLeave(self):
         """
@@ -274,7 +269,6 @@ class DebugVariableGraphicViewer(DebugVariableViewer, FigureCanvas):
 
         FigureCanvas.__init__(self, parent, -1, self.Figure)
         self.SetWindowStyle(wx.WANTS_CHARS)
-        self.SetBackgroundColour(wx.WHITE)
 
         # Bind wx events
         self.Bind(wx.EVT_LEFT_DCLICK, self.OnLeftDClick)
@@ -302,9 +296,9 @@ class DebugVariableGraphicViewer(DebugVariableViewer, FigureCanvas):
             GraphButton(0, 0, "fit_graph", self.OnZoomFitButton))
 
         # Add buttons for changing canvas size with predefined height
-        for size, bitmap in list(zip(
+        for size, bitmap in zip(
                 [SIZE_MINI, SIZE_MIDDLE, SIZE_MAXI],
-                ["minimize_graph", "middle_graph", "maximize_graph"])):
+                ["minimize_graph", "middle_graph", "maximize_graph"]):
             self.Buttons.append(GraphButton(0, 0, bitmap,
                                             self.GetOnChangeSizeButton(size)))
 
@@ -323,7 +317,7 @@ class DebugVariableGraphicViewer(DebugVariableViewer, FigureCanvas):
         Add an item to the list of items displayed by Viewer
         @param item: Item to add to the list
         """
-        DebugVariableViewer.Add(self, item)
+        DebugVariableViewer.AddItem(self, item)
         self.ResetGraphics()
 
     def RemoveItem(self, item):
@@ -486,11 +480,12 @@ class DebugVariableGraphicViewer(DebugVariableViewer, FigureCanvas):
         @param item: Item from which data to export, all items if None
         (default None)
         """
-        self.ParentWindow.CopyDataToClipboard(
-            [(item, [entry for entry in item.GetData()])
-             for item in (self.Items
-                          if item is None
-                          else [item])])
+        if item is not None and item.GetData():
+            self.ParentWindow.CopyDataToClipboard(
+                [(item, [entry for entry in item.GetData()])
+                 for item in (self.Items
+                              if item is None
+                              else [item])])
 
     def OnZoomFitButton(self):
         """
@@ -587,7 +582,7 @@ class DebugVariableGraphicViewer(DebugVariableViewer, FigureCanvas):
 
             # Search for point that tick is the nearest from mouse X position
             # and set cursor tick to the tick of this point
-            if len(data) > 0:
+            if data is not None and len(data) > 0:
                 cursor_tick = data[numpy.argmin(
                     numpy.abs(data[:, 0] - event.xdata)), 0]
 
@@ -724,10 +719,10 @@ class DebugVariableGraphicViewer(DebugVariableViewer, FigureCanvas):
             # Find if mouse is over an item label
             item_idx = None
             menu_direction = None
-            for (i, t), dir in list(zip(
+            for (i, t), dir in zip(
                     [pair for pair in enumerate(self.AxesLabels)] +
                     [pair for pair in enumerate(self.Labels)],
-                    directions)):
+                    directions):
                 # Check every label paired with corresponding item
                 (x0, y0), (x1, y1) = t.get_window_extent().get_points()
                 rect = wx.Rect(x0, height - y1, x1 - x0, y1 - y0)
@@ -1333,7 +1328,7 @@ class DebugVariableGraphicViewer(DebugVariableViewer, FigureCanvas):
                   for item in self.Items]
 
         # Get style for each variable according to
-        styles = list(map(lambda x: {True: 'italic', False: 'normal'}[x], forced))
+        styles = [{True: 'italic', False: 'normal'}[x] for x in forced]
 
         # Graph is orthogonal 3D, set variables path as 3D axis label
         if self.Is3DCanvas():
@@ -1345,12 +1340,12 @@ class DebugVariableGraphicViewer(DebugVariableViewer, FigureCanvas):
 
         # Graph is not orthogonal 3D, set variables path in axes labels
         else:
-            for label, text in list(zip(self.AxesLabels, labels)):
+            for label, text in zip(self.AxesLabels, labels):
                 label.set_text(text)
 
         # Set value label text and style according to value and forced flag for
         # each variable displayed
-        for label, value, style in list(zip(self.Labels, values, styles)):
+        for label, value, style in zip(self.Labels, values, styles):
             label.set_text(value)
             label.set_style(style)
 
@@ -1377,8 +1372,6 @@ class DebugVariableGraphicViewer(DebugVariableViewer, FigureCanvas):
         # rendering
         destGC = wx.GCDC(destDC)
 
-        # destGC.BeginDrawing()
-
         # Get canvas size and figure bounding box in canvas
         width, height = self.GetSize()
         bbox = self.GetAxesBoundingBox()
@@ -1404,8 +1397,6 @@ class DebugVariableGraphicViewer(DebugVariableViewer, FigureCanvas):
 
         # Draw other Viewer common elements
         self.DrawCommonElements(destGC, self.GetButtons())
-
-        # destGC.EndDrawing()
 
         self._isDrawn = True
         self.gui_repaint(drawDC=drawDC)

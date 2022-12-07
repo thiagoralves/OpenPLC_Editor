@@ -24,7 +24,6 @@
 
 
 from functools import reduce
-
 import wx
 import wx.stc
 
@@ -39,7 +38,7 @@ if wx.Platform == '__WXMSW__':
 else:
     faces = {
         'times': 'Times',
-        'mono':  'Courier',
+        'mono':  'FreeMono',
         'helv':  'Helvetica',
         'other': 'new century schoolbook',
         'size':  12,
@@ -114,8 +113,4 @@ class CustomStyledTextCtrl(wx.stc.StyledTextCtrl):
 
     def AppendText(self, text):
         self.GotoPos(self.GetLength())
-        try:
-            self.AddText(text)
-        except Exception as e:
-            print(text)
-            print(e)
+        self.AddText(text)

@@ -21,7 +21,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-from targets.toolchain_gcc import toolchain_gcc
+
+
+
+from ..toolchain_gcc import toolchain_gcc
 
 
 class Xenomai_target(toolchain_gcc):
@@ -34,7 +37,7 @@ class Xenomai_target(toolchain_gcc):
         if xeno_config:
             from util.ProcessLogger import ProcessLogger
             status, result, _err_result = ProcessLogger(self.CTRInstance.logger,
-                                                        xeno_config + " --skin=posix --skin=alchemy --no-auto-init --"+flagsname,
+                                                        xeno_config + " --skin=posix --skin=alchemy "+flagsname,
                                                         no_stdout=True).spin()
             if status:
                 self.CTRInstance.logger.write_error(_("Unable to get Xenomai's %s \n") % flagsname)
@@ -42,9 +45,9 @@ class Xenomai_target(toolchain_gcc):
         return []
 
     def getBuilderLDFLAGS(self):
-        xeno_ldflags = self.getXenoConfig("ldflags")
+        xeno_ldflags = self.getXenoConfig("--no-auto-init --ldflags")
         return toolchain_gcc.getBuilderLDFLAGS(self) + xeno_ldflags + ["-shared"]
 
     def getBuilderCFLAGS(self):
-        xeno_cflags = self.getXenoConfig("cflags")
+        xeno_cflags = self.getXenoConfig("--cflags")
         return toolchain_gcc.getBuilderCFLAGS(self) + xeno_cflags + ["-fPIC"]

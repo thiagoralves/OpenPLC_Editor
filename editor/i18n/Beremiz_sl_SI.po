@@ -978,10 +978,6 @@ msgstr "Spremeni delovno mapo"
 msgid "Character string"
 msgstr "Niz znakov"
 
-#: ../svgui/svgui.py:136
-msgid "Choose a SVG file"
-msgstr "Izberi SVG datoteko"
-
 #: ../etherlab/EtherCATManagementEditor.py:911
 #: ../etherlab/EtherCATManagementEditor.py:1306
 msgid "Choose a binary file"
@@ -1311,10 +1307,6 @@ msgstr "Ne morem zagnati krmilnik !\n"
 #: ../ProjectController.py:1725
 msgid "Couldn't stop PLC !\n"
 msgstr "Ne morem ustaviti krmilnika !\n"
-
-#: ../svgui/svgui.py:57
-msgid "Create HMI"
-msgstr "Kreiraj HMI"
 
 #: ../dialogs/PouDialog.py:48
 msgid "Create a new POU"
@@ -2101,10 +2093,6 @@ msgstr "IP naslov ni veljaven!"
 msgid "Import ESI file"
 msgstr ""
 
-#: ../svgui/svgui.py:50 ../svgui/svgui.py:51
-msgid "Import SVG"
-msgstr "Uvoz SVG"
-
 #: ../etherlab/ConfigEditor.py:1352
 msgid "Import file to ESI files database"
 msgstr ""
@@ -2170,10 +2158,6 @@ msgstr ""
 #: ../etherlab/EthercatCIA402Slave.py:126
 msgid "Initiate Drag'n drop of Network position located variable"
 msgstr ""
-
-#: ../svgui/svgui.py:56
-msgid "Inkscape"
-msgstr "Inkscape"
 
 #: ../dialogs/SFCTransitionDialog.py:77 ../dialogs/ActionBlockDialog.py:47
 msgid "Inline"
@@ -2735,11 +2719,6 @@ msgstr "Ni rezultata iskanja."
 msgid "No slave defined at position %d!"
 msgstr ""
 
-#: ../svgui/svgui.py:142
-#, python-format
-msgid "No such SVG file: %s\n"
-msgstr "Ni take SVG datoteke: %s\n"
-
 #: ../etherlab/ConfigEditor.py:1245
 #, python-format
 msgid "No such XML file: %s\n"
@@ -2835,10 +2814,6 @@ msgstr "Samo Elementi"
 #: ../PLCOpenEditor.py:118
 msgid "Open"
 msgstr "Odpri"
-
-#: ../svgui/svgui.py:151
-msgid "Open Inkscape"
-msgstr "Odpri Inkscape"
 
 #: ../version.py:88
 msgid ""
@@ -3440,14 +3415,6 @@ msgstr "ST"
 #: ../PLCOpenEditor.py:308
 msgid "ST files (*.st)|*.st|All files|*.*"
 msgstr "ST datoteke (*.st)|*.st|Vse datoteke|*.*"
-
-#: ../svgui/svgui.py:136
-msgid "SVG files (*.svg)|*.svg|All files|*.*"
-msgstr "SVG datoteke (*.svg)|*.svg|Vse datoteke|*.*"
-
-#: ../features.py:25
-msgid "SVGUI"
-msgstr "SVGUI"
 
 #: ../BeremizIDE.py:247 ../BeremizIDE.py:278 ../PLCOpenEditor.py:84
 #: ../PLCOpenEditor.py:119
@@ -4258,14 +4225,6 @@ msgstr ""
 #: ../etherlab/EtherCATManagementEditor.py:648
 msgid "You cannot SDO download this state"
 msgstr ""
-
-#: ../svgui/svgui.py:150
-msgid ""
-"You don't have write permissions.\n"
-"Open Inkscape anyway ?"
-msgstr ""
-"Nimaš dovoljenja za pisanje.\n"
-"Vseeno odprem Inkscape ?"
 
 #: ../wxglade_hmi/wxglade_hmi.py:175
 msgid ""

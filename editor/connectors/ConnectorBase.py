@@ -3,7 +3,9 @@
 
 # See COPYING file for copyrights details.
 
+
 import hashlib
+
 
 class ConnectorBase(object):
 
@@ -11,7 +13,7 @@ class ConnectorBase(object):
 
     def BlobFromFile(self, filepath, seed):
         s = hashlib.new('md5')
-        s.update(seed)
+        s.update(seed.encode())
         blobID = self.SeedBlob(seed)
         with open(filepath, "rb") as f:
             while blobID == s.digest():
@@ -20,3 +22,4 @@ class ConnectorBase(object):
                     return blobID
                 blobID = self.AppendChunkToBlob(chunk, blobID)
                 s.update(chunk)
+        raise IOError("Data corrupted during transfer or connection lost")

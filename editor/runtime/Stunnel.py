@@ -1,9 +1,7 @@
-# 
 
 
 import os
 from binascii import b2a_hqx
-
 try:
     from runtime.spawn_subprocess import call
 except ImportError:

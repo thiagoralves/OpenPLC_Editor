@@ -24,20 +24,23 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-import datetime
-import os
 from copy import deepcopy
+import os
+import re
+import datetime
 from time import localtime
+from functools import reduce
 
-from PLCGenerator import *
-from graphics.GraphicCommons import *
+import util.paths as paths
 from plcopen import *
-from plcopen.BlockInstanceCollector import BlockInstanceCollector
-from plcopen.InstanceTagnameCollector import InstanceTagnameCollector
+from plcopen.types_enums import *
 from plcopen.InstancesPathCollector import InstancesPathCollector
 from plcopen.POUVariablesCollector import POUVariablesCollector
+from plcopen.InstanceTagnameCollector import InstanceTagnameCollector
+from plcopen.BlockInstanceCollector import BlockInstanceCollector
 from plcopen.VariableInfoCollector import VariableInfoCollector
-from util import paths
+from graphics.GraphicCommons import *
+from PLCGenerator import *
 
 duration_model = re.compile(r"(?:([0-9]{1,2})h)?(?:([0-9]{1,2})m(?!s))?(?:([0-9]{1,2})s)?(?:([0-9]{1,3}(?:\.[0-9]*)?)ms)?")
 VARIABLE_NAME_SUFFIX_MODEL = re.compile(r'(\d+)$')
@@ -456,14 +459,14 @@ class PLCControler(object):
                     programfile.close()
                     self.ProgramFilePath = filepath
                 return program_text, errors, warnings
-            except Exception as ex:
+            except PLCGenException as ex:
                 errors.append(ex)
         else:
             errors.append("No project opened")
         return "", errors, warnings
 
     def DebugAvailable(self):
-        return True
+        return self.CurrentCompiledProject is not None
 
     def ProgramTransferred(self):
         if self.NextCompiledProject is None:
@@ -526,7 +529,26 @@ class PLCControler(object):
         if self.Project is not None:
             pou = self.Project.getpou(name)
             if pou is not None:
-                pou.setpouType(pou_type)
+                new_pou = self.Copy(pou)
+                idx = 0
+                new_name = name + "_" + pou_type
+                while self.Project.getpou(new_name) is not None:
+                    idx += 1
+                    new_name = "%s%d" % (name, idx)
+                new_pou.setname(new_name)
+
+                orig_type = pou.getpouType()
+                if orig_type == 'function' and pou_type in ['functionBlock', 'program']:
+                    # delete return type
+                    return_type_obj = new_pou.interface.getreturnType()
+                    new_pou.interface.remove(return_type_obj)
+                    # To be ultimately correct we could re-create an
+                    # output variable with same name+_out or so
+                    # but in any case user will have to connect/assign
+                    # this output, so better leave it as-is
+
+                new_pou.setpouType(pou_type)
+                self.Project.insertpou(0, new_pou)
                 self.BufferProject()
 
     def GetPouXml(self, pou_name):
@@ -1152,9 +1174,7 @@ class PLCControler(object):
         for _sectioname, blocktype in self.TotalTypesDict.get(typename, []):
             if inputs is not None and inputs != "undefined":
                 block_inputs = tuple([var_type for _name, var_type, _modifier in blocktype["inputs"]])
-                if reduce(lambda x, y: x and y,
-                          list(map(lambda x: x[0] == "ANY" or self.IsOfType(*x), list(zip(inputs, block_inputs)))),
-                          True):
+                if reduce(lambda x, y: x and y, [x[0] == "ANY" or self.IsOfType(*x) for x in zip(inputs, block_inputs)], True):
                     return blocktype
             else:
                 if result_blocktype:
@@ -1217,7 +1237,7 @@ class PLCControler(object):
         if project is not None and words[0] in ["P", "T", "A"]:
             name = words[1]
         blocktypes = []
-        for blocks in list(self.TotalTypesDict.values()):
+        for blocks in self.TotalTypesDict.values():
             for _sectioname, block in blocks:
                 if block["type"] == "functionBlock":
                     blocktypes.append(block["name"])
@@ -1940,9 +1960,9 @@ class PLCControler(object):
                 new_pos[0] -= width // 2
                 new_pos[1] -= height // 2
             else:
-                new_pos = list(map(lambda x: x + 30, new_pos))
+                new_pos = [x + 30 for x in new_pos]
             if scaling[0] != 0 and scaling[1] != 0:
-                min_pos = list(map(lambda x: 30 / x, scaling))
+                min_pos = [30 / x for x in scaling]
                 minx = round(min_pos[0])
                 if int(min_pos[0]) == round(min_pos[0]):
                     minx += 1
@@ -2026,14 +2046,15 @@ class PLCControler(object):
                         self.GetVarTypeObject(var_type),
                         name, **args)
 
-    def AddEditedElementPouExternalVar(self, tagname, var_type, name):
+    def AddEditedElementPouExternalVar(self, tagname, var_type, name, **args):
         if self.Project is not None:
             words = tagname.split("::")
             if words[0] in ['P', 'T', 'A']:
                 pou = self.Project.getpou(words[1])
                 if pou is not None:
                     pou.addpouExternalVar(
-                        self.GetVarTypeObject(var_type), name)
+                        self.GetVarTypeObject(var_type),
+                        name, **args)
 
     def ChangeEditedElementPouVar(self, tagname, old_type, old_name, new_type, new_name):
         if self.Project is not None:
@@ -2087,7 +2108,7 @@ class PLCControler(object):
                     self.ChangeEditedElementPouVar(tagname, old_type, old_name, new_type, new_name)
             elif new_name != old_name:
                 self.ChangeEditedElementPouVar(tagname, old_type, old_name, new_type, new_name)
-            for param, value in infos.items():
+            for param, value in list(infos.items()):
                 if param == "name":
                     if value != "":
                         block.setinstanceName(value)
@@ -2148,7 +2169,7 @@ class PLCControler(object):
             variable = element.getinstance(id)
             if variable is None:
                 return
-            for param, value in infos.items():
+            for param, value in list(infos.items()):
                 if param == "name":
                     variable.setexpression(value)
                 elif param == "executionOrder" and variable.getexecutionOrderId() != value:
@@ -2201,7 +2222,7 @@ class PLCControler(object):
             connection = element.getinstance(id)
             if connection is None:
                 return
-            for param, value in infos.items():
+            for param, value in list(infos.items()):
                 if param == "name":
                     connection.setname(value)
                 elif param == "height":
@@ -2233,7 +2254,7 @@ class PLCControler(object):
         element = self.GetEditedElement(tagname)
         if element is not None:
             comment = element.getinstance(id)
-            for param, value in infos.items():
+            for param, value in list(infos.items()):
                 if param == "content":
                     comment.setcontentText(value)
                 elif param == "height":
@@ -2260,7 +2281,7 @@ class PLCControler(object):
             powerrail = element.getinstance(id)
             if powerrail is None:
                 return
-            for param, value in infos.items():
+            for param, value in list(infos.items()):
                 if param == "height":
                     powerrail.setheight(value)
                 elif param == "width":
@@ -2299,7 +2320,7 @@ class PLCControler(object):
             contact = element.getinstance(id)
             if contact is None:
                 return
-            for param, value in infos.items():
+            for param, value in list(infos.items()):
                 if param == "name":
                     contact.setvariable(value)
                 elif param == "type":
@@ -2342,7 +2363,7 @@ class PLCControler(object):
             coil = element.getinstance(id)
             if coil is None:
                 return
-            for param, value in infos.items():
+            for param, value in list(infos.items()):
                 if param == "name":
                     coil.setvariable(value)
                 elif param == "type":
@@ -2388,7 +2409,7 @@ class PLCControler(object):
             step = element.getinstance(id)
             if step is None:
                 return
-            for param, value in infos.items():
+            for param, value in list(infos.items()):
                 if param == "name":
                     step.setname(value)
                 elif param == "initial":
@@ -2438,7 +2459,7 @@ class PLCControler(object):
             transition = element.getinstance(id)
             if transition is None:
                 return
-            for param, value in infos.items():
+            for param, value in list(infos.items()):
                 if param == "type" and value != "connection":
                     transition.setconditionContent(value, infos["condition"])
                 elif param == "height":
@@ -2498,7 +2519,7 @@ class PLCControler(object):
             divergence = element.getinstance(id)
             if divergence is None:
                 return
-            for param, value in infos.items():
+            for param, value in list(infos.items()):
                 if param == "height":
                     divergence.setheight(value)
                 elif param == "width":
@@ -2549,7 +2570,7 @@ class PLCControler(object):
             jump = element.getinstance(id)
             if jump is None:
                 return
-            for param, value in infos.items():
+            for param, value in list(infos.items()):
                 if param == "target":
                     jump.settargetName(value)
                 elif param == "height":
@@ -2579,7 +2600,7 @@ class PLCControler(object):
             actionBlock = element.getinstance(id)
             if actionBlock is None:
                 return
-            for param, value in infos.items():
+            for param, value in list(infos.items()):
                 if param == "actions":
                     actionBlock.setactions(value)
                 elif param == "height":

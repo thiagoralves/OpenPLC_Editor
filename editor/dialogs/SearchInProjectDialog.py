@@ -24,11 +24,10 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-import wx
 
+import wx
 from plcopen.plcopen import *
 from util.TranslationCatalogs import NoTranslate
-
 
 # -------------------------------------------------------------------------------
 #                          Search In Project Dialog
@@ -56,7 +55,7 @@ class SearchInProjectDialog(wx.Dialog):
         pattern_sizer = wx.FlexGridSizer(cols=2, hgap=5, rows=2, vgap=5)
         pattern_sizer.AddGrowableCol(0)
         main_sizer.Add(pattern_sizer, border=20,
-                       flag=wx.GROW | wx.TOP | wx.LEFT | wx.RIGHT)
+                            flag=wx.GROW | wx.TOP | wx.LEFT | wx.RIGHT)
 
         pattern_label = wx.StaticText(self, label=_('Pattern to search:'))
         pattern_sizer.Add(pattern_label, flag=wx.ALIGN_BOTTOM)
@@ -74,17 +73,17 @@ class SearchInProjectDialog(wx.Dialog):
         scope_staticbox = wx.StaticBox(self, label=_('Scope'))
         scope_sizer = wx.StaticBoxSizer(scope_staticbox, wx.HORIZONTAL)
         main_sizer.Add(scope_sizer, border=20,
-                       flag=wx.GROW | wx.LEFT | wx.RIGHT)
+                            flag=wx.GROW | wx.LEFT | wx.RIGHT)
 
         scope_selection_sizer = wx.BoxSizer(wx.VERTICAL)
         scope_sizer.Add(scope_selection_sizer, 1, border=5,
-                        flag=wx.GROW | wx.TOP | wx.LEFT | wx.BOTTOM)
+                             flag=wx.GROW | wx.TOP | wx.LEFT | wx.BOTTOM)
 
         self.WholeProject = wx.RadioButton(self, label=_('Whole Project'), style=wx.RB_GROUP)
         self.WholeProject.SetValue(True)
         self.Bind(wx.EVT_RADIOBUTTON, self.OnScopeChanged, self.WholeProject)
         scope_selection_sizer.Add(self.WholeProject, border=5,
-                                  flag=wx.GROW | wx.BOTTOM)
+                                        flag=wx.GROW | wx.BOTTOM)
 
         self.OnlyElements = wx.RadioButton(self, label=_('Only Elements'))
         self.Bind(wx.EVT_RADIOBUTTON, self.OnScopeChanged, self.OnlyElements)
@@ -94,11 +93,11 @@ class SearchInProjectDialog(wx.Dialog):
         self.ElementsList = wx.CheckListBox(self)
         self.ElementsList.Enable(False)
         scope_sizer.Add(self.ElementsList, 1, border=5,
-                        flag=wx.GROW | wx.TOP | wx.RIGHT | wx.BOTTOM)
+                              flag=wx.GROW | wx.TOP | wx.RIGHT | wx.BOTTOM)
 
         buttons_sizer = wx.BoxSizer(wx.HORIZONTAL)
         main_sizer.Add(buttons_sizer, border=20,
-                       flag=wx.LEFT | wx.RIGHT | wx.BOTTOM | wx.ALIGN_RIGHT)
+                            flag=wx.LEFT | wx.RIGHT | wx.BOTTOM | wx.ALIGN_RIGHT)
 
         self.FindButton = wx.Button(self, label=_("Find"))
         self.FindButton.SetDefault()

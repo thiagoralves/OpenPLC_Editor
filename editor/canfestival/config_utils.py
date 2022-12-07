@@ -23,9 +23,10 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-import getopt
 import os
 import sys
+import getopt
+from functools import reduce
 
 # Translation between IEC types and Can Open types
 IECToCOType = {
@@ -82,7 +83,7 @@ def LE_to_BE(value, size):
     """
 
     data = ("%" + str(size * 2) + "." + str(size * 2) + "X") % value
-    list_car = [data[i:i + 2] for i in list(range(0, len(data), 2))]
+    list_car = [data[i:i+2] for i in range(0, len(data), 2)]
     list_car.reverse()
     return "".join([chr(int(car, 16)) for car in list_car])
 
@@ -300,7 +301,7 @@ class ConciseDCFGenerator(object):
             values = self.NodeList.GetSlaveNodeEntry(nodeid, index + 0x200)
             if values is not None and values[0] > 0:
                 # Check that all subindex upper than 0 equal 0 => configurable PDO
-                if reduce(lambda x, y: x and y, list(map(lambda x: x == 0, values[1:])), True):
+                if reduce(lambda x, y: x and y, [x == 0 for x in values[1:]], True):
                     cobid = self.NodeList.GetSlaveNodeEntry(nodeid, index, 1)
                     # If no COB ID defined in PDO, generate a new one (not used)
                     if cobid == 0:
@@ -427,7 +428,7 @@ class ConciseDCFGenerator(object):
         #                         Search for locations already mapped
         # -------------------------------------------------------------------------------
 
-        for name, locationinfos in self.IECLocations.items():
+        for name, locationinfos in list(self.IECLocations.items()):
             node = self.NodeList.SlaveNodes[locationinfos["nodeid"]]["Node"]
 
             # Search if slave has a PDO mapping this locations
@@ -479,7 +480,7 @@ class ConciseDCFGenerator(object):
         #                         Build concise DCF for the others locations
         # -------------------------------------------------------------------------------
 
-        for nodeid, locations in self.LocationsNotMapped.items():
+        for nodeid, locations in list(self.LocationsNotMapped.items()):
             node = self.NodeList.SlaveNodes[nodeid]["Node"]
 
             # Initialize number of params and data to add to node DCF
@@ -528,7 +529,7 @@ class ConciseDCFGenerator(object):
         # -------------------------------------------------------------------------------
 
         # Generate Master's Configuration from informations stored in MasterMapping
-        for cobid, pdo_infos in self.MasterMapping.items():
+        for cobid, pdo_infos in list(self.MasterMapping.items()):
             # Get next PDO index in MasterNode for this PDO type
             current_idx = self.CurrentPDOParamsIdx[pdo_infos["type"]]
 
@@ -732,7 +733,7 @@ Options:
 
     # Extract workspace base folder
     base_folder = sys.path[0]
-    for i in list(range(3)):
+    for i in range(3):
         base_folder = os.path.split(base_folder)[0]
     # Add CanFestival folder to search pathes
     sys.path.append(os.path.join(base_folder, "CanFestival-3", "objdictgen"))
@@ -775,13 +776,13 @@ Options:
     # If reset has been choosen
     if reset:
         # Write Text into reference result file
-        testfile = open("test_config/result.txt", "w", encoding='utf-8')
+        testfile = open("test_config/result.txt", "w")
         testfile.write(result)
         testfile.close()
 
         print("Reset Successful!")
     else:
-        testfile = open("test_config/result_tmp.txt", "w", encoding='utf-8')
+        testfile = open("test_config/result_tmp.txt", "w")
         testfile.write(result)
         testfile.close()
 

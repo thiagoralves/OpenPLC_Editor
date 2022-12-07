@@ -25,18 +25,17 @@
 
 # Package initialisation
 
-import sys
 
+import importlib
+from os import listdir, path
 from connectors.ConnectorBase import ConnectorBase
-from util import paths
 
-_base_path = paths.AbsDir(__file__)
-sys.path.append(_base_path)
-connectors_packages = ["PYRO", "WAMP", "HTTP"]
+connectors_packages = ["PYRO"]
 
 
 def _GetLocalConnectorClassFactory(name):
-    return lambda: getattr(__import__(name, globals(), locals()), name + "_connector_factory")
+    return lambda: getattr(importlib.import_module(f"connectors.{name}"),
+                           f"{name}_connector_factory")
 
 
 connectors = {name: _GetLocalConnectorClassFactory(name)
@@ -55,7 +54,7 @@ def _Import_Dialogs():
         per_URI_connectors = {}
         schemes = []
         for con_name in connectors_packages:
-            module = __import__(con_name + '_dialog', globals(), locals())
+            module = importlib.import_module(f"connectors.{con_name}_dialog")
 
             for scheme in module.Schemes:
                 per_URI_connectors[scheme] = getattr(module, con_name + '_dialog')
@@ -68,7 +67,7 @@ def ConnectorFactory(uri, confnodesroot):
     or None if cannot connect to URI
     """
     _scheme = uri.split("://")[0].upper()
-    if _scheme == "NONE": _scheme = "WAMP"
+
     # commented code to enable for MDNS:// support
     # _scheme, location = uri.split("://")
     # _scheme = _scheme.upper()
@@ -78,9 +77,8 @@ def ConnectorFactory(uri, confnodesroot):
         # pyro connection to local runtime
         # started on demand, listening on random port
         scheme = "PYRO"
-        runtime_port = confnodesroot.AppFrame.StartLocalRuntime(
-            taskbaricon=True)
-        uri = "PYROLOC://127.0.0.1:" + str(runtime_port)
+        runtime_port = confnodesroot.StartLocalRuntime()
+        uri = "PYRO://localhost:" + str(runtime_port)
 
     # commented code to enable for MDNS:// support
     # elif _scheme == "MDNS":

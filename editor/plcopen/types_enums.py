@@ -3,7 +3,7 @@
 # This file is part of Beremiz
 # See COPYING file for copyrights details.
 
-# 
+
 from util.TranslationCatalogs import NoTranslate
 _ = NoTranslate
 
@@ -16,7 +16,7 @@ ITEMS_EDITABLE = [
     ITEM_CONFIGURATION,
     ITEM_RESOURCE,
     ITEM_DATATYPE
-] = range(8)
+] = list(range(8))
 
 ITEMS_UNEDITABLE = [
     ITEM_DATATYPES,
@@ -28,7 +28,7 @@ ITEMS_UNEDITABLE = [
     ITEM_CONFIGURATIONS,
     ITEM_RESOURCES,
     ITEM_PROPERTIES
-] = range(8, 17)
+] = list(range(8, 17))
 
 ITEMS_VARIABLE = [
     ITEM_VAR_LOCAL,
@@ -38,7 +38,7 @@ ITEMS_VARIABLE = [
     ITEM_VAR_INPUT,
     ITEM_VAR_OUTPUT,
     ITEM_VAR_INOUT
-] = range(17, 24)
+] = list(range(17, 24))
 
 ITEM_CONFNODE = 25
 
@@ -70,7 +70,7 @@ LOCATIONS_ITEMS = [LOCATION_CONFNODE,
                    LOCATION_GROUP,
                    LOCATION_VAR_INPUT,
                    LOCATION_VAR_OUTPUT,
-                   LOCATION_VAR_MEMORY] = range(6)
+                   LOCATION_VAR_MEMORY] = list(range(6))
 
 UNEDITABLE_NAMES = [_("User-defined POUs"), _("Functions"), _("Function Blocks"),
                     _("Programs"), _("Data Types"), _("Transitions"), _("Actions"),

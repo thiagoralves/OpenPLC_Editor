@@ -3,9 +3,9 @@
 # This file is part of Beremiz.
 # See COPYING file for copyrights details.
 
-# 
-from plcopen.XSLTModelQuery import XSLTModelQuery
-from plcopen.types_enums import *
+
+from . XSLTModelQuery import XSLTModelQuery
+from . types_enums import *
 
 
 class InstanceTagName(object):

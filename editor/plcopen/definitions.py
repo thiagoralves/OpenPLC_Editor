@@ -23,11 +23,11 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from os.path import join
 
+
+from os.path import join
 import util.paths as paths
 from util.TranslationCatalogs import NoTranslate
-
 sd = paths.AbsDir(__file__)
 
 # Override gettext _ in this module

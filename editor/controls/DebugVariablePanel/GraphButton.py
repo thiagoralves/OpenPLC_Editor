@@ -23,10 +23,10 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
+
 import wx
 
 from util.BitmapLibrary import GetBitmap
-
 
 # -------------------------------------------------------------------------------
 #                        Custom button for Graphic Viewer Class
@@ -57,13 +57,6 @@ class GraphButton(object):
 
         # Save reference to callback function
         self.Callback = callback
-
-    def __del__(self):
-        """
-        Destructor
-        """
-        # Remove reference to callback function
-        self.callback = None
 
     def SetBitmap(self, bitmap):
         """

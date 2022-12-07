@@ -23,10 +23,13 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
+from functools import cmp_to_key
+from operator import eq
+import wx
 
-from .DebugDataConsumer import DebugDataConsumer
-from .GraphicCommons import *
-from .Graphic_Element import Connector, Graphic_Element
+from graphics.GraphicCommons import *
+from graphics.DebugDataConsumer import DebugDataConsumer
+from plcopen.structures import *
 
 
 def GetWireSize(block):
@@ -970,7 +973,7 @@ class SFC_Transition(Graphic_Element, DebugDataConsumer):
         if highlight_type is None:
             self.Highlights = {}
         else:
-            highlight_items = self.Highlights.items()
+            highlight_items = list(self.Highlights.items())
             for name, highlights in highlight_items:
                 highlights = ClearHighlights(highlights, highlight_type)
                 if len(highlights) == 0:
@@ -1238,8 +1241,8 @@ class SFC_Divergence(Graphic_Element):
             for output in self.Outputs:
                 output_pos = output.GetRelPosition()
                 output.SetPosition(wx.Point(output_pos.x - minx, output_pos.y))
-        self.Inputs.sort(lambda x, y: operator.eq(x.Pos.x, y.Pos.x))
-        self.Outputs.sort(lambda x, y: operator.eq(x.Pos.x, y.Pos.x))
+        self.Inputs.sort(key=cmp_to_key(lambda x, y: eq(x.Pos.y, y.Pos.y)))
+        self.Outputs.sort(key=cmp_to_key(lambda x, y: eq(x.Pos.y, y.Pos.y)))
         self.Pos.x += minx
         self.Size[0] = maxx - minx
         connector.MoveConnected()
@@ -1460,7 +1463,7 @@ class SFC_Divergence(Graphic_Element):
         dc.SetUserScale(1, 1)
         dc.SetPen(MiterPen(HIGHLIGHTCOLOR))
         dc.SetBrush(wx.Brush(HIGHLIGHTCOLOR))
-        #dc.SetLogicalFunction(wx.AND)
+        dc.SetLogicalFunction(wx.AND)
         # Draw two rectangles for representing the contact
         posx = self.Pos.x
         width = self.Size[0]
@@ -1471,7 +1474,7 @@ class SFC_Divergence(Graphic_Element):
                          int(round((self.Pos.y - 1) * scaley)) - 2,
                          int(round((width + 3) * scalex)) + 5,
                          int(round((self.Size.height + 3) * scaley)) + 5)
-        #dc.SetLogicalFunction(wx.COPY)
+        dc.SetLogicalFunction(wx.COPY)
         dc.SetUserScale(scalex, scaley)
 
     # Draws divergence
@@ -1730,7 +1733,7 @@ class SFC_Jump(Graphic_Element):
         dc.SetUserScale(1, 1)
         dc.SetPen(MiterPen(HIGHLIGHTCOLOR))
         dc.SetBrush(wx.Brush(HIGHLIGHTCOLOR))
-        #dc.SetLogicalFunction(wx.AND)
+        dc.SetLogicalFunction(wx.AND)
         points = [wx.Point(int(round((self.Pos.x - 2) * scalex)) - 3,
                            int(round((self.Pos.y - 2) * scaley)) - 2),
                   wx.Point(int(round((self.Pos.x + self.Size[0] + 2) * scalex)) + 4,
@@ -1738,7 +1741,7 @@ class SFC_Jump(Graphic_Element):
                   wx.Point(int(round((self.Pos.x + self.Size[0] / 2) * scalex)),
                            int(round((self.Pos.y + self.Size[1] + 3) * scaley)) + 4)]
         dc.DrawPolygon(points)
-        #dc.SetLogicalFunction(wx.COPY)
+        dc.SetLogicalFunction(wx.COPY)
         dc.SetUserScale(scalex, scaley)
 
     # Draws divergence
@@ -1998,9 +2001,9 @@ class SFC_ActionBlock(Graphic_Element):
         if highlight_type is None:
             self.Highlights = {}
         else:
-            highlight_items = self.Highlights.items()
+            highlight_items = list(self.Highlights.items())
             for number, action_highlights in highlight_items:
-                action_highlight_items = action_highlights.items()
+                action_highlight_items = list(action_highlights.items())
                 for name, attribute_highlights in action_highlight_items:
                     attribute_highlights = ClearHighlights(attribute_highlights, highlight_type)
                     if len(attribute_highlights) == 0:

@@ -31,20 +31,20 @@ Config Tree Node base class.
 - ... TODO : document
 """
 
+
 import os
-import shutil
 import traceback
 import types
-from builtins import str as text
-from functools import reduce
+import shutil
 from operator import add
+from functools import reduce
 
 from lxml import etree
 
+from xmlclass import GenerateParserFromXSDstring
 from PLCControler import LOCATION_CONFNODE
 from editors.ConfTreeNodeEditor import ConfTreeNodeEditor
-from util.misc import execfile
-from xmlclass import GenerateParserFromXSDstring
+from POULibrary import UserAddressedException
 
 _BaseParamsParser = GenerateParserFromXSDstring("""<?xml version="1.0" encoding="ISO-8859-1" ?>
         <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
@@ -98,9 +98,6 @@ class ConfigTreeNode(object):
 
     def ConfNodeXmlFilePath(self, CTNName=None):
         return os.path.join(self.CTNPath(CTNName), "confnode.xml")
-
-    def ConfNodePath(self):
-        return os.path.join(self.CTNParent.ConfNodePath(), self.CTNType)
 
     def CTNPath(self, CTNName=None, project_path=None):
         if not CTNName:
@@ -195,7 +192,7 @@ class ConfigTreeNode(object):
         os.mkdir(self.CTNPath())
 
     def CTNRequestSave(self, from_project_path=None):
-        if self.GetCTRoot().CheckProjectPathPerm(False):
+        if self.GetCTRoot().CheckProjectPathPerm():
             # If confnode do not have corresponding directory
             ctnpath = self.CTNPath()
             if not os.path.isdir(ctnpath):
@@ -286,7 +283,7 @@ class ConfigTreeNode(object):
         LDFLAGS = []
         if CTNLDFLAGS is not None:
             # LDFLAGS can be either string
-            if isinstance(CTNLDFLAGS, (str, text)):
+            if isinstance(CTNLDFLAGS, str):
                 LDFLAGS += [CTNLDFLAGS]
             # or list of strings
             elif isinstance(CTNLDFLAGS, list):
@@ -311,7 +308,7 @@ class ConfigTreeNode(object):
         return LocationCFilesAndCFLAGS, LDFLAGS, extra_files
 
     def IterChildren(self):
-        for _CTNType, Children in self.Children.items():
+        for _CTNType, Children in list(self.Children.items()):
             for CTNInstance in Children:
                 yield CTNInstance
 
@@ -319,7 +316,7 @@ class ConfigTreeNode(object):
         # reorder children by IEC_channels
         ordered = [(chld.BaseParams.getIEC_Channel(), chld) for chld in self.IterChildren()]
         if ordered:
-            sorted(ordered)
+            ordered.sort()
             return list(zip(*ordered))[1]
         else:
             return []
@@ -439,7 +436,7 @@ class ConfigTreeNode(object):
         for CTNInstance in self.CTNParent.IterChildren():
             if CTNInstance != self:
                 AllChannels.append(CTNInstance.BaseParams.getIEC_Channel())
-        sorted(AllChannels)
+        AllChannels.sort()
         return AllChannels
 
     def FindNewIEC_Channel(self, DesiredChannel):
@@ -460,8 +457,7 @@ class ConfigTreeNode(object):
             if res < CurrentChannel:  # Want to go down ?
                 res -= 1  # Test for n-1
                 if res < 0:
-                    self.GetCTRoot().logger.write_warning(
-                        _("Cannot find lower free IEC channel than %d\n") % CurrentChannel)
+                    self.GetCTRoot().logger.write_warning(_("Cannot find lower free IEC channel than %d\n") % CurrentChannel)
                     return CurrentChannel  # Can't go bellow 0, do nothing
             else:  # Want to go up ?
                 res += 1  # Test for n-1
@@ -472,21 +468,21 @@ class ConfigTreeNode(object):
     def GetContextualMenuItems(self):
         return None
 
-    def GetView(self):
-        if self._View is None and self.EditorType is not None:
+    def GetView(self, onlyopened=False):
+        if not self._View and not onlyopened and self.EditorType is not None:
             app_frame = self.GetCTRoot().AppFrame
             self._View = self.EditorType(app_frame.TabsOpened, self, app_frame)
 
         return self._View
 
     def _OpenView(self, name=None, onlyopened=False):
-        view = self.GetView()
+        view = self.GetView(onlyopened)
 
         if view is not None:
             if name is None:
                 name = self.CTNFullName()
             app_frame = self.GetCTRoot().AppFrame
-            app_frame.EditProjectElement(view, name)
+            app_frame.EditProjectElement(view, name, onlyopened)
 
         return view
 
@@ -625,7 +621,7 @@ class ConfigTreeNode(object):
     def LoadXMLParams(self, CTNName=None):
         methode_name = os.path.join(self.CTNPath(CTNName), "methods.py")
         if os.path.isfile(methode_name):
-            execfile(methode_name)
+            exec(compile(open(methode_name, "rb").read(), methode_name, 'exec'))
 
         ConfNodeName = CTNName if CTNName is not None else self.CTNName()
 
@@ -640,7 +636,7 @@ class ConfigTreeNode(object):
                 self.MandatoryParams = ("BaseParams", self.BaseParams)
                 basexmlfile.close()
             except Exception as exc:
-                msg = _("Couldn't load confnode base parameters {a1} :\n {a2}").format(a1=ConfNodeName, a2=text(exc))
+                msg = _("Couldn't load confnode base parameters {a1} :\n {a2}").format(a1=ConfNodeName, a2=str(exc))
                 self.GetCTRoot().logger.write_error(msg)
                 self.GetCTRoot().logger.write_error(traceback.format_exc())
 
@@ -657,7 +653,7 @@ class ConfigTreeNode(object):
                 self.CTNParams = (name, obj)
                 xmlfile.close()
             except Exception as exc:
-                msg = _("Couldn't load confnode parameters {a1} :\n {a2}").format(a1=ConfNodeName, a2=text(exc))
+                msg = _("Couldn't load confnode parameters {a1} :\n {a2}").format(a1=ConfNodeName, a2=str(exc))
                 self.GetCTRoot().logger.write_error(msg)
                 self.GetCTRoot().logger.write_error(traceback.format_exc())
 
@@ -665,12 +661,19 @@ class ConfigTreeNode(object):
         # Iterate over all CTNName@CTNType in confnode directory, and try to open them
         for CTNDir in os.listdir(self.CTNPath()):
             if os.path.isdir(os.path.join(self.CTNPath(), CTNDir)) and \
-                    CTNDir.count(NameTypeSeparator) == 1:
+               CTNDir.count(NameTypeSeparator) == 1:
                 pname, ptype = CTNDir.split(NameTypeSeparator)
                 try:
                     self.CTNAddChild(pname, ptype)
                 except Exception as exc:
-                    msg = _("Could not add child \"{a1}\", type {a2} :\n{a3}\n").format(a1=pname, a2=ptype,
-                                                                                        a3=text(exc))
+                    msg = _("Could not add child \"{a1}\", type {a2} :\n{a3}\n").format(a1=pname, a2=ptype, a3=str(exc))
                     self.GetCTRoot().logger.write_error(msg)
                     self.GetCTRoot().logger.write_error(traceback.format_exc())
+
+
+    def FatalError(self, message):
+        """ Raise an exception that will trigger error message intended to 
+            the user, but without backtrace since it is not a software error """
+
+        raise UserAddressedException(message)
+

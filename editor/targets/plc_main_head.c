@@ -23,7 +23,7 @@ void __publish_debug(void);
  *  Variables used by generated C softPLC and plugins
  **/
 IEC_TIME __CURRENT_TIME;
-//IEC_BOOL __DEBUG = 0;
+IEC_BOOL __DEBUG = 0;
 unsigned long __tick = 0;
 char *PLC_ID = NULL;
 

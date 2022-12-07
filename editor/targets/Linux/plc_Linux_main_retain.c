@@ -105,20 +105,20 @@ int CheckFileCRC(FILE* file_buffer)
 /* Compare current hash with hash from file byte by byte.  */
 int CheckFilehash(void)
 {
-	int k;
+	int k,ret;
 	int offset = sizeof(retain_info.retain_size);
 
 	rewind(retain_buffer);
 	fseek(retain_buffer, offset , SEEK_SET);
 
 	uint32_t size;
-	fread(&size, sizeof(size), 1, retain_buffer);
+	ret = fread(&size, sizeof(size), 1, retain_buffer);
 	if (size != retain_info.hash_size)
 		return 0;
 
 	for(k = 0; k < retain_info.hash_size; k++){
 		uint8_t file_digit;
-		fread(&file_digit, sizeof(char), 1, retain_buffer);
+		ret = fread(&file_digit, sizeof(char), 1, retain_buffer);
 		if (file_digit != *(retain_info.hash+k))
 			return 0;
 	}
@@ -317,8 +317,9 @@ void Retain(unsigned int offset, unsigned int count, void *p)
 
 void Remind(unsigned int offset, unsigned int count, void *p)
 {
+    int ret;
 	/* Remind variable from file.  */
 	fseek(retain_buffer, retain_info.header_offset+offset, SEEK_SET);
-	fread((void *)p, count, 1, retain_buffer);
+	ret = fread((void *)p, count, 1, retain_buffer);
 }
 #endif // !HAVE_RETAIN

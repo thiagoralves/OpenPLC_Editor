@@ -24,11 +24,11 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
+
 import wx
 
-from dialogs.BlockPreviewDialog import BlockPreviewDialog
 from graphics.SFC_Objects import SFC_Step
-
+from dialogs.BlockPreviewDialog import BlockPreviewDialog
 
 # -------------------------------------------------------------------------------
 #                         Set SFC Step Parameters Dialog
@@ -107,7 +107,7 @@ class SFCStepDialog(BlockPreviewDialog):
         @param values: Block parameters values
         """
         # For each parameters defined, set corresponding control value
-        for name, value in values.items():
+        for name, value in list(values.items()):
 
             # Parameter is step name
             if name == "name":

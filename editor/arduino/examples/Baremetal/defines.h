@@ -10,14 +10,14 @@
 #define MBTCP_PWD ""
 #define MBSERIAL
 #define MODBUS_ENABLED
-#define BOARD_STM32_F103CB
 
 
 //Arduino Libraries
+#define USE_P1AM_BLOCKS
 
 
 //Pin Array Sizes
-#define NUM_DISCRETE_INPUT          9
-#define NUM_ANALOG_INPUT            6
-#define NUM_DISCRETE_OUTPUT         8
-#define NUM_ANALOG_OUTPUT           2
+#define NUM_DISCRETE_INPUT          0
+#define NUM_ANALOG_INPUT            0
+#define NUM_DISCRETE_OUTPUT         0
+#define NUM_ANALOG_OUTPUT           0

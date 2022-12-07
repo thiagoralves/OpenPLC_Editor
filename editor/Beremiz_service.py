@@ -23,25 +23,39 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import getopt
+
 import os
 import sys
+import getopt
 import threading
-from builtins import str as text
+import shlex
+import traceback
+import threading
 from threading import Thread, Semaphore, Lock, currentThread
-
 import builtins
+from functools import partial
 
 import runtime
-from util.misc import execfile
-import util.paths as paths
+from runtime.PyroServer import PyroServer
+from runtime.xenomai import TryPreloadXenomai
 from runtime import LogMessageAndException
 from runtime import PlcStatus
 from runtime import default_evaluator
-from runtime.PyroServer import PyroServer
 from runtime.Stunnel import ensurePSK
-from runtime.xenomai import TryPreloadXenomai
+import util.paths as paths
 
+# In case system time is ajusted, it is better to use
+# monotonic timers for timers and other timeout based operations.
+# hot-patch threading module to force using monitonic time for all 
+# Thread/Timer/Event/Condition
+
+from runtime.monotonic_time import monotonic
+threading._time = monotonic
+
+try:
+    from runtime.spawn_subprocess import Popen
+except ImportError:
+    from subprocess import Popen
 
 def version():
     from version import app_version
@@ -70,7 +84,7 @@ Usage of Beremiz PLC execution service :\n
 
 
 try:
-    opts, argv = getopt.getopt(sys.argv[1:], "i:p:n:x:t:a:w:c:e:s:h", ["help", "version"])
+    opts, argv = getopt.getopt(sys.argv[1:], "i:p:n:x:t:a:w:c:e:s:h", ["help", "version", "status-change=", "on-plc-start=", "on-plc-stop="])
 except getopt.GetoptError as err:
     # print help information and exit:
     print(str(err))  # will print something like "option -a not recognized"
@@ -91,6 +105,13 @@ enabletwisted = True
 havetwisted = False
 
 extensions = []
+statuschange = []
+def status_change_call_factory(wanted, args):
+    def status_change_call(status):
+        if wanted is None or status is wanted:
+            cmd = shlex.split(args.format(status))
+            Popen(cmd)
+    return status_change_call
 
 for o, a in opts:
     if o == "-h" or o == "--help":
@@ -99,6 +120,12 @@ for o, a in opts:
     if o == "--version":
         version()
         sys.exit()
+    if o == "--on-plc-start":
+        statuschange.append(status_change_call_factory(PlcStatus.Started, a))
+    elif o == "--on-plc-stop":
+        statuschange.append(status_change_call_factory(PlcStatus.Stopped, a))
+    elif o == "--status-change":
+        statuschange.append(status_change_call_factory(None, a))
     elif o == "-i":
         if len(a.split(".")) == 4:
             interface = a
@@ -203,6 +230,7 @@ if enablewx:
 
     if havewx:
         import re
+        import wx.adv
 
         if wx.VERSION >= (3, 0, 0):
             app = wx.App(redirect=False)
@@ -244,19 +272,19 @@ if enablewx:
             def SetTests(self, tests):
                 self.Tests = tests
 
-        class BeremizTaskBarIcon(wx.TaskBarIcon):
-            TBMENU_START = wx.NewId()
-            TBMENU_STOP = wx.NewId()
-            TBMENU_CHANGE_NAME = wx.NewId()
-            TBMENU_CHANGE_PORT = wx.NewId()
-            TBMENU_CHANGE_INTERFACE = wx.NewId()
-            TBMENU_LIVE_SHELL = wx.NewId()
-            TBMENU_WXINSPECTOR = wx.NewId()
-            TBMENU_CHANGE_WD = wx.NewId()
-            TBMENU_QUIT = wx.NewId()
+        class BeremizTaskBarIcon(wx.adv.TaskBarIcon):
+            TBMENU_START = wx.NewIdRef()
+            TBMENU_STOP = wx.NewIdRef()
+            TBMENU_CHANGE_NAME = wx.NewIdRef()
+            TBMENU_CHANGE_PORT = wx.NewIdRef()
+            TBMENU_CHANGE_INTERFACE = wx.NewIdRef()
+            TBMENU_LIVE_SHELL = wx.NewIdRef()
+            TBMENU_WXINSPECTOR = wx.NewIdRef()
+            TBMENU_CHANGE_WD = wx.NewIdRef()
+            TBMENU_QUIT = wx.NewIdRef()
 
             def __init__(self, pyroserver):
-                wx.TaskBarIcon.__init__(self)
+                wx.adv.TaskBarIcon.__init__(self)
                 self.pyroserver = pyroserver
                 # Set the image
                 self.UpdateIcon(None)
@@ -304,7 +332,7 @@ if enablewx:
                 elif "wxGTK" in wx.PlatformInfo:
                     img = img.Scale(22, 22)
                 # wxMac can be any size upto 128x128, so leave the source img alone....
-                icon = wx.IconFromBitmap(img.ConvertToBitmap())
+                icon = wx.Icon(img.ConvertToBitmap())
                 return icon
 
             def OnTaskBarStartPLC(self, evt):
@@ -326,7 +354,7 @@ if enablewx:
 
             def OnTaskBarChangePort(self, evt):
                 dlg = ParamsEntryDialog(None, _("Enter a port number "), defaultValue=str(self.pyroserver.port))
-                dlg.SetTests([(text.isdigit, _("Port number must be an integer!")), (lambda port: 0 <= int(port) <= 65535, _("Port number must be 0 <= port <= 65535!"))])
+                dlg.SetTests([(str.isdigit, _("Port number must be an integer!")), (lambda port: 0 <= int(port) <= 65535, _("Port number must be 0 <= port <= 65535!"))])
                 if dlg.ShowModal() == wx.ID_OK:
                     self.pyroserver.port = int(dlg.GetValue())
                     self.pyroserver.Restart()
@@ -391,7 +419,12 @@ if enabletwisted:
             if havewx:
                 from twisted.internet import wxreactor
                 wxreactor.install()
-            from twisted.internet import reactor
+                from twisted.internet import reactor
+                reactor.registerWxApp(app)
+            else:
+                # from twisted.internet import pollreactor
+                # pollreactor.install()
+                from twisted.internet import reactor
 
             havetwisted = True
         except ImportError:
@@ -399,14 +432,6 @@ if enabletwisted:
             havetwisted = False
 
 pyruntimevars = {}
-statuschange = []
-
-if havetwisted:
-    if havewx:
-        reactor.registerWxApp(app)
-
-twisted_reactor_thread_id = None
-ui_thread = None
 
 if havewx:
     wx_eval_lock = Semaphore(0)
@@ -421,24 +446,18 @@ if havewx:
         obj.res = default_evaluator(tocall, *args, **kwargs)
         wx_eval_lock.release()
 
+    main_thread_id = currentThread().ident
     def evaluator(tocall, *args, **kwargs):
-        # To prevent deadlocks, check if current thread is not one of the UI
-        # UI threads can be either the one from WX main loop or
-        # worker thread from twisted "threadselect" reactor
+        # To prevent deadlocks, check if current thread is not one already main
         current_id = currentThread().ident
 
-        if ui_thread is not None \
-            and ui_thread.ident != current_id \
-            and (not havetwisted or (
-                    twisted_reactor_thread_id is not None
-                    and twisted_reactor_thread_id != current_id)):
-
+        if main_thread_id != current_id:
             o = type('', (object,), dict(call=(tocall, args, kwargs), res=None))
             wx.CallAfter(wx_evaluator, o)
             wx_eval_lock.acquire()
             return o.res
         else:
-            # avoid dead lock if called from the wx mainloop
+            # avoid dead lock if called from main : do job immediately
             return default_evaluator(tocall, *args, **kwargs)
 else:
     evaluator = default_evaluator
@@ -478,10 +497,10 @@ if havetwisted:
     if webport is not None:
         try:
             import runtime.NevowServer as NS  # pylint: disable=ungrouped-imports
+            NS.WorkingDir = WorkingDir
         except Exception:
             LogMessageAndException(_("Nevow/Athena import failed :"))
             webport = None
-        NS.WorkingDir = WorkingDir
 
     try:
         import runtime.WampClient as WC  # pylint: disable=ungrouped-imports
@@ -493,7 +512,7 @@ if havetwisted:
 # Load extensions
 for extention_file, extension_folder in extensions:
     sys.path.append(extension_folder)
-    execfile(os.path.join(extension_folder, extention_file), locals())
+    exec(compile(open(os.path.join(extension_folder, extention_file), "rb").read(), os.path.join(extension_folder, extention_file), 'exec'), locals())
 
 # Service name is used as an ID for stunnel's PSK
 # Some extension may set 'servicename' to a computed ID or Serial Number
@@ -514,83 +533,114 @@ if havetwisted:
         try:
             website = NS.RegisterWebsite(interface, webport)
             pyruntimevars["website"] = website
-            NS.SetServer(pyroserver)
             statuschange.append(NS.website_statuslistener_factory(website))
         except Exception:
             LogMessageAndException(_("Nevow Web service failed. "))
 
     if havewamp:
         try:
-            WC.SetServer(pyroserver)
             WC.RegisterWampClient(wampconf, PSKpath)
             WC.RegisterWebSettings(NS)
         except Exception:
             LogMessageAndException(_("WAMP client startup failed. "))
 
-pyro_thread_started = Lock()
-pyro_thread_started.acquire()
-pyro_thread = Thread(target=pyroserver.PyroLoop,
-                     kwargs=dict(when_ready=pyro_thread_started.release),
-                     name="PyroThread")
-pyro_thread.start()
+pyro_thread = None
 
-# Wait for pyro thread to be effective
-pyro_thread_started.acquire()
+def FirstWorkerJob():
+    """
+    RPC through pyro/wamp/UI may lead to delegation to Worker,
+    then this function ensures that Worker is already
+    created when pyro starts
+    """
+    global pyro_thread, pyroserver
 
-pyroserver.PrintServerInfo()
+    pyro_thread_started = Lock()
+    pyro_thread_started.acquire()
+    pyro_thread = Thread(target=pyroserver.PyroLoop,
+                         kwargs=dict(when_ready=pyro_thread_started.release),
+                         name="PyroThread")
 
-# Beremiz IDE detects LOCAL:// runtime is ready by looking
-# for self.workdir in the daemon's stdout.
-sys.stdout.write(_("Current working directory :") + WorkingDir + "\n")
-sys.stdout.flush()
+    pyro_thread.start()
 
-if havetwisted or havewx:
+    # Wait for pyro thread to be effective
+    pyro_thread_started.acquire()
+
+    pyroserver.PrintServerInfo()
+
+    # Beremiz IDE detects LOCAL:// runtime is ready by looking
+    # for self.workdir in the daemon's stdout.
+    sys.stdout.write(_("Current working directory :") + WorkingDir + "\n")
+    sys.stdout.flush()
+
+    runtime.GetPLCObjectSingleton().AutoLoad(autostart)
+
+if havetwisted and havewx:
+
+    waker_func = wx.CallAfter
+
+    # This orders ui loop to signal when ready on Stdout
+    waker_func(print,"UI thread started successfully.")
+
+    # interleaved worker copes with wxreactor by delegating all asynchronous
+    # calls to wx's mainloop
+    runtime.MainWorker.interleave(waker_func, reactor.stop, FirstWorkerJob)
+
+    try:
+        reactor.run(installSignalHandlers=False)
+    except KeyboardInterrupt:
+        pass
+
+    runtime.MainWorker.stop()
+
+elif havewx:
+
+    try:
+        app.MainLoop
+    except KeyboardInterrupt:
+        pass
+
+elif havetwisted:
+
     ui_thread_started = Lock()
     ui_thread_started.acquire()
-    if havetwisted:
-        # reactor._installSignalHandlersAgain()
-        def ui_thread_target():
-            # FIXME: had to disable SignaHandlers install because
-            # signal not working in non-main thread
-            reactor.run(installSignalHandlers=False)
-    else:
-        ui_thread_target = app.MainLoop
 
-    ui_thread = Thread(target=ui_thread_target, name="UIThread")
+    reactor.callLater(0, ui_thread_started.release)
+
+    ui_thread = Thread(
+        target=partial(reactor.run, installSignalHandlers=False),
+        name="UIThread")
     ui_thread.start()
 
-    # This order ui loop to unblock main thread when ready.
-    if havetwisted:
-        def signal_uithread_started():
-            global twisted_reactor_thread_id
-            twisted_reactor_thread_id = currentThread().ident
-            ui_thread_started.release()
-        reactor.callLater(0, signal_uithread_started)
-    else:
-        wx.CallAfter(ui_thread_started.release)
-
-    # Wait for ui thread to be effective
     ui_thread_started.acquire()
     print("UI thread started successfully.")
+    try:
+        # blocking worker loop
+        runtime.MainWorker.runloop(FirstWorkerJob)
+    except KeyboardInterrupt:
+        pass
+else:
+    try:
+        # blocking worker loop
+        runtime.MainWorker.runloop(FirstWorkerJob)
+    except KeyboardInterrupt:
+        pass
 
-try:
-    runtime.MainWorker.runloop(
-        runtime.GetPLCObjectSingleton().AutoLoad, autostart)
-except KeyboardInterrupt:
-    pass
 
 pyroserver.Quit()
 pyro_thread.join()
 
 plcobj = runtime.GetPLCObjectSingleton()
-plcobj.StopPLC()
-plcobj.UnLoadPLC()
+try:
+    plcobj.StopPLC()
+    plcobj.UnLoadPLC()
+except:
+    print(traceback.format_exc())
 
 if havetwisted:
     reactor.stop()
-    ui_thread.join()
+    if not havewx:
+        ui_thread.join()
 elif havewx:
     app.ExitMainLoop()
-    ui_thread.join()
 
 sys.exit(0)

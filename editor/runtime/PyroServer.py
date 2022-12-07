@@ -9,15 +9,13 @@
 
 # See COPYING file for copyrights details.
 
-# 
 
 
-import os
 import sys
+import os
 
 import Pyro
 import Pyro.core as pyro
-
 import runtime
 from runtime.ServicePublisher import ServicePublisher
 
@@ -64,10 +62,17 @@ class PyroServer(object):
             self.daemon.connect(pyro_obj, "PLCObject")
 
             when_ready()
-            self.piper,self.pipew = os.pipe()
-            self.daemon.requestLoop(others=[self.piper], callback=lambda x:None)
+
+            # "pipe to self" trick to to accelerate runtime shutdown 
+            # instead of waiting for arbitrary pyro timeout.
+            others = []
+            if not sys.platform.startswith('win'):
+                self.piper, self.pipew = os.pipe()
+                others.append(self.piper)
+
+            self.daemon.requestLoop(others=others, callback=lambda x: None)
             self.piper, self.pipew = None, None
-            if hasattr(self,'sock'):
+            if hasattr(self, 'sock'):
                 self.daemon.sock.close()
         self.Unpublish()
 
@@ -78,8 +83,9 @@ class PyroServer(object):
         self.continueloop = False
         self.daemon.shutdown(True)
         self.daemon.closedown()
-        if self.pipew is not None:
-            os.write(self.pipew, "goodbye")
+        if not sys.platform.startswith('win'):
+            if self.pipew is not None:
+                os.write(self.pipew, "goodbye")
 
     def Publish(self):
         self.servicepublisher = ServicePublisher("PYRO")

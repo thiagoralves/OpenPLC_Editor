@@ -10,12 +10,14 @@
 # See COPYING file for copyrights details.
 
 
-from ConfigTreeNode import ConfigTreeNode
+
 from PLCControler import LOCATION_CONFNODE, LOCATION_VAR_INPUT, LOCATION_VAR_OUTPUT, LOCATION_VAR_MEMORY
-# ------------------------------------------
-from etherlab.CommonEtherCATFunction import _CommonSlave
+from ConfigTreeNode import ConfigTreeNode
+
 from etherlab.ConfigEditor import NodeEditor
 
+# ------------------------------------------
+from etherlab.CommonEtherCATFunction import _CommonSlave
 # ------------------------------------------
 
 
@@ -71,6 +73,8 @@ class _EthercatSlaveCTN(object):
     def __init__(self):
         # ----------- call ethercat mng. function --------------
         self.CommonMethod = _CommonSlave(self)
+        self.SelectedRxPDOIndex = []
+        self.SelectedTxPDOIndex = []
 
     def GetIconName(self):
         return "Slave"
@@ -164,4 +168,4 @@ class _EthercatSlaveCTN(object):
         }
 
     def CTNGenerate_C(self, buildpath, locations):
-        return [], "", False, []
+        return [], "", False

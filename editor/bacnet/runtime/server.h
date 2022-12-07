@@ -33,12 +33,19 @@
 
 
 
+
 typedef struct{
-	    const char *location;
-	    const char *network_interface;
-	    const char *port_number;
-	    const char *device_name;
-	    const char *comm_control_passwd;
+	    char location              [%(BACnet_Param_String_Size)d];
+	    char network_interface     [%(BACnet_Param_String_Size)d];
+	    char port_number           [%(BACnet_Param_String_Size)d];
+	    char device_name           [%(BACnet_Param_String_Size)d];
+	    char device_location       [%(BACnet_Param_String_Size)d];        
+	    char device_description    [%(BACnet_Param_String_Size)d];
+	    char device_appsoftware_ver[%(BACnet_Param_String_Size)d];        
+	    char comm_control_passwd   [%(BACnet_Param_String_Size)d];
+// 	    int         override_local_config;  // bool flag => 
+// 	                                        //   true : use these parameter values
+// 	                                        //   false: use values stored on local file in PLC
 	    uint32_t	device_id; // device ID is 22 bits long! uint16_t is not enough!
 	    int		init_state; // store how far along the server's initialization has progressed
 	    pthread_t	thread_id;  // thread handling this server
@@ -49,13 +56,16 @@ typedef struct{
 /*initialization following all parameters given by user in application*/
 static server_node_t server_node = {
   "%(locstr)s",
-  "%(network_interface)s",           // interface    (NULL => use default (eth0))
-  "%(port_number)s",                 // Port number  (NULL => use default)
-  "%(BACnet_Device_Name)s",          // BACnet server's device (object) name
-  "%(BACnet_Comm_Control_Password)s",// BACnet server's device (object) name
-   %(BACnet_Device_ID)s              // BACnet server's device (object) ID
+  "%(network_interface)s",              // interface    (NULL => use default (eth0))
+  "%(port_number)s",                    // Port number  (NULL => use default)
+  "%(BACnet_Device_Name)s",             // BACnet server's device (object) Name
+  "%(BACnet_Device_Location)s",         // BACnet server's device (object) Location
+  "%(BACnet_Device_Description)s",      // BACnet server's device (object) Description
+  "%(BACnet_Device_AppSoft_Version)s",  // BACnet server's device (object) App. Software Ver.
+  "%(BACnet_Comm_Control_Password)s",   // BACnet server's device (object) Password
+//  (Override_Parameters_Saved_on_PLC)d, // override locally saved parameters (bool flag)
+  %(BACnet_Device_ID)s                  // BACnet server's device (object) ID
 };
-
 
 
 #endif /* SERVER_H_ */

@@ -23,9 +23,9 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
+import wx
 
 from editors.Viewer import *
-
 
 
 def ExtractNextBlocks(block, block_list):
@@ -64,7 +64,7 @@ def CalcBranchSize(elements, stops):
         elif element_tree[element]:
             element_tree[element]["parents"].append("start")
     remove_stops = {"start": [], "stop": []}
-    for element, values in element_tree.items():
+    for element, values in list(element_tree.items()):
         if "stop" in values["children"]:
             removed = []
             for child in values["children"]:
@@ -83,7 +83,7 @@ def CalcBranchSize(elements, stops):
         element_tree[element]["parents"].remove("start")
     for element in remove_stops["stop"]:
         element_tree[element]["children"].remove("stop")
-    for element, values in element_tree.items():
+    for element, values in list(element_tree.items()):
         if values and "stop" in values["children"]:
             CalcWeight(element, element_tree)
             if values["weight"]:
@@ -763,8 +763,8 @@ class LD_Viewer(Viewer):
                         infos["rights"].remove(right_element)
                         if "LD_PowerRail" not in infos["rights"]:
                             infos["rights"].append("LD_PowerRail")
-                sorted(infos["lefts"])
-                sorted(infos["rights"])
+                infos["lefts"].sort()
+                infos["rights"].sort()
             lefts = blocks_infos[0]["lefts"]
             rights = blocks_infos[0]["rights"]
             good = True

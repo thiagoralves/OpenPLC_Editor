@@ -23,12 +23,12 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+
 import wx
 
-from dialogs.BlockPreviewDialog import BlockPreviewDialog
-from graphics.FBD_Objects import FBD_Variable
 from graphics.GraphicCommons import INPUT, INOUT, OUTPUT
-
+from graphics.FBD_Objects import FBD_Variable
+from dialogs.BlockPreviewDialog import BlockPreviewDialog
 
 # -------------------------------------------------------------------------------
 #                                    Helpers
@@ -94,7 +94,7 @@ class FBDVariableDialog(BlockPreviewDialog):
         # Create label for variable expression
         name_label = wx.StaticText(self, label=_('Expression:'))
         self.RightGridSizer.Add(name_label, border=5,
-                                flag=wx.GROW | wx.BOTTOM)
+                                      flag=wx.GROW | wx.BOTTOM)
 
         # Create text control for defining variable expression
         self.Expression = wx.TextCtrl(self)
@@ -110,9 +110,9 @@ class FBDVariableDialog(BlockPreviewDialog):
 
         # Add preview panel and associated label to sizers
         self.MainSizer.Add(self.PreviewLabel, border=20,
-                           flag=wx.GROW | wx.LEFT | wx.RIGHT)
+                                 flag=wx.GROW | wx.LEFT | wx.RIGHT)
         self.MainSizer.Add(self.Preview, border=20,
-                           flag=wx.GROW | wx.LEFT | wx.RIGHT)
+                                 flag=wx.GROW | wx.LEFT | wx.RIGHT)
 
         # Add buttons sizer to sizers
         self.MainSizer.Add(
@@ -178,7 +178,7 @@ class FBDVariableDialog(BlockPreviewDialog):
             self.RefreshNameList()
 
         # For each parameters defined, set corresponding control value
-        for name, value in values.items():
+        for name, value in list(values.items()):
 
             # Parameter is variable expression
             if name == "expression":

@@ -23,44 +23,35 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+
 import os
 import pickle
-import random
-import shutil
 import sys
-import tempfile
+import shutil
+import time
+from time import time as gettime
+from threading import Lock, Timer, currentThread
 
-import wx
 import wx.lib.buttons
 import wx.lib.statbmp
 import wx.stc
+import wx.adv
+
 
 import version
-from IDEFrame import \
-    TITLE, \
-    EDITORTOOLBAR, \
-    FILEMENU, \
-    EDITMENU, \
-    DISPLAYMENU, \
-    PROJECTTREE, \
-    POUINSTANCEVARIABLESPANEL, \
-    LIBRARYTREE, \
-    PAGETITLES, \
-    IDEFrame, \
-    AppendMenu, \
-    EncodeFileSystemPath, \
-    DecodeFileSystemPath
-from LogPseudoFile import LogPseudoFile
-from ProjectController import ProjectController, GetAddMenuItems, MATIEC_ERROR_MODEL
-from controls import EnhancedStatusBar as esb
-from controls.CustomStyledTextCtrl import CustomStyledTextCtrl
-from controls.LogViewer import LogViewer
-from dialogs.AboutDialog import ShowAboutDialog
-from editors.DataTypeEditor import DataTypeEditor
 from editors.EditorPanel import EditorPanel
-from editors.ResourceEditor import ConfigurationEditor, ResourceEditor
-from editors.TextViewer import TextViewer
 from editors.Viewer import Viewer
+from editors.TextViewer import TextViewer
+from editors.ResourceEditor import ConfigurationEditor, ResourceEditor
+from editors.DataTypeEditor import DataTypeEditor
+from util.paths import Bpath
+from util.MiniTextControler import MiniTextControler
+from util.BitmapLibrary import GetBitmap
+from controls.LogViewer import LogViewer
+from controls.CustomStyledTextCtrl import CustomStyledTextCtrl
+from controls import EnhancedStatusBar as esb
+from dialogs.AboutDialog import ShowAboutDialog
+
 from plcopen.types_enums import \
     ComputeConfigurationName, \
     LOCATION_CONFNODE, \
@@ -72,22 +63,33 @@ from plcopen.types_enums import \
     ITEM_PROJECT, \
     ITEM_RESOURCE, \
     ITEM_CONFNODE
-from util import paths as paths
-from util.BitmapLibrary import GetBitmap
-from util.MiniTextControler import MiniTextControler
-from util.ProcessLogger import ProcessLogger
 
+from ProjectController import ProjectController, GetAddMenuItems, MATIEC_ERROR_MODEL
+
+from IDEFrame import \
+    TITLE,\
+    EDITORTOOLBAR,\
+    FILEMENU,\
+    EDITMENU,\
+    DISPLAYMENU,\
+    PROJECTTREE,\
+    POUINSTANCEVARIABLESPANEL,\
+    LIBRARYTREE,\
+    PAGETITLES,\
+    IDEFrame, \
+    EncodeFileSystemPath, \
+    DecodeFileSystemPath
+
+from LocalRuntimeMixin import LocalRuntimeMixin
+
+	
 # Define OpenPLC Editor FileMenu extra items id
 [
     ID_OPENPLCFILEMENUUPDATE
 ] = [wx.NewId() for _init_coll_FileMenu_Items in range(1)]
 
-beremiz_dir = paths.AbsDir(__file__)
-
-
-def Bpath(*args):
-    return os.path.join(beremiz_dir, *args)
-
+def AppendMenu(parent, help, id, kind, text):
+    return parent.Append(wx.MenuItem(helpString=help, id=id, kind=kind, text=text))
 
 MAX_RECENT_PROJECTS = 9
 
@@ -99,14 +101,143 @@ if wx.Platform == '__WXMSW__':
     }
 else:
     faces = {
-        'mono': 'Courier',
+        'mono': 'FreeMono',
         'size': 10,
     }
+
+
+MainThread = currentThread().ident
+REFRESH_PERIOD = 0.1
+
+
+class LogPseudoFile(object):
+    """ Base class for file like objects to facilitate StdOut for the Shell."""
+    def __init__(self, output, risecall, logf):
+        self.red_white = 1
+        self.red_yellow = 2
+        self.black_white = wx.stc.STC_STYLE_DEFAULT
+        self.output = output
+        self.risecall = risecall
+        # to prevent rapid fire on rising log panel
+        self.rising_timer = 0
+        self.StackLock = Lock()
+        self.YieldLock = Lock()
+        self.RefreshLock = Lock()
+        self.TimerAccessLock = Lock()
+        self.stack = []
+        self.LastRefreshTime = gettime()
+        self.LastRefreshTimer = None
+        self.refreshPending = False
+        self.logf = logf
+
+    def write(self, s, style=None):
+        if self.logf is not None:
+            self.logf.write(s)
+            self.logf.flush()
+        self.StackLock.acquire()
+        self.stack.append((s, style))
+        self.StackLock.release()
+        current_time = gettime()
+        with self.TimerAccessLock:
+            if self.LastRefreshTimer is not None:
+                self.LastRefreshTimer.cancel()
+                self.LastRefreshTimer = None
+        elapsed = current_time - self.LastRefreshTime
+        if elapsed > REFRESH_PERIOD:
+            self._should_write()
+        else:
+            with self.TimerAccessLock:
+                if self.LastRefreshTimer is None:
+                    self.LastRefreshTimer = Timer(REFRESH_PERIOD - elapsed, self._timer_expired)
+                    self.LastRefreshTimer.start()
+
+    def _timer_expired(self):
+        self._should_write()
+        with self.TimerAccessLock:
+            self.LastRefreshTimer = None
+
+    def _should_write(self):
+        if MainThread == currentThread().ident:
+            app = wx.GetApp()
+            if app is not None:
+                self._write()
+                if self.YieldLock.acquire(0):
+                    app.Yield()
+                    self.YieldLock.release()
+        else:
+            with self.RefreshLock:
+                if not self.refreshPending:
+                    self.refreshPending = True
+                    wx.CallAfter(self._write)
+
+    def _write(self):
+        if self.output:
+            with self.RefreshLock:
+                self.output.Freeze()
+                self.output.AnnotationClearAll()
+                self.StackLock.acquire()
+                for s, style in self.stack:
+                    if style is None:
+                        style = self.black_white
+                    if style != self.black_white:
+                        self.output.StartStyling(self.output.GetLength())
+
+                    # Temporary deactivate read only mode on StyledTextCtrl for
+                    # adding text. It seems that text modifications, even
+                    # programmatically, are disabled in StyledTextCtrl when read
+                    # only is active
+                    start_pos = self.output.GetLength()
+                    self.output.SetReadOnly(False)
+                    self.output.AppendText(s)
+                    self.output.SetReadOnly(True)
+                    text_len = self.output.GetLength() - start_pos
+
+                    if style != self.black_white:
+                        self.output.SetStyling(text_len, style)
+                self.stack = []
+                self.StackLock.release()
+                self.output.ScrollToEnd()
+                self.output.Thaw()
+                self.LastRefreshTime = gettime()
+                newtime = time.time()
+                if newtime - self.rising_timer > 1:
+                    self.risecall(self.output)
+                self.rising_timer = newtime
+                self.refreshPending = False
+
+
+    def write_warning(self, s):
+        self.write(s, self.red_white)
+
+    def write_error(self, s):
+        self.write(s, self.red_yellow)
+
+    def flush(self):
+        # Temporary deactivate read only mode on StyledTextCtrl for clearing
+        # text. It seems that text modifications, even programmatically, are
+        # disabled in StyledTextCtrl when read only is active
+        self.output.SetReadOnly(False)
+        self.output.SetText("")
+        self.output.SetReadOnly(True)
+
+    def isatty(self):
+        return False
+
+    def progress(self, text):
+        l = max(self.output.GetLineCount()-2, 0)
+        self.output.AnnotationSetText(l, text)
+        self.output.AnnotationSetVisible(wx.stc.STC_ANNOTATION_BOXED)
+        self.output.AnnotationSetStyle(l, self.black_white)
+        if self.YieldLock.acquire(0):
+            app = wx.GetApp()
+            app.Yield()
+            self.YieldLock.release()
+
 
 ID_FILEMENURECENTPROJECTS = wx.NewIdRef()
 
 
-class Beremiz(IDEFrame):
+class Beremiz(IDEFrame, LocalRuntimeMixin):
 
     def _init_utils(self):
         self.ConfNodeMenu = wx.Menu(title='')
@@ -117,18 +248,18 @@ class Beremiz(IDEFrame):
 
     def _init_coll_FileMenu_Items(self, parent):
         AppendMenu(parent, help='', id=wx.ID_NEW,
-                   kind=wx.ITEM_NORMAL, text=_(u'New') + '\tCTRL+N')
+                   kind=wx.ITEM_NORMAL, text=_('New') + '\tCTRL+N')
         AppendMenu(parent, help='', id=wx.ID_OPEN,
-                   kind=wx.ITEM_NORMAL, text=_(u'Open') + '\tCTRL+O')
-        parent.AppendSubMenu(self.RecentProjectsMenu, _("&Recent Projects"))
+                   kind=wx.ITEM_NORMAL, text=_('Open') + '\tCTRL+O')
+        parent.Append(ID_FILEMENURECENTPROJECTS, _("&Recent Projects"), self.RecentProjectsMenu)
         parent.AppendSeparator()
-        parent.AppendMenu(wx.ID_ANY, _("&Tutorials and Examples"), self.TutorialsProjectsMenu)
+        parent.Append(wx.ID_ANY, _("&Tutorials and Examples"), self.TutorialsProjectsMenu)
 
         examples_dir = Bpath("examples")
         project_list = sorted(os.listdir(examples_dir))
 
         for idx, dirname  in enumerate(project_list):
-            text = u'&%d: %s' % (idx + 1, dirname)
+            text = '&%d: %s' % (idx + 1, dirname)
 
             item = self.TutorialsProjectsMenu.Append(wx.ID_ANY, text, '')
 
@@ -145,28 +276,26 @@ class Beremiz(IDEFrame):
             self.Bind(wx.EVT_MENU, OpenExemple, item)
         parent.AppendSeparator()
         AppendMenu(parent, help='', id=wx.ID_SAVE,
-                   kind=wx.ITEM_NORMAL, text=_(u'Save') + '\tCTRL+S')
+                   kind=wx.ITEM_NORMAL, text=_('Save') + '\tCTRL+S')
         AppendMenu(parent, help='', id=wx.ID_SAVEAS,
-                   kind=wx.ITEM_NORMAL, text=_(u'Save as') + '\tCTRL+SHIFT+S')
+                   kind=wx.ITEM_NORMAL, text=_('Save as') + '\tCTRL+SHIFT+S')
         AppendMenu(parent, help='', id=wx.ID_CLOSE,
-                   kind=wx.ITEM_NORMAL, text=_(u'Close Tab') + '\tCTRL+W')
+                   kind=wx.ITEM_NORMAL, text=_('Close Tab') + '\tCTRL+W')
         AppendMenu(parent, help='', id=wx.ID_CLOSE_ALL,
-                   kind=wx.ITEM_NORMAL, text=_(u'Close Project') + '\tCTRL+SHIFT+W')
+                   kind=wx.ITEM_NORMAL, text=_('Close Project') + '\tCTRL+SHIFT+W')
         parent.AppendSeparator()
         AppendMenu(parent, help='', id=wx.ID_PAGE_SETUP,
-                   kind=wx.ITEM_NORMAL, text=_(u'Page Setup') + '\tCTRL+ALT+P')
+                   kind=wx.ITEM_NORMAL, text=_('Page Setup') + '\tCTRL+ALT+P')
         AppendMenu(parent, help='', id=wx.ID_PREVIEW,
-                   kind=wx.ITEM_NORMAL, text=_(u'Preview') + '\tCTRL+SHIFT+P')
+                   kind=wx.ITEM_NORMAL, text=_('Preview') + '\tCTRL+SHIFT+P')
         AppendMenu(parent, help='', id=wx.ID_PRINT,
-                   kind=wx.ITEM_NORMAL, text=_(u'Print') + '\tCTRL+P')
+                   kind=wx.ITEM_NORMAL, text=_('Print') + '\tCTRL+P')
         parent.AppendSeparator()
-        
         AppendMenu(parent, help='', id=ID_OPENPLCFILEMENUUPDATE,
                    kind=wx.ITEM_NORMAL, text=_(u'Check for updates...') + '\tCTRL+U')
-
         parent.AppendSeparator()
         AppendMenu(parent, help='', id=wx.ID_EXIT,
-                   kind=wx.ITEM_NORMAL, text=_(u'Quit') + '\tCTRL+Q')
+                   kind=wx.ITEM_NORMAL, text=_('Quit') + '\tCTRL+Q')
 
         self.Bind(wx.EVT_MENU, self.OnNewProjectMenu, id=wx.ID_NEW)
         self.Bind(wx.EVT_MENU, self.OnOpenProjectMenu, id=wx.ID_OPEN)
@@ -180,20 +309,20 @@ class Beremiz(IDEFrame):
         self.Bind(wx.EVT_MENU, self.OnUpdateMenu, id=ID_OPENPLCFILEMENUUPDATE)
         self.Bind(wx.EVT_MENU, self.OnQuitMenu, id=wx.ID_EXIT)
 
-        self.AddToMenuToolBar([(wx.ID_NEW, "new", _(u'New'), None),
-                               (wx.ID_OPEN, "open", _(u'Open'), None),
-                               (wx.ID_SAVE, "save", _(u'Save'), None),
-                               (wx.ID_SAVEAS, "saveas", _(u'Save As...'), None),
-                               (wx.ID_PRINT, "print", _(u'Print'), None)])
+        self.AddToMenuToolBar([(wx.ID_NEW, "new", _('New'), None),
+                               (wx.ID_OPEN, "open", _('Open'), None),
+                               (wx.ID_SAVE, "save", _('Save'), None),
+                               (wx.ID_SAVEAS, "saveas", _('Save As...'), None),
+                               (wx.ID_PRINT, "print", _('Print'), None)])
 
     def _RecursiveAddMenuItems(self, menu, items):
         for name, text, helpstr, children in items:
             if len(children) > 0:
                 new_menu = wx.Menu(title='')
-                menu.Append(wx.ID_ANY, text, new_menu)
+                menu.AppendSubMenu(new_menu, text)
                 self._RecursiveAddMenuItems(new_menu, children)
             else:
-                item = menu.Append(wx.ID_ANY, text, helpstr)
+                item = menu.Append(wx.MenuItem(text=text, helpString=helpstr, kind=wx.ITEM_NORMAL, id=wx.ID_ANY))
                 self.Bind(wx.EVT_MENU, self.GetAddConfNodeFunction(name), item)
 
     def _init_coll_AddMenu_Items(self, parent):
@@ -204,14 +333,14 @@ class Beremiz(IDEFrame):
         def handler(event):
             return wx.MessageBox(
                 version.GetCommunityHelpMsg(),
-                _(u'Community support'),
+                _('Community support'),
                 wx.OK | wx.ICON_INFORMATION)
 
-        # item = parent.Append(wx.ID_ANY, _(u'Community support'), '')
-        # self.Bind(wx.EVT_MENU, handler, item)
-        #
-        parent.Append(helpString='', id=wx.ID_ABOUT,
-                      kind=wx.ITEM_NORMAL, item=_(u'About'))
+        item = parent.Append(wx.ID_ANY, _('Community support'), '')
+        self.Bind(wx.EVT_MENU, handler, item)
+
+        parent.Append(wx.MenuItem(helpString='', id=wx.ID_ABOUT,
+                      kind=wx.ITEM_NORMAL, text=_('About')))
         self.Bind(wx.EVT_MENU, self.OnAboutMenu, id=wx.ID_ABOUT)
 
     def _init_coll_ConnectionStatusBar_Fields(self, parent):
@@ -232,18 +361,27 @@ class Beremiz(IDEFrame):
         self.Bind(wx.EVT_MENU, self.OnOpenWidgetInspector, id=inspectorID)
         accels = [wx.AcceleratorEntry(wx.ACCEL_CTRL | wx.ACCEL_ALT, ord('I'), inspectorID)]
 
+        self.methodLock = Lock()
+
         for method, shortcut in [("Stop",     wx.WXK_F4),
                                  ("Run",      wx.WXK_F5),
                                  ("Transfer", wx.WXK_F6),
                                  ("Connect",  wx.WXK_F7),
+                                 ("Clean",    wx.WXK_F9),
                                  ("Build",    wx.WXK_F11)]:
             def OnMethodGen(obj, meth):
                 def OnMethod(evt):
                     if obj.CTR is not None:
-                        obj.CTR.CallMethod('_'+meth)
-                    wx.CallAfter(self.RefreshStatusToolBar)
+                        if obj.methodLock.acquire(False):
+                            obj.CTR.CallMethod('_'+meth)
+                            obj.methodLock.release()
+                            wx.CallAfter(obj.RefreshStatusToolBar)
+                        else:
+                            # Postpone call if one of method already running
+                            # can happen because of long method using log, 
+                            # itself calling wx.Yield
+                            wx.CallLater(50, OnMethod, evt)
                 return OnMethod
-
             newid = wx.NewIdRef()
             self.Bind(wx.EVT_MENU, OnMethodGen(self, method), id=newid)
             accels += [wx.AcceleratorEntry(wx.ACCEL_NORMAL, shortcut, newid)]
@@ -271,6 +409,7 @@ class Beremiz(IDEFrame):
         self.LogConsole.MarkerDefine(0, wx.stc.STC_MARK_CIRCLE, "BLACK", "RED")
 
         self.LogConsole.SetModEventMask(wx.stc.STC_MOD_INSERTTEXT)
+        self.LogConsole.SetCaretPeriod(0)
 
         self.LogConsole.Bind(wx.stc.EVT_STC_MARGINCLICK, self.OnLogConsoleMarginClick)
         self.LogConsole.Bind(wx.stc.EVT_STC_MODIFIED, self.OnLogConsoleModified)
@@ -285,7 +424,7 @@ class Beremiz(IDEFrame):
         # self.BottomNoteBook.Split(self.BottomNoteBook.GetPageIndex(self.LogViewer), wx.RIGHT)
 
         StatusToolBar = wx.ToolBar(self, -1, wx.DefaultPosition, wx.DefaultSize,
-                                   wx.TB_FLAT | wx.TB_NODIVIDER | wx.NO_BORDER)
+                                   wx.TB_FLAT | wx.TB_HORIZONTAL | wx.NO_BORDER)
         StatusToolBar.SetToolBitmapSize(wx.Size(25, 25))
         StatusToolBar.Realize()
         self.Panes["StatusToolBar"] = StatusToolBar
@@ -296,7 +435,7 @@ class Beremiz(IDEFrame):
 
         self.AUIManager.Update()
 
-        self.ConnectionStatusBar = esb.EnhancedStatusBar(self, style=0)
+        self.ConnectionStatusBar = esb.EnhancedStatusBar(self, style=wx.STB_SIZEGRIP)
         self._init_coll_ConnectionStatusBar_Fields(self.ConnectionStatusBar)
         self.ProgressStatusBar = wx.Gauge(self.ConnectionStatusBar, -1, range=100)
         self.ConnectionStatusBar.AddWidget(self.ProgressStatusBar, esb.ESB_EXACT_FIT, esb.ESB_EXACT_FIT, 2)
@@ -312,17 +451,16 @@ class Beremiz(IDEFrame):
             # found here.
             os.environ["PATH"] = os.getcwd()+'\\mingw\\bin;'+os.environ["PATH"]
 
-    def __init__(self, parent, projectOpen=None, buildpath=None, ctr=None, debug=True):
+    def __init__(self, parent, projectOpen=None, buildpath=None, ctr=None, debug=True, logf=None):
+
         # Add beremiz's icon in top left corner of the frame
         self.icon = wx.Icon(Bpath("images", "brz.ico"), wx.BITMAP_TYPE_ICO)
         self.__init_execute_path()
 
         IDEFrame.__init__(self, parent, debug)
-        self.Log = LogPseudoFile(self.LogConsole, self.SelectTab)
+        self.Log = LogPseudoFile(self.LogConsole, self.SelectTab, logf)
 
-        self.local_runtime = None
-        self.runtime_port = None
-        self.local_runtime_tmpdir = None
+        LocalRuntimeMixin.__init__(self, self.Log)
 
         self.LastPanelSelected = None
 
@@ -332,17 +470,17 @@ class Beremiz(IDEFrame):
 
         # Icons for location items
         for imgname, itemtype in [
-            ("CONFIGURATION", LOCATION_CONFNODE),
-            ("RESOURCE", LOCATION_MODULE),
-            ("PROGRAM", LOCATION_GROUP),
-            ("VAR_INPUT", LOCATION_VAR_INPUT),
-            ("VAR_OUTPUT", LOCATION_VAR_OUTPUT),
-            ("VAR_LOCAL", LOCATION_VAR_MEMORY)]:
+                ("CONFIGURATION", LOCATION_CONFNODE),
+                ("RESOURCE",      LOCATION_MODULE),
+                ("PROGRAM",       LOCATION_GROUP),
+                ("VAR_INPUT",     LOCATION_VAR_INPUT),
+                ("VAR_OUTPUT",    LOCATION_VAR_OUTPUT),
+                ("VAR_LOCAL",     LOCATION_VAR_MEMORY)]:
             self.LocationImageDict[itemtype] = self.LocationImageList.Add(GetBitmap(imgname))
 
         # Icons for other items
         for imgname, itemtype in [
-            ("Extension", ITEM_CONFNODE)]:
+                ("Extension", ITEM_CONFNODE)]:
             self.TreeImageDict[itemtype] = self.TreeImageList.Add(GetBitmap(imgname))
 
         if projectOpen is not None:
@@ -373,8 +511,6 @@ class Beremiz(IDEFrame):
         if self.EnableDebug:
             self.DebugVariablePanel.SetDataProducer(self.CTR)
 
-        self.Bind(wx.EVT_CLOSE, self.OnCloseFrame)
-
         self._Refresh(TITLE, EDITORTOOLBAR, FILEMENU, EDITMENU, DISPLAYMENU)
         self.RefreshAll()
         self.LogConsole.SetFocus()
@@ -388,36 +524,6 @@ class Beremiz(IDEFrame):
             self.SetTitle("%s - %s" % (name, projectname))
         else:
             self.SetTitle(name)
-
-    def StartLocalRuntime(self, taskbaricon=True):
-        if (self.local_runtime is None) or (self.local_runtime.exitcode is not None):
-            # create temporary directory for runtime working directory
-            self.local_runtime_tmpdir = tempfile.mkdtemp()
-            # choose an arbitrary random port for runtime
-            self.runtime_port = int(random.random() * 1000) + 61131
-            # launch local runtime
-            self.local_runtime = ProcessLogger(
-                self.Log,
-                "\"%s\" \"%s\" -p %s -i localhost %s %s" % (
-                    sys.executable,
-                    Bpath("Beremiz_service.py"),
-                    self.runtime_port,
-                    {False: "-x 0", True: "-x 1"}[taskbaricon],
-                    self.local_runtime_tmpdir),
-                no_gui=False,
-                timeout=500, keyword=self.local_runtime_tmpdir,
-                cwd=self.local_runtime_tmpdir)
-            self.local_runtime.spin()
-        return self.runtime_port
-
-    def KillLocalRuntime(self):
-        if self.local_runtime is not None:
-            # shutdown local runtime
-            self.local_runtime.kill(gently=False)
-            # clear temp dir
-            shutil.rmtree(self.local_runtime_tmpdir)
-
-            self.local_runtime = None
 
     def OnOpenWidgetInspector(self, evt):
         # Activate the widget inspection tool
@@ -437,7 +543,8 @@ class Beremiz(IDEFrame):
         event.Skip()
 
     def OnLogConsoleUpdateUI(self, event):
-        self.SetCopyBuffer(self.LogConsole.GetSelectedText(), True)
+        if event.GetUpdated()==wx.stc.STC_UPDATE_SELECTION:
+            self.SetCopyBuffer(self.LogConsole.GetSelectedText(), True)
         event.Skip()
 
     def OnLogConsoleMarginClick(self, event):
@@ -489,11 +596,11 @@ class Beremiz(IDEFrame):
 
     def GetTabInfos(self, tab):
         if isinstance(tab, EditorPanel) and \
-                not isinstance(tab, (Viewer,
-                                     TextViewer,
-                                     ResourceEditor,
-                                     ConfigurationEditor,
-                                     DataTypeEditor)):
+           not isinstance(tab, (Viewer,
+                                TextViewer,
+                                ResourceEditor,
+                                ConfigurationEditor,
+                                DataTypeEditor)):
             return ("confnode", tab.Controler.CTNFullName(), tab.GetTagName())
         elif (isinstance(tab, TextViewer) and
               (tab.Controler is None or isinstance(tab.Controler, MiniTextControler))):
@@ -523,6 +630,7 @@ class Beremiz(IDEFrame):
         if self.CTR is None or self.CheckSaveBeforeClosing(_("Close Application")):
             if self.CTR is not None:
                 self.CTR.KillDebugThread()
+                self.CTR._Disconnect()
             self.KillLocalRuntime()
 
             self.SaveLastState()
@@ -536,6 +644,8 @@ class Beremiz(IDEFrame):
 
     def OnCloseFrame(self, event):
         if self.TryCloseFrame():
+            self.LogConsole.Disconnect(-1, -1, wx.wxEVT_KILL_FOCUS)
+            super(Beremiz, self).OnCloseFrame(event)
             event.Skip()
         else:
             # prevent event to continue, i.e. cancel closing
@@ -589,8 +699,8 @@ class Beremiz(IDEFrame):
 
     def RefreshRecentProjectsMenu(self):
         try:
-            txt = self.GetConfigEntry("RecentProjects", [])
-            recent_projects = list(map(DecodeFileSystemPath, txt))
+            recent_projects = list(map(DecodeFileSystemPath,
+                                  self.GetConfigEntry("RecentProjects", [])))
         except Exception:
             recent_projects = []
 
@@ -598,9 +708,9 @@ class Beremiz(IDEFrame):
             item = self.RecentProjectsMenu.FindItemByPosition(0)
             self.RecentProjectsMenu.Remove(item)
 
-        # self.FileMenu.Enable(ID_FILEMENURECENTPROJECTS, len(recent_projects) > 0)
+        self.FileMenu.Enable(ID_FILEMENURECENTPROJECTS, len(recent_projects) > 0)
         for idx, projectpath in enumerate(recent_projects):
-            text = u'&%d: %s' % (idx + 1, projectpath)
+            text = '&%d: %s' % (idx + 1, projectpath)
 
             item = self.RecentProjectsMenu.Append(wx.ID_ANY, text, '')
             self.Bind(wx.EVT_MENU, self.GenerateOpenRecentProjectFunction(projectpath), item)
@@ -619,7 +729,7 @@ class Beremiz(IDEFrame):
                 text, id = infos
                 submenu = wx.Menu('')
                 self.GenerateMenuRecursive(kind, submenu)
-                menu.Append(id, text, submenu)
+                menu.AppendMenu(id, text, submenu)
             elif kind == wx.ITEM_SEPARATOR:
                 menu.AppendSeparator()
             else:
@@ -644,8 +754,9 @@ class Beremiz(IDEFrame):
             for confnode_method in self.CTR.StatusMethods:
                 if "method" in confnode_method and confnode_method.get("shown", True):
                     tool = StatusToolBar.AddTool(
-                        toolId=wx.ID_ANY, bitmap=GetBitmap(confnode_method.get("bitmap", "Unknown")),
-                        shortHelp=confnode_method["tooltip"], label=confnode_method["name"])
+                        wx.ID_ANY, confnode_method["name"],
+                        GetBitmap(confnode_method.get("bitmap", "Unknown")),
+                        confnode_method["tooltip"])
                     self.Bind(wx.EVT_MENU, self.GetMenuCallBackFunction(confnode_method["method"]), tool)
 
             StatusToolBar.Realize()
@@ -712,9 +823,9 @@ class Beremiz(IDEFrame):
         return OnMenu
 
     def GetConfigEntry(self, entry_name, default):
-        dv = pickle.dumps(default, 0).decode()
-        tt = self.Config.Read(entry_name, dv).encode()
-        return pickle.loads(tt)
+        return pickle.loads(self.Config.Read(entry_name,
+                                             pickle.dumps(default,
+                                                          0).decode()).encode())
 
     def ResetConnectionStatusBar(self):
         for field in range(self.ConnectionStatusBar.GetFieldsCount()):
@@ -733,17 +844,18 @@ class Beremiz(IDEFrame):
     def RefreshConfigRecentProjects(self, projectpath, err=False):
         try:
             recent_projects = list(map(DecodeFileSystemPath,
-                                       self.GetConfigEntry("RecentProjects", [])))
+                                  self.GetConfigEntry("RecentProjects", [])))
         except Exception:
             recent_projects = []
         if projectpath in recent_projects:
             recent_projects.remove(projectpath)
         if not err:
             recent_projects.insert(0, projectpath)
-        txt = list(map(EncodeFileSystemPath, recent_projects[:MAX_RECENT_PROJECTS]))
-        tt = pickle.dumps(txt, 0)
-        # tt = str(txt)
-        self.Config.Write("RecentProjects", tt)
+        self.Config.Write("RecentProjects",
+                          pickle.dumps(
+                              list(map(EncodeFileSystemPath,
+                                       recent_projects[:MAX_RECENT_PROJECTS])),
+                              0))
         self.Config.Flush()
 
     def ResetPerspective(self):
@@ -866,19 +978,27 @@ class Beremiz(IDEFrame):
         self.Close()
 
     def OnAboutMenu(self, event):
-        info = version.GetAboutDialogInfo()
+        info = wx.adv.AboutDialogInfo()
+        info = version.GetAboutDialogInfo(info)
+        info.Name = "Beremiz"
+        info.Description = _("Open Source framework for automation, "
+            "implementing IEC 61131 IDE with constantly growing set of extensions "
+            "and flexible PLC runtime.")
+
+        info.Icon = wx.Icon(Bpath("images", "about_brz_logo.png"), wx.BITMAP_TYPE_PNG)
+
         ShowAboutDialog(self, info)
 
     def OnProjectTreeItemBeginEdit(self, event):
         selected = event.GetItem()
-        if self.ProjectTree.GetItemData(selected)["type"] == ITEM_CONFNODE:
+        if self.ProjectTree.GetPyData(selected)["type"] == ITEM_CONFNODE:
             event.Veto()
         else:
             IDEFrame.OnProjectTreeItemBeginEdit(self, event)
 
     def OnProjectTreeRightUp(self, event):
         item = event.GetItem()
-        item_infos = self.ProjectTree.GetItemData(item)
+        item_infos = self.ProjectTree.GetPyData(item)
 
         if item_infos["type"] == ITEM_CONFNODE:
             confnode_menu = wx.Menu(title='')
@@ -914,7 +1034,7 @@ class Beremiz(IDEFrame):
 
     def OnProjectTreeItemActivated(self, event):
         selected = event.GetItem()
-        item_infos = self.ProjectTree.GetItemData(selected)
+        item_infos = self.ProjectTree.GetPyData(selected)
         if item_infos["type"] == ITEM_CONFNODE:
             item_infos["confnode"]._OpenView()
             event.Skip()
@@ -925,7 +1045,7 @@ class Beremiz(IDEFrame):
 
     def ProjectTreeItemSelect(self, select_item):
         if select_item is not None and select_item.IsOk():
-            item_infos = self.ProjectTree.GetItemData(select_item)
+            item_infos = self.ProjectTree.GetPyData(select_item)
             if item_infos["type"] == ITEM_CONFNODE:
                 item_infos["confnode"]._OpenView(onlyopened=True)
             elif item_infos["type"] == ITEM_PROJECT:

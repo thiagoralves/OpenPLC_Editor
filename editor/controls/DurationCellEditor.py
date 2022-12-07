@@ -23,18 +23,20 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
+
 import wx
-import wx.grid
+
+from dialogs.DurationEditorDialog import DurationEditorDialog
 
 
-class DurationCellControl(wx.Control):
+class DurationCellControl(wx.PyControl):
 
     '''
     Custom cell editor control with a text box and a button that launches
     the DurationEditorDialog.
     '''
     def __init__(self, parent):
-        wx.Control.__init__(self, parent)
+        wx.PyControl.__init__(self, parent)
 
         main_sizer = wx.FlexGridSizer(cols=2, hgap=0, rows=1, vgap=0)
         main_sizer.AddGrowableCol(0)
@@ -68,7 +70,6 @@ class DurationCellControl(wx.Control):
         self.Layout()
 
     def OnEditButtonClick(self, event):
-        from dialogs.DurationEditorDialog import DurationEditorDialog
         # pop up the Duration Editor dialog
         dialog = DurationEditorDialog(self)
         dialog.SetDuration(self.Duration.GetValue())
@@ -107,9 +108,6 @@ class DurationCellEditor(wx.grid.GridCellEditor):
         self.Table = table
         self.Colname = colname
 
-    def __del__(self):
-        self.CellControl = None
-
     def Create(self, parent, id, evt_handler):
         self.CellControl = DurationCellControl(parent)
         self.SetControl(self.CellControl)
@@ -121,26 +119,23 @@ class DurationCellEditor(wx.grid.GridCellEditor):
         self.CellControl.SetValue(self.Table.GetValueByName(row, self.Colname))
         self.CellControl.SetFocus()
 
-    def EndEditInternal(self, row, col, grid, old_duration):
-        duration = self.CellControl.GetValue()
-        changed = duration != old_duration
+    def EndEdit(self, row, col, grid, oldval):
+        value = self.CellControl.GetValue()
+        changed = value != oldval
         if changed:
-            self.Table.SetValueByName(row, self.Colname, duration)
-        self.CellControl.Disable()
-        return changed
+            return value
+        else:
+            return None
 
-    if wx.VERSION >= (3, 0, 0):
-        def EndEdit(self, row, col, grid, oldval):
-            return self.EndEditInternal(row, col, grid, oldval)
-    else:
-        def EndEdit(self, row, col, grid):
-            oldval = self.Table.GetValueByName(row, self.Colname)
-            return self.EndEditInternal(row, col, grid, oldval)
+    def ApplyEdit(self, row, col, grid):
+        value = self.CellControl.GetValue()
+        self.Table.SetValueByName(row, self.Colname, value)
+        self.CellControl.Disable()
 
     def SetSize(self, rect):
-        self.CellControl.SetSize(rect.x + 1, rect.y,
-                                 rect.width, rect.height,
-                                 wx.SIZE_ALLOW_MINUS_ONE)
+        self.CellControl.SetDimensions(rect.x + 1, rect.y,
+                                       rect.width, rect.height,
+                                       wx.SIZE_ALLOW_MINUS_ONE)
 
     def Clone(self):
         return DurationCellEditor(self.Table, self.Colname)

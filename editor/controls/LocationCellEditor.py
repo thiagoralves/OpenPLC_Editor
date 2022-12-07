@@ -23,18 +23,20 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
+
 import wx
-import wx.grid
+
+from dialogs.BrowseLocationsDialog import BrowseLocationsDialog
 
 
-class LocationCellControl(wx.Control):
+class LocationCellControl(wx.PyControl):
 
     '''
     Custom cell editor control with a text box and a button that launches
     the BrowseLocationsDialog.
     '''
     def __init__(self, parent):
-        wx.Control.__init__(self, parent)
+        wx.PyControl.__init__(self, parent)
 
         main_sizer = wx.FlexGridSizer(cols=2, hgap=0, rows=1, vgap=0)
         main_sizer.AddGrowableCol(0)
@@ -59,9 +61,6 @@ class LocationCellControl(wx.Control):
         self.VarType = None
         self.Default = False
         self.VariableName = None
-
-    def __del__(self):
-        self.Controller = None
 
     def SetController(self, controller):
         self.Controller = controller
@@ -88,7 +87,6 @@ class LocationCellControl(wx.Control):
         self.Layout()
 
     def OnBrowseButtonClick(self, event):
-        from dialogs.BrowseLocationsDialog import BrowseLocationsDialog
         # pop up the location browser dialog
         dialog = BrowseLocationsDialog(self, self.VarType, self.Controller)
         if dialog.ShowModal() == wx.ID_OK:
@@ -159,10 +157,6 @@ class LocationCellEditor(wx.grid.GridCellEditor):
         self.Table = table
         self.Controller = controller
 
-    def __del__(self):
-        self.CellControl = None
-        self.Controller = None
-
     def Create(self, parent, id, evt_handler):
         self.CellControl = LocationCellControl(parent)
         self.SetControl(self.CellControl)
@@ -177,7 +171,7 @@ class LocationCellEditor(wx.grid.GridCellEditor):
             self.CellControl.SetVarType(self.Table.GetValueByName(row, 'Type'))
         self.CellControl.SetFocus()
 
-    def EndEditInternal(self, row, col, grid, old_loc):
+    def EndEdit(self, row, col, grid, old_loc):
         loc = self.CellControl.GetValue()
         changed = loc != old_loc
         if changed:
@@ -200,21 +194,13 @@ class LocationCellEditor(wx.grid.GridCellEditor):
         self.CellControl.Disable()
         return changed
 
-    if wx.VERSION >= (3, 0, 0):
-        def EndEdit(self, row, col, grid, oldval):
-            return self.EndEditInternal(row, col, grid, oldval)
-    else:
-        def EndEdit(self, row, col, grid):
-            old_loc = self.Table.GetValueByName(row, 'Location')
-            return self.EndEditInternal(row, col, grid, old_loc)
-
-    def SetSize(self, rect):
-        self.CellControl.SetSize(rect.x + 1, rect.y,
-                                 rect.width, rect.height,
-                                 wx.SIZE_ALLOW_MINUS_ONE)
-
     def ApplyEdit(self, row, col, grid):
         pass
+
+    def SetSize(self, rect):
+        self.CellControl.SetDimensions(rect.x + 1, rect.y,
+                                       rect.width, rect.height,
+                                       wx.SIZE_ALLOW_MINUS_ONE)
 
     def Clone(self):
         return LocationCellEditor(self.Table, self.Controller)

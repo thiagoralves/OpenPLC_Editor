@@ -23,10 +23,10 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
+
 import wx
 
-from controls import ProjectPropertiesPanel
-from controls.VariablePanel import VariablePanel
+from controls import ProjectPropertiesPanel, VariablePanel
 from editors.ConfTreeNodeEditor import ConfTreeNodeEditor
 from plcopen.types_enums import ComputeConfigurationName
 

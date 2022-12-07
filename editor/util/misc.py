@@ -26,17 +26,15 @@
 Misc definitions
 """
 
-import os
-import sys
+
+
+import os,sys
+import random
 from functools import reduce
-from os import path
 
 from util.BitmapLibrary import AddBitmapFolder
 from util.TranslationCatalogs import AddCatalog
 
-_base_path = os.path.abspath(os.path.dirname(__file__))
-_base_path = os.path.abspath(path.join(_base_path, '..'))
-sys.path.append(_base_path)
 
 def CheckPathPerm(path):
     """ Helper func to check path write permission """
@@ -45,8 +43,19 @@ def CheckPathPerm(path):
     for root, dirs, files in os.walk(path):
         files = [f for f in files if not f[0] == '.']
         dirs[:] = [d for d in dirs if not d[0] == '.']
+        if sys.platform.startswith('win'):
+            try:
+                testdirpath = os.path.join(root, "testdir_" + str(random.randint(0, 4294967296)))
+                os.mkdir(testdirpath)
+                os.rmdir(testdirpath)
+            except:
+                return False
+        else:
+            if os.access(root, os.W_OK) is not True:
+                return False
+
         for name in files:
-            if os.access(root, os.W_OK) is not True or os.access(os.path.join(root, name), os.W_OK) is not True:
+            if os.access(os.path.join(root, name), os.W_OK) is not True:
                 return False
     return True
 
@@ -74,14 +83,3 @@ def InstallLocalRessources(CWD):
 
     # Internationalization
     AddCatalog(os.path.join(CWD, "locale"))
-
-def execfile(filepath, globals=None, locals=None):
-    if globals is None:
-        globals = {}
-
-    globals.update({
-        "__file__": filepath,
-        "__name__": "__main__",
-    })
-    with open(filepath, 'rb') as file:
-        exec(compile(file.read(), filepath, 'exec'), globals, locals)

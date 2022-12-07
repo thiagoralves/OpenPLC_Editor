@@ -24,9 +24,9 @@
 
 
 import os
-
-import wx
 import builtins
+import wx
+
 
 locale = None
 

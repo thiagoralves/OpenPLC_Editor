@@ -2,8 +2,16 @@
 #include "defines.h"
 
 #ifdef MODBUS_ENABLED
-#include "Modbus.h"
-#include "ModbusSerial.h"
+#include "ModbusSlave.h"
+#endif
+
+//Include WiFi lib to turn off WiFi radio on ESP32 and ESP8266 boards if we're not using WiFi
+#ifndef MBTCP
+    #if defined(BOARD_ESP8266)
+        #include <ESP8266WiFi.h>
+    #elif defined(BOARD_ESP32)
+        #include <WiFi.h>
+    #endif
 #endif
 
 unsigned long __tick = 0;
@@ -13,11 +21,10 @@ unsigned long timer_ms = 0;
 
 #include "arduino_libs.h"
 
-
-#ifdef MODBUS_ENABLED
-//Modbus Object
-ModbusSerial modbus;
-#endif
+extern uint8_t pinMask_DIN[];
+extern uint8_t pinMask_AIN[];
+extern uint8_t pinMask_DOUT[];
+extern uint8_t pinMask_AOUT[];
 
 /*
 extern "C" int availableMemory(char *);
@@ -44,11 +51,14 @@ void setupCycleDelay(unsigned long long cycle_time)
 void cycleDelay()
 {
     //just wait until it is time to start a new cycle
+    #ifdef MODBUS_ENABLED
+    syncModbusBuffers();
+    #endif
     while(timer_ms > millis())
     {
         #ifdef MODBUS_ENABLED
-        //Only run Modbus task if we have at least 1ms gap until the next cycle
-        if (timer_ms - millis() >= 1)
+        //Only run Modbus task again if we have at least 100ms gap until the next cycle
+        if (timer_ms - millis() >= 100)
         {
             syncModbusBuffers();
         }
@@ -60,56 +70,72 @@ void cycleDelay()
 }
 
 void setup() 
-{   
+{
+    //Turn off WiFi radio on ESP32 and ESP8266 boards if we're not using WiFi
+    #ifndef MBTCP
+        #if defined(BOARD_ESP8266) || defined(BOARD_ESP32)
+            WiFi.mode(WIFI_OFF);
+        #endif
+    #endif
     hardwareInit();
     config_init__();
     glueVars();
 	#ifdef MODBUS_ENABLED
-    #ifdef MBSERIAL
-	//Config Modbus Serial (port, speed, rs485 tx pin)
-	modbus.config(&MBSERIAL_IFACE, MBSERIAL_BAUD, -1);
+        #ifdef MBSERIAL
+	        //Config Modbus Serial (port, speed, rs485 tx pin)
+            #ifdef MBSERIAL_TXPIN
+                //Disable TX pin from OpenPLC hardware layer
+                for (int i = 0; i < NUM_DISCRETE_INPUT; i++)
+                {
+                    if (pinMask_DIN[i] == MBSERIAL_TXPIN)
+                        pinMask_DIN[i] = 255;
+                }
+                for (int i = 0; i < NUM_ANALOG_INPUT; i++)
+                {
+                    if (pinMask_AIN[i] == MBSERIAL_TXPIN)
+                        pinMask_AIN[i] = 255;
+                }
+                for (int i = 0; i < NUM_DISCRETE_OUTPUT; i++)
+                {
+                    if (pinMask_DOUT[i] == MBSERIAL_TXPIN)
+                        pinMask_DOUT[i] = 255;
+                }
+                for (int i = 0; i < NUM_ANALOG_OUTPUT; i++)
+                {
+                    if (pinMask_AOUT[i] == MBSERIAL_TXPIN)
+                        pinMask_AOUT[i] = 255;
+                }
+                mbconfig_serial_iface(&MBSERIAL_IFACE, MBSERIAL_BAUD, MBSERIAL_TXPIN);
+            #else
+                mbconfig_serial_iface(&MBSERIAL_IFACE, MBSERIAL_BAUD, -1);
+            #endif
 	
-	//Set the Slave ID
-	modbus.setSlaveId(0); 
-    #endif
+	        //Set the Slave ID
+	        modbus.slaveid = MBSERIAL_SLAVE;
+        #endif
     
-    #ifdef MBTCP
-    byte mac[] = { MBTCP_MAC };
-    byte ip[] = { MBTCP_IP };
-    byte dns[] = { MBTCP_DNS };
-    byte gateway[] = { MBTCP_GATEWAY };
-    byte subnet[] = { MBTCP_SUBNET };
-    
-    if (sizeof(ip)/sizeof(byte) < 4)
-        modbus.config(mac);
-    else if (sizeof(dns)/sizeof(byte) < 4)
-        modbus.config(mac, ip);
-    else if (sizeof(gateway)/sizeof(byte) < 4)
-        modbus.config(mac, ip, dns);
-    else if (sizeof(subnet)/sizeof(byte) < 4)
-        modbus.config(mac, ip, dns, gateway);
-    else
-        modbus.config(mac, ip, dns, gateway, subnet);
-    #endif
-	
-	//Add all modbus registers
-	for (int i = 0; i < MAX_DIGITAL_INPUT; ++i) 
-	{
-		modbus.addIsts(i);
-	}
-	for (int i = 0; i < MAX_ANALOG_INPUT; ++i) 
-	{
-		modbus.addIreg(i);
-	}
-	for (int i = 0; i < MAX_DIGITAL_OUTPUT; ++i) 
-	{
-		modbus.addCoil(i);
-	}
-	for (int i = 0; i < MAX_ANALOG_OUTPUT; ++i) 
-	{
-		modbus.addHreg(i);
-	}
-    mapEmptyBuffers();
+        #ifdef MBTCP
+        uint8_t mac[] = { MBTCP_MAC };
+        uint8_t ip[] = { MBTCP_IP };
+        uint8_t dns[] = { MBTCP_DNS };
+        uint8_t gateway[] = { MBTCP_GATEWAY };
+        uint8_t subnet[] = { MBTCP_SUBNET };
+        
+        if (sizeof(ip)/sizeof(uint8_t) < 4)
+            mbconfig_ethernet_iface(mac, NULL, NULL, NULL, NULL);
+        else if (sizeof(dns)/sizeof(uint8_t) < 4)
+            mbconfig_ethernet_iface(mac, ip, NULL, NULL, NULL);
+        else if (sizeof(gateway)/sizeof(uint8_t) < 4)
+            mbconfig_ethernet_iface(mac, ip, dns, NULL, NULL);
+        else if (sizeof(subnet)/sizeof(uint8_t) < 4)
+            mbconfig_ethernet_iface(mac, ip, dns, gateway, NULL);
+        else
+            mbconfig_ethernet_iface(mac, ip, dns, gateway, subnet);
+        #endif
+        
+        //Add all modbus registers
+        init_mbregs(MAX_ANALOG_OUTPUT, MAX_DIGITAL_OUTPUT, MAX_ANALOG_INPUT, MAX_DIGITAL_INPUT);
+        mapEmptyBuffers();
 	#endif
 
     setupCycleDelay(common_ticktime__);
@@ -131,8 +157,7 @@ void mapEmptyBuffers()
     {
         if (int_output[i] == NULL)
         {
-			int_output[i] = (IEC_UINT *)malloc(sizeof(IEC_UINT));
-			*int_output[i] = 0;
+			int_output[i] = (IEC_UINT *)(modbus.holding + i);
         }
     }
     for (int i = 0; i < MAX_DIGITAL_INPUT; i++)
@@ -147,8 +172,7 @@ void mapEmptyBuffers()
     {
         if (int_input[i] == NULL)
         {
-			int_input[i] = (IEC_UINT *)malloc(sizeof(IEC_UINT));
-			*int_input[i] = 0;
+			int_input[i] = (IEC_UINT *)(modbus.input_regs + i);
         }
     }
 }
@@ -159,47 +183,47 @@ void syncModbusBuffers()
     {
         if (bool_output[i/8][i%8] != NULL)
         {
-			modbus.Coil(i, (bool)*bool_output[i/8][i%8]);
+            write_discrete(i, COILS, (bool)*bool_output[i/8][i%8]);
         }
     }
     for (int i = 0; i < MAX_ANALOG_OUTPUT; i++)
     {
         if (int_output[i] != NULL)
         {
-			modbus.Hreg(i, *int_output[i]);
+            modbus.holding[i] = *int_output[i];
         }
     }
     for (int i = 0; i < MAX_DIGITAL_INPUT; i++)
     {
         if (bool_input[i/8][i%8] != NULL)
         {
-			modbus.Ists(i, (bool)*bool_input[i/8][i%8]);
+            write_discrete(i, INPUTSTATUS, (bool)*bool_input[i/8][i%8]);
         }
     }
     for (int i = 0; i < MAX_ANALOG_INPUT; i++)
     {
         if (int_input[i] != NULL)
         {
-			modbus.Ireg(i, *int_input[i]);
+            modbus.input_regs[i] = *int_input[i];
         }
     }
     
     //Read changes from clients
-    modbus.task();
+    mbtask();
     
     //Write changes back to OpenPLC Buffers
     for (int i = 0; i < MAX_DIGITAL_OUTPUT; i++)
     {
         if (bool_output[i/8][i%8] != NULL)
         {
-            *bool_output[i/8][i%8] = (uint8_t)modbus.Coil(i);
+            *bool_output[i/8][i%8] = get_discrete(i, COILS);
         }
     }
     for (int i = 0; i < MAX_ANALOG_OUTPUT; i++)
     {
         if (int_output[i] != NULL)
         {
-            *int_output[i] = (uint16_t)modbus.Hreg(i);
+            *int_output[i] = modbus.holding[i];
         }
     }
 }
