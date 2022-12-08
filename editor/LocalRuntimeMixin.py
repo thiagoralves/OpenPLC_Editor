@@ -12,7 +12,7 @@ from util.paths import Bpath
 LocalRuntimeInterpreterPath = \
     os.environ["BEREMIZPYTHONPATH"] \
     if "BEREMIZPYTHONPATH" in os.environ \
-    else sys.executable if "darwin" not in sys.platform \
+    else sys.executable if "windows" not in sys.platform \
         else sys.executable + 'w'
 
 class LocalRuntimeMixin():

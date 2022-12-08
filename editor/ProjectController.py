@@ -1100,7 +1100,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
                 }[v["vartype"]] % v +
                 "}")
 
-            if v["retain"] == "1":
+            if "retain" in v and v["retain"] == "1":
                 retain_indexes.append("/* "+v["C_path"]+" */ "+str(i))
 
         debug_code = targets.GetCode("plc_debug.c") % {

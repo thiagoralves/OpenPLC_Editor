@@ -226,10 +226,11 @@ class ProcessLogger(object):
 
     def endlog(self):
         if self.endlock.acquire(False):
-            if not self.outt.finished and self.kill_it:
-                self.kill()
-            self.finishsem.release()
-            self.spinwakeup()
+            if hasattr(self, 'outt'): 
+                if not self.outt.finished and self.kill_it:
+                    self.kill()
+                self.finishsem.release()
+                self.spinwakeup()
 
     def spinwakeup(self):
         with self.spinwakeuplock:
