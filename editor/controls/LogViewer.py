@@ -40,6 +40,13 @@ THUMB_SIZE_RATIO = 1. / 8.
 
 
 def ArrowPoints(direction, width, height, xoffset, yoffset):
+    if type(width) is float or type(height) is float or type(xoffset) is float or type(yoffset) is float:
+        print("WARNING: ArrowPoints: some of input is float")
+        width = int(width)
+        height = int(height)
+        xoffset = int(xoffset)
+        yoffset = int(yoffset)
+
     if direction == wx.TOP:
         return [wx.Point(xoffset + 1, yoffset + height - 2),
                 wx.Point(xoffset + width // 2, yoffset + 1),
