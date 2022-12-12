@@ -191,7 +191,7 @@ class LD_PowerRail(Graphic_Element):
             else:
                 position = self.Extensions[0] + int(round(i * interval))
             if scaling is not None:
-                position = round((self.Pos.y + position) / scaling[1]) * scaling[1] - self.Pos.y
+                position = int(round((self.Pos.y + position) / scaling[1]) * scaling[1] - self.Pos.y)
             if self.Type == LEFTRAIL:
                 connector.SetPosition(wx.Point(self.Size[0], position))
             elif self.Type == RIGHTRAIL:
@@ -545,7 +545,7 @@ class LD_Contact(Graphic_Element, DebugDataConsumer):
         scaling = self.Parent.GetScaling()
         position = self.Size[1] // 2 + 1
         if scaling is not None:
-            position = round((self.Pos.y + position) / scaling[1]) * scaling[1] - self.Pos.y
+            position = int(round((self.Pos.y + position) / scaling[1]) * scaling[1] - self.Pos.y)
         self.Input.SetPosition(wx.Point(0, position))
         self.Output.SetPosition(wx.Point(self.Size[0], position))
         self.RefreshConnected()
@@ -593,11 +593,11 @@ class LD_Contact(Graphic_Element, DebugDataConsumer):
         dc.SetBrush(wx.Brush(HIGHLIGHTCOLOR))
         dc.SetLogicalFunction(wx.AND)
         # Draw two rectangles for representing the contact
-        left_left = (self.Pos.x - 1) * scalex - 2
-        right_left = (self.Pos.x + self.Size[0] - 2) * scalex - 2
-        top = (self.Pos.y - 1) * scaley - 2
-        width = 4 * scalex + 5
-        height = (self.Size[1] + 3) * scaley + 5
+        left_left = int((self.Pos.x - 1) * scalex - 2)
+        right_left = int((self.Pos.x + self.Size[0] - 2) * scalex - 2)
+        top = int((self.Pos.y - 1) * scaley - 2)
+        width = int(4 * scalex + 5)
+        height = int((self.Size[1] + 3) * scaley + 5)
 
         dc.DrawRectangle(left_left, top, width, height)
         dc.DrawRectangle(right_left, top, width, height)
@@ -865,7 +865,7 @@ class LD_Coil(Graphic_Element):
         scaling = self.Parent.GetScaling()
         position = self.Size[1] // 2 + 1
         if scaling is not None:
-            position = round((self.Pos.y + position) / scaling[1]) * scaling[1] - self.Pos.y
+            position = int(round((self.Pos.y + position) / scaling[1]) * scaling[1] - self.Pos.y)
         self.Input.SetPosition(wx.Point(0, position))
         self.Output.SetPosition(wx.Point(self.Size[0], position))
         self.RefreshConnected()
