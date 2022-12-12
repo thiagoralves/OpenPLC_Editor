@@ -183,8 +183,8 @@ def GetScaledEventPosition(event, dc, scaling):
     """
     pos = event.GetLogicalPosition(dc)
     if scaling:
-        pos.x = round(pos.x / scaling[0]) * scaling[0]
-        pos.y = round(pos.y / scaling[1]) * scaling[1]
+        pos.x = int(round(pos.x / scaling[0]) * scaling[0])
+        pos.y = int(round(pos.y / scaling[1]) * scaling[1])
     return pos
 
 
@@ -314,6 +314,11 @@ class Graphic_Element(ToolTipProducer):
 
     # Changes the block position
     def SetPosition(self, x, y):
+        # TODO: FIX this at source of float, here it is just workaround
+        if type(x) is float or type(y) is float:
+            print("WARNING: position is float instead int")
+            x = int(x)
+            y = int(y)
         self.Pos.x = x
         self.Pos.y = y
         self.RefreshConnected()
@@ -325,6 +330,12 @@ class Graphic_Element(ToolTipProducer):
 
     # Changes the element size
     def SetSize(self, width, height):
+        # TODO: FIX this at source of float, here it is just workaround
+        if type(width) is float or type(height) is float:
+            print("WARNING: size is float instead int")
+            width = int(width)
+            height = int(height)
+
         self.Size.SetWidth(width)
         self.Size.SetHeight(height)
         self.RefreshConnectors()
@@ -431,13 +442,13 @@ class Graphic_Element(ToolTipProducer):
         pos = event.GetPosition()
         pt = wx.Point(*self.Parent.CalcUnscrolledPosition(pos.x, pos.y))
 
-        left = (self.BoundingBox.x - 2) * scalex - HANDLE_SIZE
+        left = int((self.BoundingBox.x - 2) * scalex - HANDLE_SIZE)
         center = (self.BoundingBox.x + self.BoundingBox.width // 2) * scalex - HANDLE_SIZE // 2
-        right = (self.BoundingBox.x + self.BoundingBox.width + 2) * scalex
+        right = int((self.BoundingBox.x + self.BoundingBox.width + 2) * scalex)
 
-        top = (self.BoundingBox.y - 2) * scaley - HANDLE_SIZE
+        top = int((self.BoundingBox.y - 2) * scaley - HANDLE_SIZE)
         middle = (self.BoundingBox.y + self.BoundingBox.height / 2) * scaley - HANDLE_SIZE // 2
-        bottom = (self.BoundingBox.y + self.BoundingBox.height + 2) * scaley
+        bottom = int((self.BoundingBox.y + self.BoundingBox.height + 2) * scaley)
 
         extern_rect = wx.Rect(left, top, right + HANDLE_SIZE - left, bottom + HANDLE_SIZE - top)
         intern_rect = wx.Rect(left + HANDLE_SIZE, top + HANDLE_SIZE, right - left - HANDLE_SIZE, bottom - top - HANDLE_SIZE)
@@ -679,13 +690,13 @@ class Graphic_Element(ToolTipProducer):
                 dc.SetPen(MiterPen(wx.BLACK))
                 dc.SetBrush(wx.BLACK_BRUSH)
 
-                left = (self.BoundingBox.x - 2) * scalex - HANDLE_SIZE
+                left = int((self.BoundingBox.x - 2) * scalex - HANDLE_SIZE)
                 center = (self.BoundingBox.x + self.BoundingBox.width // 2) * scalex - HANDLE_SIZE // 2
-                right = (self.BoundingBox.x + self.BoundingBox.width + 2) * scalex
+                right = int((self.BoundingBox.x + self.BoundingBox.width + 2) * scalex)
 
-                top = (self.BoundingBox.y - 2) * scaley - HANDLE_SIZE
+                top = int((self.BoundingBox.y - 2) * scaley - HANDLE_SIZE)
                 middle = (self.BoundingBox.y + self.BoundingBox.height // 2) * scaley - HANDLE_SIZE // 2
-                bottom = (self.BoundingBox.y + self.BoundingBox.height + 2) * scaley
+                bottom = int((self.BoundingBox.y + self.BoundingBox.height + 2) * scaley)
 
                 for x, y in [(left, top), (center, top), (right, top),
                              (left, middle), (right, middle),
