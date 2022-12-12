@@ -29,7 +29,9 @@ from collections import OrderedDict
 from functools import reduce
 
 import wx
-from matplotlib.backends.backend_wxagg import _convert_agg_to_wx_bitmap
+
+# TODO: Do this proper way! Do not use private functions from random libraries
+from matplotlib.backends.backend_wxagg import _rgba_to_wx_bitmap
 
 from dialogs.ForceVariableDialog import ForceVariableDialog
 
@@ -303,8 +305,9 @@ class DebugVariableViewer(object):
                 srcX = srcBBox.x - (srcPos.x if destBBox.x == 0 else 0)
                 srcY = srcBBox.y - (srcPos.y if destBBox.y == 0 else 0)
 
-                srcBmp = _convert_agg_to_wx_bitmap(
-                    srcPanel.get_renderer(), None)
+                # TODO: Do this proper way! Do not use private functions from random libraries
+                srcBmp = _rgba_to_wx_bitmap(
+                    srcPanel.get_renderer().buffer_rgba())
                 srcDC = wx.MemoryDC()
                 srcDC.SelectObject(srcBmp)
 
