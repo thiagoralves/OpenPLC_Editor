@@ -31,7 +31,9 @@ import wx
 import matplotlib
 import matplotlib.pyplot
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
-from matplotlib.backends.backend_wxagg import _convert_agg_to_wx_bitmap
+
+# TODO: Do this proper way! Do not use private functions from random libraries
+from matplotlib.backends.backend_wxagg import _rgba_to_wx_bitmap
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 from mpl_toolkits.mplot3d import Axes3D
 
@@ -1360,7 +1362,8 @@ class DebugVariableGraphicViewer(DebugVariableViewer, FigureCanvas):
         FigureCanvasAgg.draw(self)
 
         # Get bitmap of figure rendered
-        self.bitmap = _convert_agg_to_wx_bitmap(self.get_renderer(), None)
+        # TODO: Do this proper way! Do not use private functions from random libraries
+        self.bitmap = _rgba_to_wx_bitmap(self.get_renderer().buffer_rgba())
         if wx.VERSION < (3, 0, 0):
             self.bitmap.UseAlpha()
 
