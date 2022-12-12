@@ -201,6 +201,10 @@ def DirectionChoice(v_base, v_target, dir_target):
 
 
 def MiterPen(colour, width=1, style=wx.SOLID):
+    if type(width) is float:
+        print("WARNING: MiterPen: width is in float instead int")
+        width = int(width)
+
     pen = wx.Pen(colour, width, style)
     pen.SetJoin(wx.JOIN_MITER)
     pen.SetCap(wx.CAP_PROJECTING)
@@ -691,11 +695,11 @@ class Graphic_Element(ToolTipProducer):
                 dc.SetBrush(wx.BLACK_BRUSH)
 
                 left = int((self.BoundingBox.x - 2) * scalex - HANDLE_SIZE)
-                center = (self.BoundingBox.x + self.BoundingBox.width // 2) * scalex - HANDLE_SIZE // 2
+                center = int((self.BoundingBox.x + self.BoundingBox.width // 2) * scalex - HANDLE_SIZE // 2)
                 right = int((self.BoundingBox.x + self.BoundingBox.width + 2) * scalex)
 
                 top = int((self.BoundingBox.y - 2) * scaley - HANDLE_SIZE)
-                middle = (self.BoundingBox.y + self.BoundingBox.height // 2) * scaley - HANDLE_SIZE // 2
+                middle = int((self.BoundingBox.y + self.BoundingBox.height // 2) * scaley - HANDLE_SIZE // 2)
                 bottom = int((self.BoundingBox.y + self.BoundingBox.height + 2) * scaley)
 
                 for x, y in [(left, top), (center, top), (right, top),
