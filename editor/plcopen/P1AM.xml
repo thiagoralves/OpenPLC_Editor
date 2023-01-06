@@ -1,0 +1,225 @@
+<?xml version='1.0' encoding='utf-8'?>
+<project xmlns:ns1="http://www.plcopen.org/xml/tc6_0201" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.plcopen.org/xml/tc6_0201">
+  <fileHeader companyName="OpenPLC" productName="P1AM Function Blocks Library" productVersion="1.0" creationDateTime="2021-11-11T02:33:11"/>
+  <contentHeader name="P1AM Function Blocks" author="Thiago Alves" modificationDateTime="2021-11-11T02:33:11">
+    <coordinateInfo>
+      <fbd>
+        <scaling x="0" y="0"/>
+      </fbd>
+      <ld>
+        <scaling x="0" y="0"/>
+      </ld>
+      <sfc>
+        <scaling x="0" y="0"/>
+      </sfc>
+    </coordinateInfo>
+  </contentHeader>
+  <types>
+    <dataTypes/>
+    <pous>
+      <pou name="P1AM_INIT" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="INIT"><type><BOOL/></type></variable>
+          </inputVars>
+          <outputVars>
+            <variable name="SUCCESS"><type><SINT/></type></variable>
+          </outputVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[SUCCESS := 0;]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[Initialize P1AM Modules and return the number of initialized modules on SUCCESS. If SUCCESS is zero, an error has occurred, or there aren't any modules on the bus]]></xhtml:p>
+        </documentation>
+      </pou>
+      
+      <pou name="P1_16CDR" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="SLOT"><type><SINT/></type></variable>
+            <variable name="O1"><type><BOOL/></type></variable>
+            <variable name="O2"><type><BOOL/></type></variable>
+            <variable name="O3"><type><BOOL/></type></variable>
+            <variable name="O4"><type><BOOL/></type></variable>
+            <variable name="O5"><type><BOOL/></type></variable>
+            <variable name="O6"><type><BOOL/></type></variable>
+            <variable name="O7"><type><BOOL/></type></variable>
+            <variable name="O8"><type><BOOL/></type></variable>
+          </inputVars>
+          <outputVars>
+            <variable name="I1"><type><BOOL/></type></variable>
+            <variable name="I2"><type><BOOL/></type></variable>
+            <variable name="I3"><type><BOOL/></type></variable>
+            <variable name="I4"><type><BOOL/></type></variable>
+            <variable name="I5"><type><BOOL/></type></variable>
+            <variable name="I6"><type><BOOL/></type></variable>
+            <variable name="I7"><type><BOOL/></type></variable>
+            <variable name="I8"><type><BOOL/></type></variable>
+          </outputVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[I1 := 0;]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[Get all inputs and update all outputs from P1-16CDR module. Also works with P1-15CDD1 and P1-15CDD2]]></xhtml:p>
+        </documentation>
+      </pou>
+      
+      <pou name="P1_08N" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="SLOT"><type><SINT/></type></variable>
+          </inputVars>
+          <outputVars>
+            <variable name="I1"><type><BOOL/></type></variable>
+            <variable name="I2"><type><BOOL/></type></variable>
+            <variable name="I3"><type><BOOL/></type></variable>
+            <variable name="I4"><type><BOOL/></type></variable>
+            <variable name="I5"><type><BOOL/></type></variable>
+            <variable name="I6"><type><BOOL/></type></variable>
+            <variable name="I7"><type><BOOL/></type></variable>
+            <variable name="I8"><type><BOOL/></type></variable>
+          </outputVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[I1 := 0;]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[Get all inputs from P1-08Nxx modules. Compatible with P1-08NA, P1-08ND3, P1-08NE3 and P1-08SIM]]></xhtml:p>
+        </documentation>
+      </pou>
+      
+      <pou name="P1_16N" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="SLOT"><type><SINT/></type></variable>
+          </inputVars>
+          <outputVars>
+            <variable name="I1"><type><BOOL/></type></variable>
+            <variable name="I2"><type><BOOL/></type></variable>
+            <variable name="I3"><type><BOOL/></type></variable>
+            <variable name="I4"><type><BOOL/></type></variable>
+            <variable name="I5"><type><BOOL/></type></variable>
+            <variable name="I6"><type><BOOL/></type></variable>
+            <variable name="I7"><type><BOOL/></type></variable>
+            <variable name="I8"><type><BOOL/></type></variable>
+            <variable name="I9"><type><BOOL/></type></variable>
+            <variable name="I10"><type><BOOL/></type></variable>
+            <variable name="I11"><type><BOOL/></type></variable>
+            <variable name="I12"><type><BOOL/></type></variable>
+            <variable name="I13"><type><BOOL/></type></variable>
+            <variable name="I14"><type><BOOL/></type></variable>
+            <variable name="I15"><type><BOOL/></type></variable>
+            <variable name="I16"><type><BOOL/></type></variable>
+          </outputVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[I1 := 0;]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[Get all inputs from P1-16Nxx modules. Compatible with P1-16ND3 and P1-16NE3]]></xhtml:p>
+        </documentation>
+      </pou>
+      
+      <pou name="P1_08T" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="SLOT"><type><SINT/></type></variable>
+            <variable name="O1"><type><BOOL/></type></variable>
+            <variable name="O2"><type><BOOL/></type></variable>
+            <variable name="O3"><type><BOOL/></type></variable>
+            <variable name="O4"><type><BOOL/></type></variable>
+            <variable name="O5"><type><BOOL/></type></variable>
+            <variable name="O6"><type><BOOL/></type></variable>
+            <variable name="O7"><type><BOOL/></type></variable>
+            <variable name="O8"><type><BOOL/></type></variable>
+          </inputVars>
+          <localVars>
+            <variable name="DUMMY"><type><SINT/></type></variable>
+          </localVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[DUMMY := SLOT;]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[Set all outputs on P1-08Txx modules. Compatible with P1-08TA, P1-08TD1, P1-08TD2 and P1-08TRS]]></xhtml:p>
+        </documentation>
+      </pou>
+      
+      <pou name="P1_16TR" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="SLOT"><type><SINT/></type></variable>
+            <variable name="O1"><type><BOOL/></type></variable>
+            <variable name="O2"><type><BOOL/></type></variable>
+            <variable name="O3"><type><BOOL/></type></variable>
+            <variable name="O4"><type><BOOL/></type></variable>
+            <variable name="O5"><type><BOOL/></type></variable>
+            <variable name="O6"><type><BOOL/></type></variable>
+            <variable name="O7"><type><BOOL/></type></variable>
+            <variable name="O8"><type><BOOL/></type></variable>
+            <variable name="O9"><type><BOOL/></type></variable>
+            <variable name="O10"><type><BOOL/></type></variable>
+            <variable name="O11"><type><BOOL/></type></variable>
+            <variable name="O12"><type><BOOL/></type></variable>
+            <variable name="O13"><type><BOOL/></type></variable>
+            <variable name="O14"><type><BOOL/></type></variable>
+            <variable name="O15"><type><BOOL/></type></variable>
+            <variable name="O16"><type><BOOL/></type></variable>
+          </inputVars>
+          <localVars>
+            <variable name="DUMMY"><type><SINT/></type></variable>
+          </localVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[DUMMY := SLOT;]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[Set all outputs on P1-16TR modules. Also compatible with P1-15TD1 and P1-15TD2]]></xhtml:p>
+        </documentation>
+      </pou>
+      
+      <pou name="P1_04AD" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="SLOT"><type><SINT/></type></variable>
+          </inputVars>
+          <outputVars>
+            <variable name="I1"><type><UINT/></type></variable>
+            <variable name="I2"><type><UINT/></type></variable>
+            <variable name="I3"><type><UINT/></type></variable>
+            <variable name="I4"><type><UINT/></type></variable>
+          </outputVars>
+          <localVars>
+            <variable name="DUMMY"><type><SINT/></type></variable>
+          </localVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[DUMMY := SLOT;]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[Get all analog inputs from P1-04ADxx modules. Compatible with P1-04AD, P1-04ADL-1 and P1-04ADL-2]]></xhtml:p>
+        </documentation>
+      </pou>
+      
+    </pous>
+  </types>
+  <instances>
+    <configurations/>
+  </instances>
+</project>

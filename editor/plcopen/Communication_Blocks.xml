@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='utf-8'?>
+<project xmlns:ns1="http://www.plcopen.org/xml/tc6_0201" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.plcopen.org/xml/tc6_0201">
+  <fileHeader companyName="OpenPLC" productName="Communication Blocks Library" productVersion="1.0" creationDateTime="2022-11-11T02:33:11"/>
+  <contentHeader name="Communication Blocks" author="Thiago Alves" modificationDateTime="2022-11-11T02:33:11">
+    <coordinateInfo>
+      <fbd>
+        <scaling x="0" y="0"/>
+      </fbd>
+      <ld>
+        <scaling x="0" y="0"/>
+      </ld>
+      <sfc>
+        <scaling x="0" y="0"/>
+      </sfc>
+    </coordinateInfo>
+  </contentHeader>
+  <types>
+    <dataTypes/>
+    <pous>
+      <pou name="TCP_CONNECT" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="CONNECT"><type><BOOL/></type></variable>
+            <variable name="IP_ADDRESS"><type><string/></type></variable>
+            <variable name="PORT"><type><INT/></type></variable>
+          </inputVars>
+          <outputVars>
+            <variable name="SOCKET_ID"><type><INT/></type></variable>
+          </outputVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[SOCKET_ID := 0;]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[Connect to a remote TCP server when CONNECT is TRUE. Upon success, this block returns the connection ID on SOCKET_ID. If SOCKET_ID is less than zero, then the connection was not successfull]]></xhtml:p>
+        </documentation>
+      </pou>
+      <pou name="TCP_SEND" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="SEND"><type><BOOL/></type></variable>
+            <variable name="SOCKET_ID"><type><INT/></type></variable>
+            <variable name="MSG"><type><string/></type></variable>
+          </inputVars>
+          <outputVars>
+            <variable name="BYTES_SENT"><type><INT/></type></variable>
+          </outputVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[BYTES_SENT := 0;]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[Send a message to a remote device using TCP/IP when SEND is TRUE. SOCKET_ID must receive a connection ID from a successfull connection using the TCP_Connect block. BYTES_SENT returns the number of bytes sent to the remote device. If BYTES_SENT is less than zero then an error occurred while trying to send the message]]></xhtml:p>
+        </documentation>
+      </pou>
+      <pou name="TCP_RECEIVE" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="RECEIVE"><type><BOOL/></type></variable>
+            <variable name="SOCKET_ID"><type><INT/></type></variable>
+          </inputVars>
+          <outputVars>
+            <variable name="BYTES_RECEIVED"><type><INT/></type></variable>
+            <variable name="MSG"><type><string/></type></variable>
+          </outputVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[BYTES_RECEIVED := 0;]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[Send a message to a remote device using TCP/IP when SEND is TRUE. SOCKET_ID must receive a connection ID from a successfull connection using the TCP_Connect block. BYTES_RECEIVED returns the number of bytes received from the remote device. MSG is a String containing the message received]]></xhtml:p>
+        </documentation>
+      </pou>
+      <pou name="TCP_CLOSE" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="CLOSE"><type><BOOL/></type></variable>
+            <variable name="SOCKET_ID"><type><INT/></type></variable>
+          </inputVars>
+          <outputVars>
+            <variable name="SUCCESS"><type><INT/></type></variable>
+          </outputVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[SUCCESS := 0;]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[Close the TCP connection with the remote server. If SUCCESS is less than zero, then the connection was not successfully closed, or the connection does not exist anymore.]]></xhtml:p>
+        </documentation>
+      </pou>
+    </pous>
+  </types>
+  <instances>
+    <configurations/>
+  </instances>
+</project>

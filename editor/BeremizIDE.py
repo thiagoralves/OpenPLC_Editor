@@ -980,12 +980,6 @@ class Beremiz(IDEFrame, LocalRuntimeMixin):
     def OnAboutMenu(self, event):
         info = wx.adv.AboutDialogInfo()
         info = version.GetAboutDialogInfo(info)
-        info.Name = "Beremiz"
-        info.Description = _("Open Source framework for automation, "
-            "implementing IEC 61131 IDE with constantly growing set of extensions "
-            "and flexible PLC runtime.")
-
-        info.Icon = wx.Icon(Bpath("images", "about_brz_logo.png"), wx.BITMAP_TYPE_PNG)
 
         ShowAboutDialog(self, info)
 
