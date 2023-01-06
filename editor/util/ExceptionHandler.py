@@ -59,10 +59,10 @@ def Display_Exception_Dialog(e_type, e_value, e_tb, bug_report_path, exit):
 An unhandled exception (bug) occured. Bug report saved at :
 (%s)
 
-Please be kind enough to send this file to:
-beremiz-devel@lists.sourceforge.net
-
-You should now restart program.
+Please be kind enough to post this file on OpenPLC Forums at:
+https://openplc.discussion.community
+under section "Bug Reports" with a brief description of what
+you were doing at the moment of this exception.
 
 Traceback:
 """) % bug_report_path +
