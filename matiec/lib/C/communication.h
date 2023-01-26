@@ -10,6 +10,7 @@ typedef struct {
   __DECLARE_VAR(BOOL,CONNECT)
   __DECLARE_VAR(STRING,IP_ADDRESS)
   __DECLARE_VAR(INT,PORT)
+  __DECLARE_VAR(BOOL,UDP)
   __DECLARE_VAR(INT,SOCKET_ID)
 
   // FB private variables - TEMP, private and located variables
@@ -78,6 +79,7 @@ static void TCP_CONNECT_init__(TCP_CONNECT *data__, BOOL retain) {
   __INIT_VAR(data__->CONNECT,0,retain)
   __INIT_VAR(data__->IP_ADDRESS,__STRING_LITERAL(0,""),retain)
   __INIT_VAR(data__->PORT,0,retain)
+  __INIT_VAR(data__->UDP,0,retain)
   __INIT_VAR(data__->SOCKET_ID,0,retain)
 }
 
