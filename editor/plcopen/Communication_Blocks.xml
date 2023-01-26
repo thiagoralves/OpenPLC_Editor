@@ -23,6 +23,7 @@
             <variable name="CONNECT"><type><BOOL/></type></variable>
             <variable name="IP_ADDRESS"><type><string/></type></variable>
             <variable name="PORT"><type><INT/></type></variable>
+            <variable name="UDP"><type><INT/></type></variable>
           </inputVars>
           <outputVars>
             <variable name="SOCKET_ID"><type><INT/></type></variable>
@@ -34,7 +35,7 @@
           </ST>
         </body>
         <documentation>
-          <xhtml:p><![CDATA[Connect to a remote TCP server when CONNECT is TRUE. Upon success, this block returns the connection ID on SOCKET_ID. If SOCKET_ID is less than zero, then the connection was not successfull]]></xhtml:p>
+          <xhtml:p><![CDATA[Connect to a remote TCP/IP server when CONNECT is TRUE. If UDP input is TRUE, the connection will be made using UDP instead of TCP. Upon success, this block returns the connection ID on SOCKET_ID. If SOCKET_ID is less than zero, then the connection was not successfull]]></xhtml:p>
         </documentation>
       </pou>
       <pou name="TCP_SEND" pouType="functionBlock">
