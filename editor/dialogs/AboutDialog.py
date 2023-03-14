@@ -216,6 +216,15 @@ class SponsorsDialog(wx.Dialog):
         self.m_staticText5 = HyperLinkCtrl(self, label=u"https://www.freewave.com", URL="https://www.freewave.com")
         gSizer1.Add( self.m_staticText5, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
 
+        self.m_bitmap3 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap(os.path.join(current_dir, "..", "images", "sponsor_logos", "arduino.png"), wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+        gSizer1.Add( self.m_bitmap3, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
+
+        self.m_bitmap4 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap(os.path.join(current_dir, "..", "images", "sponsor_logos", "blank.png"), wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+        gSizer1.Add( self.m_bitmap4, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
+
+        self.m_staticText6 = HyperLinkCtrl(self, label=u"https://arduino.cc", URL="https://arduino.cc")
+        gSizer1.Add( self.m_staticText6, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+
         bSizer3.Add( gSizer1, 0, wx.EXPAND, 5 )
 
         self.m_staticText51 = wx.StaticText( self, wx.ID_ANY, u"If you are interested in becoming an official OpenPLC Sponsor, check out our Patreon page:", wx.DefaultPosition, wx.Size( 450,40 ), 0 )
