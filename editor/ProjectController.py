@@ -2179,7 +2179,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
         {
             "bitmap":    "arduino",
             "name":    _("Upload Arduino"),
-            "tooltip": _("Upload program to Arduino Board"),
+            "tooltip": _("Transfer program to PLC"),
             "method":   "_generateArduino",
             "shown":      True,
         },
