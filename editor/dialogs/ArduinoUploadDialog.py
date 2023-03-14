@@ -33,8 +33,12 @@ class ArduinoUploadDialog(wx.Dialog):
         self.last_update = 0
         self.update_subsystem = True
         current_dir = paths.AbsDir(__file__)
-#
-        wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Transfer Program to PLC", pos = wx.DefaultPosition, size = wx.Size( 693,453 ), style = wx.DEFAULT_DIALOG_STYLE )
+        
+        if os.name == 'nt':
+            wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Transfer Program to PLC", pos = wx.DefaultPosition, size = wx.Size( 693,453 ), style = wx.DEFAULT_DIALOG_STYLE )
+        else:
+            wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Transfer Program to PLC", pos = wx.DefaultPosition, size = wx.Size( 720,590 ), style = wx.DEFAULT_DIALOG_STYLE )
+        
         # load Hals automatically and initialize the board_type_comboChoices
         self.loadHals()
         board_type_comboChoices = []
