@@ -4,6 +4,7 @@ import threading
 import serial.tools.list_ports
 from builtins import str as text
 from arduino import builder
+import util.paths as paths
 
 import wx
 import wx.xrc
@@ -31,13 +32,14 @@ class ArduinoUploadDialog(wx.Dialog):
         self.plc_program = st_code
         self.last_update = 0
         self.update_subsystem = True
+        current_dir = paths.AbsDir(__file__)
 
         if platform.system() == 'Windows':
-            wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Upload to Arduino Board", pos = wx.DefaultPosition, size = wx.Size( 400,640 ), style = wx.DEFAULT_DIALOG_STYLE )
+            wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Transfer Program to PLC", pos = wx.DefaultPosition, size = wx.Size( 693,453 ), style = wx.DEFAULT_DIALOG_STYLE )
         elif platform.system() == 'Linux':
-            wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Upload to Arduino Board", pos = wx.DefaultPosition, size = wx.Size( 480,820 ), style = wx.DEFAULT_DIALOG_STYLE )
+            wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Transfer Program to PLC", pos = wx.DefaultPosition, size = wx.Size( 720,590 ), style = wx.DEFAULT_DIALOG_STYLE )
         elif platform.system() == 'Darwin':
-            wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Upload to Arduino Board", pos = wx.DefaultPosition, size = wx.Size( 410,640 ), style = wx.DEFAULT_DIALOG_STYLE )
+            wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Transfer Program to PLC", pos = wx.DefaultPosition, size = wx.Size( 700,453 ), style = wx.DEFAULT_DIALOG_STYLE )
 
         # load Hals automatically and initialize the board_type_comboChoices
         self.loadHals()
@@ -50,187 +52,356 @@ class ArduinoUploadDialog(wx.Dialog):
 
         bSizer2 = wx.BoxSizer( wx.VERTICAL )
 
+        self.m_listbook2 = wx.Listbook( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LB_LEFT )
+        m_listbook2ImageSize = wx.Size( 100,100 )
+        m_listbook2Index = 0
+        m_listbook2Images = wx.ImageList( m_listbook2ImageSize.GetWidth(), m_listbook2ImageSize.GetHeight() )
+
+        self.m_listbook2.AssignImageList( m_listbook2Images )
+        self.m_panel5 = wx.Panel( self.m_listbook2, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        bSizer21 = wx.BoxSizer( wx.VERTICAL )
+
         fgSizer1 = wx.FlexGridSizer( 0, 2, 0, 0 )
-        fgSizer1.SetFlexibleDirection( wx.HORIZONTAL )
+        fgSizer1.SetFlexibleDirection( wx.BOTH )
         fgSizer1.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 
-        self.board_type_lbl = wx.StaticText( self, wx.ID_ANY, u"Board Type:", wx.Point( -1,-1 ), wx.Size( 65,-1 ), wx.ALIGN_LEFT )
-        self.board_type_lbl.Wrap( -1 )
-        fgSizer1.Add( self.board_type_lbl, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 10 )
 
-        self.board_type_combo = wx.ComboBox( self, wx.ID_ANY, u"Uno", wx.DefaultPosition, wx.Size( 300,-1 ), board_type_comboChoices, wx.CB_READONLY )
-        self.board_type_combo.SetSelection( 0 )
-        fgSizer1.Add( self.board_type_combo, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 
-        self.mode_lbl = wx.StaticText( self, wx.ID_ANY, u"Mode:", wx.DefaultPosition, wx.Size( 65,-1 ), 0)
-        self.mode_lbl.Wrap( -1 )
-        fgSizer1.Add( self.mode_lbl, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 10 )
 
-        self.check_compile = wx.CheckBox( self, wx.ID_ANY, u"Compile Only", wx.DefaultPosition, wx.DefaultSize, 0 )
-        fgSizer1.Add( self.check_compile, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
-        self.check_compile.Bind(wx.EVT_CHECKBOX, self.onUIChange)
+        self.m_staticText1 = wx.StaticText( self.m_panel5, wx.ID_ANY, u"Board Type", wx.DefaultPosition, wx.Size( 80,-1 ), 0 )
+        self.m_staticText1.Wrap( -1 )
+        fgSizer1.Add( self.m_staticText1, 0, wx.ALIGN_CENTER|wx.BOTTOM|wx.LEFT|wx.TOP, 15 )
 
-        self.com_port_lbl = wx.StaticText( self, wx.ID_ANY, u"COM Port:", wx.DefaultPosition, wx.Size( 65,-1 ), 0 )
-        self.com_port_lbl.Wrap( -1 )
-        fgSizer1.Add( self.com_port_lbl, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 10 )
+        self.board_type_combo = wx.ComboBox( self.m_panel5, wx.ID_ANY, u"Arduino Uno", wx.DefaultPosition, wx.Size( 410,-1 ), board_type_comboChoices, 0 )
+        fgSizer1.Add( self.board_type_combo, 0, wx.ALIGN_CENTER|wx.BOTTOM|wx.TOP, 15 )
+
+        self.m_staticText2 = wx.StaticText( self.m_panel5, wx.ID_ANY, u"COM Port", wx.DefaultPosition, wx.Size( 80,-1 ), 0 )
+        self.m_staticText2.Wrap( -1 )
+        fgSizer1.Add( self.m_staticText2, 0, wx.ALIGN_CENTER|wx.ALIGN_TOP|wx.BOTTOM|wx.LEFT, 15 )
 
         com_port_comboChoices = [comport.device for comport in serial.tools.list_ports.comports()]
-        self.com_port_combo = wx.ComboBox( self, wx.ID_ANY, u"COM1", wx.DefaultPosition, wx.Size( 300,-1 ), com_port_comboChoices, wx.CB_READONLY )
-        self.com_port_combo.SetSelection( 0 )
-        fgSizer1.Add( self.com_port_combo, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+        self.com_port_combo = wx.ComboBox( self.m_panel5, wx.ID_ANY, u"COM1", wx.DefaultPosition, wx.Size( 410,-1 ), com_port_comboChoices, 0 )
+        fgSizer1.Add( self.com_port_combo, 0, wx.ALIGN_CENTER|wx.BOTTOM, 15 )
 
-        bSizer2.Add( fgSizer1, 0, wx.EXPAND|wx.TOP, 5 )
 
-        self.m_staticline1 = wx.StaticLine( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
-        bSizer2.Add( self.m_staticline1, 0, wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, 10 )
+        bSizer21.Add( fgSizer1, 1, wx.EXPAND, 5 )
 
-        self.check_modbus_serial = wx.CheckBox( self, wx.ID_ANY, u"Enable Modbus Serial", wx.DefaultPosition, wx.DefaultSize, 0 )
-        bSizer2.Add( self.check_modbus_serial, 0, wx.ALL, 10 )
+        self.check_compile = wx.CheckBox( self.m_panel5, wx.ID_ANY, u"Compile Only", wx.DefaultPosition, wx.DefaultSize, 0 )
+        bSizer21.Add( self.check_compile, 0, wx.LEFT, 15 )
+        self.check_compile.Bind(wx.EVT_CHECKBOX, self.onUIChange)
+
+        self.m_staticline2 = wx.StaticLine( self.m_panel5, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
+        bSizer21.Add( self.m_staticline2, 0, wx.EXPAND |wx.ALL, 5 )
+
+        self.m_staticText3 = wx.StaticText( self.m_panel5, wx.ID_ANY, u"Compilation output", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.m_staticText3.Wrap( -1 )
+        bSizer21.Add( self.m_staticText3, 0, wx.ALL, 5 )
+
+        self.output_text = wx.TextCtrl( self.m_panel5, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( -1,230 ), wx.TE_MULTILINE|wx.TE_READONLY|wx.TE_WORDWRAP|wx.VSCROLL )
+        self.output_text.SetFont( wx.Font( 10, 75, 90, 90, False, "Consolas" ) )
+        self.output_text.SetBackgroundColour( wx.BLACK )
+        self.output_text.SetForegroundColour( wx.WHITE )
+        self.output_text.SetDefaultStyle(wx.TextAttr(wx.WHITE))
+
+        bSizer21.Add( self.output_text, 0, wx.ALL|wx.EXPAND, 5 )
+
+        self.upload_button = wx.Button( self.m_panel5, wx.ID_ANY, u"Transfer to PLC", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.upload_button.SetMinSize( wx.Size( 150,30 ) )
+        self.upload_button.Bind(wx.EVT_BUTTON, self.OnUpload)
+
+        bSizer21.Add( self.upload_button, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
+
+        self.m_panel5.SetSizer( bSizer21 )
+        self.m_panel5.Layout()
+        bSizer21.Fit( self.m_panel5 )
+        self.m_listbook2.AddPage( self.m_panel5, u"Transfer", True )
+        m_listbook2Bitmap = wx.Bitmap(os.path.join(current_dir, "..", "images", "transfer_plc.png"), wx.BITMAP_TYPE_ANY )
+        if ( m_listbook2Bitmap.IsOk() ):
+            m_listbook2Images.Add( m_listbook2Bitmap )
+            self.m_listbook2.SetPageImage( m_listbook2Index, m_listbook2Index )
+            m_listbook2Index += 1
+
+        self.m_panel6 = wx.Panel( self.m_listbook2, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        bSizer3 = wx.BoxSizer( wx.VERTICAL )
+
+        self.m_staticText4 = wx.StaticText( self.m_panel6, wx.ID_ANY, u"This setting will allow you to change the default pin mapping for your board. Please be cautious while edditing, as mistakes can lead to compilation errors. Pin numbers should obey the Arduino notation for your board and must be comma-separated.", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.m_staticText4.Wrap( 530 )
+        self.m_staticText4.SetMinSize( wx.Size( -1,60 ) )
+
+        bSizer3.Add( self.m_staticText4, 0, wx.ALL, 5 )
+
+        self.m_staticText5 = wx.StaticText( self.m_panel6, wx.ID_ANY, u"Digital Inputs", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.m_staticText5.Wrap( -1 )
+        bSizer3.Add( self.m_staticText5, 0, wx.ALL, 5 )
+
+        self.m_textCtrl2 = wx.TextCtrl( self.m_panel6, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+        bSizer3.Add( self.m_textCtrl2, 0, wx.ALL|wx.EXPAND, 5 )
+
+        self.m_staticText6 = wx.StaticText( self.m_panel6, wx.ID_ANY, u"Digital Outputs", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.m_staticText6.Wrap( -1 )
+        bSizer3.Add( self.m_staticText6, 0, wx.ALL, 5 )
+
+        self.m_textCtrl3 = wx.TextCtrl( self.m_panel6, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+        bSizer3.Add( self.m_textCtrl3, 0, wx.ALL|wx.EXPAND, 5 )
+
+        self.m_staticText7 = wx.StaticText( self.m_panel6, wx.ID_ANY, u"Analog Inputs", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.m_staticText7.Wrap( -1 )
+        bSizer3.Add( self.m_staticText7, 0, wx.ALL, 5 )
+
+        self.m_textCtrl4 = wx.TextCtrl( self.m_panel6, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+        bSizer3.Add( self.m_textCtrl4, 0, wx.ALL|wx.EXPAND, 5 )
+
+        self.m_staticText8 = wx.StaticText( self.m_panel6, wx.ID_ANY, u"Analog Outputs", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.m_staticText8.Wrap( -1 )
+        bSizer3.Add( self.m_staticText8, 0, wx.ALL, 5 )
+
+        self.m_textCtrl5 = wx.TextCtrl( self.m_panel6, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+        bSizer3.Add( self.m_textCtrl5, 0, wx.ALL|wx.EXPAND, 5 )
+
+        self.m_staticText9 = wx.StaticText( self.m_panel6, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.m_staticText9.Wrap( -1 )
+        self.m_staticText9.SetMinSize( wx.Size( -1,40 ) )
+
+        bSizer3.Add( self.m_staticText9, 0, wx.ALL, 5 )
+
+        gSizer1 = wx.GridSizer( 0, 2, 0, 0 )
+
+        self.m_button2 = wx.Button( self.m_panel6, wx.ID_ANY, u"Restore Defaults", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.m_button2.SetMinSize( wx.Size( 150,30 ) )
+
+        gSizer1.Add( self.m_button2, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
+
+        self.m_button3 = wx.Button( self.m_panel6, wx.ID_ANY, u"Save Changes", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.m_button3.SetMinSize( wx.Size( 150,30 ) )
+
+        gSizer1.Add( self.m_button3, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
+
+
+        bSizer3.Add( gSizer1, 1, wx.EXPAND, 5 )
+
+
+        self.m_panel6.SetSizer( bSizer3 )
+        self.m_panel6.Layout()
+        bSizer3.Fit( self.m_panel6 )
+        self.m_listbook2.AddPage( self.m_panel6, u"I/O Config", False )
+        m_listbook2Bitmap = wx.Bitmap(os.path.join(current_dir, "..", "images", "io.png"), wx.BITMAP_TYPE_ANY )
+        if ( m_listbook2Bitmap.IsOk() ):
+            m_listbook2Images.Add( m_listbook2Bitmap )
+            self.m_listbook2.SetPageImage( m_listbook2Index, m_listbook2Index )
+            m_listbook2Index += 1
+
+        self.m_panel7 = wx.Panel( self.m_listbook2, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        bSizer4 = wx.BoxSizer( wx.VERTICAL )
+
+        self.check_modbus_serial = wx.CheckBox( self.m_panel7, wx.ID_ANY, u"Enable Modbus RTU (Serial)", wx.DefaultPosition, wx.DefaultSize, 0 )
+        bSizer4.Add( self.check_modbus_serial, 0, wx.ALL, 10 )
         self.check_modbus_serial.Bind(wx.EVT_CHECKBOX, self.onUIChange)
 
-        fgSizer2 = wx.FlexGridSizer( 0, 2, 0, 0 )
+        fgSizer2 = wx.FlexGridSizer( 0, 4, 0, 0 )
         fgSizer2.SetFlexibleDirection( wx.BOTH )
         fgSizer2.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 
-        self.m_staticText5 = wx.StaticText( self, wx.ID_ANY, u"Interface:", wx.DefaultPosition, wx.Size( 65,-1 ), 0 )
-        self.m_staticText5.Wrap( -1 )
-        fgSizer2.Add( self.m_staticText5, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 10 )
+        self.m_staticText10 = wx.StaticText( self.m_panel7, wx.ID_ANY, u"Interface:", wx.DefaultPosition, wx.Size( -1,-1 ), 0 )
+        self.m_staticText10.Wrap( -1 )
+        self.m_staticText10.SetMinSize( wx.Size( 60,-1 ) )
+
+        fgSizer2.Add( self.m_staticText10, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 
         serial_iface_comboChoices = [ u"Serial", u"Serial1", u"Serial2", u"Serial3" ]
-        self.serial_iface_combo = wx.ComboBox( self, wx.ID_ANY, u"Serial", wx.DefaultPosition, wx.Size( 300,-1 ), serial_iface_comboChoices, wx.CB_READONLY )
+        self.serial_iface_combo = wx.ComboBox( self.m_panel7, wx.ID_ANY, u"Serial", wx.DefaultPosition, wx.DefaultSize, serial_iface_comboChoices, wx.CB_READONLY )
         self.serial_iface_combo.SetSelection( 0 )
-        fgSizer2.Add( self.serial_iface_combo, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_LEFT|wx.ALL, 5 )
-        self.serial_iface_combo.Enable(False)
+        self.serial_iface_combo.SetMinSize( wx.Size( 180,-1 ) )
 
-        self.m_staticText6 = wx.StaticText( self, wx.ID_ANY, u"Baud:", wx.DefaultPosition, wx.Size( 65,-1 ), 0 )
-        self.m_staticText6.Wrap( -1 )
-        fgSizer2.Add( self.m_staticText6, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 10 )
+        fgSizer2.Add( self.serial_iface_combo, 0, wx.ALL, 5 )
+
+        self.m_staticText11 = wx.StaticText( self.m_panel7, wx.ID_ANY, u"Baud:", wx.DefaultPosition, wx.Size( -1,-1 ), 0 )
+        self.m_staticText11.Wrap( -1 )
+        self.m_staticText11.SetMinSize( wx.Size( 60,-1 ) )
+
+        fgSizer2.Add( self.m_staticText11, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 
         baud_rate_comboChoices = [ u"9600", u"14400", u"19200", u"38400", u"57600", u"115200" ]
-        self.baud_rate_combo = wx.ComboBox( self, wx.ID_ANY, u"115200", wx.DefaultPosition, wx.Size( 300,-1 ), baud_rate_comboChoices, wx.CB_READONLY )
+        self.baud_rate_combo = wx.ComboBox( self.m_panel7, wx.ID_ANY, u"115200", wx.DefaultPosition, wx.DefaultSize, baud_rate_comboChoices, wx.CB_READONLY )
         self.baud_rate_combo.SetSelection( 5 )
+        self.baud_rate_combo.SetMinSize( wx.Size( 180,-1 ) )
+
         fgSizer2.Add( self.baud_rate_combo, 0, wx.ALL, 5 )
-        self.baud_rate_combo.Enable(False)
+
+        self.m_staticText12 = wx.StaticText( self.m_panel7, wx.ID_ANY, u"Slave ID:", wx.DefaultPosition, wx.Size( -1,-1 ), 0 )
+        self.m_staticText12.Wrap( -1 )
+        self.m_staticText12.SetMinSize( wx.Size( 60,-1 ) )
+
+        fgSizer2.Add( self.m_staticText12, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+        self.slaveid_txt = wx.TextCtrl( self.m_panel7, wx.ID_ANY, u"0", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.slaveid_txt.SetMinSize( wx.Size( 180,-1 ) )
+
+        fgSizer2.Add( self.slaveid_txt, 0, wx.ALL, 5 )
+
+        self.m_staticText13 = wx.StaticText( self.m_panel7, wx.ID_ANY, u"Tx Pin:", wx.DefaultPosition, wx.Size( -1,-1 ), 0 )
+        self.m_staticText13.Wrap( -1 )
+        self.m_staticText13.SetMinSize( wx.Size( 60,-1 ) )
+
+        fgSizer2.Add( self.m_staticText13, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+        self.txpin_txt = wx.TextCtrl( self.m_panel7, wx.ID_ANY, u"-1", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.txpin_txt.SetMinSize( wx.Size( 180,-1 ) )
+
+        fgSizer2.Add( self.txpin_txt, 0, wx.ALL, 5 )
+
+        self.m_staticText23 = wx.StaticText( self.m_panel7, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.m_staticText23.Wrap( -1 )
+        self.m_staticText23.SetMaxSize( wx.Size( -1,15 ) )
+
+        fgSizer2.Add( self.m_staticText23, 0, 0, 5 )
 
 
-        bSizer2.Add( fgSizer2, 0, wx.EXPAND, 5 )
+        bSizer4.Add( fgSizer2, 0, wx.EXPAND, 5 )
 
-        self.m_staticline11 = wx.StaticLine( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
-        bSizer2.Add( self.m_staticline11, 0, wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, 10 )
+        self.m_staticline21 = wx.StaticLine( self.m_panel7, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
+        bSizer4.Add( self.m_staticline21, 0, wx.ALL|wx.BOTTOM|wx.EXPAND|wx.TOP, 5 )
 
-        self.check_modbus_tcp = wx.CheckBox( self, wx.ID_ANY, u"Enable Modbus TCP", wx.DefaultPosition, wx.DefaultSize, 0 )
-        bSizer2.Add( self.check_modbus_tcp, 0, wx.ALL, 10 )
+        self.check_modbus_tcp = wx.CheckBox( self.m_panel7, wx.ID_ANY, u"Enable Modbus TCP", wx.DefaultPosition, wx.DefaultSize, 0 )
+        bSizer4.Add( self.check_modbus_tcp, 0, wx.ALL, 10 )
         self.check_modbus_tcp.Bind(wx.EVT_CHECKBOX, self.onUIChange)
-
+        
         fgSizer3 = wx.FlexGridSizer( 0, 2, 0, 0 )
         fgSizer3.SetFlexibleDirection( wx.BOTH )
         fgSizer3.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 
-        self.m_staticText9 = wx.StaticText( self, wx.ID_ANY, u"Interface:", wx.DefaultPosition, wx.Size( 65,-1 ), 0 )
-        self.m_staticText9.Wrap( -1 )
-        fgSizer3.Add( self.m_staticText9, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 10 )
+        self.m_staticText14 = wx.StaticText( self.m_panel7, wx.ID_ANY, u"Interface:", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.m_staticText14.Wrap( -1 )
+        self.m_staticText14.SetMinSize( wx.Size( 60,-1 ) )
+
+        fgSizer3.Add( self.m_staticText14, 0, wx.ALL, 5 )
 
         tcp_iface_comboChoices = [ u"Ethernet", u"WiFi" ]
-        self.tcp_iface_combo = wx.ComboBox( self, wx.ID_ANY, u"Ethernet", wx.DefaultPosition, wx.Size( 300,-1 ), tcp_iface_comboChoices, wx.CB_READONLY )
+        self.tcp_iface_combo = wx.ComboBox( self.m_panel7, wx.ID_ANY, u"Ethernet", wx.DefaultPosition, wx.DefaultSize, tcp_iface_comboChoices, wx.CB_READONLY )
         self.tcp_iface_combo.SetSelection( 0 )
-        fgSizer3.Add( self.tcp_iface_combo, 0, wx.ALL, 5 )
-        self.tcp_iface_combo.Enable(False)
+        self.tcp_iface_combo.SetMinSize( wx.Size( 440,-1 ) )
         self.tcp_iface_combo.Bind(wx.EVT_COMBOBOX, self.onUIChange)
 
-        self.m_staticText91 = wx.StaticText( self, wx.ID_ANY, u"MAC:", wx.DefaultPosition, wx.Size( 65,-1 ), 0 )
-        self.m_staticText91.Wrap( -1 )
-        fgSizer3.Add( self.m_staticText91, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 10 )
+        fgSizer3.Add( self.tcp_iface_combo, 0, wx.ALL|wx.EXPAND, 5 )
 
-        self.mac_txt = wx.TextCtrl( self, wx.ID_ANY, u"0xDE, 0xAD, 0xBE, 0xEF, 0xDE, 0xAD", wx.DefaultPosition, wx.Size( 300,-1 ), 0 )
-        fgSizer3.Add( self.mac_txt, 0, wx.ALL, 5 )
-        self.mac_txt.Enable(False)
+        self.m_staticText15 = wx.StaticText( self.m_panel7, wx.ID_ANY, u"MAC:", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.m_staticText15.Wrap( -1 )
+        self.m_staticText15.SetMinSize( wx.Size( 60,-1 ) )
 
-        bSizer2.Add( fgSizer3, 0, wx.EXPAND, 5 )
+        fgSizer3.Add( self.m_staticText15, 0, wx.ALL, 5 )
 
-        fgSizer5 = wx.FlexGridSizer( 0, 4, 0, 5 )
-        fgSizer5.SetFlexibleDirection( wx.BOTH )
-        fgSizer5.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
+        self.mac_txt = wx.TextCtrl( self.m_panel7, wx.ID_ANY, u"0xDE, 0xAD, 0xBE, 0xEF, 0xDE, 0xAD", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.mac_txt.SetMinSize( wx.Size( 440,-1 ) )
 
-        self.m_staticText111 = wx.StaticText( self, wx.ID_ANY, u"IP:", wx.DefaultPosition, wx.DefaultSize, 0 )
-        self.m_staticText111.Wrap( -1 )
-        fgSizer5.Add( self.m_staticText111, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 10 )
-
-        self.ip_txt = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-        fgSizer5.Add( self.ip_txt, 0, wx.ALL, 5 )
-        self.ip_txt.Enable(False)
-
-        self.m_staticText12 = wx.StaticText( self, wx.ID_ANY, u"DNS:", wx.DefaultPosition, wx.DefaultSize, 0 )
-        self.m_staticText12.Wrap( -1 )
-        fgSizer5.Add( self.m_staticText12, 0, wx.ALIGN_CENTER_VERTICAL, 5 )
-
-        self.dns_txt = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 118,-1 ), 0 )
-        fgSizer5.Add( self.dns_txt, 0, wx.ALL, 5 )
-        self.dns_txt.Enable(False)
-
-        self.m_staticText13 = wx.StaticText( self, wx.ID_ANY, u"Gateway:", wx.DefaultPosition, wx.DefaultSize, 0 )
-        self.m_staticText13.Wrap( -1 )
-        fgSizer5.Add( self.m_staticText13, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 10 )
-
-        self.gateway_txt = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-        fgSizer5.Add( self.gateway_txt, 0, wx.ALL, 5 )
-        self.gateway_txt.Enable(False)
-
-        self.m_staticText14 = wx.StaticText( self, wx.ID_ANY, u"Subnet:", wx.DefaultPosition, wx.DefaultSize, 0 )
-        self.m_staticText14.Wrap( -1 )
-        fgSizer5.Add( self.m_staticText14, 0, wx.ALIGN_CENTER_VERTICAL, 5 )
-
-        self.subnet_txt = wx.TextCtrl( self, wx.ID_ANY, u"255.255.255.0", wx.DefaultPosition, wx.Size( 118,-1 ), 0 )
-        fgSizer5.Add( self.subnet_txt, 0, wx.ALL, 5 )
-        self.subnet_txt.Enable(False)
-
-        self.m_staticText10 = wx.StaticText( self, wx.ID_ANY, u"Wi-Fi SSID:", wx.DefaultPosition, wx.DefaultSize, 0 )
-        self.m_staticText10.Wrap( -1 )
-        fgSizer5.Add( self.m_staticText10, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 10 )
-
-        self.wifi_ssid_txt = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( -1,-1 ), 0 )
-        fgSizer5.Add( self.wifi_ssid_txt, 0, wx.ALL|wx.EXPAND, 5 )
-        self.wifi_ssid_txt.Enable(False)
-
-        self.m_staticText11 = wx.StaticText( self, wx.ID_ANY, u"Password:", wx.DefaultPosition, wx.DefaultSize, 0 )
-        self.m_staticText11.Wrap( -1 )
-        fgSizer5.Add( self.m_staticText11, 0, wx.ALIGN_CENTER_VERTICAL, 5 )
-
-        self.wifi_pwd_txt = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 118,-1 ), wx.TE_PASSWORD )
-        fgSizer5.Add( self.wifi_pwd_txt, 0, wx.ALL, 5 )
-        self.wifi_pwd_txt.Enable(False)
+        fgSizer3.Add( self.mac_txt, 0, wx.ALL|wx.EXPAND, 5 )
 
 
-        bSizer2.Add( fgSizer5, 0, wx.EXPAND, 5 )
+        bSizer4.Add( fgSizer3, 0, wx.EXPAND, 5 )
 
-        self.output_lbl = wx.StaticText( self, wx.ID_ANY, u"Compilation output:", wx.DefaultPosition, wx.DefaultSize, 0 )
-        self.output_lbl.Wrap( -1 )
-        bSizer2.Add( self.output_lbl, 0, wx.BOTTOM|wx.LEFT|wx.TOP, 10 )
+        fgSizer4 = wx.FlexGridSizer( 0, 4, 0, 0 )
+        fgSizer4.SetFlexibleDirection( wx.BOTH )
+        fgSizer4.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 
-        self.output_text = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( -1,-1 ), wx.TE_MULTILINE|wx.TE_READONLY|wx.TE_WORDWRAP|wx.VSCROLL )
-        self.output_text.SetFont( wx.Font( 8, 75, 90, 90, False, "Consolas" ) )
-        if platform.system() == 'Darwin':
-            self.output_text.SetForegroundColour( wx.Colour( 0, 0, 0 ) )
-            self.output_text.SetBackgroundColour( wx.Colour( 255, 255, 255 ) )
-        else:
-            self.output_text.SetForegroundColour( wx.Colour( 255, 255, 255 ) )
-            self.output_text.SetBackgroundColour( wx.Colour( 0, 0, 0 ) )
-        self.output_text.SetMinSize( wx.Size( -1,75 ) )
+        self.m_staticText17 = wx.StaticText( self.m_panel7, wx.ID_ANY, u"IP:", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.m_staticText17.Wrap( -1 )
+        self.m_staticText17.SetMinSize( wx.Size( 60,-1 ) )
 
-        bSizer2.Add( self.output_text, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 10 )
+        fgSizer4.Add( self.m_staticText17, 0, wx.ALL, 5 )
 
-        gSizer3 = wx.GridSizer( 0, 2, 0, 0 )
+        self.ip_txt = wx.TextCtrl( self.m_panel7, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.ip_txt.SetMinSize( wx.Size( 180,-1 ) )
 
-        gSizer3.SetMinSize( wx.Size( -1,45 ) ) 
-        self.upload_button = wx.Button( self, wx.ID_ANY, u"Upload", wx.DefaultPosition, wx.Size( -1,-1 ), 0 )
-        gSizer3.Add( self.upload_button, 0, wx.ALIGN_CENTER_HORIZONTAL|wx.ALL|wx.EXPAND, 5 )
-        self.upload_button.Bind(wx.EVT_BUTTON, self.OnUpload)
+        fgSizer4.Add( self.ip_txt, 0, wx.ALL, 5 )
 
-        self.cancel_button = wx.Button( self, wx.ID_ANY, u"Cancel", wx.DefaultPosition, wx.Size( -1,-1 ), 0 )
-        gSizer3.Add( self.cancel_button, 0, wx.ALIGN_CENTER_HORIZONTAL|wx.ALL|wx.EXPAND, 5 )
-        self.cancel_button.Bind(wx.EVT_BUTTON, self.OnCancel)
+        self.m_staticText18 = wx.StaticText( self.m_panel7, wx.ID_ANY, u"DNS:", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.m_staticText18.Wrap( -1 )
+        self.m_staticText18.SetMinSize( wx.Size( 60,-1 ) )
+
+        fgSizer4.Add( self.m_staticText18, 0, wx.ALL, 5 )
+
+        self.dns_txt = wx.TextCtrl( self.m_panel7, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.dns_txt.SetMinSize( wx.Size( 180,-1 ) )
+
+        fgSizer4.Add( self.dns_txt, 0, wx.ALL, 5 )
+
+        self.m_staticText19 = wx.StaticText( self.m_panel7, wx.ID_ANY, u"Gateway:", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.m_staticText19.Wrap( -1 )
+        self.m_staticText19.SetMinSize( wx.Size( 60,-1 ) )
+
+        fgSizer4.Add( self.m_staticText19, 0, wx.ALL, 5 )
+
+        self.gateway_txt = wx.TextCtrl( self.m_panel7, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.gateway_txt.SetMinSize( wx.Size( 180,-1 ) )
+
+        fgSizer4.Add( self.gateway_txt, 0, wx.ALL, 5 )
+
+        self.m_staticText20 = wx.StaticText( self.m_panel7, wx.ID_ANY, u"Subnet:", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.m_staticText20.Wrap( -1 )
+        self.m_staticText20.SetMinSize( wx.Size( 60,-1 ) )
+
+        fgSizer4.Add( self.m_staticText20, 0, wx.ALL, 5 )
+
+        self.subnet_txt = wx.TextCtrl( self.m_panel7, wx.ID_ANY, u"255.255.255.0", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.subnet_txt.SetMinSize( wx.Size( 180,-1 ) )
+
+        fgSizer4.Add( self.subnet_txt, 0, wx.ALL, 5 )
+
+        self.m_staticText21 = wx.StaticText( self.m_panel7, wx.ID_ANY, u"Wi-Fi SSID:", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.m_staticText21.Wrap( -1 )
+        self.m_staticText21.SetMinSize( wx.Size( 60,-1 ) )
+
+        fgSizer4.Add( self.m_staticText21, 0, wx.ALL, 5 )
+
+        self.wifi_ssid_txt = wx.TextCtrl( self.m_panel7, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.wifi_ssid_txt.SetMinSize( wx.Size( 180,-1 ) )
+
+        fgSizer4.Add( self.wifi_ssid_txt, 0, wx.ALL, 5 )
+
+        self.m_staticText22 = wx.StaticText( self.m_panel7, wx.ID_ANY, u"Password:", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.m_staticText22.Wrap( -1 )
+        self.m_staticText22.SetMinSize( wx.Size( 60,-1 ) )
+
+        fgSizer4.Add( self.m_staticText22, 0, wx.ALL, 5 )
+
+        self.wifi_pwd_txt = wx.TextCtrl( self.m_panel7, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_PASSWORD )
+        self.wifi_pwd_txt.SetMinSize( wx.Size( 180,-1 ) )
+
+        fgSizer4.Add( self.wifi_pwd_txt, 0, wx.ALL, 5 )
+
+        self.m_staticText24 = wx.StaticText( self.m_panel7, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.m_staticText24.Wrap( -1 )
+        fgSizer4.Add( self.m_staticText24, 0, wx.ALL, 5 )
 
 
-        bSizer2.Add( gSizer3, 0, wx.ALL|wx.EXPAND, 5 )
+        bSizer4.Add( fgSizer4, 1, wx.EXPAND, 5 )
+
+        gSizer2 = wx.GridSizer( 0, 2, 0, 0 )
+
+        self.m_button4 = wx.Button( self.m_panel7, wx.ID_ANY, u"Restore Defaults", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.m_button4.SetMinSize( wx.Size( 150,30 ) )
+
+        gSizer2.Add( self.m_button4, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
+
+        self.m_button5 = wx.Button( self.m_panel7, wx.ID_ANY, u"Save Changes", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.m_button5.SetMinSize( wx.Size( 150,30 ) )
+
+        gSizer2.Add( self.m_button5, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
+
+
+        bSizer4.Add( gSizer2, 1, wx.EXPAND, 5 )
+
+
+        self.m_panel7.SetSizer( bSizer4 )
+        self.m_panel7.Layout()
+        bSizer4.Fit( self.m_panel7 )
+        self.m_listbook2.AddPage( self.m_panel7, u"Communications", False )
+        m_listbook2Bitmap = wx.Bitmap( os.path.join(current_dir, "..", "images", "comm.png"), wx.BITMAP_TYPE_ANY )
+        if ( m_listbook2Bitmap.IsOk() ):
+            m_listbook2Images.Add( m_listbook2Bitmap )
+            self.m_listbook2.SetPageImage( m_listbook2Index, m_listbook2Index )
+            m_listbook2Index += 1
+
+
+        bSizer2.Add( self.m_listbook2, 1, wx.EXPAND |wx.ALL, 0 )
 
 
         self.SetSizer( bSizer2 )
@@ -247,9 +418,13 @@ class ArduinoUploadDialog(wx.Dialog):
         if (self.check_modbus_serial.GetValue() == False):
             self.serial_iface_combo.Enable(False)
             self.baud_rate_combo.Enable(False)
+            self.slaveid_txt.Enable(False)
+            self.txpin_txt.Enable(False)
         elif (self.check_modbus_serial.GetValue() == True):
             self.serial_iface_combo.Enable(True)
             self.baud_rate_combo.Enable(True)
+            self.slaveid_txt.Enable(True)
+            self.txpin_txt.Enable(True)
 
         if (self.check_compile.GetValue() == False):
             self.com_port_combo.Enable(True)
@@ -280,9 +455,6 @@ class ArduinoUploadDialog(wx.Dialog):
             elif (self.tcp_iface_combo.GetValue() == u"WiFi"):
                 self.wifi_ssid_txt.Enable(True)
                 self.wifi_pwd_txt.Enable(True)
-
-    def OnCancel(self, event):
-        self.EndModal(wx.ID_OK)
 
     def startBuilder(self):
 
@@ -352,8 +524,7 @@ class ArduinoUploadDialog(wx.Dialog):
         compiler_thread = threading.Thread(target=builder.build, args=(self.plc_program, platform, source, port, self.output_text, self.update_subsystem))
         compiler_thread.start()
         compiler_thread.join()
-        wx.CallAfter(self.upload_button.Enable, True)
-        wx.CallAfter(self.cancel_button.Enable, True)        
+        wx.CallAfter(self.upload_button.Enable, True)    
         if (self.update_subsystem):
             self.update_subsystem = False
             self.last_update = time.time()
@@ -362,7 +533,6 @@ class ArduinoUploadDialog(wx.Dialog):
 
     def OnUpload(self, event):
         self.upload_button.Enable(False)
-        self.cancel_button.Enable(False)
         builder_thread = threading.Thread(target=self.startBuilder)
         builder_thread.start()
     
