@@ -15,6 +15,7 @@ Install wxPython 4.1.1. This can be tricky on some systems. For Ubuntu:
 ```
 pip3 install -f https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-20.04/ wxPython==4.1.1
 sudo apt install libsdl2-2.0-0
+```
 
 
 You can change the https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-20.04/ URL if you're not on Ubuntu 20.04. There are other pre-built wxPython packages for other Linux distros. Check https://extras.wxpython.org/wxPython4/extras/linux/gtk3
