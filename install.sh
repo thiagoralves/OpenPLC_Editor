@@ -88,7 +88,9 @@ then\n\
 fi\n\
 python2.7 ./editor/Beremiz.py" > openplc_editor.sh
 chmod +x ./openplc_editor.sh
-cd ~/.local/share/applications
+APP_DIR="$HOME/.local/share/applications"
+mkdir -p "$APP_DIR"
+cd "$APP_DIR"
 echo -e "[Desktop Entry]\n\
 Name=OpenPLC Editor\n\
 Categories=Development;\n\
