@@ -33,10 +33,44 @@ def runCommand(command):
 
     return cmd_response.decode('utf-8')
 
+def loadHals():
+    # load hals list from json file, or construct it
+    if (os.name == 'nt'):
+        jfile = 'editor\\arduino\\examples\\Baremetal\\hals.json'
+    else:
+        jfile = 'editor/arduino/examples/Baremetal/hals.json'
+    
+    f = open(jfile, 'r')
+    jsonStr = f.read()
+    f.close()
+    return(json.loads(jsonStr))
+
+def saveHals(halObj):
+    jsonStr = json.dumps(halObj)
+    if (os.name == 'nt'):
+        jfile = 'editor\\arduino\\examples\\Baremetal\\hals.json'
+    else:
+        jfile = 'editor/arduino/examples/Baremetal/hals.json'
+    f = open(jfile, 'w')
+    f.write(jsonStr)
+    f.flush()
+    f.close()
 
 def build(st_file, platform, source_file, port, txtCtrl, update_subsystem):
     global compiler_logs
     compiler_logs = ''
+    hals = loadHals()
+
+    #Check if board is installed
+    board_installed = False
+    core = ''
+    for board in hals:
+        if hals[board]['platform'] == platform:
+            core = hals[board]['core']
+            if hals[board]['version'] != "0":
+                board_installed = True
+    
+    #Check MatIEC compiler
     if (os.path.exists("editor/arduino/bin/iec2c") or os.path.exists("editor/arduino/bin/iec2c.exe") or os.path.exists("editor/arduino/bin/iec2c_mac")):
         # remove old files first
         if os.path.exists('editor/arduino/src/POUS.c'):
@@ -59,9 +93,15 @@ def build(st_file, platform, source_file, port, txtCtrl, update_subsystem):
         wx.CallAfter(scrollToEnd, txtCtrl)
         return
 
-    # Update/setup environment
-    if (update_subsystem):
-        compiler_logs += "Updating environment...\n"
+    #Install/Update board support
+    if board_installed == False or update_subsystem == True:
+        if board_installed == False:
+            compiler_logs += "Support for " + platform + " is not installed on OpenPLC Editor. Please be patient and wait while " + platform + " is being installed...\n"
+            wx.CallAfter(txtCtrl.SetValue, compiler_logs)
+        elif update_subsystem == True:
+            compiler_logs += "Updating support for " + platform + ". Please be patient and wait while " + platform + " is being installed...\n"
+            wx.CallAfter(txtCtrl.SetValue, compiler_logs)
+
         cli_command = ''
         if os_platform.system() == 'Windows':
             cli_command = 'editor\\arduino\\bin\\arduino-cli-w32'
@@ -90,6 +130,7 @@ def build(st_file, platform, source_file, port, txtCtrl, update_subsystem):
         compiler_logs += runCommand(cli_command + ' config init')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
+
         # Setup boards - remove 3rd party boards to re-add them later since we don't know if they're there or not
         compiler_logs += runCommand(
             cli_command + ' config remove board_manager.additional_urls https://arduino.esp8266.com/stable/package_esp8266com_index.json')
@@ -146,43 +187,12 @@ def build(st_file, platform, source_file, port, txtCtrl, update_subsystem):
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
 
-        # Install boards
-        compiler_logs += runCommand(cli_command +
-                                    ' core install esp8266:esp8266')
+        # Install board
+        compiler_logs += runCommand(cli_command + ' core install ' + core)
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
-        compiler_logs += runCommand(cli_command + ' core install esp32:esp32')
-        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
-        wx.CallAfter(scrollToEnd, txtCtrl)
-        compiler_logs += runCommand(cli_command + ' core install arduino:avr')
-        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
-        wx.CallAfter(scrollToEnd, txtCtrl)
-        compiler_logs += runCommand(cli_command + ' core install arduino:samd')
-        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
-        wx.CallAfter(scrollToEnd, txtCtrl)
-        compiler_logs += runCommand(cli_command + ' core install arduino:sam')
-        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
-        wx.CallAfter(scrollToEnd, txtCtrl)
-        compiler_logs += runCommand(cli_command +
-                                    ' core install arduino:megaavr')
-        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
-        wx.CallAfter(scrollToEnd, txtCtrl)
-        compiler_logs += runCommand(cli_command +
-                                    ' core install arduino:mbed_portenta')
-        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
-        wx.CallAfter(scrollToEnd, txtCtrl)
-        compiler_logs += runCommand(cli_command +
-                                    ' core install arduino:mbed_nano')
-        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
-        wx.CallAfter(scrollToEnd, txtCtrl)
-        compiler_logs += runCommand(cli_command +
-                                    ' core install arduino:mbed_rp2040')
-        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
-        wx.CallAfter(scrollToEnd, txtCtrl)
-        compiler_logs += runCommand(cli_command +
-                                    ' core install STMicroelectronics:stm32')
-        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
-        wx.CallAfter(scrollToEnd, txtCtrl)
+        
+        # Install libs - required after core install/update
         compiler_logs += runCommand(cli_command + ' lib install WiFiNINA')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
@@ -203,35 +213,41 @@ def build(st_file, platform, source_file, port, txtCtrl, update_subsystem):
         compiler_logs += runCommand(cli_command + ' lib install P1AM')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
-
-        # Install CONTROLLINO boards core
-        compiler_logs += runCommand(cli_command +
-                                    ' core install CONTROLLINO_Boards:avr')
-        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
-        wx.CallAfter(scrollToEnd, txtCtrl)
-        # Install CONTROLLINO library
         compiler_logs += runCommand(cli_command + ' lib install CONTROLLINO')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
-
-        # Install ADS115X library
         compiler_logs += runCommand(cli_command +
                                     ' lib install "Adafruit ADS1X15"')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
-        # Install MQTT library
         compiler_logs += runCommand(cli_command +
                                     ' lib install "PubSubClient"')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
-        # Install ArduinoJson library
         compiler_logs += runCommand(cli_command + ' lib install "ArduinoJson"')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
 
-        compiler_logs += runCommand(cli_command + ' upgrade')
-        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
-        wx.CallAfter(scrollToEnd, txtCtrl)
+        # Read back installed core version
+        board_details = runCommand(cli_command + ' board details -b ' + platform)
+        board_details = board_details.splitlines()
+        board_version = '0'
+        for line in board_details:
+            if " Error getting board details" in line:
+                compiler_logs += 'Error installing support for board ' + platform
+                wx.CallAfter(txtCtrl.SetValue, compiler_logs)
+                wx.CallAfter(scrollToEnd, txtCtrl)
+                return
+            if "Board version:" in line:
+                board_version = line.split('Board version:')[1]
+                board_version = ''.join(board_version.split()) #remove white spaces
+                break
+        
+        # Update version for all platforms using this core
+        for board in hals:
+            if hals[board]['core'] == core:
+                hals[board]['version'] = board_version
+        saveHals(hals)
 
     # Generate C files
     compiler_logs += "Compiling .st file...\n"

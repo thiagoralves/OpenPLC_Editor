@@ -33,17 +33,19 @@ class ArduinoUploadDialog(wx.Dialog):
         self.last_update = 0
         self.update_subsystem = True
         current_dir = paths.AbsDir(__file__)
-        
-        if os.name == 'nt':
-            wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Transfer Program to PLC", pos = wx.DefaultPosition, size = wx.Size( 693,453 ), style = wx.DEFAULT_DIALOG_STYLE )
-        else:
-            wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Transfer Program to PLC", pos = wx.DefaultPosition, size = wx.Size( 720,590 ), style = wx.DEFAULT_DIALOG_STYLE )
-        
+#
+        wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Transfer Program to PLC", pos = wx.DefaultPosition, size = wx.Size( 693,453 ), style = wx.DEFAULT_DIALOG_STYLE )
         # load Hals automatically and initialize the board_type_comboChoices
         self.loadHals()
         board_type_comboChoices = []
         for board in self.hals:
-            board_type_comboChoices.append(board)
+            board_name = ""
+            if self.hals[board]['version'] == "0":
+                board_name = board + ' [NOT INSTALLED]'
+            else:
+                board_name = board + ' [' + self.hals[board]['version'] + ']'
+
+            board_type_comboChoices.append(board_name)
         board_type_comboChoices.sort()
 
         self.SetSizeHintsSz( wx.DefaultSize, wx.DefaultSize )
@@ -77,10 +79,9 @@ class ArduinoUploadDialog(wx.Dialog):
         self.m_staticText2.Wrap( -1 )
         fgSizer1.Add( self.m_staticText2, 0, wx.ALIGN_CENTER|wx.ALIGN_TOP|wx.BOTTOM|wx.LEFT, 15 )
 
-        self.com_port_combo = wx.ComboBox( self.m_panel5, wx.ID_ANY, u"COM1", wx.DefaultPosition, wx.Size( 420,-1 ), [""], 0 )
-        self.reloadComboChoices() # Initialize the com port combo box
+        com_port_comboChoices = [comport.device for comport in serial.tools.list_ports.comports()]
+        self.com_port_combo = wx.ComboBox( self.m_panel5, wx.ID_ANY, u"COM1", wx.DefaultPosition, wx.Size( 420,-1 ), com_port_comboChoices, 0 )
         fgSizer1.Add( self.com_port_combo, 0, wx.ALIGN_CENTER|wx.BOTTOM|wx.EXPAND, 15 )
-        self.com_port_combo.Bind(wx.EVT_COMBOBOX_DROPDOWN, self.reloadComboChoices)
 
 
         bSizer21.Add( fgSizer1, 1, wx.EXPAND, 5 )
@@ -413,11 +414,6 @@ class ArduinoUploadDialog(wx.Dialog):
     def __del__( self ):
         pass
 
-    def reloadComboChoices(self):
-        self.com_port_combo.Clear()
-        self.com_port_combo_choices = {comport.description:comport.device for comport in serial.tools.list_ports.comports()}
-        self.com_port_combo.SetItems(self.com_port_combo_choices.keys())
-
     def onUIChange(self, e):
         if (self.check_modbus_serial.GetValue() == False):
             self.serial_iface_combo.Enable(False)
@@ -463,13 +459,13 @@ class ArduinoUploadDialog(wx.Dialog):
     def startBuilder(self):
 
         # Get platform and source_file from hals
-        board_type = self.board_type_combo.GetValue()
+        board_type = self.board_type_combo.GetValue().split(" [")[0] #remove the trailing [version] on board name
         platform = self.hals[board_type]['platform']
         source = self.hals[board_type]['source']
         
         self.generateDefinitionsFile()
 
-        port = self.com_port_combo_choices[str(self.com_port_combo.GetValue())] 
+        port = self.com_port_combo.GetValue()
         if (self.check_compile.GetValue() == True):
             port = None
         
@@ -519,8 +515,9 @@ class ArduinoUploadDialog(wx.Dialog):
                 define_file += '#define MBTCP_WIFI\n'
         
         # Get define from hals
-        if 'define' in self.hals[self.board_type_combo.GetValue()]:
-            define_file += '#define '+ self.hals[self.board_type_combo.GetValue()]['define'] +'\n'
+        board_type = self.board_type_combo.GetValue().split(" [")[0]
+        if 'define' in self.hals[board_type]:
+            define_file += '#define '+ self.hals[board_type]['define'] +'\n'
         
         define_file += '\n\n//Arduino Libraries\n'
 
