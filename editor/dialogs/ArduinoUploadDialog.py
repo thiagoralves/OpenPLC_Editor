@@ -77,13 +77,14 @@ class ArduinoUploadDialog(wx.Dialog):
 
         self.board_type_combo = wx.ComboBox( self.m_panel5, wx.ID_ANY, u"Arduino Uno", wx.DefaultPosition, wx.Size( 420,-1 ), board_type_comboChoices, 0 )
         fgSizer1.Add( self.board_type_combo, 0, wx.ALIGN_CENTER|wx.BOTTOM|wx.EXPAND|wx.TOP, 15 )
+        self.board_type_combo.Bind(wx.EVT_COMBOBOX, self.onUIChange)
 
         self.m_staticText2 = wx.StaticText( self.m_panel5, wx.ID_ANY, u"COM Port", wx.DefaultPosition, wx.Size( 70,-1 ), 0 )
         self.m_staticText2.Wrap( -1 )
         fgSizer1.Add( self.m_staticText2, 0, wx.ALIGN_CENTER|wx.ALIGN_TOP|wx.BOTTOM|wx.LEFT, 15 )
 
         self.com_port_combo = wx.ComboBox( self.m_panel5, wx.ID_ANY, u"COM1", wx.DefaultPosition, wx.Size( 420,-1 ), [""], 0 )
-        self.reloadComboChoices() # Initialize the com port combo box
+        self.reloadComboChoices(None) # Initialize the com port combo box
         fgSizer1.Add( self.com_port_combo, 0, wx.ALIGN_CENTER|wx.BOTTOM|wx.EXPAND, 15 )
         self.com_port_combo.Bind(wx.EVT_COMBOBOX_DROPDOWN, self.reloadComboChoices)
 
@@ -138,29 +139,29 @@ class ArduinoUploadDialog(wx.Dialog):
         self.m_staticText5.Wrap( -1 )
         bSizer3.Add( self.m_staticText5, 0, wx.ALL, 5 )
 
-        self.m_textCtrl2 = wx.TextCtrl( self.m_panel6, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-        bSizer3.Add( self.m_textCtrl2, 0, wx.ALL|wx.EXPAND, 5 )
+        self.din_txt = wx.TextCtrl( self.m_panel6, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+        bSizer3.Add( self.din_txt, 0, wx.ALL|wx.EXPAND, 5 )
 
         self.m_staticText6 = wx.StaticText( self.m_panel6, wx.ID_ANY, u"Digital Outputs", wx.DefaultPosition, wx.DefaultSize, 0 )
         self.m_staticText6.Wrap( -1 )
         bSizer3.Add( self.m_staticText6, 0, wx.ALL, 5 )
 
-        self.m_textCtrl3 = wx.TextCtrl( self.m_panel6, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-        bSizer3.Add( self.m_textCtrl3, 0, wx.ALL|wx.EXPAND, 5 )
+        self.dout_txt = wx.TextCtrl( self.m_panel6, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+        bSizer3.Add( self.dout_txt, 0, wx.ALL|wx.EXPAND, 5 )
 
         self.m_staticText7 = wx.StaticText( self.m_panel6, wx.ID_ANY, u"Analog Inputs", wx.DefaultPosition, wx.DefaultSize, 0 )
         self.m_staticText7.Wrap( -1 )
         bSizer3.Add( self.m_staticText7, 0, wx.ALL, 5 )
 
-        self.m_textCtrl4 = wx.TextCtrl( self.m_panel6, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-        bSizer3.Add( self.m_textCtrl4, 0, wx.ALL|wx.EXPAND, 5 )
+        self.ain_txt = wx.TextCtrl( self.m_panel6, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+        bSizer3.Add( self.ain_txt, 0, wx.ALL|wx.EXPAND, 5 )
 
         self.m_staticText8 = wx.StaticText( self.m_panel6, wx.ID_ANY, u"Analog Outputs", wx.DefaultPosition, wx.DefaultSize, 0 )
         self.m_staticText8.Wrap( -1 )
         bSizer3.Add( self.m_staticText8, 0, wx.ALL, 5 )
 
-        self.m_textCtrl5 = wx.TextCtrl( self.m_panel6, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-        bSizer3.Add( self.m_textCtrl5, 0, wx.ALL|wx.EXPAND, 5 )
+        self.aout_txt = wx.TextCtrl( self.m_panel6, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+        bSizer3.Add( self.aout_txt, 0, wx.ALL|wx.EXPAND, 5 )
 
         self.m_staticText9 = wx.StaticText( self.m_panel6, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
         self.m_staticText9.Wrap( -1 )
@@ -172,11 +173,13 @@ class ArduinoUploadDialog(wx.Dialog):
 
         self.m_button2 = wx.Button( self.m_panel6, wx.ID_ANY, u"Restore Defaults", wx.DefaultPosition, wx.DefaultSize, 0 )
         self.m_button2.SetMinSize( wx.Size( 150,30 ) )
+        self.m_button2.Bind(wx.EVT_BUTTON, self.restoreIODefaults)
 
         gSizer1.Add( self.m_button2, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
 
         self.m_button3 = wx.Button( self.m_panel6, wx.ID_ANY, u"Save Changes", wx.DefaultPosition, wx.DefaultSize, 0 )
         self.m_button3.SetMinSize( wx.Size( 150,30 ) )
+        self.m_button3.Bind(wx.EVT_BUTTON, self.saveIO)
 
         gSizer1.Add( self.m_button3, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
 
@@ -418,12 +421,13 @@ class ArduinoUploadDialog(wx.Dialog):
     def __del__( self ):
         pass
 
-    def reloadComboChoices(self):
+    def reloadComboChoices(self, event):
          self.com_port_combo.Clear()
          self.com_port_combo_choices = {comport.description:comport.device for comport in serial.tools.list_ports.comports()}
          self.com_port_combo.SetItems(self.com_port_combo_choices.keys())
 
     def onUIChange(self, e):
+        # Update Comms
         if (self.check_modbus_serial.GetValue() == False):
             self.serial_iface_combo.Enable(False)
             self.baud_rate_combo.Enable(False)
@@ -465,6 +469,35 @@ class ArduinoUploadDialog(wx.Dialog):
                 self.wifi_ssid_txt.Enable(True)
                 self.wifi_pwd_txt.Enable(True)
 
+        #Update IOs
+        board_type = self.board_type_combo.GetValue().split(" [")[0] #remove the trailing [version] on board name
+        board_din = self.hals[board_type]['user_din']
+        board_ain = self.hals[board_type]['user_ain']
+        board_dout = self.hals[board_type]['user_dout']
+        board_aout = self.hals[board_type]['user_aout']
+        
+        self.din_txt.SetValue(str(board_din))
+        self.ain_txt.SetValue(str(board_ain))
+        self.dout_txt.SetValue(str(board_dout))
+        self.aout_txt.SetValue(str(board_aout))
+
+    def restoreIODefaults(self, event):
+        board_type = self.board_type_combo.GetValue().split(" [")[0] #remove the trailing [version] on board name
+        self.hals[board_type]['user_din'] = self.hals[board_type]['default_din']
+        self.hals[board_type]['user_ain'] = self.hals[board_type]['default_ain']
+        self.hals[board_type]['user_dout'] = self.hals[board_type]['default_dout']
+        self.hals[board_type]['user_aout'] = self.hals[board_type]['default_aout']
+        self.saveHals()
+        self.onUIChange(None)
+
+    def saveIO(self, event):
+        board_type = self.board_type_combo.GetValue().split(" [")[0] #remove the trailing [version] on board name
+        self.hals[board_type]['user_din'] = str(self.din_txt.GetValue())
+        self.hals[board_type]['user_ain'] = str(self.ain_txt.GetValue())
+        self.hals[board_type]['user_dout'] = str(self.dout_txt.GetValue())
+        self.hals[board_type]['user_aout'] = str(self.aout_txt.GetValue())
+        self.saveHals()
+
     def startBuilder(self):
 
         # Get platform and source_file from hals
@@ -474,9 +507,11 @@ class ArduinoUploadDialog(wx.Dialog):
         
         self.generateDefinitionsFile()
 
-        port = self.com_port_combo_choices[str(self.com_port_combo.GetValue())] 
+        port = "None" #invalid port
         if (self.check_compile.GetValue() == True):
             port = None
+        if str(self.com_port_combo.GetValue()) in self.com_port_combo_choices:
+            port = self.com_port_combo_choices[str(self.com_port_combo.GetValue())]
         
         compiler_thread = threading.Thread(target=builder.build, args=(self.plc_program, platform, source, port, self.output_text, self.update_subsystem))
         compiler_thread.start()
@@ -522,6 +557,17 @@ class ArduinoUploadDialog(wx.Dialog):
                 define_file += '#define MBTCP_ETHERNET\n'
             elif (self.tcp_iface_combo.GetValue() == u'WiFi'):
                 define_file += '#define MBTCP_WIFI\n'
+
+        #Generate IO Config defines
+        define_file += '\n\n//IO Config\n'
+        define_file += '#define PINMASK_DIN ' + str(self.din_txt.GetValue()) + '\n'
+        define_file += '#define PINMASK_AIN ' + str(self.ain_txt.GetValue()) + '\n'
+        define_file += '#define PINMASK_DOUT ' + str(self.dout_txt.GetValue()) + '\n'
+        define_file += '#define PINMASK_AOUT ' + str(self.aout_txt.GetValue()) + '\n'
+        define_file += '#define NUM_DISCRETE_INPUT ' + str(len(str(self.din_txt.GetValue()).split(','))) + '\n'
+        define_file += '#define NUM_ANALOG_INPUT ' + str(len(str(self.ain_txt.GetValue()).split(','))) + '\n'
+        define_file += '#define NUM_DISCRETE_OUTPUT ' + str(len(str(self.dout_txt.GetValue()).split(','))) + '\n'
+        define_file += '#define NUM_ANALOG_OUTPUT ' + str(len(str(self.aout_txt.GetValue()).split(','))) + '\n'
         
         # Get define from hals
         board_type = self.board_type_combo.GetValue().split(" [")[0]
@@ -635,3 +681,14 @@ class ArduinoUploadDialog(wx.Dialog):
         jsonStr = f.read()
         f.close()
         self.hals = json.loads(jsonStr)
+
+    def saveHals(self):
+        jsonStr = json.dumps(self.hals)
+        if (os.name == 'nt'):
+            jfile = 'editor\\arduino\\examples\\Baremetal\\hals.json'
+        else:
+            jfile = 'editor/arduino/examples/Baremetal/hals.json'
+        f = open(jfile, 'w')
+        f.write(jsonStr)
+        f.flush()
+        f.close()
