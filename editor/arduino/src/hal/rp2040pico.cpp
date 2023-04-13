@@ -3,6 +3,7 @@ extern "C" {
 #include "openplc.h"
 }
 #include "Arduino.h"
+#include "../examples/Baremetal/defines.h"
 
 //OpenPLC HAL for Raspberry Pi Pico/Pico W with the RP2040
 
@@ -13,11 +14,6 @@ Analog In: A1, A2, A3 (26,27,28)             (%IW0 - %IW2)
 Analog Out: 4,5                              (%QW0 - %QW1)
 **************************************************************/
 
-//Define the number of inputs and outputs for this board
-#define NUM_DISCRETE_INPUT          8
-#define NUM_ANALOG_INPUT            3
-#define NUM_DISCRETE_OUTPUT         8
-#define NUM_ANALOG_OUTPUT           2
 /*
     Refer to Pico-OpenPLC-A4-Pinout.pdf & -PicoPLC schem.pdf for details
     on using the Pico/Pico W as a plc
@@ -25,10 +21,10 @@ Analog Out: 4,5                              (%QW0 - %QW1)
     SPI functionality is not required (adding extra code to the .ino file)     
 */
 //Create the I/O pin masks
-uint8_t pinMask_DIN[] = {6, 7, 8, 9, 10, 11, 12, 13};
-uint8_t pinMask_AIN[] = {26, 27, 28}; 
-uint8_t pinMask_DOUT[] = {14, 15, 16, 17, 18, 19, 20, 21};
-uint8_t pinMask_AOUT[] = {4,5}; //2,3 can be used if SPI not required
+uint8_t pinMask_DIN[] = {PINMASK_DIN};
+uint8_t pinMask_AIN[] = {PINMASK_AIN};
+uint8_t pinMask_DOUT[] = {PINMASK_DOUT};
+uint8_t pinMask_AOUT[] = {PINMASK_AOUT}; //2,3 can be used if SPI not required
 
 void hardwareInit()
 {

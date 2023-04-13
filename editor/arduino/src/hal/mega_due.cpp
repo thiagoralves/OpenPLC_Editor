@@ -3,6 +3,7 @@ extern "C" {
 #include "openplc.h"
 }
 #include "Arduino.h"
+#include "../examples/Baremetal/defines.h"
 
 //OpenPLC HAL for Arduino Mega and Arduino Due
 
@@ -22,18 +23,12 @@ Analog Out: 2, 3, 4, 5, 6, 7, 8, 9                (%QW0 - %QW7)
 			
 *********************************************************************/
 
-//Define the number of inputs and outputs for this board (mapping for the Arduino Mega)
-#define NUM_DISCRETE_INPUT         24
-#define NUM_ANALOG_INPUT           8
-#define NUM_DISCRETE_OUTPUT        24
-#define NUM_ANALOG_OUTPUT          12
-
 //Create the I/O pin masks
-//const PROGMEM uint8_t pinMask_DIN[] = {62, 63, 64, 65, 66, 67, 68, 69, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52};
-uint8_t pinMask_DIN[] = {62, 63, 64, 65, 66, 67, 68, 69, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52};
-uint8_t pinMask_AIN[] = {A0, A1, A2, A3, A4, A5, A6, A7};
-uint8_t pinMask_DOUT[] = {14, 15, 16, 17, 18, 19, 20, 21, 23, 25, 27, 29, 31, 33, 35, 37, 39, 41, 43, 45, 47, 49, 51, 53};
-uint8_t pinMask_AOUT[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
+uint8_t pinMask_DIN[] = {PINMASK_DIN};
+uint8_t pinMask_AIN[] = {PINMASK_AIN};
+uint8_t pinMask_DOUT[] = {PINMASK_DOUT};
+uint8_t pinMask_AOUT[] = {PINMASK_AOUT};
+
 
 void hardwareInit()
 {

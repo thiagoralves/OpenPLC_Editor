@@ -3,6 +3,7 @@ extern "C" {
 #include "openplc.h"
 }
 #include "Arduino.h"
+#include "../examples/Baremetal/defines.h"
 
 //OpenPLC HAL for ESP8266 boards
 
@@ -12,12 +13,6 @@ Digital Out: 0, 1, 2, 3                     (%QX0.0 - %QX0.3)
 Analog In: A0                               (%IW0)
 Analog Out: 8                               (%QW0)
 **************************************************************/
-
-//Define the number of inputs and outputs for this board (mapping for the NodeMCU 1.0)
-#define NUM_DISCRETE_INPUT          4
-#define NUM_ANALOG_INPUT            1
-#define NUM_DISCRETE_OUTPUT         4
-#define NUM_ANALOG_OUTPUT           1
 
 #define NODE_PIN_D0		16
 #define NODE_PIN_D1		5
@@ -29,10 +24,11 @@ Analog Out: 8                               (%QW0)
 #define NODE_PIN_D7		13
 #define NODE_PIN_D8		15
 
-uint8_t pinMask_DIN[] = { NODE_PIN_D4, NODE_PIN_D5, NODE_PIN_D6, NODE_PIN_D7 };
-uint8_t pinMask_DOUT[] = { NODE_PIN_D0, NODE_PIN_D1, NODE_PIN_D2, NODE_PIN_D3 };
-uint8_t pinMask_AIN[] = { A0 };
-uint8_t pinMask_AOUT[] = { NODE_PIN_D8 };
+//Create the I/O pin masks
+uint8_t pinMask_DIN[] = {PINMASK_DIN};
+uint8_t pinMask_AIN[] = {PINMASK_AIN};
+uint8_t pinMask_DOUT[] = {PINMASK_DOUT};
+uint8_t pinMask_AOUT[] = {PINMASK_AOUT};
 
 void hardwareInit()
 {

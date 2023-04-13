@@ -3,6 +3,7 @@ extern "C" {
 #include "openplc.h"
 }
 #include "Arduino.h"
+#include "../examples/Baremetal/defines.h"
 
 //OpenPLC HAL for AutomationDirect P1AM PLC
 
@@ -17,17 +18,11 @@ P1AM Toggle Switch (digital pin 31) mapped to %IX0.0
 P1AM LED (digital pin 32) mapped to %QX0.0
 **************************************************************/
 
-//Define the number of inputs and outputs for this board (mapping for the Arduino UNO)
-#define NUM_DISCRETE_INPUT          6
-#define NUM_ANALOG_INPUT            7
-#define NUM_DISCRETE_OUTPUT         4
-#define NUM_ANALOG_OUTPUT           1
-
 //Create the I/O pin masks
-uint8_t pinMask_DIN[] = {31, 0, 1, 2, 3, 4};
-uint8_t pinMask_AIN[] = {A1, A2, A5, A6};
-uint8_t pinMask_DOUT[] = {32, 6, 7, 11, 12, 13, 14};
-uint8_t pinMask_AOUT[] = {A0};
+uint8_t pinMask_DIN[] = {PINMASK_DIN};
+uint8_t pinMask_AIN[] = {PINMASK_AIN};
+uint8_t pinMask_DOUT[] = {PINMASK_DOUT};
+uint8_t pinMask_AOUT[] = {PINMASK_AOUT};
 
 extern uint8_t disabled_pins[11];
 

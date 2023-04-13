@@ -5,20 +5,15 @@ extern "C" {
 #include "Arduino.h"
 #include <Arduino_MachineControl.h>
 #include "Wire.h"
+#include "../examples/Baremetal/defines.h"
 
 using namespace machinecontrol;
 
-//Define the number of inputs and outputs for this board (mapping for the Arduino UNO)
-#define NUM_DISCRETE_INPUT          8
-#define NUM_ANALOG_INPUT            3
-#define NUM_DISCRETE_OUTPUT         8
-#define NUM_ANALOG_OUTPUT           4
-
 //Create the I/O pin masks
-uint8_t pinMask_DIN[] = {DIN_READ_CH_PIN_00, DIN_READ_CH_PIN_01, DIN_READ_CH_PIN_02, DIN_READ_CH_PIN_03, DIN_READ_CH_PIN_04, DIN_READ_CH_PIN_05, DIN_READ_CH_PIN_06, DIN_READ_CH_PIN_07};
-uint8_t pinMask_AIN[] = {0, 1, 2};
-uint8_t pinMask_DOUT[] = {0, 1, 2, 3, 4, 5, 6, 7};
-uint8_t pinMask_AOUT[] = {0, 1, 2, 3};
+uint8_t pinMask_DIN[] = {PINMASK_DIN};
+uint8_t pinMask_AIN[] = {PINMASK_AIN};
+uint8_t pinMask_DOUT[] = {PINMASK_DOUT};
+uint8_t pinMask_AOUT[] = {PINMASK_AOUT};
 
 void hardwareInit()
 {
