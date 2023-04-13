@@ -23,7 +23,7 @@ def scrollToEnd(txtCtrl):
 def runCommand(command):
     cmd_response = None
     try:
-        cmd_response = subprocess.check_output(command, shell=True)
+        cmd_response = subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT)
         #cmd_response = subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True)
     except subprocess.CalledProcessError as exc:
         cmd_response = exc.output
