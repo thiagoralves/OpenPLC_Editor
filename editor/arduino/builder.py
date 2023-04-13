@@ -126,56 +126,24 @@ def build(st_file, platform, source_file, port, txtCtrl, update_subsystem):
           => arduino-cli board details -fqbn [board fqbn]
         """
 
-        # Setup boards - initial stage
-        compiler_logs += runCommand(cli_command + ' config init')
-        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
-        wx.CallAfter(scrollToEnd, txtCtrl)
-
         # Setup boards - remove 3rd party boards to re-add them later since we don't know if they're there or not
         compiler_logs += runCommand(
-            cli_command + ' config remove board_manager.additional_urls https://arduino.esp8266.com/stable/package_esp8266com_index.json')
-        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
-        wx.CallAfter(scrollToEnd, txtCtrl)
-        compiler_logs += runCommand(
-            cli_command + ' config remove board_manager.additional_urls https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json')
-        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
-        wx.CallAfter(scrollToEnd, txtCtrl)
-
-        # Remove STM32 Board
-        compiler_logs += runCommand(
-            cli_command + ' config remove board_manager.additional_urls https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectronics_index.json')
-        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
-        wx.CallAfter(scrollToEnd, txtCtrl)
-
-        # Remove CONTROLLINO boards
-        compiler_logs += runCommand(cli_command + ' config remove board_manager.additional_urls https://raw.githubusercontent.com/CONTROLLINO-PLC/CONTROLLINO_Library/master/Boards/package_ControllinoHardware_index.json')
-        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
-        wx.CallAfter(scrollToEnd, txtCtrl)
-
-        # Remove board added incorrectly by previous OpenPLC Editor versions
-        compiler_logs += runCommand(cli_command +
-                                    ' config remove board_manager.additional_urls "2>&1"')
+            cli_command + ' config remove board_manager.additional_urls \
+https://arduino.esp8266.com/stable/package_esp8266com_index.json \
+https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json \
+https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectronics_index.json \
+https://raw.githubusercontent.com/CONTROLLINO-PLC/CONTROLLINO_Library/master/Boards/package_ControllinoHardware_index.json \
+"2>&1"')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
 
         # Setup boards - add 3rd party boards
         compiler_logs += runCommand(
-            cli_command + ' config add board_manager.additional_urls https://arduino.esp8266.com/stable/package_esp8266com_index.json')
-        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
-        wx.CallAfter(scrollToEnd, txtCtrl)
-        compiler_logs += runCommand(
-            cli_command + ' config add board_manager.additional_urls https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json')
-        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
-        wx.CallAfter(scrollToEnd, txtCtrl)
-
-        # Add STM32 Board
-        compiler_logs += runCommand(
-            cli_command + ' config add board_manager.additional_urls https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectronics_index.json')
-        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
-        wx.CallAfter(scrollToEnd, txtCtrl)
-
-        # Add CONTROLLINO Boards
-        compiler_logs += runCommand(cli_command + ' config add board_manager.additional_urls https://raw.githubusercontent.com/CONTROLLINO-PLC/CONTROLLINO_Library/master/Boards/package_ControllinoHardware_index.json')
+            cli_command + ' config add board_manager.additional_urls \
+https://arduino.esp8266.com/stable/package_esp8266com_index.json \
+https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json \
+https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectronics_index.json \
+https://raw.githubusercontent.com/CONTROLLINO-PLC/CONTROLLINO_Library/master/Boards/package_ControllinoHardware_index.json')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
 
@@ -192,39 +160,18 @@ def build(st_file, platform, source_file, port, txtCtrl, update_subsystem):
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
         
-        # Install libs - required after core install/update
-        compiler_logs += runCommand(cli_command + ' lib install WiFiNINA')
-        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
-        wx.CallAfter(scrollToEnd, txtCtrl)
-        compiler_logs += runCommand(cli_command + ' lib install Ethernet')
-        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
-        wx.CallAfter(scrollToEnd, txtCtrl)
-        compiler_logs += runCommand(cli_command +
-                                    ' lib install Arduino_MachineControl')
-        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
-        wx.CallAfter(scrollToEnd, txtCtrl)
-        compiler_logs += runCommand(cli_command + ' lib install OneWire')
-        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
-        wx.CallAfter(scrollToEnd, txtCtrl)
-        compiler_logs += runCommand(cli_command +
-                                    ' lib install DallasTemperature')
-        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
-        wx.CallAfter(scrollToEnd, txtCtrl)
-        compiler_logs += runCommand(cli_command + ' lib install P1AM')
-        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
-        wx.CallAfter(scrollToEnd, txtCtrl)
-        compiler_logs += runCommand(cli_command + ' lib install CONTROLLINO')
-        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
-        wx.CallAfter(scrollToEnd, txtCtrl)
-        compiler_logs += runCommand(cli_command +
-                                    ' lib install "Adafruit ADS1X15"')
-        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
-        wx.CallAfter(scrollToEnd, txtCtrl)
-        compiler_logs += runCommand(cli_command +
-                                    ' lib install "PubSubClient"')
-        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
-        wx.CallAfter(scrollToEnd, txtCtrl)
-        compiler_logs += runCommand(cli_command + ' lib install "ArduinoJson"')
+        # Install all libs - required after core install/update
+        compiler_logs += runCommand(cli_command + ' lib install \
+WiFiNINA \
+Ethernet \
+Arduino_MachineControl \
+OneWire \
+DallasTemperature \
+P1AM \
+CONTROLLINO \
+"Adafruit ADS1X15" \
+PubSubClient \
+ArduinoJson')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
 
