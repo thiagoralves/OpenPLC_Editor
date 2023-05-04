@@ -1,5 +1,6 @@
 
 // FUNCTION_BLOCK MQTT_RECEIVE
+
 // Data part
 typedef struct {
   // FB Interface - IN, OUT, IN_OUT variables
@@ -70,6 +71,13 @@ typedef struct {
 static void MQTT_SUBSCRIBE_init__(MQTT_SUBSCRIBE *data__, BOOL retain);
 // Code part
 static void MQTT_SUBSCRIBE_body__(MQTT_SUBSCRIBE *data__);
+
+
+// External C Functions
+uint8_t connect_mqtt(char *broker, uint16_t port);
+uint8_t mqtt_send(char *topic, char *message);
+
+
 static void MQTT_RECEIVE_init__(MQTT_RECEIVE *data__, BOOL retain) {
   __INIT_VAR(data__->EN,__BOOL_LITERAL(TRUE),retain)
   __INIT_VAR(data__->ENO,__BOOL_LITERAL(TRUE),retain)
@@ -124,15 +132,28 @@ static void MQTT_SEND_body__(MQTT_SEND *data__) {
   }
   // Initialise TEMP variables
 
-  __SET_VAR(data__->,SUCCESS,,0);
+  uint8_t message_sent = 0;
+
+  if (__GET_VAR(data__->SEND))
+  {
+    #define GetFbVar(var,...) __GET_VAR(data__->var,__VA_ARGS__)
+    #define SetFbVar(var,val,...) __SET_VAR(data__->,var,__VA_ARGS__,val)
+
+    IEC_STRING mqtt_topic = GetFbVar(TOPIC);
+    IEC_STRING mqtt_message = GetFbVar(MESSAGE);
+    message_sent = mqtt_send(mqtt_topic.body, mqtt_message.body);
+
+    #undef GetFbVar
+    #undef SetFbVar
+  }
+
+  __SET_VAR(data__->,SUCCESS,,message_sent);
 
   goto __end;
 
 __end:
   return;
 } // MQTT_SEND_body__() 
-
-
 
 
 
@@ -157,7 +178,18 @@ static void MQTT_CONNECT_body__(MQTT_CONNECT *data__) {
   }
   // Initialise TEMP variables
 
-  __SET_VAR(data__->,SUCCESS,,0);
+  if (__GET_VAR(data__->CONNECT))
+  {
+    #define GetFbVar(var,...) __GET_VAR(data__->var,__VA_ARGS__)
+    #define SetFbVar(var,val,...) __SET_VAR(data__->,var,__VA_ARGS__,val)
+
+    IEC_STRING mqtt_broker = GetFbVar(BROKER);
+    uint8_t mqtt_connected = connect_mqtt(mqtt_broker.body, GetFbVar(PORT));
+    __SET_VAR(data__->,SUCCESS,,mqtt_connected);
+
+    #undef GetFbVar
+    #undef SetFbVar
+  }
 
   goto __end;
 

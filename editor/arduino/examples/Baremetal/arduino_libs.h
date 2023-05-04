@@ -147,3 +147,27 @@ extern uint8_t pinMask_AOUT[];
     }
     
 #endif
+
+#ifdef USE_MQTT_BLOCKS
+    #include <ArduinoMqttClient.h>
+    
+    WiFiClient wifiClient;
+    MqttClient mqttClient(wifiClient);
+
+    extern "C" uint8_t connect_mqtt(char *broker, uint16_t port);
+    extern "C" uint8_t mqtt_send(char *topic, char *message);
+
+    uint8_t connect_mqtt(char *broker, uint16_t port)
+    {
+        return mqttClient.connect(broker, port);
+    }
+
+    uint8_t mqtt_send(char *topic, char *message)
+    {
+        mqttClient.beginMessage(topic);
+        mqttClient.print(message);
+        mqttClient.endMessage();
+
+        return 1;
+    }
+#endif

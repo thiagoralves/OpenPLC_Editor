@@ -583,6 +583,8 @@ class ArduinoUploadDialog(wx.Dialog):
             define_file += '#define USE_P1AM_BLOCKS\n'
         if (self.plc_program.find('CLOUD_BEGIN;') > 0):
             define_file += '#define USE_CLOUD_BLOCKS\n'
+        if (self.plc_program.find('MQTT_CONNECT;') > 0):
+            define_file += '#define USE_MQTT_BLOCKS\n'
 
         #Write file to disk
         if (os.name == 'nt'):
