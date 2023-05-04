@@ -1893,4 +1893,5 @@ __end:
 #include "arduino_lib_FB.h"
 #include "p1am_FB.h"
 
+#include "MQTT.h"
 #endif //_IEC_STD_FB_H

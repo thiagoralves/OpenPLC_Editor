@@ -48,4 +48,5 @@
 {#include "communication_blocks.txt" }
 
 
+{#include "MQTT.txt" }
 {enable code generation}

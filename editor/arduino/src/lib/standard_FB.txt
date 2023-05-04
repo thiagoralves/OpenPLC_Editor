@@ -47,4 +47,5 @@
 {#include "p1am.txt" }
 
 
+{#include "MQTT.txt" }
 {enable code generation}

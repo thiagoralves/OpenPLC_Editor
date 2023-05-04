@@ -1894,4 +1894,5 @@ __end:
 #include "communication.h"
 
 
+#include "MQTT.h"
 #endif //_IEC_STD_FB_H

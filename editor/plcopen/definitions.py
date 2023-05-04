@@ -51,7 +51,8 @@ StdTC6Libs = [(_("Standard function blocks"),   join(sd, "Standard_Function_Bloc
               (_("Additional function blocks"), join(sd, "Additional_Function_Blocks.xml")),
               (_("Arduino"), join(sd, "Arduino_Function_Blocks.xml")),
               (_("Communication"), join(sd, "Communication_Blocks.xml")),
-              (_("P1AM Modules"), join(sd, "P1AM.xml"))]
+              (_("P1AM Modules"), join(sd, "P1AM.xml")),
+              (_("MQTT"), join(sd, "MQTT.xml"))]
 
 StdFuncsCSV = join(sd, "iec_std.csv")
 
@@ -173,3 +174,4 @@ ANY_TO_ANY_FILTERS = {
 
 # remove gettext override
 del _
+
