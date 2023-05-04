@@ -171,7 +171,8 @@ P1AM \
 CONTROLLINO \
 "Adafruit ADS1X15" \
 PubSubClient \
-ArduinoJson')
+ArduinoJson \
+arduinomqttclient')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
 
