@@ -174,8 +174,13 @@ extern uint8_t pinMask_AOUT[];
     */
 
     #include <PubSubClient.h>
+    //Reference: https://www.hivemq.com/blog/mqtt-client-library-encyclopedia-arduino-pubsubclient/
 
-    WiFiClient wifiClient;
+    #ifdef MBTCP_ETHERNET
+        EthernetClient wifiClient;
+    #else
+        WiFiClient wifiClient;
+    #endif
     PubSubClient mqttClient(wifiClient);
 
     extern "C" uint8_t connect_mqtt(char *broker, uint16_t port);
