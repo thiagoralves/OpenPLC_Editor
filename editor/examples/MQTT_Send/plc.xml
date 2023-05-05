@@ -444,7 +444,7 @@
               <connectionPointOut>
                 <relPosition x="170" y="20"/>
               </connectionPointOut>
-              <expression>'thiago-alves-topic'</expression>
+              <expression>'openplc-test-topic'</expression>
             </inVariable>
             <inVariable localId="15" height="40" width="180" negated="false" executionOrderId="0">
               <position x="260" y="630"/>
