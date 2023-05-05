@@ -7,8 +7,6 @@
 #define MBTCP_DNS 8,8,8,8
 #define MBTCP_GATEWAY 192,168,0,1
 #define MBTCP_SUBNET 255,255,255,0
-#define MBTCP_SSID "Alves-Net"
-#define MBTCP_PWD "palmdev1"
 #define MBTCP
 #define MODBUS_ENABLED
 #define MBTCP_WIFI
