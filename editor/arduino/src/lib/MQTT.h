@@ -115,8 +115,8 @@ static void MQTT_SEND_init__(MQTT_SEND *data__, BOOL retain) {
   __INIT_VAR(data__->EN,__BOOL_LITERAL(TRUE),retain)
   __INIT_VAR(data__->ENO,__BOOL_LITERAL(TRUE),retain)
   __INIT_VAR(data__->SEND,__BOOL_LITERAL(FALSE),retain)
-  __INIT_VAR(data__->TOPIC,__STRING_LITERAL(0,""),retain)
-  __INIT_VAR(data__->MESSAGE,__STRING_LITERAL(0,""),retain)
+  __INIT_VAR(data__->TOPIC,__STRING_LITERAL(1,"\0"),retain)
+  __INIT_VAR(data__->MESSAGE,__STRING_LITERAL(1,"\0"),retain)
   __INIT_VAR(data__->SUCCESS,__BOOL_LITERAL(FALSE),retain)
 }
 
@@ -136,15 +136,7 @@ static void MQTT_SEND_body__(MQTT_SEND *data__) {
 
   if (__GET_VAR(data__->SEND))
   {
-    #define GetFbVar(var,...) __GET_VAR(data__->var,__VA_ARGS__)
-    #define SetFbVar(var,val,...) __SET_VAR(data__->,var,__VA_ARGS__,val)
-
-    IEC_STRING mqtt_topic = GetFbVar(TOPIC);
-    IEC_STRING mqtt_message = GetFbVar(MESSAGE);
-    message_sent = mqtt_send(mqtt_topic.body, mqtt_message.body);
-
-    #undef GetFbVar
-    #undef SetFbVar
+    message_sent = mqtt_send(__GET_VAR(data__->TOPIC).body, __GET_VAR(data__->MESSAGE).body);
   }
 
   __SET_VAR(data__->,SUCCESS,,message_sent);
@@ -161,7 +153,7 @@ static void MQTT_CONNECT_init__(MQTT_CONNECT *data__, BOOL retain) {
   __INIT_VAR(data__->EN,__BOOL_LITERAL(TRUE),retain)
   __INIT_VAR(data__->ENO,__BOOL_LITERAL(TRUE),retain)
   __INIT_VAR(data__->CONNECT,__BOOL_LITERAL(FALSE),retain)
-  __INIT_VAR(data__->BROKER,__STRING_LITERAL(0,""),retain)
+  __INIT_VAR(data__->BROKER,__STRING_LITERAL(1,"\0"),retain)
   __INIT_VAR(data__->PORT,0,retain)
   __INIT_VAR(data__->SUCCESS,__BOOL_LITERAL(FALSE),retain)
 }
@@ -180,15 +172,8 @@ static void MQTT_CONNECT_body__(MQTT_CONNECT *data__) {
 
   if (__GET_VAR(data__->CONNECT))
   {
-    #define GetFbVar(var,...) __GET_VAR(data__->var,__VA_ARGS__)
-    #define SetFbVar(var,val,...) __SET_VAR(data__->,var,__VA_ARGS__,val)
-
-    IEC_STRING mqtt_broker = GetFbVar(BROKER);
-    uint8_t mqtt_connected = connect_mqtt(mqtt_broker.body, GetFbVar(PORT));
+    uint8_t mqtt_connected = connect_mqtt(__GET_VAR(data__->BROKER).body, __GET_VAR(data__->PORT));
     __SET_VAR(data__->,SUCCESS,,mqtt_connected);
-
-    #undef GetFbVar
-    #undef SetFbVar
   }
 
   goto __end;

@@ -146,14 +146,17 @@ void mbconfig_ethernet_iface(uint8_t *mac, uint8_t *ip, uint8_t *dns, uint8_t *g
             }
             mb_server.setNoDelay(true);
         #else
-            if (dns == NULL)
-                WiFi.config(IPAddress(ip));
-            else if (gateway == NULL)
-                WiFi.config(IPAddress(ip), IPAddress(dns));
-            else if (subnet == NULL)
-                WiFi.config(IPAddress(ip), IPAddress(dns), IPAddress(gateway));
-            else
-                WiFi.config(IPAddress(ip), IPAddress(dns), IPAddress(gateway), IPAddress(subnet));
+            if (ip != NULL)
+            {
+                if (dns == NULL)
+                    WiFi.config(IPAddress(ip));
+                else if (gateway == NULL)
+                    WiFi.config(IPAddress(ip), IPAddress(dns));
+                else if (subnet == NULL)
+                    WiFi.config(IPAddress(ip), IPAddress(dns), IPAddress(gateway));
+                else
+                    WiFi.config(IPAddress(ip), IPAddress(dns), IPAddress(gateway), IPAddress(subnet));
+            }
         #endif
         WiFi.begin(MBTCP_SSID, MBTCP_PWD);
         int num_tries = 0;
