@@ -489,5 +489,21 @@
         "user_ain":  "-1",
         "user_dout": "41, 40, 8, 0, 19, 60",
         "user_aout": "-1"
+    },
+	"SEQUENT-ESP32-PI": {
+        "platform": "esp32:esp32:esp32doit-devkit-v1",
+        "define": "BOARD_ESP32",
+        "source": "sequent_esp32.cpp",
+        "version": "0",
+        "last_update": 0,
+        "core": "esp32:esp32",
+        "default_din": "27, 32",
+        "default_ain": "34, 35",
+        "default_dout": "12, 13, 14, 15",
+        "default_aout": "25",
+        "user_din": "27, 32",
+        "user_ain":  "34, 35",
+        "user_dout": "12, 13, 14, 15",
+        "user_aout": "25"
     }
 }
