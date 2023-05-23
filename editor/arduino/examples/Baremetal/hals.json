@@ -490,7 +490,7 @@
         "user_dout": "41, 40, 8, 0, 19, 60",
         "user_aout": "-1"
     },
-	"SEQUENT-ESP32-PI": {
+    "SEQUENT-ESP32-PI": {
         "platform": "esp32:esp32:esp32doit-devkit-v1",
         "define": "BOARD_ESP32",
         "source": "sequent_esp32.cpp",
