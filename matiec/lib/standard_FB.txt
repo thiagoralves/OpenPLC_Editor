@@ -49,4 +49,5 @@
 
 
 {#include "MQTT.txt" }
+{#include "sm_cards.txt" }
 {enable code generation}
