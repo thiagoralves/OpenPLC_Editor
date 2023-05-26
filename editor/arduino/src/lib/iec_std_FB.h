@@ -1894,4 +1894,5 @@ __end:
 #include "p1am_FB.h"
 
 #include "MQTT.h"
+#include "sm_cards.h"
 #endif //_IEC_STD_FB_H

@@ -199,6 +199,55 @@ typedef struct {
   __DECLARE_VAR(REAL,OWB_T3)
   __DECLARE_VAR(REAL,OWB_T4)
 } SM_INDUSTRIAL;
+
+// SM_BUILDING
+// Data part
+typedef struct {
+  // FB Interface - IN, OUT, IN_OUT variables
+  __DECLARE_VAR(BOOL,EN)
+  __DECLARE_VAR(BOOL,ENO)
+  __DECLARE_VAR(SINT,STACK)
+  __DECLARE_VAR(BOOL,TRIAC1)
+  __DECLARE_VAR(BOOL,TRIAC2)
+  __DECLARE_VAR(BOOL,TRIAC3)
+  __DECLARE_VAR(BOOL,TRIAC4)
+  __DECLARE_VAR(BOOL,LED1)
+  __DECLARE_VAR(BOOL,LED2)
+  __DECLARE_VAR(BOOL,LED3)
+  __DECLARE_VAR(BOOL,LED4)
+  __DECLARE_VAR(UINT,IN1_T)
+  __DECLARE_VAR(UINT,IN2_T)
+  __DECLARE_VAR(UINT,IN3_T)
+  __DECLARE_VAR(UINT,IN4_T)
+  __DECLARE_VAR(UINT,IN5_T)
+  __DECLARE_VAR(UINT,IN6_T)
+  __DECLARE_VAR(UINT,IN7_T)
+  __DECLARE_VAR(UINT,IN8_T)
+  __DECLARE_VAR(REAL,Q0_10V1)
+  __DECLARE_VAR(REAL,Q0_10V2)
+  __DECLARE_VAR(REAL,Q0_10V3)
+  __DECLARE_VAR(REAL,Q0_10V4)
+  __DECLARE_VAR(REAL,UNIV1)
+  __DECLARE_VAR(REAL,UNIV2)
+  __DECLARE_VAR(REAL,UNIV3)
+  __DECLARE_VAR(REAL,UNIV4)
+  __DECLARE_VAR(REAL,UNIV5)
+  __DECLARE_VAR(REAL,UNIV6)
+  __DECLARE_VAR(REAL,UNIV7)
+  __DECLARE_VAR(REAL,UNIV8)  
+  __DECLARE_VAR(BOOL,DRY_C1)
+  __DECLARE_VAR(BOOL,DRY_C2)
+  __DECLARE_VAR(BOOL,DRY_C3)
+  __DECLARE_VAR(BOOL,DRY_C4)
+  __DECLARE_VAR(BOOL,DRY_C5)
+  __DECLARE_VAR(BOOL,DRY_C6)
+  __DECLARE_VAR(BOOL,DRY_C7)
+  __DECLARE_VAR(BOOL,DRY_C8) 
+  __DECLARE_VAR(REAL,OWB_T1)
+  __DECLARE_VAR(REAL,OWB_T2)
+  __DECLARE_VAR(REAL,OWB_T3)
+  __DECLARE_VAR(REAL,OWB_T4)
+} SM_BAS;
 /************************************************************************
  *                      END OF SM_CARDS LIB BLOCKS                      *
 ************************************************************************/
@@ -793,3 +842,158 @@ goto __end;
 __end:
   return;
 } // SM_INDUSTRIAL_body__()
+
+static void SM_BAS_init__(SM_BAS *data__, BOOL retain) {
+  __INIT_VAR(data__->EN,__BOOL_LITERAL(TRUE),retain)
+  __INIT_VAR(data__->ENO,__BOOL_LITERAL(TRUE),retain)
+  __INIT_VAR(data__->STACK,0,retain)
+  __INIT_VAR(data__->TRIAC1,0,retain)
+  __INIT_VAR(data__->TRIAC2,0,retain)
+  __INIT_VAR(data__->TRIAC3,0,retain)
+  __INIT_VAR(data__->TRIAC4,0,retain)
+  __INIT_VAR(data__->LED1,0,retain)
+  __INIT_VAR(data__->LED2,0,retain)
+  __INIT_VAR(data__->LED3,0,retain)
+  __INIT_VAR(data__->LED4,0,retain)
+  __INIT_VAR(data__->IN1_T,0,retain) 
+  __INIT_VAR(data__->IN2_T,0,retain) 
+  __INIT_VAR(data__->IN3_T,0,retain) 
+  __INIT_VAR(data__->IN4_T,0,retain) 
+  __INIT_VAR(data__->IN5_T,0,retain) 
+  __INIT_VAR(data__->IN6_T,0,retain) 
+  __INIT_VAR(data__->IN7_T,0,retain) 
+  __INIT_VAR(data__->IN8_T,0,retain)   
+  __INIT_VAR(data__->Q0_10V1,0,retain)
+  __INIT_VAR(data__->Q0_10V2,0,retain)
+  __INIT_VAR(data__->Q0_10V3,0,retain)
+  __INIT_VAR(data__->Q0_10V4,0,retain)
+  __INIT_VAR(data__->UNIV1,0,retain)
+  __INIT_VAR(data__->UNIV2,0,retain)
+  __INIT_VAR(data__->UNIV3,0,retain)
+  __INIT_VAR(data__->UNIV4,0,retain)
+  __INIT_VAR(data__->UNIV5,0,retain)
+  __INIT_VAR(data__->UNIV6,0,retain)
+  __INIT_VAR(data__->UNIV7,0,retain)
+  __INIT_VAR(data__->UNIV8,0,retain)
+  __INIT_VAR(data__->DRY_C1,0,retain)
+  __INIT_VAR(data__->DRY_C2,0,retain)
+  __INIT_VAR(data__->DRY_C3,0,retain)
+  __INIT_VAR(data__->DRY_C4,0,retain)
+  __INIT_VAR(data__->DRY_C5,0,retain)
+  __INIT_VAR(data__->DRY_C6,0,retain)
+  __INIT_VAR(data__->DRY_C7,0,retain)
+  __INIT_VAR(data__->DRY_C8,0,retain)
+  __INIT_VAR(data__->OWB_T1,0,retain)
+  __INIT_VAR(data__->OWB_T2,0,retain)
+  __INIT_VAR(data__->OWB_T3,0,retain)
+  __INIT_VAR(data__->OWB_T4,0,retain)
+}
+
+
+// Code part
+int basSetTriacs(uint8_t, uint8_t);
+int basSet0_10Vout(uint8_t, uint8_t, float);
+int basGetDryContacts(uint8_t, uint8_t*);
+int basGetUniversalIn(uint8_t, uint8_t, uint8_t, float*);
+int basGet1WbTemp(uint8_t, uint8_t, float*);
+static void SM_BAS_body__(SM_BAS *data__) {
+  // Control execution
+  if (!__GET_VAR(data__->EN)) {
+    __SET_VAR(data__->,ENO,,__BOOL_LITERAL(FALSE));
+    return;
+  }
+  else {
+    __SET_VAR(data__->,ENO,,__BOOL_LITERAL(TRUE));
+  }
+  uint8_t output_byte = __GET_VAR(data__->LED4) << 7 |
+						__GET_VAR(data__->LED3) << 6 |
+						__GET_VAR(data__->LED2) << 5 |
+						__GET_VAR(data__->LED1) << 4 |
+						__GET_VAR(data__->TRIAC4) << 3 | 
+                        __GET_VAR(data__->TRIAC3) << 2 | 
+                        __GET_VAR(data__->TRIAC2) << 1 | 
+                        __GET_VAR(data__->TRIAC1);
+  
+  basSetTriacs(__GET_VAR(data__->STACK), output_byte);
+  #define bitRead(value, bit) (((value) >> (bit)) & 0x01)
+  uint8_t input_byte = 0;
+  if(0 == basGetDryContacts(__GET_VAR(data__->STACK), &input_byte)){
+	__SET_VAR(data__->,DRY_C1,,bitRead(input_byte, 0));
+	__SET_VAR(data__->,DRY_C2,,bitRead(input_byte, 1));
+	__SET_VAR(data__->,DRY_C3,,bitRead(input_byte, 2));
+	__SET_VAR(data__->,DRY_C4,,bitRead(input_byte, 3));
+	__SET_VAR(data__->,DRY_C5,,bitRead(input_byte, 4));
+	__SET_VAR(data__->,DRY_C6,,bitRead(input_byte, 5));
+	__SET_VAR(data__->,DRY_C7,,bitRead(input_byte, 6));
+	__SET_VAR(data__->,DRY_C8,,bitRead(input_byte, 7));	
+  }
+  float val = 0;
+
+// ---------  Universal  inputs	------------------
+  if( 0 == basGetUniversalIn(__GET_VAR(data__->STACK), 0, __GET_VAR(data__->IN1_T), &val))
+  {
+	__SET_VAR(data__->,UNIV1,,val);
+  }
+  if( 0 == basGetUniversalIn(__GET_VAR(data__->STACK), 1, __GET_VAR(data__->IN2_T), &val))
+  {
+	__SET_VAR(data__->,UNIV2,,val);
+  }
+  if( 0 == basGetUniversalIn(__GET_VAR(data__->STACK), 2, __GET_VAR(data__->IN3_T), &val))
+  {
+	__SET_VAR(data__->,UNIV3,,val);
+  }
+  if( 0 == basGetUniversalIn(__GET_VAR(data__->STACK), 3, __GET_VAR(data__->IN4_T), &val))
+  {
+	__SET_VAR(data__->,UNIV4,,val);
+  }
+  if( 0 == basGetUniversalIn(__GET_VAR(data__->STACK), 4, __GET_VAR(data__->IN5_T), &val))
+  {
+	__SET_VAR(data__->,UNIV5,,val);
+  }
+  if( 0 == basGetUniversalIn(__GET_VAR(data__->STACK), 5, __GET_VAR(data__->IN6_T), &val))
+  {
+	__SET_VAR(data__->,UNIV6,,val);
+  }
+  if( 0 == basGetUniversalIn(__GET_VAR(data__->STACK), 6, __GET_VAR(data__->IN7_T), &val))
+  {
+	__SET_VAR(data__->,UNIV7,,val);
+  }
+  if( 0 == basGetUniversalIn(__GET_VAR(data__->STACK), 7, __GET_VAR(data__->IN8_T), &val))
+  {
+	__SET_VAR(data__->,UNIV8,,val);
+  }
+
+
+// --------------- One wire bus temperature inputs (dsb20 sensors)
+  if( 0 == basGet1WbTemp(__GET_VAR(data__->STACK), 0, &val))
+  {
+	__SET_VAR(data__->,OWB_T1,,val);
+  }
+  if( 0 == basGet1WbTemp(__GET_VAR(data__->STACK), 1, &val))
+  {
+	__SET_VAR(data__->,OWB_T2,,val);
+  }
+  if( 0 == basGet1WbTemp(__GET_VAR(data__->STACK), 2, &val))
+  {
+	__SET_VAR(data__->,OWB_T3,,val);
+  }
+  if( 0 == basGet1WbTemp(__GET_VAR(data__->STACK), 3, &val))
+  {
+	__SET_VAR(data__->,OWB_T4,,val);
+  }
+
+// ----------------- 0-10V outputs ---------------------------------------
+  basSet0_10Vout(__GET_VAR(data__->STACK), 0, __GET_VAR(data__->Q0_10V1));
+  basSet0_10Vout(__GET_VAR(data__->STACK), 1, __GET_VAR(data__->Q0_10V2));
+  basSet0_10Vout(__GET_VAR(data__->STACK), 2, __GET_VAR(data__->Q0_10V3));
+  basSet0_10Vout(__GET_VAR(data__->STACK), 3, __GET_VAR(data__->Q0_10V4));
+
+
+
+goto __end;
+
+__end:
+  return;
+} // SM_BAS_body__()
+
+

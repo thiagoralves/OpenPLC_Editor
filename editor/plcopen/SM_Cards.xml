@@ -250,19 +250,22 @@
 				<interface>
 				  <inputVars>
 					<variable name="STACK"><type><SINT/></type></variable>
-					<variable name="V_R1"> <type> <BOOL/> </type> </variable>
-					<variable name="V_R2"> <type> <BOOL/> </type> </variable>
-					<variable name="V_R3"> <type> <BOOL/> </type> </variable>
-					<variable name="V_R4"> <type> <BOOL/> </type> </variable>
-					<variable name="V_R5"> <type> <BOOL/> </type> </variable>
-					<variable name="V_R6"> <type> <BOOL/> </type> </variable>
-					<variable name="V_R7"> <type> <BOOL/> </type> </variable>
-					<variable name="V_R8"> <type> <BOOL/> </type> </variable>
-					<variable name="R1K_R10K"> <type> <BOOL/> </type> </variable>
 					<variable name="TRIAC1"> <type> <BOOL/> </type> </variable>
 					<variable name="TRIAC2"> <type> <BOOL/> </type> </variable>
 					<variable name="TRIAC3"> <type> <BOOL/> </type> </variable>
 					<variable name="TRIAC4"> <type> <BOOL/> </type> </variable>
+					<variable name="LED1"> <type> <BOOL/> </type> </variable>
+					<variable name="LED2"> <type> <BOOL/> </type> </variable>
+					<variable name="LED3"> <type> <BOOL/> </type> </variable>
+					<variable name="LED4"> <type> <BOOL/> </type> </variable>
+					<variable name="IN1_T"> <type> <UINT/> </type> </variable>
+					<variable name="IN2_T"> <type> <UINT/> </type> </variable>
+					<variable name="IN3_T"> <type> <UINT/> </type> </variable>
+					<variable name="IN4_T"> <type> <UINT/> </type> </variable>
+					<variable name="IN5_T"> <type> <UINT/> </type> </variable>
+					<variable name="IN6_T"> <type> <UINT/> </type> </variable>
+					<variable name="IN7_T"> <type> <UINT/> </type> </variable>
+					<variable name="IN8_T"> <type> <UINT/> </type> </variable>
 					<variable name="Q0_10V1"> <type> <REAL/> </type> </variable>
 					<variable name="Q0_10V2"> <type> <REAL/> </type> </variable>
 					<variable name="Q0_10V3"> <type> <REAL/> </type> </variable>

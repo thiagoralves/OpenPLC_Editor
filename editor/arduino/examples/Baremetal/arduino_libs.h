@@ -1251,3 +1251,198 @@ int indSetPWMout(uint8_t stack, uint8_t channel, float val)
 	return OK;
 }
 //#endif
+
+
+
+//------------------------------------------------------------------------------
+// Building Automation 8-Layer Stackable HAT for Raspberry Pi
+//------------------------------------------------------------------------------
+
+extern "C" int basSetLeds(uint8_t, uint8_t);
+extern "C" int basSetTriacs(uint8_t, uint8_t);
+extern "C" int basSet0_10Vout(uint8_t, uint8_t, float);
+extern "C" int basGetDryContacts(uint8_t, uint8_t*);
+extern "C" int basGetUniversalIn(uint8_t, uint8_t, uint8_t, float*);
+extern "C" int basGet1WbTemp(uint8_t, uint8_t, float*);
+
+#define I2C_BAS_ADDRESS_BASE 0x48
+
+#define BAS_I2C_TRIACS_VAL_ADD 0
+#define BAS_I2C_DRY_CONTACT_VAL_ADD 3
+#define BAS_I2C_U0_10_OUT_VAL1_ADD 4
+#define BAS_I2C_U0_10_IN_VAL1_ADD 12
+#define BAS_I2C_R_1K_CH1 28
+#define BAS_I2C_R_10K_CH1 44
+#define BAS_I2C_MEM_1WB_T1 174
+#define BAS_I2C_REVISION_MAJOR_MEM_ADD 122
+
+#define BAS_U_IN_CH_NR_MAX 8
+#define BAS_U_OUT_CH_NR_MAX 4
+#define BAS_VOLT_MAX 10
+
+
+
+int basCardCheck(uint8_t stack)
+{
+	uint8_t add = 0;
+
+	if ( (stack < 0) || (stack > 7))
+	{
+		return ERROR;
+	}
+	add = stack + I2C_BAS_ADDRESS_BASE;
+	return add;
+}
+
+int basInit(int stack)
+{
+	int dev = -1;
+	uint8_t add = 0;
+	uint8_t buff[2];
+	uint16_t val = 0;
+
+	dev = basCardCheck(stack);
+	if (dev < 0)
+	{
+		return ERROR;
+	}
+
+	if (ERROR == i2cMemRead(dev, BAS_I2C_REVISION_MAJOR_MEM_ADD, buff, 2))
+	{
+		return ERROR;
+	}
+
+	return OK;
+}
+
+int basSetTriacs(uint8_t stack, uint8_t value)
+{
+	static uint8_t prevTriacs[STACK_LEVELS] = {0, 0, 0, 0, 0, 0, 0, 0};
+	int dev = -1;
+	uint8_t buff[2];
+	if (stack >= STACK_LEVELS)
+	{
+		return ERROR;
+	}
+	if (prevTriacs[stack] == value)
+	{
+		return OK; // prevent usless transactions on I2C bus
+	}
+	dev = basCardCheck(stack);
+	if (dev < 0)
+	{
+		return ERROR;
+	}
+
+	buff[0] = 0x0f & value ;
+	if (ERROR == i2cMemWrite(dev, BAS_I2C_TRIACS_VAL_ADD, buff, 1))
+	{
+		return ERROR;
+	}
+	prevTriacs[stack] = value;
+	return OK;
+}
+
+int basGetDryContacts(uint8_t stack, uint8_t *val)
+{
+	int dev = -1;
+
+	if (val == NULL)
+	{
+		return ERROR;
+	}
+	dev = basCardCheck(stack);
+	if (dev < 0)
+	{
+		return ERROR;
+	}
+	return i2cMemRead(dev, BAS_I2C_DRY_CONTACT_VAL_ADD, val, 1);
+}
+
+int basGetUniversalIn(uint8_t stack, uint8_t channel, uint8_t type, float *val)
+{
+	uint8_t buff[2];
+	int dev = -1;
+	uint16_t aux16 = 0;
+	uint8_t address = BAS_I2C_U0_10_IN_VAL1_ADD;
+	float scaleFactor = VOLT_TO_MILIVOLT;
+
+	if (channel >= IND_U_IN_CH_NR_MAX || NULL == val)
+	{
+		return ERROR;
+	}
+	dev = basCardCheck(stack);
+	if (dev < 0)
+	{
+		return ERROR;
+	}
+	switch( type) //default reads 0-10V inputs
+	{
+		case 1: //1k resistor
+			address = BAS_I2C_R_1K_CH1;
+			scaleFactor = 1;
+			break;
+		case 2: //10k resistor
+			address = BAS_I2C_R_10K_CH1;
+			scaleFactor = 1;
+		break;
+	}
+
+	if (OK != i2cMemRead(dev, address + 2 * channel, buff, 2))
+	{
+		return ERROR;
+	}
+	memcpy(&aux16, buff, 2);
+	*val = (float)aux16 / scaleFactor;
+	return OK;
+}
+
+int basSet0_10Vout(uint8_t stack, uint8_t channel, float val)
+{
+	uint8_t buff[2];
+	int dev = -1;
+	uint16_t aux16 = 0;
+
+	if (channel >= BAS_U_OUT_CH_NR_MAX || val > BAS_VOLT_MAX)
+	{
+		return ERROR;
+	}
+	aux16 = (uint16_t)(val * VOLT_TO_MILIVOLT);
+	dev = basCardCheck(stack);
+	if (dev < 0)
+	{
+		return ERROR;
+	}
+	memcpy(buff, &aux16, 2);
+	if (OK
+		!= i2cMemWrite(dev, BAS_I2C_U0_10_OUT_VAL1_ADD + 2 * channel, buff, 2))
+	{
+		return ERROR;
+	}
+
+	return OK;
+}
+
+int basGet1WbTemp(uint8_t stack, uint8_t channel, float *val)
+{
+	uint8_t buff[2];
+	int dev = -1;
+	int16_t aux16 = 0;
+
+	if (channel > IND_OWB_CH_MAX || NULL == val)
+	{
+		return ERROR;
+	}
+	dev = basCardCheck(stack);
+	if (dev < 0)
+	{
+		return ERROR;
+	}
+	if (OK != i2cMemRead(dev, BAS_I2C_MEM_1WB_T1 + 2 * channel, buff, 2))
+	{
+		return ERROR;
+	}
+	memcpy(&aux16, buff, 2);
+	*val = (float)aux16 / OWB_TEMP_SCALE;
+	return OK;
+}

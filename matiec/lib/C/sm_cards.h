@@ -197,6 +197,55 @@ typedef struct {
   __DECLARE_VAR(REAL,OWB_T4)
 } SM_INDUSTRIAL;
 
+
+// SM_BUILDING
+// Data part
+typedef struct {
+  // FB Interface - IN, OUT, IN_OUT variables
+  __DECLARE_VAR(BOOL,EN)
+  __DECLARE_VAR(BOOL,ENO)
+  __DECLARE_VAR(SINT,STACK)
+  __DECLARE_VAR(BOOL,TRIAC1)
+  __DECLARE_VAR(BOOL,TRIAC2)
+  __DECLARE_VAR(BOOL,TRIAC3)
+  __DECLARE_VAR(BOOL,TRIAC4)
+  __DECLARE_VAR(BOOL,LED1)
+  __DECLARE_VAR(BOOL,LED2)
+  __DECLARE_VAR(BOOL,LED3)
+  __DECLARE_VAR(BOOL,LED4)
+  __DECLARE_VAR(UINT,IN1_T)
+  __DECLARE_VAR(UINT,IN2_T)
+  __DECLARE_VAR(UINT,IN3_T)
+  __DECLARE_VAR(UINT,IN4_T)
+  __DECLARE_VAR(UINT,IN5_T)
+  __DECLARE_VAR(UINT,IN6_T)
+  __DECLARE_VAR(UINT,IN7_T)
+  __DECLARE_VAR(UINT,IN8_T)
+  __DECLARE_VAR(REAL,Q0_10V1)
+  __DECLARE_VAR(REAL,Q0_10V2)
+  __DECLARE_VAR(REAL,Q0_10V3)
+  __DECLARE_VAR(REAL,Q0_10V4)
+  __DECLARE_VAR(REAL,UNIV1)
+  __DECLARE_VAR(REAL,UNIV2)
+  __DECLARE_VAR(REAL,UNIV3)
+  __DECLARE_VAR(REAL,UNIV4)
+  __DECLARE_VAR(REAL,UNIV5)
+  __DECLARE_VAR(REAL,UNIV6)
+  __DECLARE_VAR(REAL,UNIV7)
+  __DECLARE_VAR(REAL,UNIV8)  
+  __DECLARE_VAR(BOOL,DRY_C1)
+  __DECLARE_VAR(BOOL,DRY_C2)
+  __DECLARE_VAR(BOOL,DRY_C3)
+  __DECLARE_VAR(BOOL,DRY_C4)
+  __DECLARE_VAR(BOOL,DRY_C5)
+  __DECLARE_VAR(BOOL,DRY_C6)
+  __DECLARE_VAR(BOOL,DRY_C7)
+  __DECLARE_VAR(BOOL,DRY_C8) 
+  __DECLARE_VAR(REAL,OWB_T1)
+  __DECLARE_VAR(REAL,OWB_T2)
+  __DECLARE_VAR(REAL,OWB_T3)
+  __DECLARE_VAR(REAL,OWB_T4)
+} SM_BAS;
 /************************************************************************
  *                      END OF SM_CARDS LIB BLOCKS                      *
 ************************************************************************/
@@ -488,3 +537,67 @@ goto __end;
 __end:
   return;
 } // SM_INDUSTRIAL_body__()
+
+static void SM_BAS_init__(SM_BAS *data__, BOOL retain) {
+  __INIT_VAR(data__->EN,__BOOL_LITERAL(TRUE),retain)
+  __INIT_VAR(data__->ENO,__BOOL_LITERAL(TRUE),retain)
+  __INIT_VAR(data__->STACK,0,retain)
+  __INIT_VAR(data__->TRIAC1,0,retain)
+  __INIT_VAR(data__->TRIAC2,0,retain)
+  __INIT_VAR(data__->TRIAC3,0,retain)
+  __INIT_VAR(data__->TRIAC4,0,retain)
+  __INIT_VAR(data__->LED1,0,retain)
+  __INIT_VAR(data__->LED2,0,retain)
+  __INIT_VAR(data__->LED3,0,retain)
+  __INIT_VAR(data__->LED4,0,retain)
+  __INIT_VAR(data__->IN1_T,0,retain) 
+  __INIT_VAR(data__->IN2_T,0,retain) 
+  __INIT_VAR(data__->IN3_T,0,retain) 
+  __INIT_VAR(data__->IN4_T,0,retain) 
+  __INIT_VAR(data__->IN5_T,0,retain) 
+  __INIT_VAR(data__->IN6_T,0,retain) 
+  __INIT_VAR(data__->IN7_T,0,retain) 
+  __INIT_VAR(data__->IN8_T,0,retain)   
+  __INIT_VAR(data__->Q0_10V1,0,retain)
+  __INIT_VAR(data__->Q0_10V2,0,retain)
+  __INIT_VAR(data__->Q0_10V3,0,retain)
+  __INIT_VAR(data__->Q0_10V4,0,retain)
+  __INIT_VAR(data__->UNIV1,0,retain)
+  __INIT_VAR(data__->UNIV2,0,retain)
+  __INIT_VAR(data__->UNIV3,0,retain)
+  __INIT_VAR(data__->UNIV4,0,retain)
+  __INIT_VAR(data__->UNIV5,0,retain)
+  __INIT_VAR(data__->UNIV6,0,retain)
+  __INIT_VAR(data__->UNIV7,0,retain)
+  __INIT_VAR(data__->UNIV8,0,retain)
+  __INIT_VAR(data__->DRY_C1,0,retain)
+  __INIT_VAR(data__->DRY_C2,0,retain)
+  __INIT_VAR(data__->DRY_C3,0,retain)
+  __INIT_VAR(data__->DRY_C4,0,retain)
+  __INIT_VAR(data__->DRY_C5,0,retain)
+  __INIT_VAR(data__->DRY_C6,0,retain)
+  __INIT_VAR(data__->DRY_C7,0,retain)
+  __INIT_VAR(data__->DRY_C8,0,retain)
+  __INIT_VAR(data__->OWB_T1,0,retain)
+  __INIT_VAR(data__->OWB_T2,0,retain)
+  __INIT_VAR(data__->OWB_T3,0,retain)
+  __INIT_VAR(data__->OWB_T4,0,retain)
+}
+
+// Code part
+static void SM_BAS_body__(SM_BAS *data__) {
+  // Control execution
+  if (!__GET_VAR(data__->EN)) {
+    __SET_VAR(data__->,ENO,,__BOOL_LITERAL(FALSE));
+    return;
+  }
+  else {
+    __SET_VAR(data__->,ENO,,__BOOL_LITERAL(TRUE));
+  }
+
+goto __end;
+
+__end:
+  return;
+} // SM_BAS_body__()
+
