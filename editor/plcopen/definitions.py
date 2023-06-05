@@ -52,7 +52,8 @@ StdTC6Libs = [(_("Standard function blocks"),   join(sd, "Standard_Function_Bloc
               (_("Arduino"), join(sd, "Arduino_Function_Blocks.xml")),
               (_("Communication"), join(sd, "Communication_Blocks.xml")),
               (_("P1AM Modules"), join(sd, "P1AM.xml")),
-              (_("MQTT"), join(sd, "MQTT.xml"))]
+              (_("MQTT"), join(sd, "MQTT.xml")),
+              (_("Sequent Microsystems Modules"), join(sd, "SM_Cards.xml"))]
 
 StdFuncsCSV = join(sd, "iec_std.csv")
 
