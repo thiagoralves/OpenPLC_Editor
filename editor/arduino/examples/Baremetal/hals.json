@@ -505,5 +505,20 @@
         "user_ain":  "34, 35",
         "user_dout": "12, 13, 14, 15",
         "user_aout": "25"
+    },
+    "Arduino Edge Control": {
+        "platform": "arduino:mbed_edge:edge_control",
+        "source": "edge_control.cpp",
+        "version": "0",
+        "last_update": 0,
+        "core": "arduino:mbed_edge",
+        "default_din": "IRQ_CH1, IRQ_CH2, IRQ_CH3, IRQ_CH4, IRQ_CH5, IRQ_CH6",
+        "default_ain": "INPUT_420mA_CH01, INPUT_420mA_CH02, INPUT_420mA_CH03, INPUT_420mA_CH04, INPUT_05V_CH01, INPUT_05V_CH02, INPUT_05V_CH03, INPUT_05V_CH04, INPUT_05V_CH05, INPUT_05V_CH06, INPUT_05V_CH07, INPUT_05V_CH08",
+        "default_dout": "RELAY_CH01, RELAY_CH02, RELAY_CH03, RELAY_CH04",
+        "default_aout": "-1",
+        "user_din": "IRQ_CH1, IRQ_CH2, IRQ_CH3, IRQ_CH4, IRQ_CH5, IRQ_CH6",
+        "user_ain":  "INPUT_420mA_CH01, INPUT_420mA_CH02, INPUT_420mA_CH03, INPUT_420mA_CH04, INPUT_05V_CH01, INPUT_05V_CH02, INPUT_05V_CH03, INPUT_05V_CH04, INPUT_05V_CH05, INPUT_05V_CH06, INPUT_05V_CH07, INPUT_05V_CH08",
+        "user_dout": "RELAY_CH01, RELAY_CH02, RELAY_CH03, RELAY_CH04",
+        "user_aout": "-1"
     }
 }
