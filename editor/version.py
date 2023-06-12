@@ -214,6 +214,6 @@ def GetAboutDialogInfo():
 
 app_version = "2.01"
 #rev = GetAppRevision()
-rev = "Release: 2023-05-05"
+rev = "Release: 2023-05-12"
 if rev is not None:
     app_version = app_version + "\n" + rev.rstrip()
