@@ -1,0 +1,11 @@
+future==0.18.3
+lxml==4.9.2
+matplotlib==2.0.2
+Pillow==6.2.2
+Pyro==3.16
+pyserial==3.5
+setuptools==41.2.0
+sslpsk==1.0.0
+wheel==0.37.1
+zeroconf==0.19.1
+winregistry
