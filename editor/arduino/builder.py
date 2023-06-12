@@ -165,6 +165,7 @@ https://raw.githubusercontent.com/CONTROLLINO-PLC/CONTROLLINO_Library/master/Boa
 WiFiNINA \
 Ethernet \
 Arduino_MachineControl \
+Arduino_EdgeControl \
 OneWire \
 DallasTemperature \
 P1AM \
