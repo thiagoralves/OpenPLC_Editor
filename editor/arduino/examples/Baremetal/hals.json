@@ -526,7 +526,7 @@
         "platform": "arduino:mbed_opta:opta",
         "define": "BOARD_PORTENTA",
         "source": "arduino_opta.cpp",
-        "version": "4.0.2",
+        "version": "0",
         "last_update": 0,
         "core": "arduino:mbed_opta",
         "default_din": "A0, A1, A2, A3, A4, A5, A6, A7",
