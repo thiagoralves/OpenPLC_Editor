@@ -16,7 +16,11 @@ uint16_t mb_t35; // frame delay
 #ifdef MBTCP_ETHERNET
     EthernetServer mb_server(502);
     uint8_t mb_mbap[MBAP_SIZE];
+#ifdef BOARD_PORTENTA
+    EthernetClient mb_serverClients[MAX_SRV_CLIENTS];
 #endif
+#endif
+
 #ifdef MBTCP_WIFI
     WiFiServer mb_server(502);
     uint8_t mb_mbap[MBAP_SIZE];
@@ -191,16 +195,24 @@ void handle_tcp()
         WiFiClient client = mb_server.available();
     #endif
 
-    //ESP boards have a slightly different implementation of the WiFi API - therefore their specific
+    //ESP and Portenta boards have a slightly different implementation of the WiFi/Ethernet API - therefore their specific
     //code lies below
-    #if (defined(BOARD_ESP8266) || defined(BOARD_ESP32)) && defined(MBTCP_WIFI)
-        if (mb_server.hasClient()) 
+    #if (defined(BOARD_ESP8266) || defined(BOARD_ESP32) || defined(BOARD_PORTENTA)) && (defined(MBTCP_WIFI) || defined(MBTCP_ETHERNET))
+        #ifdef BOARD_PORTENTA
+        if (client)
+        #else
+        if (mb_server.hasClient())
+        #endif
         {
             for (int i = 0; i < MAX_SRV_CLIENTS; i++) 
             {
                 if (!mb_serverClients[i]) //equivalent to !serverClients[i].connected()
-                { 
+                {
+                    #ifdef BOARD_PORTENTA
+                    mb_serverClients[i] = client;
+                    #else
                     mb_serverClients[i] = mb_server.available();
+                    #endif
                     break;
                 }
             }
@@ -256,8 +268,8 @@ void handle_tcp()
                 mb_serverClients[i].write(sendbuffer, mb_frame_len + MBAP_SIZE);
             }
         }
-
-        //If this is not an ESP board, then here is the default code
+    
+    //If this is not an ESP board or Portenta board, then here is the default code
     #else
         if (client) 
         {

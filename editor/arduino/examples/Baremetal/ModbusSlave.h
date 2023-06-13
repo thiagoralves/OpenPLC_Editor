@@ -90,7 +90,11 @@ extern uint16_t mb_t35; // frame delay
 #ifdef MBTCP_ETHERNET
     extern EthernetServer mb_server;
     extern uint8_t mb_mbap[MBAP_SIZE];
+#ifdef BOARD_PORTENTA
+    extern EthernetClient mb_serverClients[MAX_SRV_CLIENTS];
 #endif
+#endif
+
 #ifdef MBTCP_WIFI
     extern WiFiServer mb_server;
     extern uint8_t mb_mbap[MBAP_SIZE];
