@@ -170,6 +170,7 @@
     },
     "Portenta Machine Control H7": {
         "platform": "arduino:mbed_portenta:envie_m7",
+        "define": "BOARD_PORTENTA",
         "source": "machine_control.cpp",
         "version": "0",
         "last_update": 0,
@@ -519,6 +520,22 @@
         "user_din": "IRQ_CH1, IRQ_CH2, IRQ_CH3, IRQ_CH4, IRQ_CH5, IRQ_CH6",
         "user_ain":  "INPUT_420mA_CH01, INPUT_420mA_CH02, INPUT_420mA_CH03, INPUT_420mA_CH04, INPUT_05V_CH01, INPUT_05V_CH02, INPUT_05V_CH03, INPUT_05V_CH04, INPUT_05V_CH05, INPUT_05V_CH06, INPUT_05V_CH07, INPUT_05V_CH08",
         "user_dout": "RELAY_CH01, RELAY_CH02, RELAY_CH03, RELAY_CH04",
+        "user_aout": "-1"
+    },
+    "Arduino Opta": {
+        "platform": "arduino:mbed_opta:opta",
+        "define": "BOARD_PORTENTA",
+        "source": "arduino_opta.cpp",
+        "version": "4.0.2",
+        "last_update": 0,
+        "core": "arduino:mbed_opta",
+        "default_din": "A0, A1, A2, A3, A4, A5, A6, A7",
+        "default_ain": "A0, A1, A2, A3, A4, A5, A6, A7",
+        "default_dout": "D0, D1, D2, D3",
+        "default_aout": "-1",
+        "user_din": "A0, A1, A2, A3, A4, A5, A6, A7",
+        "user_ain":  "A0, A1, A2, A3, A4, A5, A6, A7",
+        "user_dout": "D0, D1, D2, D3",
         "user_aout": "-1"
     }
 }
