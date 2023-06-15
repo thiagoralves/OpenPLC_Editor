@@ -3,41 +3,24 @@ extern "C" {
 #include "openplc.h"
 }
 #include "Arduino.h"
+#include "../examples/Baremetal/defines.h"
 
-//OpenPLC HAL for AutomationDirect P1AM PLC
+//OpenPLC HAL for ESP32 boards
 
-/******************PINOUT CONFIGURATION***********************
-Digital In:  0, 1, 2, 3, 4, 5               (%IX0.0 - %IX0.5)
-Digital Out: 7, 8, 9, 10, 11, 12            (%QX0.0 - %QX0.5)
-Analog In: A1, A2, A3, A4, A5, A6           (%IW0 - %IW5)
-Analog Out: 6, 15                           (%QW0 - %QW1)
-**************************************************************/
-
-//Define the number of inputs and outputs for this board (mapping for the Arduino UNO)
-#define NUM_DISCRETE_INPUT          0
-#define NUM_ANALOG_INPUT            0
-#define NUM_DISCRETE_OUTPUT         0
-#define NUM_ANALOG_OUTPUT           0
+/******************PINOUT CONFIGURATION**************************
+Digital In:  17, 18, 19, 21, 22, 23, 27, 32 (%IX0.0 - %IX0.7)
+             33                             (%IX1.0 - %IX1.0)
+Digital Out: 01, 02, 03, 04, 05, 12, 13, 14 (%QX0.0 - %QX0.7)
+             15, 16                         (%QX1.0 - %QX1.1)
+Analog In:   34, 35, 36, 39                 (%IW0 - %IW2)
+Analog Out:  25, 26                         (%QW0 - %QW1)
+*****************************************************************/
 
 //Create the I/O pin masks
-uint8_t pinMask_DIN[] = {0, 1, 2, 3, 4, 5};
-uint8_t pinMask_AIN[] = {A1, A2, A3, A4, A5, A6};
-uint8_t pinMask_DOUT[] = {7, 8, 9, 10, 11, 12};
-uint8_t pinMask_AOUT[] = {6, 15};
-
-extern uint8_t disabled_pins[11];
-
-bool checkPin(uint8_t pin)
-{
-    for (int i = 1; i < disabled_pins[0]; i++)
-    {
-        if (pin == disabled_pins[i])
-        {
-            return false;
-        }
-    }
-    return true;
-}
+uint8_t pinMask_DIN[] = {PINMASK_DIN};
+uint8_t pinMask_AIN[] = {PINMASK_AIN};
+uint8_t pinMask_DOUT[] = {PINMASK_DOUT};
+uint8_t pinMask_AOUT[] = {PINMASK_AOUT};
 
 void hardwareInit()
 {
@@ -73,7 +56,7 @@ void updateInputBuffers()
     for (int i = 0; i < NUM_ANALOG_INPUT; i++)
     {
         if (int_input[i] != NULL)
-            *int_input[i] = (analogRead(pinMask_AIN[i]) * 64);
+            *int_input[i] = (analogRead(pinMask_AIN[i]) * 16);
     }
 }
 
@@ -87,6 +70,6 @@ void updateOutputBuffers()
     for (int i = 0; i < NUM_ANALOG_OUTPUT; i++)
     {
         if (int_output[i] != NULL) 
-            analogWrite(pinMask_AOUT[i], (*int_output[i] / 256));
+            dacWrite(pinMask_AOUT[i], (*int_output[i] / 256));
     }
 }

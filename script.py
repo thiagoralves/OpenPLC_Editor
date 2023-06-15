@@ -81,6 +81,7 @@ os.system(cmd)
 #installing esp32
 cmd = os.path.dirname(os.path.realpath(__file__))+"\\editor\\arduino\\bin\\arduino-cli-w32.exe core install esp32:esp32"
 os.system(cmd)
+
 #installing driver
 subprocess.call(['pnputil', '-i', '-a', os.path.dirname(os.path.realpath(__file__))+"\\DRIVER\\silabser.inf"])
 
