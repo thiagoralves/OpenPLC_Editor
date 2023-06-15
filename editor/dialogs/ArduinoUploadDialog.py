@@ -39,7 +39,10 @@ class ArduinoUploadDialog(wx.Dialog):
         else:
             wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Transfer Program to PLC", pos = wx.DefaultPosition, size = wx.Size( 720,590 ), style = wx.DEFAULT_DIALOG_STYLE )
         # load Hals automatically and initialize the board_type_comboChoices
+        builder.setLangArduino()
+        builder.readBoardsInstalled()
         self.loadHals()
+
         board_type_comboChoices = []
         for board in self.hals:
             board_name = ""

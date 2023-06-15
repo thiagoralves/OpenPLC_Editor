@@ -56,6 +56,7 @@ def saveHals(halObj):
     f.write(jsonStr)
     f.flush()
     f.close()
+    
 def readBoardInstalled(platform):
     hals = loadHals()
     cli_command = ''
@@ -77,6 +78,33 @@ def readBoardInstalled(platform):
                         hals[board]['version'] = board_version
                         saveHals(hals)
                         break
+
+def readBoardsInstalled():
+    hasToSave = False
+    hals = loadHals()
+    cli_command = ''
+    if os_platform.system() == 'Windows':
+        cli_command = 'editor\\arduino\\bin\\arduino-cli-w32'
+    elif os_platform.system() == 'Darwin':
+        cli_command = 'editor/arduino/bin/arduino-cli-mac'
+    else:
+        cli_command = 'editor/arduino/bin/arduino-cli-l64'
+    boardInstalled = runCommand(cli_command + ' board listall')
+    for board in hals:
+        if board in boardInstalled:
+            platform = hals[board]['platform']
+            board_details = runCommand(cli_command + ' board details -b ' + platform)
+            board_details = board_details.splitlines()
+            board_version = '0'
+            for line in board_details:
+                if "Board version:" in line:
+                    board_version = line.split('Board version:')[1]
+                    board_version = ''.join(board_version.split()) #remove white spaces
+                    hals[board]['version'] = board_version
+                    hasToSave = True
+                    break
+    if hasToSave:
+        saveHals(hals)
 
 def setLangArduino():
     cli_command = ''

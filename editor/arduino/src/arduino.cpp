@@ -5,16 +5,14 @@ extern "C" {
 #include "Arduino.h"
 #include "../examples/Baremetal/defines.h"
 
-//OpenPLC HAL for ESP32 boards
+//OpenPLC HAL for Arduino Uno and Arduino Nano (old) form factor (Uno, Leonardo, Nano, Micro and Zero)
 
-/******************PINOUT CONFIGURATION**************************
-Digital In:  17, 18, 19, 21, 22, 23, 27, 32 (%IX0.0 - %IX0.7)
-             33                             (%IX1.0 - %IX1.0)
-Digital Out: 01, 02, 03, 04, 05, 12, 13, 14 (%QX0.0 - %QX0.7)
-             15, 16                         (%QX1.0 - %QX1.1)
-Analog In:   34, 35, 36, 39                 (%IW0 - %IW2)
-Analog Out:  25, 26                         (%QW0 - %QW1)
-*****************************************************************/
+/******************PINOUT CONFIGURATION*******************
+Digital In: 2, 3, 4, 5, 6           (%IX0.0 - %IX0.4)
+Digital Out: 7, 8, 12, 13           (%QX0.0 - %QX0.3)
+Analog In: A0, A1, A2, A3, A4, A5   (%IW0 - %IW5)
+Analog Out: 9, 10, 11               (%QW0 - %QW2)
+**********************************************************/
 
 //Create the I/O pin masks
 uint8_t pinMask_DIN[] = {PINMASK_DIN};
@@ -26,22 +24,26 @@ void hardwareInit()
 {
     for (int i = 0; i < NUM_DISCRETE_INPUT; i++)
     {
-        pinMode(pinMask_DIN[i], INPUT);
+		uint8_t pin = pinMask_DIN[i];
+        pinMode(pin, INPUT);
     }
     
     for (int i = 0; i < NUM_ANALOG_INPUT; i++)
     {
-        pinMode(pinMask_AIN[i], INPUT);
+		uint8_t pin = pinMask_AIN[i];
+        pinMode(pin, INPUT);
     }
     
     for (int i = 0; i < NUM_DISCRETE_OUTPUT; i++)
     {
-        pinMode(pinMask_DOUT[i], OUTPUT);
+		uint8_t pin = pinMask_DOUT[i];
+        pinMode(pin, OUTPUT);
     }
 
     for (int i = 0; i < NUM_ANALOG_OUTPUT; i++)
     {
-        pinMode(pinMask_AOUT[i], OUTPUT);
+		uint8_t pin = pinMask_AOUT[i];
+        pinMode(pin, OUTPUT);
     }
 }
 
@@ -49,14 +51,16 @@ void updateInputBuffers()
 {
     for (int i = 0; i < NUM_DISCRETE_INPUT; i++)
     {
+		uint8_t pin = pinMask_DIN[i];
         if (bool_input[i/8][i%8] != NULL) 
-            *bool_input[i/8][i%8] = digitalRead(pinMask_DIN[i]);
+            *bool_input[i/8][i%8] = digitalRead(pin);
     }
     
     for (int i = 0; i < NUM_ANALOG_INPUT; i++)
     {
+		uint8_t pin = pinMask_AIN[i];
         if (int_input[i] != NULL)
-            *int_input[i] = (analogRead(pinMask_AIN[i]) * 16);
+            *int_input[i] = (analogRead(pin) * 64);
     }
 }
 
@@ -64,12 +68,14 @@ void updateOutputBuffers()
 {
     for (int i = 0; i < NUM_DISCRETE_OUTPUT; i++)
     {
+		uint8_t pin = pinMask_DOUT[i];
         if (bool_output[i/8][i%8] != NULL) 
-            digitalWrite(pinMask_DOUT[i], *bool_output[i/8][i%8]);
+            digitalWrite(pin, *bool_output[i/8][i%8]);
     }
     for (int i = 0; i < NUM_ANALOG_OUTPUT; i++)
     {
+		uint8_t pin = pinMask_AOUT[i];
         if (int_output[i] != NULL) 
-            dacWrite(pinMask_AOUT[i], (*int_output[i] / 256));
+            analogWrite(pin, (*int_output[i] / 256));
     }
 }
