@@ -246,6 +246,74 @@ typedef struct {
   __DECLARE_VAR(REAL,OWB_T3)
   __DECLARE_VAR(REAL,OWB_T4)
 } SM_BAS;
+
+
+// SM_HOME
+// Data part
+typedef struct {
+  // FB Interface - IN, OUT, IN_OUT variables
+  __DECLARE_VAR(BOOL,EN)
+  __DECLARE_VAR(BOOL,ENO)
+  __DECLARE_VAR(SINT,STACK)
+  __DECLARE_VAR(BOOL,RELAY1)
+  __DECLARE_VAR(BOOL,RELAY2)
+  __DECLARE_VAR(BOOL,RELAY3)
+  __DECLARE_VAR(BOOL,RELAY4)
+  __DECLARE_VAR(BOOL,RELAY5)
+  __DECLARE_VAR(BOOL,RELAY6)
+  __DECLARE_VAR(BOOL,RELAY7)
+  __DECLARE_VAR(BOOL,RELAY8)
+  __DECLARE_VAR(REAL,Q0_10V1)
+  __DECLARE_VAR(REAL,Q0_10V2)
+  __DECLARE_VAR(REAL,Q0_10V3)
+  __DECLARE_VAR(REAL,Q0_10V4)
+  __DECLARE_VAR(REAL,QOD1)
+  __DECLARE_VAR(REAL,QOD2)
+  __DECLARE_VAR(REAL,QOD3)
+  __DECLARE_VAR(REAL,QOD4)
+  __DECLARE_VAR(BOOL,OPTO1)
+  __DECLARE_VAR(BOOL,OPTO2)
+  __DECLARE_VAR(BOOL,OPTO3)
+  __DECLARE_VAR(BOOL,OPTO4)
+  __DECLARE_VAR(BOOL,OPTO5)
+  __DECLARE_VAR(BOOL,OPTO6)
+  __DECLARE_VAR(BOOL,OPTO7)
+  __DECLARE_VAR(BOOL,OPTO8)
+  __DECLARE_VAR(REAL,ADC1)
+  __DECLARE_VAR(REAL,ADC2)
+  __DECLARE_VAR(REAL,ADC3)
+  __DECLARE_VAR(REAL,ADC4)
+  __DECLARE_VAR(REAL,ADC5)
+  __DECLARE_VAR(REAL,ADC6)
+  __DECLARE_VAR(REAL,ADC7)
+  __DECLARE_VAR(REAL,ADC8)
+  __DECLARE_VAR(REAL,OWB_T1)
+  __DECLARE_VAR(REAL,OWB_T2)
+  __DECLARE_VAR(REAL,OWB_T3)
+  __DECLARE_VAR(REAL,OWB_T4)
+} SM_HOME;
+
+
+
+// SM_8MOSFET SIMULATOR
+// Data part
+typedef struct {
+  // FB Interface - IN, OUT, IN_OUT variables
+  __DECLARE_VAR(BOOL,EN)
+  __DECLARE_VAR(BOOL,ENO)
+  __DECLARE_VAR(SINT,STACK)
+  __DECLARE_VAR(BOOL,MOS1)
+  __DECLARE_VAR(BOOL,MOS2)
+  __DECLARE_VAR(BOOL,MOS3)
+  __DECLARE_VAR(BOOL,MOS4)
+  __DECLARE_VAR(BOOL,MOS5)
+  __DECLARE_VAR(BOOL,MOS6)
+  __DECLARE_VAR(BOOL,MOS7)
+  __DECLARE_VAR(BOOL,MOS8)
+  // FB private variables - TEMP, private and located variables
+  __DECLARE_VAR(SINT,DUMMY)
+} SM_8MOSFET;
+
 /************************************************************************
  *                      END OF SM_CARDS LIB BLOCKS                      *
 ************************************************************************/
@@ -601,3 +669,99 @@ __end:
   return;
 } // SM_BAS_body__()
 
+
+static void SM_HOME_init__(SM_HOME *data__, BOOL retain) {
+  __INIT_VAR(data__->EN,__BOOL_LITERAL(TRUE),retain)
+  __INIT_VAR(data__->ENO,__BOOL_LITERAL(TRUE),retain)
+  __INIT_VAR(data__->STACK,0,retain)
+  __INIT_VAR(data__->RELAY1,0,retain)
+  __INIT_VAR(data__->RELAY2,0,retain)
+  __INIT_VAR(data__->RELAY3,0,retain)
+  __INIT_VAR(data__->RELAY4,0,retain)
+  __INIT_VAR(data__->RELAY5,0,retain)
+  __INIT_VAR(data__->RELAY6,0,retain)
+  __INIT_VAR(data__->RELAY7,0,retain)
+  __INIT_VAR(data__->RELAY8,0,retain)
+  __INIT_VAR(data__->Q0_10V1,0,retain)
+  __INIT_VAR(data__->Q0_10V2,0,retain)
+  __INIT_VAR(data__->Q0_10V3,0,retain)
+  __INIT_VAR(data__->Q0_10V4,0,retain)
+  __INIT_VAR(data__->QOD1,0,retain)
+  __INIT_VAR(data__->QOD2,0,retain)
+  __INIT_VAR(data__->QOD3,0,retain)
+  __INIT_VAR(data__->QOD4,0,retain)
+  __INIT_VAR(data__->OPTO1,0,retain)
+  __INIT_VAR(data__->OPTO2,0,retain)
+  __INIT_VAR(data__->OPTO3,0,retain)
+  __INIT_VAR(data__->OPTO4,0,retain)
+  __INIT_VAR(data__->OPTO5,0,retain)
+  __INIT_VAR(data__->OPTO6,0,retain)
+  __INIT_VAR(data__->OPTO7,0,retain)
+  __INIT_VAR(data__->OPTO8,0,retain)
+  __INIT_VAR(data__->ADC1,0,retain)
+  __INIT_VAR(data__->ADC2,0,retain)
+  __INIT_VAR(data__->ADC3,0,retain)
+  __INIT_VAR(data__->ADC4,0,retain)
+  __INIT_VAR(data__->ADC5,0,retain)
+  __INIT_VAR(data__->ADC6,0,retain)
+  __INIT_VAR(data__->ADC7,0,retain)
+  __INIT_VAR(data__->ADC8,0,retain)
+  __INIT_VAR(data__->OWB_T1,0,retain)
+  __INIT_VAR(data__->OWB_T2,0,retain)
+  __INIT_VAR(data__->OWB_T3,0,retain)
+  __INIT_VAR(data__->OWB_T4,0,retain)
+}
+
+// Code part
+static void SM_HOME_body__(SM_HOME *data__) {
+  // Control execution
+  if (!__GET_VAR(data__->EN)) {
+    __SET_VAR(data__->,ENO,,__BOOL_LITERAL(FALSE));
+    return;
+  }
+  else {
+    __SET_VAR(data__->,ENO,,__BOOL_LITERAL(TRUE));
+  }
+
+goto __end;
+
+__end:
+  return;
+} // SM_HOME_body__()
+
+
+static void SM_8MOSFET_init__(SM_8MOSFET *data__, BOOL retain) {
+  __INIT_VAR(data__->EN,__BOOL_LITERAL(TRUE),retain)
+  __INIT_VAR(data__->ENO,__BOOL_LITERAL(TRUE),retain)
+  __INIT_VAR(data__->STACK,0,retain)
+  __INIT_VAR(data__->DUMMY,0,retain)
+  __INIT_VAR(data__->MOS1,0,retain)
+  __INIT_VAR(data__->MOS2,0,retain)
+  __INIT_VAR(data__->MOS3,0,retain)
+  __INIT_VAR(data__->MOS4,0,retain)
+  __INIT_VAR(data__->MOS5,0,retain)
+  __INIT_VAR(data__->MOS6,0,retain)
+  __INIT_VAR(data__->MOS7,0,retain)
+  __INIT_VAR(data__->MOS8,0,retain)
+
+}
+
+// Code part
+static void SM_8MOSFET_body__(SM_8MOSFET *data__) {
+	static uint8_t init = 0;
+  // Control execution
+  if (!__GET_VAR(data__->EN)) {
+    __SET_VAR(data__->,ENO,,__BOOL_LITERAL(FALSE));
+    return;
+  }
+  else {
+    __SET_VAR(data__->,ENO,,__BOOL_LITERAL(TRUE));
+  }
+  // Dummy code - just for editor simulation. Real code is inside sm_cards.h file on arduino folder
+  __SET_VAR(data__->,DUMMY,,0);
+  
+  goto __end;
+
+__end:
+  return;
+} // SM_8MOSFET_body__()
