@@ -3,6 +3,7 @@ extern "C" {
 #include "openplc.h"
 }
 #include "Arduino.h"
+#include "../examples/Baremetal/defines.h"
 
 //OpenPLC HAL for Arduino Nano RP2040
 
@@ -13,17 +14,11 @@ Analog In: A1, A2, A3                       (%IW0 - %IW2)
 Analog Out: 14                              (%QW0 - %QW0)
 **************************************************************/
 
-//Define the number of inputs and outputs for this board (mapping for the Arduino UNO)
-#define NUM_DISCRETE_INPUT          6
-#define NUM_ANALOG_INPUT            3
-#define NUM_DISCRETE_OUTPUT         6
-#define NUM_ANALOG_OUTPUT           1
-
 //Create the I/O pin masks
-uint8_t pinMask_DIN[] = {2, 3, 4, 5, 6, 7};
-uint8_t pinMask_AIN[] = {A1, A2, A3}; //Apparently Arduino mbedOS crashes when we use A4 onward. They need to fix this...
-uint8_t pinMask_DOUT[] = {8, 9, 10, 11, 12, 13};
-uint8_t pinMask_AOUT[] = {14};
+uint8_t pinMask_DIN[] = {PINMASK_DIN};
+uint8_t pinMask_AIN[] = {PINMASK_AIN}; //Apparently Arduino mbedOS crashes when we use A4 onward. They need to fix this...
+uint8_t pinMask_DOUT[] = {PINMASK_DOUT};
+uint8_t pinMask_AOUT[] = {PINMASK_AOUT};
 
 void hardwareInit()
 {

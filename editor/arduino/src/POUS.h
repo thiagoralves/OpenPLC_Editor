@@ -4,24 +4,22 @@
 #include "accessor.h"
 #include "iec_std_lib.h"
 
-// PROGRAM PROGRAM0
+// PROGRAM MQTT_EXAMPLE
 // Data part
 typedef struct {
   // PROGRAM Interface - IN, OUT, IN_OUT variables
 
   // PROGRAM private variables - TEMP, private and located variables
+  __DECLARE_VAR(BOOL,BLINK_LED)
   TON TON0;
-  __DECLARE_LOCATED(BOOL,BLINKY)
   TOF TOF0;
-  P1AM_INIT P1AM_INIT0;
-  __DECLARE_LOCATED(INT,INIT_MODULES)
-  P1_16TR P1_16TR0;
-  P1_08N P1_08N0;
-  __DECLARE_VAR(INT,SINT_TO_INT11_OUT)
+  MQTT_CONNECT MQTT_CONNECT0;
+  MQTT_SEND MQTT_SEND0;
+  __DECLARE_VAR(BOOL,MQTT_CONNECTED)
 
-} PROGRAM0;
+} MQTT_EXAMPLE;
 
-void PROGRAM0_init__(PROGRAM0 *data__, BOOL retain);
+void MQTT_EXAMPLE_init__(MQTT_EXAMPLE *data__, BOOL retain);
 // Code part
-void PROGRAM0_body__(PROGRAM0 *data__);
+void MQTT_EXAMPLE_body__(MQTT_EXAMPLE *data__);
 #endif //__POUS_H

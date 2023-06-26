@@ -3,6 +3,7 @@ extern "C" {
 #include "openplc.h"
 }
 #include "Arduino.h"
+#include "../examples/Baremetal/defines.h"
 
 //OpenPLC HAL for Arduino MKR products
 
@@ -13,17 +14,12 @@ Analog In: A1, A2, A3, A4, A5, A6           (%IW0 - %IW5)
 Analog Out: 6, 15                           (%QW0 - %QW1)
 **************************************************************/
 
-//Define the number of inputs and outputs for this board (mapping for the Arduino UNO)
-#define NUM_DISCRETE_INPUT          6
-#define NUM_ANALOG_INPUT            6
-#define NUM_DISCRETE_OUTPUT         6
-#define NUM_ANALOG_OUTPUT           2
-
 //Create the I/O pin masks
-uint8_t pinMask_DIN[] = {0, 1, 2, 3, 4, 5};
-uint8_t pinMask_AIN[] = {A1, A2, A3, A4, A5, A6};
-uint8_t pinMask_DOUT[] = {7, 8, 9, 10, 11, 12};
-uint8_t pinMask_AOUT[] = {6, 15};
+uint8_t pinMask_DIN[] = {PINMASK_DIN};
+uint8_t pinMask_AIN[] = {PINMASK_AIN};
+uint8_t pinMask_DOUT[] = {PINMASK_DOUT};
+uint8_t pinMask_AOUT[] = {PINMASK_AOUT};
+
 
 void hardwareInit()
 {

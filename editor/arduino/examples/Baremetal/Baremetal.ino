@@ -77,9 +77,9 @@ void setup()
             WiFi.mode(WIFI_OFF);
         #endif
     #endif
-    hardwareInit();
     config_init__();
     glueVars();
+    hardwareInit();
 	#ifdef MODBUS_ENABLED
         #ifdef MBSERIAL
 	        //Config Modbus Serial (port, speed, rs485 tx pin)

@@ -3,6 +3,7 @@ extern "C" {
 #include "openplc.h"
 }
 #include "Arduino.h"
+#include "../examples/Baremetal/defines.h"
 
 //OpenPLC HAL for CONTROLLINO MAXI see https://www.controllino.com/wp-content/uploads/2021/03/CONTROLLINO-MAXI-Pinout.pdf
 
@@ -18,17 +19,11 @@ Analog In:   A0, A1, A2, A3                             (%IW0 - %IW3)
 Analog Out:  D0, D1, D2, D3                             (%QW0 - %QW3)
 *********************************************************************/
 
-//Define the number of inputs and outputs for this board (mapping for the Arduino Mega)
-#define NUM_DISCRETE_INPUT         8
-#define NUM_ANALOG_INPUT           4
-#define NUM_DISCRETE_OUTPUT        18
-#define NUM_ANALOG_OUTPUT          4
-
 //Create the I/O pin masks
-uint8_t pinMask_DIN[] =     { A4, A5, A6, A7, A8, A9, 18, 19 };
-uint8_t pinMask_AIN[] =     { A0, A1, A2, A3 };
-uint8_t pinMask_DOUT[] =    { 6, 7, 8, 9, 10, 11, 12, 13, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 };
-uint8_t pinMask_AOUT[] =    { 2, 3, 4, 5 };
+uint8_t pinMask_DIN[] = {PINMASK_DIN};
+uint8_t pinMask_AIN[] = {PINMASK_AIN};
+uint8_t pinMask_DOUT[] = {PINMASK_DOUT};
+uint8_t pinMask_AOUT[] = {PINMASK_AOUT};
 
 void hardwareInit()
 {

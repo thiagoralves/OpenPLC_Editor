@@ -3,6 +3,7 @@ extern "C" {
 #include "openplc.h"
 }
 #include "Arduino.h"
+#include "../examples/Baremetal/defines.h"
 
 //OpenPLC HAL for ESP32 boards
 
@@ -15,16 +16,11 @@ Analog In:   34, 35, 36, 39                 (%IW0 - %IW2)
 Analog Out:  25, 26                         (%QW0 - %QW1)
 *****************************************************************/
 
-//Define the number of inputs and outputs for this board (mapping for the NodeMCU 1.0)
-#define NUM_DISCRETE_INPUT          9
-#define NUM_ANALOG_INPUT            4
-#define NUM_DISCRETE_OUTPUT         10
-#define NUM_ANALOG_OUTPUT           2
-
-uint8_t pinMask_DIN[] = { 17, 18, 19, 21, 22, 23, 27, 32, 33 };
-uint8_t pinMask_DOUT[] = { 01, 02, 03, 04, 05, 12, 13, 14, 15, 16 };
-uint8_t pinMask_AIN[] = { 34, 35, 36, 39 };
-uint8_t pinMask_AOUT[] = { 25, 26 };
+//Create the I/O pin masks
+uint8_t pinMask_DIN[] = {PINMASK_DIN};
+uint8_t pinMask_AIN[] = {PINMASK_AIN};
+uint8_t pinMask_DOUT[] = {PINMASK_DOUT};
+uint8_t pinMask_AOUT[] = {PINMASK_AOUT};
 
 void hardwareInit()
 {

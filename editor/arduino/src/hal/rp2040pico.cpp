@@ -5,38 +5,26 @@ extern "C" {
 #include "Arduino.h"
 #include "../examples/Baremetal/defines.h"
 
-//OpenPLC HAL for AutomationDirect P1AM PLC
+//OpenPLC HAL for Raspberry Pi Pico/Pico W with the RP2040
 
 /******************PINOUT CONFIGURATION***********************
-Digital In:  31, 0, 1, 2, 3, 4              (%IX0.0 - %IX0.5)
-Digital Out: 32, 6, 7, 11, 12, 13, 14       (%QX0.0 - %QX0.6)
-Analog In: A1, A2, A5, A6                   (%IW0 - %IW3)
-Analog Out: A0                              (%QW0 - %QW0)
-
-Notes:
-P1AM Toggle Switch (digital pin 31) mapped to %IX0.0
-P1AM LED (digital pin 32) mapped to %QX0.0
+Digital In:  6, 7 ,8, 9, 10, 11, 12, 13      (%IX0.0 - %IX0.7)
+Digital Out: 14, 15, 16, 17, 18, 19, 20, 21  (%QX0.0 - %QX0.7)
+Analog In: A1, A2, A3 (26,27,28)             (%IW0 - %IW2)
+Analog Out: 4,5                              (%QW0 - %QW1)
 **************************************************************/
 
+/*
+    Refer to Pico-OpenPLC-A4-Pinout.pdf & -PicoPLC schem.pdf for details
+    on using the Pico/Pico W as a plc
+    An additional 2 analogue outputs can be used with GPIO2 & 3 if the      
+    SPI functionality is not required (adding extra code to the .ino file)     
+*/
 //Create the I/O pin masks
 uint8_t pinMask_DIN[] = {PINMASK_DIN};
 uint8_t pinMask_AIN[] = {PINMASK_AIN};
 uint8_t pinMask_DOUT[] = {PINMASK_DOUT};
-uint8_t pinMask_AOUT[] = {PINMASK_AOUT};
-
-extern uint8_t disabled_pins[11];
-
-bool checkPin(uint8_t pin)
-{
-    for (int i = 1; i < disabled_pins[0]; i++)
-    {
-        if (pin == disabled_pins[i])
-        {
-            return false;
-        }
-    }
-    return true;
-}
+uint8_t pinMask_AOUT[] = {PINMASK_AOUT}; //2,3 can be used if SPI not required
 
 void hardwareInit()
 {
@@ -44,17 +32,14 @@ void hardwareInit()
     {
         pinMode(pinMask_DIN[i], INPUT);
     }
-    
     for (int i = 0; i < NUM_ANALOG_INPUT; i++)
     {
         pinMode(pinMask_AIN[i], INPUT);
     }
-    
     for (int i = 0; i < NUM_DISCRETE_OUTPUT; i++)
     {
         pinMode(pinMask_DOUT[i], OUTPUT);
     }
-
     for (int i = 0; i < NUM_ANALOG_OUTPUT; i++)
     {
         pinMode(pinMask_AOUT[i], OUTPUT);
@@ -68,11 +53,16 @@ void updateInputBuffers()
         if (bool_input[i/8][i%8] != NULL) 
             *bool_input[i/8][i%8] = digitalRead(pinMask_DIN[i]);
     }
-    
     for (int i = 0; i < NUM_ANALOG_INPUT; i++)
     {
         if (int_input[i] != NULL)
-            *int_input[i] = (analogRead(pinMask_AIN[i]) * 64);
+        /*
+            Changed to work with the Raspberry Pi Pico/Pico W
+            Nano connect uses the A0-A3 from the RP2040
+            and A4-A7 from the Nina-W102
+        */		
+//            *int_input[i] = (analogRead(pinMask_AIN[i]) * 64);
+            *int_input[i] = analogRead(pinMask_AIN[i]);
     }
 }
 

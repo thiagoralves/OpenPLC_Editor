@@ -3,6 +3,7 @@ extern "C" {
 #include "openplc.h"
 }
 #include "Arduino.h"
+#include "../examples/Baremetal/defines.h"
 
 //OpenPLC HAL for STM32F411CE boards (blackpill)
 /******************PINOUT CONFIGURATION**************************
@@ -12,19 +13,14 @@ Analog In:   -                 	    (%IW0 - %IW0)
 Analog Out:  -                      (%QW0 - %QW0)
 *****************************************************************/
 
-//Define the number of inputs and outputs for this board
-#define NUM_DISCRETE_INPUT          8
-#define NUM_ANALOG_INPUT            0
-#define NUM_DISCRETE_OUTPUT         6
-#define NUM_ANALOG_OUTPUT           0
-
 #define RUN_LED                     58
 #define RUN_PIN                     PB2
 
-uint8_t pinMask_DIN[] = { 29, 30, 27, 28, 79, 26, 77, 78 };
-uint8_t pinMask_DOUT[] = { 41, 40, 8, 0, 19, 60 };
-uint8_t pinMask_AIN[] = { };
-uint8_t pinMask_AOUT[] = { };
+//Create the I/O pin masks
+uint8_t pinMask_DIN[] = {PINMASK_DIN};
+uint8_t pinMask_AIN[] = {PINMASK_AIN};
+uint8_t pinMask_DOUT[] = {PINMASK_DOUT};
+uint8_t pinMask_AOUT[] = {PINMASK_AOUT};
 
 
 void hardwareInit()
