@@ -29,6 +29,22 @@
         "user_dout": "14, 15, 16, 17, 18, 19, 20, 21",
         "user_aout": "4,5"
     },
+    "Project Jaguar": {
+        "platform": "rp2040:rp2040:jaguar",
+        "source": "jaguar.cpp",
+        "define": "BOARD_JAGUAR",
+        "version": "3.3.0",
+        "last_update": 0,
+        "core": "rp2040:rp2040",
+        "default_din": "-1",
+        "default_ain": "-1",
+        "default_dout": "-1",
+        "default_aout": "-1",
+        "user_din": "-1",
+        "user_ain": "-1",
+        "user_dout": "-1",
+        "user_aout": "-1"
+    },
     "Nano Every": {
         "platform": "arduino:megaavr:nona4809",
         "source": "nano_every.cpp",
