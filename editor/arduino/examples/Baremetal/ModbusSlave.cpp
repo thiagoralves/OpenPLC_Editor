@@ -129,11 +129,11 @@ void mbconfig_serial_iface(HardwareSerial* port, long baud, int txPin)
 #ifdef MBTCP
 void mbconfig_ethernet_iface(uint8_t *mac, uint8_t *ip, uint8_t *dns, uint8_t *gateway, uint8_t *subnet)
 {
-    Serial.begin(115200);
-    while (!Serial) {
-        ; // wait for serial port to connect. Needed for native USB port only
-    }
-    Serial.println("Serial ready!");
+    //Serial.begin(115200);
+    //while (!Serial) {
+    //    ; // wait for serial port to connect. Needed for native USB port only
+    //}
+    //Serial.println("Serial ready!");
     #ifdef MBTCP_ETHERNET
         if (ip == NULL)
             Ethernet.begin(mac);
