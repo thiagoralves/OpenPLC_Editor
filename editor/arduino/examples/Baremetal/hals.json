@@ -33,7 +33,7 @@
         "platform": "rp2040:rp2040:jaguar",
         "source": "jaguar.cpp",
         "define": "BOARD_JAGUAR",
-        "version": "3.3.0",
+        "version": "0",
         "last_update": 0,
         "core": "rp2040:rp2040",
         "default_din": "-1",
