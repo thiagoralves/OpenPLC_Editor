@@ -322,6 +322,90 @@
           <xhtml:p><![CDATA[Setup and initialize Arduino Cloud communication. Must be called before adding any variables (properties).]]></xhtml:p>
         </documentation>
       </pou>
+      <pou name="PWM_CONTROLLER" pouType="functionBlock">
+        <interface>
+        <inputVars>
+        <variable name="CHANNEL">
+        <type>
+        <SINT/>
+        </type>
+        <documentation>
+        <xhtml:p><![CDATA[CHANNEL]]></xhtml:p>
+        </documentation>
+        </variable>
+        <variable name="FREQ">
+        <type>
+        <REAL/>
+        </type>
+        <documentation>
+        <xhtml:p><![CDATA[FREQ]]></xhtml:p>
+        </documentation>
+        </variable>
+        <variable name="DUTY">
+        <type>
+        <REAL/>
+        </type>
+        <documentation>
+        <xhtml:p><![CDATA[DUTY]]></xhtml:p>
+        </documentation>
+        </variable>
+        </inputVars>
+        <localVars>
+        <variable name="internal_ch">
+        <type>
+        <SINT/>
+        </type>
+        <documentation>
+        <xhtml:p><![CDATA[internal_ch]]></xhtml:p>
+        </documentation>
+        </variable>
+        <variable name="internal_freq">
+        <type>
+        <REAL/>
+        </type>
+        <documentation>
+        <xhtml:p><![CDATA[internal_freq]]></xhtml:p>
+        </documentation>
+        </variable>
+        <variable name="internal_duty">
+        <type>
+        <REAL/>
+        </type>
+        <documentation>
+        <xhtml:p><![CDATA[internal_duty]]></xhtml:p>
+        </documentation>
+        </variable>
+        </localVars>
+        <outputVars>
+        <variable name="SUCCESS">
+        <type>
+        <BOOL/>
+        </type>
+        <documentation>
+        <xhtml:p><![CDATA[SUCCESS]]></xhtml:p>
+        </documentation>
+        </variable>
+        </outputVars>
+        </interface>
+        <body>
+        <ST>
+        <xhtml:p><![CDATA[
+          IF CHANNEL < 1 THEN
+            SUCCESS := FALSE;
+            RETURN;
+          END_IF;
+
+
+          IF (CHANNEL <> internal_ch) OR (FREQ <> internal_freq) OR (DUTY <> internal_duty) THEN
+            SUCCESS := TRUE;
+          END_IF;
+
+        ]]></xhtml:p></ST>
+        </body>
+        <documentation>
+        <xhtml:p><![CDATA[Configures the CPU internal PWM peripheral to generate a PWM signal through hardware. If the CPU does not have a PWM peripheral, compiling this block will result in a compilation error. CHANNEL is the PWM channel number. For most Arduino boards that number is the pin number for the PWM capable pin. FREQ is the desired PWM frequency in Hz. DUTY is the PWM duty cycle (between 0 and 100).]]></xhtml:p>
+        </documentation>
+      </pou>
     </pous>
   </types>
   <instances>
