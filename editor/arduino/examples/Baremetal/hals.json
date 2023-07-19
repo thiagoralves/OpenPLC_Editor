@@ -368,36 +368,6 @@
         "user_dout": "32, 6, 7, 11, 12, 13, 14",
         "user_aout": "A0"
     },
-    "P1AM-200XA": {
-        "platform": "Productivity Open P1AM:samd:P1AM-200XA",
-        "source": "p1am.cpp",
-        "version": "0",
-        "last_update": 0,
-        "core": "'Productivity Open P1AM:samd'",
-        "default_din": "31, 0, 1, 2, 3, 4",
-        "default_ain": "A1, A2, A5, A6",
-        "default_dout": "32, 6, 7, 11, 12, 13, 14",
-        "default_aout": "A0",
-        "user_din": "31, 0, 1, 2, 3, 4",
-        "user_ain":  "A1, A2, A5, A6",
-        "user_dout": "32, 6, 7, 11, 12, 13, 14",
-        "user_aout": "A0"
-    },
-    "P1AM-200XB": {
-        "platform": "'Productivity Open P1AM:samd:P1AM-200XB'",
-        "source": "p1am.cpp",
-        "version": "0",
-        "last_update": 0,
-        "core": "'Productivity Open P1AM:samd'",
-        "default_din": "31, 0, 1, 2, 3, 4",
-        "default_ain": "A1, A2, A5, A6",
-        "default_dout": "32, 6, 7, 11, 12, 13, 14",
-        "default_aout": "A0",
-        "user_din": "31, 0, 1, 2, 3, 4",
-        "user_ain":  "A1, A2, A5, A6",
-        "user_dout": "32, 6, 7, 11, 12, 13, 14",
-        "user_aout": "A0"
-    },
     "Arduino Leonardo": {
         "platform": "arduino:avr:leonardo",
         "source": "uno_leonardo_nano_micro_zero.cpp",
