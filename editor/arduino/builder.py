@@ -126,6 +126,11 @@ def build(st_file, platform, source_file, port, txtCtrl, update_subsystem):
           => arduino-cli board details -fqbn [board fqbn]
         """
 
+        # Initialize arduino-cli config - if it hasn't been initialized yet
+        compiler_logs += runCommand(cli_command + ' config init')
+        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
+        wx.CallAfter(scrollToEnd, txtCtrl)
+
         # Setup boards - remove 3rd party boards to re-add them later since we don't know if they're there or not
         compiler_logs += runCommand(
             cli_command + ' config remove board_manager.additional_urls \
