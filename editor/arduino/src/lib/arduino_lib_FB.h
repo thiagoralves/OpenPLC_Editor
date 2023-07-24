@@ -510,7 +510,7 @@ static void PWM_CONTROLLER_body__(PWM_CONTROLLER *data__) {
   }
   // Initialise TEMP variables
 
-  if ((__GET_VAR(data__->CHANNEL,) < 1)) {
+  if ((__GET_VAR(data__->CHANNEL,) < 0)) {
     __SET_VAR(data__->,SUCCESS,,__BOOL_LITERAL(FALSE));
     goto __end;
   };
