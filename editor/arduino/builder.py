@@ -182,7 +182,8 @@ CONTROLLINO \
 "Adafruit ADS1X15" \
 PubSubClient \
 ArduinoJson \
-arduinomqttclient')
+arduinomqttclient \
+RP2040_PWM')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
 
