@@ -207,7 +207,7 @@ extern uint8_t pinMask_AOUT[];
 
 #endif
 
-//#ifdef USE_SM_BLOCKS
+#ifdef USE_SM_BLOCKS
 #include <stdlib.h>
 #include "Arduino.h"
 #include "Wire.h"
@@ -1758,3 +1758,4 @@ int mosfets8Set(uint8_t stack, uint8_t val)
 	mosfetsOldVal[stack] = val;
 	return OK;
 }
+#endif
