@@ -7,6 +7,7 @@ extern "C" {
 
 #include <SPI.h>
 #include <Ethernet.h>
+#include "RP2040_PWM.h"
 
 //Sketch defines
 #define ADC_CS 9
@@ -37,7 +38,7 @@ uint8_t sdo[2];
 uint8_t sdi[2];
 
 // PWM settings
-//RP2040_PWM * PWM[2]; 
+RP2040_PWM *PWM[4]; 
 #define PWM_1_2_FREQ 20000.0f
 #define PWM_3_4_FREQ 50000.0f
 #define ENC_A 2
@@ -47,6 +48,7 @@ uint8_t sdi[2];
 #define PWM2_PIN  7 
 #define PWM3_PIN  27
 #define PWM4_PIN  26
+extern "C" uint8_t set_hardware_pwm(uint8_t, float, float); //this call is required for the C-based PWM block on the Editor
 
 //ADC Settings
 #define BIPOLAR_10V 0x00
@@ -66,10 +68,10 @@ Analog Out: 14                              (%QW0 - %QW0)
 **************************************************************/
 
 //Create the I/O pin masks
-uint8_t pinMask_DIN[] = {PINMASK_DIN};
-uint8_t pinMask_AIN[] = {PINMASK_AIN}; //Apparently Arduino mbedOS crashes when we use A4 onward. They need to fix this...
-uint8_t pinMask_DOUT[] = {PINMASK_DOUT};
-uint8_t pinMask_AOUT[] = {PINMASK_AOUT};
+int8_t pinMask_DIN[] = {PINMASK_DIN};
+int8_t pinMask_AIN[] = {PINMASK_AIN}; //Apparently Arduino mbedOS crashes when we use A4 onward. They need to fix this...
+int8_t pinMask_DOUT[] = {PINMASK_DOUT};
+int8_t pinMask_AOUT[] = {PINMASK_AOUT};
 
 #define NUM_JAGUAR_RELAY_OUTPUTS    8
 #define NUM_JAGUAR_DIGITAL_INPUTS   12
@@ -142,15 +144,15 @@ void write_relay_bits(uint8_t bits)
 
 uint16_t read_di_bits()
 {
-  uint16_t val = 0;
+    uint16_t val = 0;
 
-  update_spi_io();
+    update_spi_io();
 
-  // Input order is incorrect on board, so swap data here
-  val |= (~sdi[0]) & 0xF; // First 4 channels
-  val |= (~sdi[1] << 4) & 0xFF0; // Next 8 channels
+    // Input order is incorrect on board, so swap data here
+    val |= (~sdi[0]) & 0xF; // First 4 channels
+    val |= (~sdi[1] << 4) & 0xFF0; // Next 8 channels
 
-  return val;
+    return val;
 }
 
 // Returns 16 bit counts based on reading, channel is 0 indexed
@@ -178,6 +180,44 @@ uint16_t ADC_read_channel(uint8_t ch)
     digitalWrite(ADC_CS, 1); // ADC chip select high
     
     return (msb << 8) | lsb;
+}
+
+void write_pwm_led(uint8_t ch, bool state)
+{
+    if(!state)
+    { // LEDs on == low
+        sdo[0] |= 1 << (ch - 1);
+    }
+    else
+    {
+        sdo[0]  &= ~(1 << (ch - 1));
+    }
+    update_spi_io();
+}
+
+uint8_t set_hardware_pwm(uint8_t ch, float freq, float duty)
+{
+    const uint8_t pins[] = {PWM1_PIN, PWM2_PIN, PWM3_PIN, PWM4_PIN};
+
+    //Serial.print("ch: ");
+    //Serial.println(ch);
+    //Serial.print("freq: ");
+    //Serial.println(freq);
+    //Serial.print("duty: ");
+    //Serial.println(duty);
+
+    if (ch > 3)
+    {
+        return 0;
+    }
+
+    if (PWM[ch]->setPWM(pins[ch], freq, duty))
+    {
+        write_pwm_led(ch, duty != 0); // Set status LED state
+        return 1;
+    }
+
+    return 0;
 }
 
 void hardwareInit()
@@ -220,6 +260,10 @@ void hardwareInit()
     update_spi_io();
     sdo[0]  &= ~(1 << pwm_enable_bit);
     update_spi_io();
+    PWM[0] = new RP2040_PWM(PWM1_PIN, PWM_1_2_FREQ, 0); 
+    PWM[1] = new RP2040_PWM(PWM2_PIN, PWM_1_2_FREQ, 0); // 7 is on the same PWM block and must use same frequency
+    PWM[2] = new RP2040_PWM(PWM3_PIN, PWM_3_4_FREQ, 0); 
+    PWM[3] = new RP2040_PWM(PWM4_PIN, PWM_3_4_FREQ, 0); // 26 is on the same PWM block and must use same frequency
 
     pinMode(PWM1_PIN, OUTPUT);
     pinMode(PWM2_PIN, OUTPUT);
@@ -272,12 +316,6 @@ void updateInputBuffers()
             *int_input[i] = ADC_read_channel(i);
         }
     }
-
-    //for (int i = 0; i < NUM_ANALOG_INPUT; i++)
-    //{
-    //    if (int_input[i] != NULL)
-    //        *int_input[i] = (analogRead(pinMask_AIN[i]) * 64);
-    //}
 }
 
 void updateOutputBuffers()
