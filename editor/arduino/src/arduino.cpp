@@ -6,15 +6,14 @@ extern "C" {
 #include "../examples/Baremetal/defines.h"
 #include "Display.h"
 
-//OpenPLC HAL for ESP32 boards
+//OpenPLC HAL for Iruino boards
 
 /******************PINOUT CONFIGURATION**************************
-Digital In:  17, 18, 19, 21, 22, 23, 27, 32 (%IX0.0 - %IX0.7)
-             33                             (%IX1.0 - %IX1.0)
-Digital Out: 01, 02, 03, 04, 05, 12, 13, 14 (%QX0.0 - %QX0.7)
-             15, 16                         (%QX1.0 - %QX1.1)
-Analog In:   34, 35, 36, 39                 (%IW0 - %IW2)
-Analog Out:  25, 26                         (%QW0 - %QW1)
+Digital In:  I0, I1, I2, I3, I4, I5, I6, I7 (%IX0.0 - %IX0.7)
+Digital Out: O0, O1, O2, O3, O4, O5, O6, O7 (%QX0.0 - %QX0.7)
+
+Analog In:   A0, A1                         (%IW0 - %IW1)
+Analog Out:  
 *****************************************************************/
 
 //Create the I/O pin masks
