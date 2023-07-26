@@ -76,6 +76,9 @@ static void MQTT_SUBSCRIBE_body__(MQTT_SUBSCRIBE *data__);
 // External C Functions
 uint8_t connect_mqtt(char *broker, uint16_t port);
 uint8_t mqtt_send(char *topic, char *message);
+void mqtt_loop();
+uint8_t mqtt_receive(char *topic, char *message);
+uint8_t mqtt_subscribe(char *topic);
 
 
 static void MQTT_RECEIVE_init__(MQTT_RECEIVE *data__, BOOL retain) {
@@ -97,9 +100,26 @@ static void MQTT_RECEIVE_body__(MQTT_RECEIVE *data__) {
   else {
     __SET_VAR(data__->,ENO,,__BOOL_LITERAL(TRUE));
   }
-  // Initialise TEMP variables
 
-  __SET_VAR(data__->,RECEIVED,,0);
+  if (__GET_VAR(data__->RECEIVE))
+  {
+    // Make sure strings are NULL terminated
+    __GET_VAR(data__->TOPIC).body[__GET_VAR(data__->TOPIC).len] = '\0';
+
+    __GET_VAR(data__->MESSAGE).len = mqtt_receive(__GET_VAR(data__->TOPIC).body, __GET_VAR(data__->MESSAGE).body);
+    if (__GET_VAR(data__->MESSAGE).len > 0)
+    {
+      __SET_VAR(data__->,RECEIVED,,1);
+    }
+    else
+    {
+      __SET_VAR(data__->,RECEIVED,,0);
+    }
+  }
+  else
+  {
+    __SET_VAR(data__->,RECEIVED,,0);
+  }
 
   goto __end;
 
@@ -136,6 +156,10 @@ static void MQTT_SEND_body__(MQTT_SEND *data__) {
 
   if (__GET_VAR(data__->SEND))
   {
+    // Make sure strings are NULL terminated
+    __GET_VAR(data__->TOPIC).body[__GET_VAR(data__->TOPIC).len] = '\0';
+    __GET_VAR(data__->MESSAGE).body[__GET_VAR(data__->MESSAGE).len] = '\0';
+
     message_sent = mqtt_send(__GET_VAR(data__->TOPIC).body, __GET_VAR(data__->MESSAGE).body);
   }
 
@@ -172,8 +196,17 @@ static void MQTT_CONNECT_body__(MQTT_CONNECT *data__) {
 
   if (__GET_VAR(data__->CONNECT))
   {
+    // Make sure strings are NULL terminated
+    __GET_VAR(data__->BROKER).body[__GET_VAR(data__->BROKER).len] = '\0';
+
     uint8_t mqtt_connected = connect_mqtt(__GET_VAR(data__->BROKER).body, __GET_VAR(data__->PORT));
     __SET_VAR(data__->,SUCCESS,,mqtt_connected);
+  }
+
+  // Call MQTT loop every scan cycle after a successfull connection
+  if (__GET_VAR(data__->SUCCESS))
+  {
+    mqtt_loop();
   }
 
   goto __end;
@@ -206,7 +239,14 @@ static void MQTT_SUBSCRIBE_body__(MQTT_SUBSCRIBE *data__) {
   }
   // Initialise TEMP variables
 
-  __SET_VAR(data__->,SUCCESS,,0);
+  if (__GET_VAR(data__->SUBSCRIBE))
+  {
+    // Make sure strings are NULL terminated
+    __GET_VAR(data__->TOPIC).body[__GET_VAR(data__->TOPIC).len] = '\0';
+
+    uint8_t topic_subscribed = mqtt_subscribe(__GET_VAR(data__->TOPIC).body);
+    __SET_VAR(data__->,SUCCESS,,topic_subscribed);
+  }
 
   goto __end;
 
