@@ -1,6 +1,8 @@
 PROGRAM Blink
   VAR
-    blink_led : BOOL;
+    blink_led AT %QX0.0 : BOOL;
+  END_VAR
+  VAR
     TON0 : TON;
     TOF0 : TOF;
   END_VAR

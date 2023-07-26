@@ -1,0 +1,1 @@
+__LOCATED_VAR(BOOL,__QX0_0,Q,X,0,0)
