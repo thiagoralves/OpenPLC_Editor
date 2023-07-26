@@ -103,6 +103,10 @@ def readBoardsInstalled():
                     hals[board]['version'] = board_version
                     hasToSave = True
                     break
+        if board not in boardInstalled:
+            hals[board]['version'] = '0'
+            hasToSave = True
+
     if hasToSave:
         saveHals(hals)
 

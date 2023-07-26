@@ -1,22 +1,13 @@
 PROGRAM Blink
   VAR
-    acceso AT %IX0.0 : BOOL;
-    led1 AT %QX0.0 : BOOL;
-    led2 AT %QX0.4 : BOOL;
-  END_VAR
-  VAR CONSTANT
-    valore : WORD := 30000;
-  END_VAR
-  VAR
-    Analogica AT %IW0 : WORD;
-  END_VAR
-  VAR
-    _TMP_GT12_OUT : BOOL;
+    blink_led : BOOL;
+    TON0 : TON;
+    TOF0 : TOF;
   END_VAR
 
-  led1 := acceso;
-  _TMP_GT12_OUT := GT(Analogica, valore);
-  led2 := _TMP_GT12_OUT;
+  TON0(EN := TRUE, IN := NOT(blink_led), PT := T#500ms);
+  TOF0(EN := TON0.ENO, IN := TON0.Q, PT := T#500ms);
+  blink_led := TOF0.Q;
 END_PROGRAM
 
 

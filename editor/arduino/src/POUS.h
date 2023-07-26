@@ -10,12 +10,9 @@ typedef struct {
   // PROGRAM Interface - IN, OUT, IN_OUT variables
 
   // PROGRAM private variables - TEMP, private and located variables
-  __DECLARE_LOCATED(BOOL,ACCESO)
-  __DECLARE_LOCATED(BOOL,LED1)
-  __DECLARE_LOCATED(BOOL,LED2)
-  __DECLARE_VAR(WORD,VALORE)
-  __DECLARE_LOCATED(WORD,ANALOGICA)
-  __DECLARE_VAR(BOOL,_TMP_GT12_OUT)
+  __DECLARE_VAR(BOOL,BLINK_LED)
+  TON TON0;
+  TOF TOF0;
 
 } BLINK;
 
