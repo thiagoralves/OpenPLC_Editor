@@ -16,16 +16,16 @@ extern unsigned long long common_ticktime__;
 #if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega168__) || defined(__AVR_ATmega32U4__) || defined(__AVR_ATmega16U4__)
 
 #define MAX_DIGITAL_INPUT          8
-#define MAX_DIGITAL_OUTPUT         8
+#define MAX_DIGITAL_OUTPUT         32
 #define MAX_ANALOG_INPUT           6
-#define MAX_ANALOG_OUTPUT          3
+#define MAX_ANALOG_OUTPUT          32
 
 #else
 
-#define MAX_DIGITAL_INPUT          24
-#define MAX_DIGITAL_OUTPUT         24
-#define MAX_ANALOG_INPUT           8
-#define MAX_ANALOG_OUTPUT          16
+#define MAX_DIGITAL_INPUT          56
+#define MAX_DIGITAL_OUTPUT         56
+#define MAX_ANALOG_INPUT           32
+#define MAX_ANALOG_OUTPUT          32
 
 #endif
 
@@ -36,8 +36,17 @@ IEC_UINT *int_output[MAX_ANALOG_OUTPUT];
 
 void glueVars()
 {
+    bool_input[0][1] = __IX0_1;
+    bool_input[0][2] = __IX0_2;
+    bool_input[0][3] = __IX0_3;
+    bool_input[0][4] = __IX0_4;
     bool_output[0][0] = __QX0_0;
-    int_output[0] = __QW0;
+    bool_output[0][1] = __QX0_1;
+    bool_output[0][2] = __QX0_2;
+    int_input[0] = __IW0;
+    int_input[1] = __IW1;
+    int_input[2] = __IW2;
+    int_input[3] = __IW3;
 
 }
 

@@ -1,31 +1,37 @@
 PROGRAM program0
   VAR
+    RUN_BUTTON AT %IX0.1 : BOOL;
+    STOP_BUTTON AT %IX0.2 : BOOL;
+    heat AT %IX0.3 : BOOL;
+    cooling AT %IX0.4 : BOOL;
+  END_VAR
+  VAR
+    stop_status : BOOL;
+  END_VAR
+  VAR
+    system_out AT %QX0.0 : BOOL;
+    heat_out AT %QX0.1 : BOOL;
+    cooling_out AT %QX0.2 : BOOL;
+  END_VAR
+  VAR
+    RUN_STATUS : BOOL;
+  END_VAR
+  VAR
+    ET_IN AT %IW0 : INT;
+    BT_IN AT %IW1 : INT;
+    AT_IN AT %IW2 : INT;
+    CH4_in AT %IW3 : INT;
+  END_VAR
+  VAR
     TON0 : TON;
   END_VAR
-  VAR
-    BLINKY AT %QX0.0 : BOOL;
-  END_VAR
-  VAR
-    TOF0 : TOF;
-    P1AM_INIT0 : P1AM_INIT;
-  END_VAR
-  VAR
-    init_modules AT %QW0 : INT;
-  END_VAR
-  VAR
-    P1_16TR0 : P1_16TR;
-    P1_08N0 : P1_08N;
-    SINT_TO_INT11_OUT : INT;
-  END_VAR
 
-  P1AM_INIT0(INIT := TRUE);
-  SINT_TO_INT11_OUT := SINT_TO_INT(P1AM_INIT0.SUCCESS);
-  init_modules := SINT_TO_INT11_OUT;
-  TON0(IN := NOT(BLINKY), PT := T#2s);
-  TOF0(IN := TON0.Q, PT := T#2s);
-  BLINKY := TOF0.Q;
-  P1_08N0(SLOT := 1);
-  P1_16TR0(SLOT := 1, O2 := BLINKY, O4 := P1_08N0.I1, O7 := P1_08N0.I4, O9 := P1_08N0.I6, O13 := BLINKY);
+  stop_status := STOP_BUTTON;
+  RUN_STATUS := NOT(stop_status) AND RUN_STATUS;
+  TON0(IN := RUN_STATUS, PT := t#2000ms);
+  system_out := TON0.Q;
+  cooling_out := cooling AND RUN_STATUS;
+  heat_out := heat AND RUN_STATUS;
 END_PROGRAM
 
 
