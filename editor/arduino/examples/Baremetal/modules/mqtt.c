@@ -33,9 +33,12 @@ uint8_t mqtt_send(char *topic, char *message)
 PubSubClient mqttClient(wifiClient);
 
 extern "C" uint8_t connect_mqtt(char *broker, uint16_t port);
+extern "C" uint8_t connect_mqtt_auth(char *broker, uint16_t port, char *user, char *password);
 extern "C" uint8_t mqtt_send(char *topic, char *message);
 extern "C" uint8_t mqtt_receive(char *topic, char *message);
 extern "C" uint8_t mqtt_subscribe(char *topic);
+extern "C" uint8_t mqtt_unsubscribe(char *topic);
+extern "C" uint8_t mqtt_disconnect();
 extern "C" void mqtt_loop();
 
 #define STR_MAX_LEN       126
@@ -157,6 +160,13 @@ uint8_t connect_mqtt(char *broker, uint16_t port)
     return mqttClient.connect("openplc-client");
 }
 
+uint8_t connect_mqtt_auth(char *broker, uint16_t port, char *user, char *password)
+{
+    mqttClient.setServer(broker, port);
+    mqttClient.setCallback(callback);
+    return mqttClient.connect("openplc-client", user, password);
+}
+
 uint8_t mqtt_send(char *topic, char *message)
 {
     /*
@@ -193,4 +203,15 @@ uint8_t mqtt_receive(char *topic, char *message)
     }
 
     return 0;
+}
+
+uint8_t mqtt_unsubscribe(char *topic)
+{
+    return (uint8_t)mqttClient.unsubscribe(topic);
+}
+
+uint8_t mqtt_disconnect()
+{
+    mqttClient.disconnect();
+    return 1;
 }
