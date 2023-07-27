@@ -513,8 +513,8 @@ class ArduinoUploadDialog(wx.Dialog):
         port = "None" #invalid port
         if (self.check_compile.GetValue() == True):
             port = None
-        elif str(self.com_port_combo.GetValue()) in self.com_port_combo_choices:
-            port = self.com_port_combo_choices[str(self.com_port_combo.GetValue())]
+        elif self.com_port_combo.GetValue() in self.com_port_combo_choices:
+            port = self.com_port_combo_choices[self.com_port_combo.GetValue()]
         
         compiler_thread = threading.Thread(target=builder.build, args=(self.plc_program, platform, source, port, self.output_text, self.update_subsystem))
         compiler_thread.start()
