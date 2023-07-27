@@ -461,21 +461,6 @@
         "user_dout": "7, 8, 12, 13",
         "user_aout": "9, 10, 11"
     },
-    "LGT8F328P": {
-        "platform": "lgt8fx:avr:328",
-        "source": "lgt8f328p.cpp",
-        "version": "2.0.6",
-        "last_update": 0,
-        "core": "lgt8fx:avr",
-        "default_din": "2, 3, 4, 5, 6",
-        "default_ain": "A0, A1, A2, A3, A4, A5",
-        "default_dout": "7, 8, 12, 13",
-        "default_aout": "9, 10, 11",
-        "user_din": "2, 3, 4, 5, 6",
-        "user_ain":  "A0, A1, A2, A3, A4, A5",
-        "user_dout": "7, 8, 12, 13",
-        "user_aout": "9, 10, 11"
-    },
     "ESP32-C3": {
         "platform": "esp32:esp32:esp32c3",
         "define": "BOARD_ESP32",
