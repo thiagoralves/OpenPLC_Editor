@@ -1,14 +1,20 @@
-set gitdir=%CD%\pgit
-set path=%gitdir%\cmd;%path%
-if exist .\new_editor\ rmdir /s /Q new_editor
-if exist .\OpenPLC_Editor\ rmdir /s /Q OpenPLC_Editor
-git clone https://gitee.com/sakunamary/OpenPLC_Editor
-if exist .\OpenPLC_Editor\editor\ (
-  move .\OpenPLC_Editor\editor .\new_editor
-  move .\OpenPLC_Editor\matiec\lib .\new_lib
-  copy /y .\OpenPLC_Editor\revision .\
-  rmdir /s /Q OpenPLC_Editor
-  echo "Update applied successfully"
-) else (
-  echo "Error cloning from repository!"
-)
+#!/bin/bash
+if [ -d "./new_editor" ]
+then
+    rm -Rf new_editor
+fi
+if [ -d "./OpenPLC_Editor" ]
+then
+    rm -Rf OpenPLC_Editor
+fi
+git clone https://gitee.com/sakunamary/OpenPLC_Editor.git
+if [ -d "./OpenPLC_Editor/editor" ]
+then
+    mv "./OpenPLC_Editor/editor" ./new_editor
+    mv "./OpenPLC_Editor/matiec/lib" ./new_lib
+    cp ./OpenPLC_Editor/revision ./
+    rm -Rf OpenPLC_Editor
+    echo "Update applied successfully"
+else
+    echo "Error cloning from repository!"
+fi
