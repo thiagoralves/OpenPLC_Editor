@@ -149,6 +149,7 @@ https://facts-engineering.gitlab.io/facts-open-source/p1am/beta_file_hosting/pac
         compiler_logs += runCommand(
             cli_command + ' config add board_manager.additional_urls \
 https://arduino.esp8266.com/stable/package_esp8266com_index.json \
+https://raw.githubusercontent.com/dbuezas/lgt8fx/master/package_lgt8fx_index.json \
 https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json \
 https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectronics_index.json \
 https://raw.githubusercontent.com/CONTROLLINO-PLC/CONTROLLINO_Library/master/Boards/package_ControllinoHardware_index.json \
