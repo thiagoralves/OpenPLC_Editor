@@ -1,0 +1,4 @@
+# HAL configuration
+# Format :
+# Board type, FQBN
+LGT8F328P, lgt8fx:avr:328
