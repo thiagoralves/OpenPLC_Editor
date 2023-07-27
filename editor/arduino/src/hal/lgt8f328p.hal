@@ -1,0 +1,5 @@
+# HAL configuration
+# Format :
+# Board type, FQBN
+lgt8f328p Nano, arduino:lgt8f328p:nano
+
