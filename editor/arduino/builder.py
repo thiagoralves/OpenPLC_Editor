@@ -135,6 +135,7 @@ def build(st_file, platform, source_file, port, txtCtrl, update_subsystem):
         compiler_logs += runCommand(
             cli_command + ' config remove board_manager.additional_urls \
 https://arduino.esp8266.com/stable/package_esp8266com_index.json \
+https://raw.githubusercontent.com/dbuezas/lgt8fx/master/package_lgt8fx_index.json \
 https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json \
 https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectronics_index.json \
 https://raw.githubusercontent.com/CONTROLLINO-PLC/CONTROLLINO_Library/master/Boards/package_ControllinoHardware_index.json \
@@ -152,7 +153,8 @@ https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32
 https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectronics_index.json \
 https://raw.githubusercontent.com/CONTROLLINO-PLC/CONTROLLINO_Library/master/Boards/package_ControllinoHardware_index.json \
 https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json \
-https://facts-engineering.gitlab.io/facts-open-source/p1am/beta_file_hosting/package_productivity-P1AM_200-boardmanagermodule_index.json')
+https://facts-engineering.gitlab.io/facts-open-source/p1am/beta_file_hosting/package_productivity-P1AM_200-boardmanagermodule_index.json \
+https://raw.githubusercontent.com/dbuezas/lgt8fx/master/package_lgt8fx_index.json')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
 

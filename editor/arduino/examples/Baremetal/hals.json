@@ -464,7 +464,7 @@
     "Lgt8f328P": {
         "platform": "lgt8fx:avr:lgt8fx8p",
         "source": "lgt8f328p.cpp",
-        "version": "0",
+        "version": "2.0.6",
         "last_update": 0,
         "core": "lgt8fx:avr",
         "default_din": "2, 3, 4, 5, 6",
