@@ -1,4 +1,4 @@
 # HAL configuration
 # Format :
 # Board type, FQBN
-lgt8f328p Nano, lgt8fx:avr:lgt8fx8p
+LGT8F328P, lgt8fx:avr:328

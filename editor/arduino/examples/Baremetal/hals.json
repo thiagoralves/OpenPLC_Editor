@@ -461,8 +461,8 @@
         "user_dout": "7, 8, 12, 13",
         "user_aout": "9, 10, 11"
     },
-    "Lgt8f328P": {
-        "platform": "lgt8fx:avr:lgt8fx8p",
+    "LGT8F328P": {
+        "platform": "lgt8fx:avr:328",
         "source": "lgt8f328p.cpp",
         "version": "2.0.6",
         "last_update": 0,
