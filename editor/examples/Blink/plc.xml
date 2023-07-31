@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
-<project xmlns:ns1="http://www.plcopen.org/xml/tc6_0201" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.plcopen.org/xml/tc6_0201">
+<project xmlns:ns1="http://www.plcopen.org/xml/tc6.xsd" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.plcopen.org/xml/tc6_0201">
   <fileHeader companyName="Unknown" productName="Unnamed" productVersion="1" creationDateTime="2022-08-16T15:49:17"/>
-  <contentHeader name="Unnamed" modificationDateTime="2023-07-26T13:53:45">
+  <contentHeader name="Unnamed" modificationDateTime="2022-08-16T15:54:38">
     <coordinateInfo>
       <fbd>
         <scaling x="10" y="10"/>
@@ -20,13 +20,11 @@
       <pou name="Blink" pouType="program">
         <interface>
           <localVars>
-            <variable name="blink_led" address="%QX0.0">
+            <variable name="blink_led">
               <type>
                 <BOOL/>
               </type>
             </variable>
-          </localVars>
-          <localVars>
             <variable name="TON0">
               <type>
                 <derived name="TON"/>
