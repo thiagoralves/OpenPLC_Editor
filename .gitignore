@@ -6,7 +6,6 @@
 public/
 
 
-
 #=============================================================
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -137,3 +136,15 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+editor/arduino/examples/Baremetal/defines.h
+editor/arduino/examples/Baremetal/settings.json
+editor/arduino/src/LOCATED_VARIABLES.h
+editor/arduino/src/POUS.h
+editor/arduino/src/POUS.c
+editor/arduino/src/Res0.c
+editor/arduino/src/VARIABLES.csv
+editor/arduino/src/arduino.cpp
+editor/arduino/src/glueVars.c
+editor/arduino/src/plc_prog.st
+editor/examples/Blink/plc.xml

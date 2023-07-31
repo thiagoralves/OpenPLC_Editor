@@ -10,7 +10,6 @@
 #define MBTCP_SSID ""
 #define MBTCP_PWD ""
 
-
 //IO Config
 #define PINMASK_DIN I0, I1, I2, I3, I4,I5, I6, I7
 #define PINMASK_AIN A0, A1
