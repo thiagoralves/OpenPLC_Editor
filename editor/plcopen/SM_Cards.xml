@@ -303,8 +303,81 @@
 				  <xhtml:p><![CDATA[Get all inpust and set all outputs of a Sequent Microsystems Building Automation card]]></xhtml:p>
 				</documentation>
 			</pou>			
-
-			
+			<pou name="SM_HOME" pouType="functionBlock">
+				<interface>
+				  <inputVars>
+					<variable name="STACK"><type><SINT/></type></variable>
+					<variable name="RELAY1"> <type> <BOOL/> </type> </variable>
+					<variable name="RELAY2"> <type> <BOOL/> </type> </variable>
+					<variable name="RELAY3"> <type> <BOOL/> </type> </variable>
+					<variable name="RELAY4"> <type> <BOOL/> </type> </variable>
+					<variable name="RELAY5"> <type> <BOOL/> </type> </variable>
+					<variable name="RELAY6"> <type> <BOOL/> </type> </variable>
+					<variable name="RELAY7"> <type> <BOOL/> </type> </variable>
+					<variable name="RELAY8"> <type> <BOOL/> </type> </variable>
+					<variable name="Q0_10V1"> <type> <REAL/> </type> </variable>
+					<variable name="Q0_10V2"> <type> <REAL/> </type> </variable>
+					<variable name="Q0_10V3"> <type> <REAL/> </type> </variable>
+					<variable name="Q0_10V4"> <type> <REAL/> </type> </variable>
+					<variable name="QOD1"> <type> <REAL/> </type> </variable>
+					<variable name="QOD2"> <type> <REAL/> </type> </variable>
+					<variable name="QOD3"> <type> <REAL/> </type> </variable>
+					<variable name="QOD4"> <type> <REAL/> </type> </variable>
+				  </inputVars>
+				  <outputVars>
+				    <variable name="OPTO1"><type><BOOL/></type></variable>
+					<variable name="OPTO2"><type><BOOL/></type></variable>
+					<variable name="OPTO3"><type><BOOL/></type></variable>
+					<variable name="OPTO4"><type><BOOL/></type></variable>
+					<variable name="OPTO5"><type><BOOL/></type></variable>
+					<variable name="OPTO6"><type><BOOL/></type></variable>
+					<variable name="OPTO7"><type><BOOL/></type></variable>
+					<variable name="OPTO8"><type><BOOL/></type></variable>
+					<variable name="ADC1"> <type> <REAL/> </type> </variable>
+					<variable name="ADC2"> <type> <REAL/> </type> </variable>
+					<variable name="ADC3"> <type> <REAL/> </type> </variable>
+					<variable name="ADC4"> <type> <REAL/> </type> </variable>
+					<variable name="ADC5"> <type> <REAL/> </type> </variable>
+					<variable name="ADC6"> <type> <REAL/> </type> </variable>
+					<variable name="ADC7"> <type> <REAL/> </type> </variable>
+					<variable name="ADC8"> <type> <REAL/> </type> </variable>
+					<variable name="OWB_T1"> <type> <REAL/> </type> </variable>
+					<variable name="OWB_T2"> <type> <REAL/> </type> </variable>
+					<variable name="OWB_T3"> <type> <REAL/> </type> </variable>
+					<variable name="OWB_T4"> <type> <REAL/> </type> </variable>
+				  </outputVars>
+				</interface>
+				<body>
+				  <ST>
+					<xhtml:p><![CDATA[OPTO1 := 0;]]></xhtml:p>
+				  </ST>
+				</body>
+				<documentation>
+				  <xhtml:p><![CDATA[Get all inpust and set all outputs of a Sequent Microsystems Home Automation card]]></xhtml:p>
+				</documentation>
+			</pou>			
+			<pou name="SM_8MOSFET" pouType="functionBlock">
+				<interface>
+					<inputVars>
+						<variable name="STACK"> <type> <SINT/> </type> </variable>
+						<variable name="MOS1"> <type> <BOOL/> </type> </variable>
+                        <variable name="MOS2"> <type> <BOOL/> </type> </variable>
+						<variable name="MOS3"> <type> <BOOL/> </type> </variable>
+						<variable name="MOS4"> <type> <BOOL/> </type> </variable>
+						<variable name="MOS5"> <type> <BOOL/> </type> </variable>
+						<variable name="MOS6"> <type> <BOOL/> </type> </variable>
+						<variable name="MOS7"> <type> <BOOL/> </type> </variable>
+						<variable name="MOS8"> <type> <BOOL/> </type> </variable>
+					</inputVars>
+					<localVars>
+						<variable name="DUMMY"> <type> <SINT/> </type> </variable>
+					</localVars>
+				</interface>
+				<body>
+					<ST> <xhtml:p><![CDATA[DUMMY := STACK;]]></xhtml:p> </ST>
+				</body>
+				<documentation> <xhtml:p><![CDATA[Update all outputs from 8-mosfets card]]></xhtml:p> </documentation>
+			</pou>
 		</pous>
 	</types>
 	<instances>

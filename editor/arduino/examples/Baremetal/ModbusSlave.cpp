@@ -16,11 +16,15 @@ uint16_t mb_t35; // frame delay
 #ifdef MBTCP_ETHERNET
     EthernetServer mb_server(502);
     uint8_t mb_mbap[MBAP_SIZE];
+#ifdef BOARD_PORTENTA
+    EthernetClient mb_serverClients[MAX_SRV_CLIENTS];
 #endif
+#endif
+
 #ifdef MBTCP_WIFI
     WiFiServer mb_server(502);
     uint8_t mb_mbap[MBAP_SIZE];
-#if defined(BOARD_ESP8266) || defined(BOARD_ESP32)
+#if defined(BOARD_ESP8266) || defined(BOARD_ESP32) || defined(BOARD_PORTENTA)
     WiFiClient mb_serverClients[MAX_SRV_CLIENTS];
 #endif
 #endif
@@ -125,6 +129,11 @@ void mbconfig_serial_iface(HardwareSerial* port, long baud, int txPin)
 #ifdef MBTCP
 void mbconfig_ethernet_iface(uint8_t *mac, uint8_t *ip, uint8_t *dns, uint8_t *gateway, uint8_t *subnet)
 {
+    //Serial.begin(115200);
+    //while (!Serial) {
+    //    ; // wait for serial port to connect. Needed for native USB port only
+    //}
+    //Serial.println("Serial ready!");
     #ifdef MBTCP_ETHERNET
         if (ip == NULL)
             Ethernet.begin(mac);
@@ -139,12 +148,18 @@ void mbconfig_ethernet_iface(uint8_t *mac, uint8_t *ip, uint8_t *dns, uint8_t *g
     #endif
     #ifdef MBTCP_WIFI
         #if defined(BOARD_ESP8266) || defined(BOARD_ESP32)
-            if (subnet != NULL)
+            if (ip != NULL && gateway != NULL && subnet != NULL && dns != NULL)
             {
                 uint8_t secondaryDNS[] = {8, 8, 8, 8};
                 WiFi.config(IPAddress(ip), IPAddress(gateway), IPAddress(subnet), IPAddress(dns), IPAddress(secondaryDNS));
             }
             mb_server.setNoDelay(true);
+        #elif defined(BOARD_PORTENTA)
+            if (ip != NULL && subnet != NULL && gateway != NULL)
+            {
+                Serial.println("Trying to start with a fixed IP");
+                WiFi.config(IPAddress(ip), IPAddress(subnet), IPAddress(gateway));
+            }
         #else
             if (ip != NULL)
             {
@@ -160,12 +175,17 @@ void mbconfig_ethernet_iface(uint8_t *mac, uint8_t *ip, uint8_t *dns, uint8_t *g
         #endif
         WiFi.begin(MBTCP_SSID, MBTCP_PWD);
         int num_tries = 0;
+        Serial.print("Connecting to SSID");
         while (WiFi.status() != WL_CONNECTED) 
         {
+            Serial.print(".");
             delay(500);
             num_tries++;
             if (num_tries == 10) break;
         }
+        Serial.print("IP: ");
+        IPAddress myIP = WiFi.localIP();
+        Serial.println(myIP);
     #endif
     mb_server.begin();
 }
@@ -191,16 +211,24 @@ void handle_tcp()
         WiFiClient client = mb_server.available();
     #endif
 
-    //ESP boards have a slightly different implementation of the WiFi API - therefore their specific
+    //ESP and Portenta boards have a slightly different implementation of the WiFi/Ethernet API - therefore their specific
     //code lies below
-    #if (defined(BOARD_ESP8266) || defined(BOARD_ESP32)) && defined(MBTCP_WIFI)
-        if (mb_server.hasClient()) 
+    #if (defined(BOARD_ESP8266) || defined(BOARD_ESP32) || defined(BOARD_PORTENTA)) && (defined(MBTCP_WIFI) || defined(MBTCP_ETHERNET))
+        #ifdef BOARD_PORTENTA
+        if (client)
+        #else
+        if (mb_server.hasClient())
+        #endif
         {
             for (int i = 0; i < MAX_SRV_CLIENTS; i++) 
             {
                 if (!mb_serverClients[i]) //equivalent to !serverClients[i].connected()
-                { 
+                {
+                    #ifdef BOARD_PORTENTA
+                    mb_serverClients[i] = client;
+                    #else
                     mb_serverClients[i] = mb_server.available();
+                    #endif
                     break;
                 }
             }
@@ -256,8 +284,8 @@ void handle_tcp()
                 mb_serverClients[i].write(sendbuffer, mb_frame_len + MBAP_SIZE);
             }
         }
-
-        //If this is not an ESP board, then here is the default code
+    
+    //If this is not an ESP board or Portenta board, then here is the default code
     #else
         if (client) 
         {

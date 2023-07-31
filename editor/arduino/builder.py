@@ -224,6 +224,11 @@ def build(st_file, platform, source_file, port, txtCtrl, update_subsystem):
           => arduino-cli board details -fqbn [board fqbn]
         """
 
+        # Initialize arduino-cli config - if it hasn't been initialized yet
+        compiler_logs += runCommand(cli_command + ' config init')
+        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
+        wx.CallAfter(scrollToEnd, txtCtrl)
+
         # Setup boards - remove 3rd party boards to re-add them later since we don't know if they're there or not
         compiler_logs += runCommand(
             cli_command + ' config remove board_manager.additional_urls \
@@ -231,6 +236,9 @@ https://arduino.esp8266.com/stable/package_esp8266com_index.json \
 https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json \
 https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectronics_index.json \
 https://raw.githubusercontent.com/CONTROLLINO-PLC/CONTROLLINO_Library/master/Boards/package_ControllinoHardware_index.json \
+https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json \
+https://facts-engineering.gitlab.io/facts-open-source/p1am/beta_file_hosting/package_productivity-P1AM_200-boardmanagermodule_index.json \
+https://raw.githubusercontent.com/VEA-SRL/IRUINO_Library/main/package_vea_index.json \
 "2>&1"')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
@@ -241,7 +249,10 @@ https://raw.githubusercontent.com/CONTROLLINO-PLC/CONTROLLINO_Library/master/Boa
 https://arduino.esp8266.com/stable/package_esp8266com_index.json \
 https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json \
 https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectronics_index.json \
-https://raw.githubusercontent.com/CONTROLLINO-PLC/CONTROLLINO_Library/master/Boards/package_ControllinoHardware_index.json')
+https://raw.githubusercontent.com/CONTROLLINO-PLC/CONTROLLINO_Library/master/Boards/package_ControllinoHardware_index.json \
+https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json \
+https://facts-engineering.gitlab.io/facts-open-source/p1am/beta_file_hosting/package_productivity-P1AM_200-boardmanagermodule_index.json \
+https://raw.githubusercontent.com/VEA-SRL/IRUINO_Library/main/package_vea_index.json')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
 
@@ -263,6 +274,7 @@ https://raw.githubusercontent.com/CONTROLLINO-PLC/CONTROLLINO_Library/master/Boa
 WiFiNINA \
 Ethernet \
 Arduino_MachineControl \
+Arduino_EdgeControl \
 OneWire \
 DallasTemperature \
 P1AM \
@@ -270,7 +282,8 @@ CONTROLLINO \
 "Adafruit ADS1X15" \
 PubSubClient \
 ArduinoJson \
-arduinomqttclient')
+arduinomqttclient \
+RP2040_PWM')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
 
