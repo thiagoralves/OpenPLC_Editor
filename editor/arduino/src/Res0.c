@@ -34,4 +34,3 @@ void RES0_run__(unsigned long tick) {
     PROGRAM0_body__(&INSTANCE0);
   }
 }
-

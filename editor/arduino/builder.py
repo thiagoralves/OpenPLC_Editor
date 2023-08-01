@@ -22,6 +22,7 @@ def scrollToEnd(txtCtrl):
 
 def runCommand(command):
     cmd_response = None
+
     try:
         cmd_response = subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT)
         #cmd_response = subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True)
@@ -55,11 +56,108 @@ def saveHals(halObj):
     f.write(jsonStr)
     f.flush()
     f.close()
+    
+def readBoardInstalled(platform):
+    hals = loadHals()
+    cli_command = ''
+    if os_platform.system() == 'Windows':
+        cli_command = 'editor\\arduino\\bin\\arduino-cli-w32'
+    elif os_platform.system() == 'Darwin':
+        cli_command = 'editor/arduino/bin/arduino-cli-mac'
+    else:
+        cli_command = 'editor/arduino/bin/arduino-cli-l64'
+    for board in hals:
+            if hals[board]['platform'] == platform:
+                board_details = runCommand(cli_command + ' board details -b ' + platform)
+                board_details = board_details.splitlines()
+                board_version = '0'
+                for line in board_details:
+                    if "Board version:" in line:
+                        board_version = line.split('Board version:')[1]
+                        board_version = ''.join(board_version.split()) #remove white spaces
+                        hals[board]['version'] = board_version
+                        saveHals(hals)
+                        break
+
+def readBoardsInstalled():
+    hasToSave = False
+    hals = loadHals()
+    cli_command = ''
+    if os_platform.system() == 'Windows':
+        cli_command = 'editor\\arduino\\bin\\arduino-cli-w32'
+    elif os_platform.system() == 'Darwin':
+        cli_command = 'editor/arduino/bin/arduino-cli-mac'
+    else:
+        cli_command = 'editor/arduino/bin/arduino-cli-l64'
+    boardInstalled = runCommand(cli_command + ' board listall')
+    for board in hals:
+        if board in boardInstalled:
+            platform = hals[board]['platform']
+            board_details = runCommand(cli_command + ' board details -b ' + platform)
+            board_details = board_details.splitlines()
+            board_version = '0'
+            for line in board_details:
+                if "Board version:" in line:
+                    board_version = line.split('Board version:')[1]
+                    board_version = ''.join(board_version.split()) #remove white spaces
+                    hals[board]['version'] = board_version
+                    hasToSave = True
+                    break
+        if board not in boardInstalled:
+            hals[board]['version'] = '0'
+            hasToSave = True
+
+    if hasToSave:
+        saveHals(hals)
+
+def setLangArduino():
+    cli_command = ''
+    if os_platform.system() == 'Windows':
+        cli_command = 'editor\\arduino\\bin\\arduino-cli-w32'
+    elif os_platform.system() == 'Darwin':
+        cli_command = 'editor/arduino/bin/arduino-cli-mac'
+    else:
+        cli_command = 'editor/arduino/bin/arduino-cli-l64'
+
+    dump = runCommand(cli_command + ' config dump')
+    dump = dump.splitlines()
+    arduino_dir = ''
+    for line in dump:
+        if "data:" in line:
+            #get the directory of arduino ide
+            arduino_dir = line.split('data:')[1]
+            arduino_dir = ''.join(arduino_dir.split()) #remove white spaces
+            
+
+        if "locale:" in line:
+            if "en" not in line:
+                #remove the line from dump variable
+                dump.remove(line)
+            else:
+                return #already set to english
+                
+    dump.append('locale: en')
+    dump = '\n'.join(dump)
+    #write on the config file all the lines# Open the file in write mode
+    with open(arduino_dir + '/arduino-cli.yaml', 'w') as f:
+        # Write the variable to the file
+        f.write(str(dump))
+
+    #runCommand('echo ' + dump + ' > ' + arduino_dir + '/arduino-cli.yaml')
+
 
 def build(st_file, platform, source_file, port, txtCtrl, update_subsystem):
     global compiler_logs
-    compiler_logs = ''
+    compiler_logs = ''   
+    setLangArduino()
+ 
+    #check if platform is installed in the arduino ide
+    readBoardInstalled(platform)
+
     hals = loadHals()
+    
+    
+    
 
     #Check if board is installed
     board_installed = False
@@ -140,6 +238,7 @@ https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectron
 https://raw.githubusercontent.com/CONTROLLINO-PLC/CONTROLLINO_Library/master/Boards/package_ControllinoHardware_index.json \
 https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json \
 https://facts-engineering.gitlab.io/facts-open-source/p1am/beta_file_hosting/package_productivity-P1AM_200-boardmanagermodule_index.json \
+https://raw.githubusercontent.com/VEA-SRL/IRUINO_Library/main/package_vea_index.json \
 "2>&1"')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
@@ -152,7 +251,8 @@ https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32
 https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectronics_index.json \
 https://raw.githubusercontent.com/CONTROLLINO-PLC/CONTROLLINO_Library/master/Boards/package_ControllinoHardware_index.json \
 https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json \
-https://facts-engineering.gitlab.io/facts-open-source/p1am/beta_file_hosting/package_productivity-P1AM_200-boardmanagermodule_index.json')
+https://facts-engineering.gitlab.io/facts-open-source/p1am/beta_file_hosting/package_productivity-P1AM_200-boardmanagermodule_index.json \
+https://raw.githubusercontent.com/VEA-SRL/IRUINO_Library/main/package_vea_index.json')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
 
@@ -187,26 +287,7 @@ RP2040_PWM')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
 
-        # Read back installed core version
-        board_details = runCommand(cli_command + ' board details -b ' + platform)
-        board_details = board_details.splitlines()
-        board_version = '0'
-        for line in board_details:
-            if " Error getting board details" in line:
-                compiler_logs += 'Error installing support for board ' + platform
-                wx.CallAfter(txtCtrl.SetValue, compiler_logs)
-                wx.CallAfter(scrollToEnd, txtCtrl)
-                return
-            if "Board version:" in line:
-                board_version = line.split('Board version:')[1]
-                board_version = ''.join(board_version.split()) #remove white spaces
-                break
-        
-        # Update version for all platforms using this core
-        for board in hals:
-            if hals[board]['core'] == core:
-                hals[board]['version'] = board_version
-        saveHals(hals)
+        readBoardsInstalled()
 
     # Generate C files
     compiler_logs += "Compiling .st file...\n"
