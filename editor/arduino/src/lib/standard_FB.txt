@@ -49,4 +49,6 @@
 
 {#include "MQTT.txt" }
 {#include "sm_cards.txt" }
+{#include "I2C_SENSOR.txt"}
+
 {enable code generation}

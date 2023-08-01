@@ -1896,4 +1896,5 @@ __end:
 
 #include "MQTT.h"
 #include "sm_cards.h"
+#include "I2C_SENSOR.h"
 #endif //_IEC_STD_FB_H

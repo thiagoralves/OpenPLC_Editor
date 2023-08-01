@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='utf-8'?>
+<project xmlns:ns1="http://www.plcopen.org/xml/tc6_0201" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.plcopen.org/xml/tc6_0201">
+  <fileHeader companyName="OpenPLC" productName="Arduino Function Blocks Library" productVersion="1.0" creationDateTime="2023-8-1T02:33:11"/>
+  <contentHeader name="I2C sensor modules Function Blocks" author="Sakunamary Xiao" modificationDateTime="2023-8-1T02:33:11">
+    <coordinateInfo>
+      <fbd>
+        <scaling x="0" y="0"/>
+      </fbd>
+      <ld>
+        <scaling x="0" y="0"/>
+      </ld>
+      <sfc>
+        <scaling x="0" y="0"/>
+      </sfc>
+    </coordinateInfo>
+  </contentHeader>
+  <types>
+    <dataTypes/>
+    <pous>
+      <pou name="I2C_THREMO_4_OUT" pouType="functionBlock">
+              <interface>
+          <inputVars>
+            <variable name="ADDR_SLAVE">
+              <type>
+                <SINT/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[I2C module  address ]]></xhtml:p>
+              </documentation>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="OUT_0">
+              <type>
+                <REAL/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[Temperature output in Celsius]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="OUT_1">
+              <type>
+                <REAL/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[Temperature output in Celsius]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="OUT_2">
+              <type>
+                <REAL/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[Temperature output in Celsius]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="OUT_3">
+              <type>
+                <REAL/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[Temperature output in Celsius]]></xhtml:p>
+              </documentation>
+            </variable>
+          </outputVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[OUT := 0.0;]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[Reads temperature from I2C module]]></xhtml:p>
+        </documentation>
+      </pou>
+    </pous>
+  </types>
+  <instances>
+    <configurations/>
+  </instances>
+</project>

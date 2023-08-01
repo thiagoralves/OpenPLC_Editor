@@ -113,6 +113,7 @@ FUNCTION_BLOCK DS18B20_5_OUT
   OUT_4 := 0.0;
 END_FUNCTION_BLOCK
 
+
 (*
  * This is a dummy implementation of this block since
  * its code is actually written in C, not ST
