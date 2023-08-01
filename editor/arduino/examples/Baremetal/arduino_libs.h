@@ -1759,3 +1759,20 @@ int mosfets8Set(uint8_t stack, uint8_t val)
 	return OK;
 }
 #endif
+
+
+
+//------------------------------------------------------------------------------
+// I2C_SENSOR MODUlEs THRMO_4_OUT
+//------------------------------------------------------------------------------
+
+#include <stdlib.h>
+#include "Arduino.h"
+#include "Wire.h"
+
+#define OK 0
+#define ERROR -1
+#define I2C_SERSOR_ADDR_SLVAE 0x67
+
+
+extern "C" int I2C_SENSOR_Init(int);
