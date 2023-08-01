@@ -1770,9 +1770,28 @@ int mosfets8Set(uint8_t stack, uint8_t val)
 #include "Arduino.h"
 #include "Wire.h"
 
+
 #define OK 0
 #define ERROR -1
-#define I2C_SERSOR_ADDR_SLVAE 0x67
-
 
 extern "C" int I2C_SENSOR_Init(int);
+
+int I2C_SENSOR_Init(int){
+
+
+if(buff == NULL)
+	{
+		return ERROR;
+	}
+	Wire.begin();
+	Wire.beginTransmission(hwAddr);
+	Wire.write(memAddr);
+	if (Wire.endTransmission() != 0)
+	{
+		return ERROR;
+	}
+
+}
+
+
+
