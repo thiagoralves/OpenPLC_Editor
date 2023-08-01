@@ -123,7 +123,7 @@ class ArduinoUploadDialog(wx.Dialog):
         self.m_panel5.Layout()
         bSizer21.Fit( self.m_panel5 )
         self.m_listbook2.AddPage( self.m_panel5, u"Transfer", True )
-        m_listbook2Bitmap = wx.Bitmap(os.path.join(current_dir, "..", "images", "transfer.png"), wx.BITMAP_TYPE_ANY )
+        m_listbook2Bitmap = wx.Bitmap(os.path.join(current_dir, "..", "images", "transfer_plc.png"), wx.BITMAP_TYPE_ANY )
         if ( m_listbook2Bitmap.Ok() ):
             m_listbook2Images.Add( m_listbook2Bitmap )
             self.m_listbook2.SetPageImage( m_listbook2Index, m_listbook2Index )
