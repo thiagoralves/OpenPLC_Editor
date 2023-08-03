@@ -1896,4 +1896,5 @@ __end:
 
 #include "MQTT.h"
 #include "sm_cards.h"
+#include "jaguar.h"
 #endif //_IEC_STD_FB_H
