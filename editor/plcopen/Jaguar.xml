@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='utf-8'?>
+<project xmlns:ns1="http://www.plcopen.org/xml/tc6_0201" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.plcopen.org/xml/tc6_0201">
+<fileHeader companyName="OpenPLC" productName="Jaguar" productVersion="1.0" creationDateTime="2023-04-26T04:54:00"/>
+<contentHeader name="Jaguar" author="OpenPLC Lib Writter" modificationDateTime="2023-04-26T04:54:00">
+<coordinateInfo>
+<fbd>
+<scaling x="0" y="0"/>
+</fbd>
+<ld>
+<scaling x="0" y="0"/>
+</ld>
+<sfc>
+<scaling x="0" y="0"/>
+</sfc>
+</coordinateInfo>
+</contentHeader>
+<types>
+<dataTypes/>
+<pous>
+<pou name="ADC_CONFIG" pouType="functionBlock">
+<interface>
+<inputVars>
+<variable name="ADC_CH">
+<type>
+<SINT/>
+</type>
+<documentation>
+<xhtml:p><![CDATA[ADC_CH]]></xhtml:p>
+</documentation>
+</variable>
+<variable name="ADC_TYPE">
+<type>
+<SINT/>
+</type>
+<documentation>
+<xhtml:p><![CDATA[ADC_TYPE]]></xhtml:p>
+</documentation>
+</variable>
+</inputVars>
+<localVars>
+<variable name="ADC_CH_LOCAL">
+<type>
+<SINT/>
+</type>
+<documentation>
+<xhtml:p><![CDATA[ADC_CH_LOCAL]]></xhtml:p>
+</documentation>
+</variable>
+<variable name="ADC_TYPE_LOCAL">
+<type>
+<SINT/>
+</type>
+<documentation>
+<xhtml:p><![CDATA[ADC_TYPE_LOCAL]]></xhtml:p>
+</documentation>
+</variable>
+</localVars>
+<outputVars>
+<variable name="SUCCESS">
+<type>
+<BOOL/>
+</type>
+<documentation>
+<xhtml:p><![CDATA[SUCCESS]]></xhtml:p>
+</documentation>
+</variable>
+</outputVars>
+</interface>
+<body>
+<ST>
+<xhtml:p><![CDATA[
+  IF ADC_CH <> ADC_CH_LOCAL OR ADC_TYPE <> ADC_TYPE_LOCAL THEN
+    ADC_CH_LOCAL := ADC_CH;
+    ADC_TYPE_LOCAL := ADC_TYPE;
+    SUCCESS := TRUE;
+  ELSE
+    SUCCESS := FALSE;
+  END_IF;
+
+]]></xhtml:p></ST>
+</body>
+<documentation>
+<xhtml:p><![CDATA[Configures the analog channel inputs on the Jaguar board. ADC_CH must be beween 0 - 3. ADC_TYPE must be between 0 - 3, where 0 = unipolar 10V, 1 = bipolar 10V, 2 = unipolar 5V, and 3 = bipolar 5V. Upon successfull configuration of the ADC, SUCCESS is set to TRUE.]]></xhtml:p>
+</documentation>
+</pou>
+</pous>
+</types>
+<instances>
+<configurations/>
+</instances>
+</project>
+
