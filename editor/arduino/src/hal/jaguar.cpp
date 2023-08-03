@@ -80,6 +80,8 @@ int8_t pinMask_AOUT[] = {PINMASK_AOUT};
 #define bitRead(value, bit) (((value) >> (bit)) & 0x01)
 #define bitWrite(value, bit, bitvalue) (bitvalue ? bitSet(value, bit) : bitClear(value, bit))
 
+extern "C" uint8_t ADC_configure_channel(uint8_t adc_ch, uint8_t adc_type);
+
 
 void Adc_RangeSelReg(unsigned char ainChNum, unsigned char voltRange)
 {   
@@ -106,10 +108,40 @@ void Adc_RangeSelReg(unsigned char ainChNum, unsigned char voltRange)
 // AD8688 init
 void ADC_init()
 {
-    Adc_RangeSelReg(0, BIPOLAR_10V);
+    Adc_RangeSelReg(0, UNIPOLAR_10V);
     Adc_RangeSelReg(1, UNIPOLAR_10V);
-    Adc_RangeSelReg(2, BIPOLAR_5V);
-    Adc_RangeSelReg(3, UNIPOLAR_5V);
+    Adc_RangeSelReg(2, UNIPOLAR_10V);
+    Adc_RangeSelReg(3, UNIPOLAR_10V);
+}
+
+uint8_t ADC_configure_channel(uint8_t adc_ch, uint8_t adc_type)
+{
+    if (adc_ch >= NUM_JAGUAR_ANALOG_INPUTS)
+    {
+        return 0; //Wrong channel selected
+    }
+
+    switch (adc_type)
+    {
+        case 0:
+            Adc_RangeSelReg(adc_ch, UNIPOLAR_10V);
+            break;
+        case 1:
+            Adc_RangeSelReg(adc_ch, BIPOLAR_10V);
+            break;
+        case 2:
+            Adc_RangeSelReg(adc_ch, UNIPOLAR_5V);
+            break;
+        case 3:
+            Adc_RangeSelReg(adc_ch, BIPOLAR_5V);
+            break;
+        
+        default:
+            return 0; //Wrong ADC type sent
+            break;
+    }
+
+    return 1;
 }
 
 void ADC_Write_CmdReg(uint8_t spiMsb)
