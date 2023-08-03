@@ -50,4 +50,5 @@
 
 {#include "MQTT.txt" }
 {#include "sm_cards.txt" }
+{#include "jaguar.txt" }
 {enable code generation}
