@@ -106,7 +106,7 @@ def readBoardsInstalledAsync():
 
 
 # Define a function to run the command in a thread
-def run_command_thread(board, cli_command):
+def checkBoardHalsCompatibility(board, cli_command):
     global hals, hasToSave  
     if board in boardInstalled:
         platform = hals[board]['platform']
@@ -152,7 +152,7 @@ def readBoardsInstalled():
     # Create a new thread for each board
     
     for board in hals:
-        t = threading.Thread(target=run_command_thread, args=(board, cli_command))
+        t = threading.Thread(target=checkBoardHalsCompatibility, args=(board, cli_command))
         threads.append(t)
         t.start()
 
