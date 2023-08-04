@@ -22,14 +22,20 @@ def scrollToEnd(txtCtrl):
     txtCtrl.Update()
 
 
+MAX_CONCURRENT_COMMANDS = 4
+command_semaphore = threading.Semaphore(MAX_CONCURRENT_COMMANDS)
+
 def runCommand(command):
     cmd_response = None
 
     try:
+        command_semaphore.acquire()
         cmd_response = subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT)
         #cmd_response = subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True)
     except subprocess.CalledProcessError as exc:
         cmd_response = exc.output
+    finally:
+        command_semaphore.release()
 
     if cmd_response is None:
         return ''
@@ -104,10 +110,7 @@ def run_command_thread(board, cli_command):
     global hals, hasToSave  
     if board in boardInstalled:
         platform = hals[board]['platform']
-        start = time.time()
         board_details = runCommand(cli_command + ' board details -b ' + platform)
-        print("2 "+str(time.time()-start))
-
         for line in board_details.splitlines():
             if "Board version:" in line:
                 board_version = line.split('Board version:')[1].replace(" ", "")
@@ -143,10 +146,8 @@ def readBoardsInstalled():
 
     # Wait for the threads to finish
     threadLoadHals.join()
-    print("1 "+str(time.time()-start))
     
     threadBoardInstalled.join()
-    print("3 "+str(time.time()-start))
 
     # Create a new thread for each board
     
