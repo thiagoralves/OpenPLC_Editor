@@ -68,10 +68,23 @@ from runtime import PlcStatus
 from ConfigTreeNode import ConfigTreeNode, XSDSchemaErrorMessage
 from POULibrary import UserAddressedException
 
+
+#importing builder function because I'll open a thread and speed up the readings of boards installed from arduino cli
+from arduino import builder as arduino_builder
+import threading
+
 base_folder = paths.AbsParentDir(__file__)
 
 MATIEC_ERROR_MODEL = re.compile(
     r".*\.st:(\d+)-(\d+)\.\.(\d+)-(\d+): (?:error)|(?:warning) : (.*)$")
+
+def readBoards():
+    arduino_builder.setLangArduino()
+    arduino_builder.readBoardsInstalled() 
+
+   
+
+
 
 
 def ExtractChildrenTypesFromCatalog(catalog):
@@ -1184,10 +1197,14 @@ class ProjectController(ConfigTreeNode, PLCControler):
         self.logger.flush()
         self.logger.write(_("Start build in %s\n") % buildpath)
 
+
+      
+
+
         # Generate SoftPLC IEC code
         IECGenRes = self._Generate_SoftPLC()
         #self.UpdateButtons()
-
+        
         # If IEC code gen fail, bail out.
         if not IECGenRes:
             self.logger.write_error(_("PLC code generation failed !\n"))
@@ -2089,11 +2106,14 @@ class ProjectController(ConfigTreeNode, PLCControler):
                     self.logger.write_error('It was not possible to save the generated program\n')
     
     def _generateArduino(self):
+        readBoardThread = threading.Thread(target=readBoards, args=())
+        readBoardThread.start()
         self._Clean()
         if (self._Build() is True):
             f = open(self._getIECgeneratedcodepath(), 'r')
             program = f.read()
             f.close()
+            readBoardThread.join()
             dialog = ArduinoUploadDialog.ArduinoUploadDialog(self.AppFrame, program)
             dialog.ShowModal()
 
