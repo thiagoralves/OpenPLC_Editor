@@ -16,11 +16,11 @@
     "user_dout": "O0, O1, O2, O3, O4, O5, O6, O7"
   },
   "Raspberry Pico": {
-    "platform": "arduino:mbed_rp2040:pico",
+    "platform": "rp2040:rp2040:rpipico",
     "source": "rp2040pico.cpp",
     "version": "0",
     "last_update": 0,
-    "core": "arduino:mbed_rp2040",
+    "core": "rp2040:rp2040",
     "default_din": "6, 7, 8, 9, 10, 11, 12, 13",
     "default_ain": "26, 27, 28",
     "default_dout": "14, 15, 16, 17, 18, 19, 20, 21",
@@ -31,11 +31,11 @@
     "user_aout": "4,5"
   },
   "Raspberry Pico W": {
-    "platform": "arduino:mbed_rp2040:pico",
+    "platform": "rp2040:rp2040:rpipicow",
     "source": "rp2040pico.cpp",
     "version": "0",
     "last_update": 0,
-    "core": "arduino:mbed_rp2040",
+    "core": "rp2040:rp2040",
     "default_din": "6, 7, 8, 9, 10, 11, 12, 13",
     "default_ain": "26, 27, 28",
     "default_dout": "14, 15, 16, 17, 18, 19, 20, 21",
