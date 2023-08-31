@@ -119,6 +119,9 @@ def setLangArduino():
     else:
         cli_command = 'editor/arduino/bin/arduino-cli-l64'
 
+    # Initialize arduino-cli config - if it hasn't been initialized yet
+    runCommand(cli_command + ' config init')
+    
     dump = runCommand(cli_command + ' config dump')
     dump = dump.splitlines()
     arduino_dir = ''
@@ -127,7 +130,6 @@ def setLangArduino():
             #get the directory of arduino ide
             arduino_dir = line.split('data:')[1]
             arduino_dir = ''.join(arduino_dir.split()) #remove white spaces
-            
 
         if "locale:" in line:
             if "en" not in line:
