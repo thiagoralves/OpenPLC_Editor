@@ -6,6 +6,8 @@ import subprocess
 import sys
 import time
 
+import threading
+
 import wx
 
 global compiler_logs
@@ -20,16 +22,22 @@ def scrollToEnd(txtCtrl):
     txtCtrl.Update()
 
 
+MAX_CONCURRENT_COMMANDS = 4
+command_semaphore = threading.Semaphore(MAX_CONCURRENT_COMMANDS)
+
 def runCommand(command):
     cmd_response = None
 
     try:
+        command_semaphore.acquire()
         cmd_response = subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT)
         #cmd_response = subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True)
     except subprocess.CalledProcessError as exc:
         cmd_response = exc.output
+    finally:
+        command_semaphore.release()
 
-    if cmd_response == None:
+    if cmd_response is None:
         return ''
 
     return cmd_response.decode('utf-8')
@@ -79,9 +87,13 @@ def readBoardInstalled(platform):
                         saveHals(hals)
                         break
 
-def readBoardsInstalled():
-    hasToSave = False
+def loadHalsAsync():
+    global hals
     hals = loadHals()
+
+def readBoardsInstalledAsync():
+    global boardInstalled
+    # this as to be done asynchrounously
     cli_command = ''
     if os_platform.system() == 'Windows':
         cli_command = 'editor\\arduino\\bin\\arduino-cli-w32'
@@ -89,24 +101,66 @@ def readBoardsInstalled():
         cli_command = 'editor/arduino/bin/arduino-cli-mac'
     else:
         cli_command = 'editor/arduino/bin/arduino-cli-l64'
+    
     boardInstalled = runCommand(cli_command + ' board listall')
-    for board in hals:
-        if board in boardInstalled:
-            platform = hals[board]['platform']
-            board_details = runCommand(cli_command + ' board details -b ' + platform)
-            board_details = board_details.splitlines()
-            board_version = '0'
-            for line in board_details:
-                if "Board version:" in line:
-                    board_version = line.split('Board version:')[1]
-                    board_version = ''.join(board_version.split()) #remove white spaces
+
+
+# Define a function to run the command in a thread
+def checkBoardHalsCompatibility(board, cli_command):
+    global hals, hasToSave  
+    if board in boardInstalled:
+        platform = hals[board]['platform']
+        board_details = runCommand(cli_command + ' board details -b ' + platform)
+        for line in board_details.splitlines():
+            if "Board version:" in line:
+                board_version = line.split('Board version:')[1].replace(" ", "")
+                if hals[board]['version'] != board_version:
                     hals[board]['version'] = board_version
                     hasToSave = True
-                    break
-        if board not in boardInstalled:
-            hals[board]['version'] = '0'
-            hasToSave = True
 
+                break
+    elif hals[board]['version'] != '0':
+        hals[board]['version'] = '0'
+        hasToSave = True
+
+def readBoardsInstalled():
+    global hasToSave 
+    hasToSave = False
+    start = time.time()
+    threadLoadHals = threading.Thread(target=loadHalsAsync)
+    threadBoardInstalled = threading.Thread(target=readBoardsInstalledAsync)
+    # Start the threads
+    threadLoadHals.start()
+    threadBoardInstalled.start()
+
+    
+    cli_command = ''
+    if os_platform.system() == 'Windows':
+        cli_command = 'editor\\arduino\\bin\\arduino-cli-w32'
+    elif os_platform.system() == 'Darwin':
+        cli_command = 'editor/arduino/bin/arduino-cli-mac'
+    else:
+        cli_command = 'editor/arduino/bin/arduino-cli-l64'
+    
+    threads = []
+
+    # Wait for the threads to finish
+    threadLoadHals.join()
+    
+    threadBoardInstalled.join()
+
+    # Create a new thread for each board
+    
+    for board in hals:
+        t = threading.Thread(target=checkBoardHalsCompatibility, args=(board, cli_command))
+        threads.append(t)
+        t.start()
+
+
+    # Wait for all threads to finish
+    for t in threads:
+        t.join()
+    
     if hasToSave:
         saveHals(hals)
 
