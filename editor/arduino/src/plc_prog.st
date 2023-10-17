@@ -1,31 +1,24 @@
-PROGRAM program0
+PROGRAM Blink
   VAR
+    blink_led AT %QX0.0 : BOOL;
+    button AT %IX0.0 : BOOL;
+    counter_max AT %QX0.1 : BOOL;
+  END_VAR
+  VAR
+    counter_value : INT;
     TON0 : TON;
-  END_VAR
-  VAR
-    BLINKY AT %QX0.0 : BOOL;
-  END_VAR
-  VAR
     TOF0 : TOF;
-    P1AM_INIT0 : P1AM_INIT;
-  END_VAR
-  VAR
-    init_modules AT %QW0 : INT;
-  END_VAR
-  VAR
-    P1_16TR0 : P1_16TR;
-    P1_08N0 : P1_08N;
-    SINT_TO_INT11_OUT : INT;
+    CTU0 : CTU;
+    R_TRIG1 : R_TRIG;
   END_VAR
 
-  P1AM_INIT0(INIT := TRUE);
-  SINT_TO_INT11_OUT := SINT_TO_INT(P1AM_INIT0.SUCCESS);
-  init_modules := SINT_TO_INT11_OUT;
-  TON0(IN := NOT(BLINKY), PT := T#2s);
-  TOF0(IN := TON0.Q, PT := T#2s);
-  BLINKY := TOF0.Q;
-  P1_08N0(SLOT := 1);
-  P1_16TR0(SLOT := 1, O2 := BLINKY, O4 := P1_08N0.I1, O7 := P1_08N0.I4, O9 := P1_08N0.I6, O13 := BLINKY);
+  TON0(EN := TRUE, IN := NOT(blink_led), PT := T#500ms);
+  TOF0(EN := TON0.ENO, IN := TON0.Q, PT := T#500ms);
+  blink_led := TOF0.Q;
+  R_TRIG1(CLK := button);
+  CTU0(CU := R_TRIG1.Q, PV := 10);
+  counter_max := CTU0.Q;
+  counter_value := CTU0.CV;
 END_PROGRAM
 
 
@@ -33,6 +26,6 @@ CONFIGURATION Config0
 
   RESOURCE Res0 ON PLC
     TASK task0(INTERVAL := T#20ms,PRIORITY := 0);
-    PROGRAM instance0 WITH task0 : program0;
+    PROGRAM instance0 WITH task0 : Blink;
   END_RESOURCE
 END_CONFIGURATION

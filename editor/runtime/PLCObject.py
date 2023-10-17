@@ -29,13 +29,14 @@ import os
 import sys
 import traceback
 import shutil
-from time import time
+from time import time, sleep
 import hashlib
 from tempfile import mkstemp
 from functools import wraps, partial
 from six.moves import xrange
 from past.builtins import execfile
 import _ctypes
+import struct
 
 from runtime.typemapping import TypeTranslator
 from runtime.loglevels import LogLevelsDefault, LogLevelsCount
@@ -43,6 +44,8 @@ from runtime.Stunnel import getPSKID
 from runtime import PlcStatus
 from runtime import MainWorker
 from runtime import default_evaluator
+
+from runtime import openplc_debugger as debugger
 
 if os.name in ("nt", "ce"):
     dlopen = _ctypes.LoadLibrary
@@ -99,6 +102,18 @@ class PLCObject(object):
         self.TraceLock = Lock()
         self.Traces = []
         self.DebugToken = 0
+
+        self.DebuggerType = 'simulation'
+
+        # OpenPLC Debugger vars
+        self.remote = None
+        self.tracesList = []
+        self.slaveid = 0
+        self.baud = 115200
+        self.comport = 'COM1'
+        self.ip = '127.0.0.1'
+        self.ipport = 502
+        self.mode = 'TCP'
 
         self._init_blobs()
 
@@ -515,6 +530,13 @@ class PLCObject(object):
         pass
 
     @RunInMain
+    def SetDebuggerType(self, type):
+        if (type != None) and (type == 'simulation' or type == 'remote'):
+            self.DebuggerType = type
+        else:
+            self.DebuggerType = 'simulation' #defaults to simulation
+
+    @RunInMain
     def StartPLC(self):
 
         if self.PLClibraryHandle is None:
@@ -535,6 +557,10 @@ class PLCObject(object):
 
     @RunInMain
     def StopPLC(self):
+        # Stop remote target
+        if self.DebuggerType == 'remote':
+            self.DisconnectRemoteTarget()
+
         if self.PLCStatus == PlcStatus.Started:
             self.LogMessage("PLC stopped")
             self._stopPLC()
@@ -693,14 +719,64 @@ class PLCObject(object):
 
             return self.PLCStatus == PlcStatus.Stopped
         return False
+    
+    def ConfigureRemote(self, mode, ip, ipport, serialport, slaveid, baud):
+        self.mode = mode
+        self.ip = ip
+        self.ipport = ipport
+        self.comport = serialport
+        self.slaveid = slaveid
+        self.baud = baud
+
+    def ReadRemoteSettings(self):
+        remoteSettings = {}
+        remoteSettings['mode'] = self.mode
+        remoteSettings['ip'] = self.ip
+        remoteSettings['ipport'] = self.ipport
+        remoteSettings['comport'] = self.comport
+        remoteSettings['slaveid'] = self.slaveid
+        remoteSettings['baud'] = self.baud
+        return remoteSettings
+    
+    def DisconnectRemoteTarget(self):
+        if self.remote != None:
+            self.remote.disconnect()
+            self.remote = None
 
     def MatchMD5(self, MD5):
+        ret = None
         try:
             last_md5 = open(self._GetMD5FileName(), "r").read()
-            return last_md5 == MD5
+            ret = (last_md5 == MD5)
         except Exception:
-            pass
-        return False
+            ret = False
+        
+        if self.DebuggerType == 'remote':
+            if self.remote == None:
+                try:
+                    #self.remote = debugger.RemoteDebugClient('TCP', host='192.168.1.155', port=502)
+                    #self.remote = debugger.RemoteDebugClient('RTU', serial_port='COM4', baudrate=115200, slave_id=1)
+                    self.remote = debugger.RemoteDebugClient(self.mode, host=self.ip, port=self.ipport, serial_port=self.comport, baudrate=self.baud, slave_id=self.slaveid)
+                    if self.remote.connect() == False:
+                        self.remote.disconnect()
+                        self.remote = None
+                        return -1
+                except Exception as e:
+                    print("Failed to connect to remote target: {}".format(str(e)))
+                    self.remote.disconnect()
+                    self.remote = None
+                    return -1
+
+            targetMD5 = self.remote.get_md5_hash()
+            if targetMD5 == None:
+                return -1
+            else:
+                if targetMD5 == MD5:
+                    return True
+                else:
+                    return False
+        
+        return ret
 
     @RunInMain
     def SetTraceVariablesList(self, idxs):
@@ -708,6 +784,11 @@ class PLCObject(object):
         Call ctype imported function to append
         these indexes to registred variables in PLC debugger
         """
+        if self.DebuggerType == 'remote':
+            self.tracesList = []
+            for idx, iectype, force in idxs:
+                self.tracesList.append((idx,force))
+
         self.DebugToken += 1
         if idxs:
             # suspend but dont disable
@@ -747,6 +828,7 @@ class PLCObject(object):
     def GetTraceVariables(self, DebugToken):
         if DebugToken is not None and DebugToken == self.DebugToken:
             return self.PLCStatus, self._TracesSwap()
+        
         return PlcStatus.Broken, []
 
     def TraceThreadProc(self):
@@ -754,27 +836,64 @@ class PLCObject(object):
         Return a list of traces, corresponding to the list of required idx
         """
         self._resumeDebug()  # Re-enable debugger
+        TraceBuffer = None
         while self.PLCStatus == PlcStatus.Started:
-            tick = ctypes.c_uint32()
-            size = ctypes.c_uint32()
-            buff = ctypes.c_void_p()
-            TraceBuffer = None
+            if self.DebuggerType == 'simulation':
+                tick = ctypes.c_uint32()
+                size = ctypes.c_uint32()
+                buff = ctypes.c_void_p()
+                
 
-            self.PLClibraryLock.acquire()
+                self.PLClibraryLock.acquire()
 
-            res = self._GetDebugData(ctypes.byref(tick),
-                                     ctypes.byref(size),
-                                     ctypes.byref(buff))
-            if res == 0:
-                if size.value:
-                    TraceBuffer = ctypes.string_at(buff.value, size.value)
-                self._FreeDebugData()
+                res = self._GetDebugData(ctypes.byref(tick),
+                                        ctypes.byref(size),
+                                        ctypes.byref(buff))
+                if res == 0:
+                    if size.value:
+                        TraceBuffer = ctypes.string_at(buff.value, size.value)
+                    self._FreeDebugData()
 
-            self.PLClibraryLock.release()
+                self.PLClibraryLock.release()
 
-            # leave thread if GetDebugData isn't happy.
-            if res != 0:
-                break
+                # leave thread if GetDebugData isn't happy.
+                if res != 0:
+                    break
+            
+            if self.DebuggerType == 'remote' and self.remote != None:
+                trace_list = []
+                TraceBuffer = b''  # Initialize TraceBuffer as bytes
+                for item in self.tracesList:
+                    variable_idx, force_status = item
+                    trace_list.append(variable_idx)
+
+                try:
+                    while trace_list:
+                        res = self.remote.send_debug_get_list_query(len(trace_list), trace_list)
+                        response_code = struct.unpack('>B', res[8:9])[0]  # Unpack the response code as a byte
+                        if response_code == debugger.DebugResponse.SUCCESS:
+                            lastIndex = struct.unpack('>H', res[9:11])[0]
+                            tick = ctypes.c_uint32()
+                            tick.value = struct.unpack('>I', res[11:15])[0]
+                            TraceBuffer += res[17:]  # Add received traces to TraceBuffer
+                            if lastIndex == trace_list[-1]:
+                                # All traces retrieved, exit the loop
+                                break
+                            else:
+                                # Get the remaining traces
+                                last_index_idx = trace_list.index(lastIndex) + 1
+                                trace_list = trace_list[last_index_idx:]
+                        else:
+                            print("Error reading traces from remote: Invalid response")
+                            res_hex = ' '.join([hex(ord(byte))[2:].zfill(2) for byte in res])
+                            print(res_hex)
+                            TraceBuffer = None
+                            break
+                except Exception as e:
+                    print("Error reading traces from remote: {}".format(str(e)))
+                    TraceBuffer = None
+                
+                sleep(0.03) # Thread queries data every 30ms
 
             if TraceBuffer is not None:
                 self.TraceLock.acquire()

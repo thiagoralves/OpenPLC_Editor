@@ -239,10 +239,10 @@ static inline IEC_TIMESPEC __time_to_timespec(int sign, double mseconds, double 
  */
 #define __time_to_timespec(sign,mseconds,seconds,minutes,hours,days) \
           ((IEC_TIMESPEC){\
-              /*tv_sec  =*/ ((long int)   (((sign>=0)?1:-1)*((((long double)days*24 + (long double)hours)*60 + (long double)minutes)*60 + (long double)seconds + (long double)mseconds/1e3))), \
-              /*tv_nsec =*/ ((long int)(( \
+              /*tv_sec  =*/ ((int32_t)   (((sign>=0)?1:-1)*((((long double)days*24 + (long double)hours)*60 + (long double)minutes)*60 + (long double)seconds + (long double)mseconds/1e3))), \
+              /*tv_nsec =*/ ((int32_t)(( \
                             ((long double)(((sign>=0)?1:-1)*((((long double)days*24 + (long double)hours)*60 + (long double)minutes)*60 + (long double)seconds + (long double)mseconds/1e3))) - \
-                            ((long int)   (((sign>=0)?1:-1)*((((long double)days*24 + (long double)hours)*60 + (long double)minutes)*60 + (long double)seconds + (long double)mseconds/1e3)))   \
+                            ((int32_t)   (((sign>=0)?1:-1)*((((long double)days*24 + (long double)hours)*60 + (long double)minutes)*60 + (long double)seconds + (long double)mseconds/1e3)))   \
                             )*1e9))\
         })
 
@@ -264,10 +264,10 @@ static inline IEC_TIMESPEC __tod_to_timespec(double seconds, double minutes, dou
 */
 #define __tod_to_timespec(seconds,minutes,hours) \
           ((IEC_TIMESPEC){\
-              /*tv_sec  =*/ ((long int)   ((((long double)hours)*60 + (long double)minutes)*60 + (long double)seconds)), \
-              /*tv_nsec =*/ ((long int)(( \
+              /*tv_sec  =*/ ((int32_t)   ((((long double)hours)*60 + (long double)minutes)*60 + (long double)seconds)), \
+              /*tv_nsec =*/ ((int32_t)(( \
                             ((long double)((((long double)hours)*60 + (long double)minutes)*60 + (long double)seconds)) - \
-                            ((long int)   ((((long double)hours)*60 + (long double)minutes)*60 + (long double)seconds))   \
+                            ((int32_t)   ((((long double)hours)*60 + (long double)minutes)*60 + (long double)seconds))   \
                             )*1e9))\
         })
 

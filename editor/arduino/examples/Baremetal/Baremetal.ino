@@ -14,7 +14,7 @@
     #endif
 #endif
 
-unsigned long __tick = 0;
+uint32_t __tick = 0;
 
 unsigned long scan_cycle;
 unsigned long timer_ms = 0;

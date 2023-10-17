@@ -13,7 +13,6 @@ WiFiConnectionHandler *ArduinoIoTPreferredConnection;
 
 void cloud_begin(char *thing_id, char *str_ssid, char *str_pass)
 {
-    Serial.begin(9600);
     ArduinoIoTPreferredConnection = new WiFiConnectionHandler(str_ssid, str_pass);
     ArduinoCloud.setThingId(thing_id);
 }
