@@ -65,7 +65,7 @@ curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py
 sudo python2.7 get-pip.py
 
 #Install Python dependencies
-pip2 install future zeroconf==0.19.1 numpy==1.16.5 matplotlib==2.0.2 lxml==4.6.2 pyro sslpsk pyserial
+pip2 install future zeroconf==0.19.1 numpy==1.16.5 matplotlib==2.0.2 lxml==4.6.2 pyro sslpsk pyserial jinja2
 echo ""
 echo "[COMPILING MATIEC]"
 cd matiec
