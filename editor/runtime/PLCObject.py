@@ -778,6 +778,8 @@ class PLCObject(object):
             targetMD5 = self.remote.get_md5_hash()
             sleep(1)
             targetMD5 = self.remote.get_md5_hash()
+            sleep(1)
+            targetMD5 = self.remote.get_md5_hash()
             if targetMD5 == None:
                 return False
             else:
