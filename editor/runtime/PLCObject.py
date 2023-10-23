@@ -557,10 +557,6 @@ class PLCObject(object):
 
     @RunInMain
     def StopPLC(self):
-        # Stop remote target
-        if self.DebuggerType == 'remote':
-            self.DisconnectRemoteTarget()
-
         if self.PLCStatus == PlcStatus.Started:
             self.LogMessage("PLC stopped")
             self._stopPLC()
@@ -569,6 +565,11 @@ class PLCObject(object):
             if self.TraceThread is not None:
                 self.TraceThread.join()
                 self.TraceThread = None
+            
+            # Stop remote target
+            if self.DebuggerType == 'remote':
+                self.DisconnectRemoteTarget()
+            
             return True
         return False
 
@@ -738,6 +739,28 @@ class PLCObject(object):
         remoteSettings['baud'] = self.baud
         return remoteSettings
     
+    def ConnectRemoteTarget(self):
+        if self.remote == None:
+            try:
+                #self.remote = debugger.RemoteDebugClient('TCP', host='192.168.1.155', port=502)
+                #self.remote = debugger.RemoteDebugClient('RTU', serial_port='COM4', baudrate=115200, slave_id=1)
+                self.remote = debugger.RemoteDebugClient(self.mode, host=self.ip, port=self.ipport, serial_port=self.comport, baudrate=self.baud, slave_id=self.slaveid)
+                if self.remote.connect() == False:
+                    self.remote.disconnect()
+                    self.remote = None
+                    return False
+                
+                return True
+            
+            except Exception as e:
+                print("Failed to connect to remote target: {}".format(str(e)))
+                self.remote.disconnect()
+                self.remote = None
+                return False
+        else:
+            return None
+            
+    
     def DisconnectRemoteTarget(self):
         if self.remote != None:
             self.remote.disconnect()
@@ -751,25 +774,12 @@ class PLCObject(object):
         except Exception:
             ret = False
         
-        if self.DebuggerType == 'remote':
-            if self.remote == None:
-                try:
-                    #self.remote = debugger.RemoteDebugClient('TCP', host='192.168.1.155', port=502)
-                    #self.remote = debugger.RemoteDebugClient('RTU', serial_port='COM4', baudrate=115200, slave_id=1)
-                    self.remote = debugger.RemoteDebugClient(self.mode, host=self.ip, port=self.ipport, serial_port=self.comport, baudrate=self.baud, slave_id=self.slaveid)
-                    if self.remote.connect() == False:
-                        self.remote.disconnect()
-                        self.remote = None
-                        return -1
-                except Exception as e:
-                    print("Failed to connect to remote target: {}".format(str(e)))
-                    self.remote.disconnect()
-                    self.remote = None
-                    return -1
-
+        if self.DebuggerType == 'remote' and self.remote != None:
+            targetMD5 = self.remote.get_md5_hash()
+            sleep(1)
             targetMD5 = self.remote.get_md5_hash()
             if targetMD5 == None:
-                return -1
+                return False
             else:
                 if targetMD5 == MD5:
                     return True
@@ -868,27 +878,28 @@ class PLCObject(object):
                     trace_list.append(variable_idx)
 
                 try:
-                    while trace_list:
+                    while self.PLCStatus == PlcStatus.Started and trace_list:
                         res = self.remote.send_debug_get_list_query(len(trace_list), trace_list)
-                        response_code = struct.unpack('>B', res[8:9])[0]  # Unpack the response code as a byte
-                        if response_code == debugger.DebugResponse.SUCCESS:
-                            lastIndex = struct.unpack('>H', res[9:11])[0]
-                            tick = ctypes.c_uint32()
-                            tick.value = struct.unpack('>I', res[11:15])[0]
-                            TraceBuffer += res[17:]  # Add received traces to TraceBuffer
-                            if lastIndex == trace_list[-1]:
-                                # All traces retrieved, exit the loop
-                                break
+                        if res != None:
+                            response_code = struct.unpack('>B', res[8:9])[0]  # Unpack the response code as a byte
+                            if response_code == debugger.DebugResponse.SUCCESS:
+                                lastIndex = struct.unpack('>H', res[9:11])[0]
+                                tick = ctypes.c_uint32()
+                                tick.value = struct.unpack('>I', res[11:15])[0]
+                                TraceBuffer += res[17:]  # Add received traces to TraceBuffer
+                                if lastIndex == trace_list[-1]:
+                                    # All traces retrieved, exit the loop
+                                    break
+                                else:
+                                    # Get the remaining traces
+                                    last_index_idx = trace_list.index(lastIndex) + 1
+                                    trace_list = trace_list[last_index_idx:]
                             else:
-                                # Get the remaining traces
-                                last_index_idx = trace_list.index(lastIndex) + 1
-                                trace_list = trace_list[last_index_idx:]
-                        else:
-                            print("Error reading traces from remote: Invalid response")
-                            res_hex = ' '.join([hex(ord(byte))[2:].zfill(2) for byte in res])
-                            print(res_hex)
-                            TraceBuffer = None
-                            break
+                                print("Error reading traces from remote: Invalid response")
+                                res_hex = ' '.join([hex(ord(byte))[2:].zfill(2) for byte in res])
+                                print(res_hex)
+                                TraceBuffer = None
+                                break
                 except Exception as e:
                     print("Error reading traces from remote: {}".format(str(e)))
                     TraceBuffer = None
