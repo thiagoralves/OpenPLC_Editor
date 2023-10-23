@@ -16,7 +16,7 @@ Copyright (C) 2022 OpenPLC - Thiago Alves
 #define COILS           0
 #define INPUTSTATUS     1
 #if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega168__) || defined(__AVR_ATmega32U4__) || defined(__AVR_ATmega16U4__)
-    #define MAX_MB_FRAME 32
+    #define MAX_MB_FRAME 128
 #else
     #define MAX_MB_FRAME 256
 #endif
