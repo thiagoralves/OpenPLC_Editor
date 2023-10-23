@@ -1964,7 +1964,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
         Stop PLC
         """
         if self._connector is not None:
-            self._connector.DisconnectRemoteTarget()
+            #self._connector.DisconnectRemoteTarget()
             if not self._connector.StopPLC():
                 self.logger.write_error(_("Couldn't stop PLC !\n"))
 
@@ -2245,6 +2245,15 @@ class ProjectController(ConfigTreeNode, PLCControler):
             self._Stop()
 
         elif ret == 0:
+            # Connect to remote target
+            self._connector.DisconnectRemoteTarget() # Make sure target is disconnected first
+            remoteTarget = self._connector.ConnectRemoteTarget()
+            if remoteTarget == None or remoteTarget == False:
+                self.logger.write_error("Error connecting to target board. Make sure your board is running OpenPLC Runtime with debug enabled, and that your connection settings match your board parameters.\n")
+                self._connector.DisconnectRemoteTarget()
+                self._Stop()
+                return
+
             # Get MD5 of the plc_debugger.c file and compare with the one on target
             debuggerLocation = None
             CTRoot = self.GetCTRoot()
@@ -2266,15 +2275,8 @@ class ProjectController(ConfigTreeNode, PLCControler):
                 self.logger.write_error("Error building project: md5 object is null\n")
                 return
             
-            # Make sure target is disconnected first
-            self._connector.DisconnectRemoteTarget()
-            
-            targetMatch = self._connector.MatchMD5(MD5)
-            if targetMatch == -1:
-                self.logger.write_error("Error connecting to target board. Make sure your board is running OpenPLC Runtime with debug enabled, and that your connection settings match your board parameters.\n")
-                self._connector.DisconnectRemoteTarget()
-                self._Stop()
-            elif targetMatch == True:
+            if self._connector.MatchMD5(MD5) == True:
+                self.logger.write("Program matches PLC MD5\n")
                 #Transfer PLC program
                 if (self._Transfer() is False):
                     self.UnblockButtons()
@@ -2288,7 +2290,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
                     self.logger.write_error(_("Couldn't start PLC !\n"))
                 self.UnblockButtons()
                 wx.CallAfter(self.UpdateMethodsFromPLCStatus)
-            elif targetMatch == False:
+            else:
                 self.logger.write_error("This project does not match the program running on target. Upload the project to target and try again.\n")
                 self._connector.DisconnectRemoteTarget()
                 self._Stop()
