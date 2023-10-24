@@ -90,25 +90,28 @@ def readBoardsInstalled():
     else:
         cli_command = 'editor/arduino/bin/arduino-cli-l64'
     boardInstalled = runCommand(cli_command + ' board listall')
-    for board in hals:
-        if board in boardInstalled:
-            platform = hals[board]['platform']
-            board_details = runCommand(cli_command + ' board details -b ' + platform)
-            board_details = board_details.splitlines()
-            board_version = '0'
-            for line in board_details:
-                if "Board version:" in line:
-                    board_version = line.split('Board version:')[1]
-                    board_version = ''.join(board_version.split()) #remove white spaces
-                    hals[board]['version'] = board_version
-                    hasToSave = True
-                    break
-        if board not in boardInstalled:
-            hals[board]['version'] = '0'
-            hasToSave = True
-
-    if hasToSave:
-        saveHals(hals)
+    try:
+        for board in hals:
+            if board in boardInstalled:
+                platform = hals[board]['platform']
+                board_details = runCommand(cli_command + ' board details -b ' + platform)
+                board_details = board_details.splitlines()
+                board_version = '0'
+                for line in board_details:
+                    if "Board version:" in line:
+                        board_version = line.split('Board version:')[1]
+                        board_version = ''.join(board_version.split()) #remove white spaces
+                        hals[board]['version'] = board_version
+                        hasToSave = True
+                        break
+            if board not in boardInstalled:
+                hals[board]['version'] = '0'
+                hasToSave = True
+    
+        if hasToSave:
+            saveHals(hals)
+    except:
+        pass
 
 def setLangArduino():
     cli_command = ''
@@ -121,18 +124,20 @@ def setLangArduino():
 
     # Initialize arduino-cli config - if it hasn't been initialized yet
     runCommand(cli_command + ' config init')
-    
+
+    # Disabling this as it is causing more problems than solutions
+    """
     dump = runCommand(cli_command + ' config dump')
     dump = dump.splitlines()
     arduino_dir = ''
     for line in dump:
-        if "data:" in line:
+        if 'data:' in line:
             #get the directory of arduino ide
             arduino_dir = line.split('data:')[1]
             arduino_dir = ''.join(arduino_dir.split()) #remove white spaces
 
-        if "locale:" in line:
-            if "en" not in line:
+        if 'locale:' in line:
+            if 'en' not in line:
                 #remove the line from dump variable
                 dump.remove(line)
             else:
@@ -146,6 +151,7 @@ def setLangArduino():
         f.write(str(dump))
 
     #runCommand('echo ' + dump + ' > ' + arduino_dir + '/arduino-cli.yaml')
+    """
 
 
 def build(st_file, platform, source_file, port, txtCtrl, update_subsystem):
