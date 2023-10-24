@@ -291,7 +291,14 @@ CONTROLLINO \
 PubSubClient \
 ArduinoJson \
 arduinomqttclient \
-RP2040_PWM')
+RP2040_PWM \
+AVR_PWM \
+megaAVR_PWM \
+ESP32_FastPWM \
+SAMD_PWM \
+SAMDUE_PWM \
+Portenta_H7_PWM \
+STM32_PWM')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
 
