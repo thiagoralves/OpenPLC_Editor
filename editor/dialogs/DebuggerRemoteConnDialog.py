@@ -159,7 +159,14 @@ class DebuggerRemoteConnDialog(wx.Dialog):
             wx.CallAfter(self.txtIpPort.SetValue, str(remoteSettings['ipport']))
             wx.CallAfter(self.txtSlaveID.SetValue, str(remoteSettings['slaveid']))
             wx.CallAfter(self.comboBaud.SetValue, str(remoteSettings['baud']))
-            wx.CallAfter(self.comboSerialPort.SetValue, remoteSettings['comport'])
+
+            self.reloadComboChoices(None)
+            reversedComboSerialPortChoices = {v: k for k, v in self.comboSerialPortChoices.items()}
+            portName = reversedComboSerialPortChoices.get(remoteSettings['comport'])
+            if portName != None:
+                wx.CallAfter(self.comboSerialPort.SetValue, portName)
+            else:
+                wx.CallAfter(self.comboSerialPort.SetValue, '')
 
             wx.CallAfter(self.onUIChange, None)
 
