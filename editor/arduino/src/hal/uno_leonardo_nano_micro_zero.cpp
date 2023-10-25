@@ -39,6 +39,8 @@ uint8_t pinMask_AOUT[] = {PINMASK_AOUT};
 
 extern "C" uint8_t set_hardware_pwm(uint8_t, float, float); //this call is required for the C-based PWM block on the Editor
 
+bool pwm_initialized = false;
+
 void hardwareInit()
 {
     for (int i = 0; i < NUM_DISCRETE_INPUT; i++)
@@ -64,6 +66,18 @@ void hardwareInit()
 		uint8_t pin = pinMask_AOUT[i];
         pinMode(pin, OUTPUT);
     }
+}
+
+void init_pwm()
+{
+    // If PWM_CONTROLLER block is being used, disable pins from regular analogWrite
+    for (int i = 0; i < NUM_ANALOG_OUTPUT; i++)
+    {
+        if (pinMask_AOUT[i] == PWM_CHANNEL_0_PIN || pinMask_AOUT[i] == PWM_CHANNEL_1_PIN)
+        {
+            pinMask_AOUT[i] = 255;
+        }
+    }
 
     // Initialize PWM pins
     #if defined(__SAM3X8E__) || defined(__SAMD21G18A__)
@@ -77,16 +91,13 @@ void hardwareInit()
 
 uint8_t set_hardware_pwm(uint8_t ch, float freq, float duty)
 {
-    const uint8_t pins[] = {PWM_CHANNEL_0_PIN, PWM_CHANNEL_1_PIN};
-
-    // If this call is being used, disable pins from regular analogWrite
-    for (int i = 0; i < NUM_ANALOG_OUTPUT; i++)
+    if (pwm_initialized == false)
     {
-        if (pinMask_AOUT[i] == PWM_CHANNEL_0_PIN || pinMask_AOUT[i] == PWM_CHANNEL_1_PIN)
-        {
-            pinMask_AOUT[i] = 255;
-        }
+        init_pwm();
+        pwm_initialized = true;
     }
+
+    const uint8_t pins[] = {PWM_CHANNEL_0_PIN, PWM_CHANNEL_1_PIN};
 
     if (ch > 1)
     {
