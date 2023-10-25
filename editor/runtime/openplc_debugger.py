@@ -147,9 +147,23 @@ class RemoteDebugClient:
     def send_debug_info_query(self):
         data = struct.pack(">BBBB", 0, 0, 0, 0)  # Dummy data - Modbus TCP parser requires messages with at least 6 bytes of data
         return self._send_modbus_request(FunctionCode.DEBUG_INFO, data)
-
+    
     def send_debug_set_query(self, varidx, flag, value):
-        data = struct.pack(">HBH", varidx, flag, len(value)) + value
+        if isinstance(value, (int, float, bool)):
+            # For basic types, serialize the value appropriately
+            if isinstance(value, int):
+                data = struct.pack(">H", varidx) + struct.pack(">B", flag) + struct.pack(">H", 4) + struct.pack(">I", value)
+            elif isinstance(value, float):
+                data = struct.pack(">H", varidx) + struct.pack(">B", flag) + struct.pack(">H", 8) + struct.pack(">d", value)
+            elif isinstance(value, bool):
+                data = struct.pack(">H", varidx) + struct.pack(">B", flag) + struct.pack(">H", 1) + struct.pack(">?", value)
+        elif isinstance(value, str):
+            # For strings, serialize the length and the string itself
+            data = struct.pack(">H", varidx) + struct.pack(">B", flag) + struct.pack(">H", len(value)) + value
+        else:
+            # Handle unsupported data types or raise an error if needed
+            raise TypeError("Unsupported data type: {}".format(type(value)))
+        
         return self._send_modbus_request(FunctionCode.DEBUG_SET, data)
 
     def send_debug_get_query(self, startidx, endidx):
