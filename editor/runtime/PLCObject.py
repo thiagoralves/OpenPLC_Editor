@@ -905,6 +905,13 @@ class PLCObject(object):
                 except Exception as e:
                     print("Error reading traces from remote: {}".format(str(e)))
                     TraceBuffer = None
+
+                # Go over forced variables
+                for item in self.tracesList:
+                    variable_idx, force_value = item
+                    if force_value != None:
+                        #value = force_status._obj.value
+                        self.remote.send_debug_set_query(variable_idx, True, force_value)
                 
                 sleep(0.03) # Thread queries data every 30ms
 
