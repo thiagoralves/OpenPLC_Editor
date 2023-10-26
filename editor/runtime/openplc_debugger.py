@@ -148,21 +148,23 @@ class RemoteDebugClient:
         data = struct.pack(">BBBB", 0, 0, 0, 0)  # Dummy data - Modbus TCP parser requires messages with at least 6 bytes of data
         return self._send_modbus_request(FunctionCode.DEBUG_INFO, data)
     
-    def send_debug_set_query(self, varidx, flag, value):
-        if isinstance(value, (int, float, bool)):
-            # For basic types, serialize the value appropriately
-            if isinstance(value, int):
-                data = struct.pack(">H", varidx) + struct.pack(">B", flag) + struct.pack(">H", 4) + struct.pack(">I", value)
-            elif isinstance(value, float):
-                data = struct.pack(">H", varidx) + struct.pack(">B", flag) + struct.pack(">H", 8) + struct.pack(">d", value)
-            elif isinstance(value, bool):
-                data = struct.pack(">H", varidx) + struct.pack(">B", flag) + struct.pack(">H", 1) + struct.pack(">?", value)
-        elif isinstance(value, str):
+    def send_debug_set_query(self, varidx, flag, value, var_type):
+        if var_type == 'BOOL':
+            #print("I'm sending a bool")
+            data = struct.pack(">H", varidx) + struct.pack(">B", flag) + struct.pack(">H", 1) + struct.pack(">B", value)
+        elif var_type == 'INT':
+            #print("I'm sending an int")
+            data = struct.pack(">H", varidx) + struct.pack(">B", flag) + struct.pack(">H", 4) + struct.pack(">I", value)
+        elif var_type == 'REAL':
+            #print("I'm sending a float")
+            data = struct.pack(">H", varidx) + struct.pack(">B", flag) + struct.pack(">H", 8) + struct.pack(">d", value)
+        elif var_type == 'STRING':
             # For strings, serialize the length and the string itself
             data = struct.pack(">H", varidx) + struct.pack(">B", flag) + struct.pack(">H", len(value)) + value
         else:
             # Handle unsupported data types or raise an error if needed
-            raise TypeError("Unsupported data type: {}".format(type(value)))
+            #raise TypeError("Unsupported data type: {}".format(type(value)))
+            print("Unsupported data type: {}".format(var_type))
         
         return self._send_modbus_request(FunctionCode.DEBUG_SET, data)
 
@@ -209,9 +211,12 @@ class RemoteDebugClient:
             request += crc_bytes
 
         
-        return self._send_request(request)
+        if function_code == FunctionCode.DEBUG_SET:
+            return self._send_request(request, True)
+        else:
+            return self._send_request(request, False)
 
-    def _send_request(self, request):
+    def _send_request(self, request, should_print):
         try:
             if self.modbus_type == 'TCP':
                 if not self.sock:
@@ -230,9 +235,10 @@ class RemoteDebugClient:
                     print("Device is not connected")
                     return None
 
-                #print('request:')
-                #res_hex = ' '.join([hex(ord(byte))[2:].zfill(2) for byte in request])
-                #print(res_hex)
+                #if should_print == True:
+                    #print('request:')
+                    #res_hex = ' '.join([hex(ord(byte))[2:].zfill(2) for byte in request])
+                    #print(res_hex)
 
                 ## Wait until timeout for the response to arrive
                 #start_time = time.time()
