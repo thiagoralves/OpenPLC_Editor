@@ -799,7 +799,7 @@ class PLCObject(object):
         if self.DebuggerType == 'remote':
             self.tracesList = []
             for idx, iectype, force in idxs:
-                self.tracesList.append((idx,force))
+                self.tracesList.append((idx, force, iectype))
 
         self.DebugToken += 1
         if idxs:
@@ -876,7 +876,7 @@ class PLCObject(object):
                 trace_list = []
                 TraceBuffer = b''  # Initialize TraceBuffer as bytes
                 for item in self.tracesList:
-                    variable_idx, force_status = item
+                    variable_idx, force_status, iec_type = item
                     trace_list.append(variable_idx)
 
                 try:
@@ -908,10 +908,10 @@ class PLCObject(object):
 
                 # Go over forced variables
                 for item in self.tracesList:
-                    variable_idx, force_value = item
+                    variable_idx, force_value, iec_type = item
                     if force_value != None:
                         #value = force_status._obj.value
-                        self.remote.send_debug_set_query(variable_idx, True, force_value)
+                        self.remote.send_debug_set_query(variable_idx, True, force_value, iec_type)
                 
                 sleep(0.03) # Thread queries data every 30ms
 
