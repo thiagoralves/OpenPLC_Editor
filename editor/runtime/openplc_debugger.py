@@ -149,14 +149,17 @@ class RemoteDebugClient:
         return self._send_modbus_request(FunctionCode.DEBUG_INFO, data)
     
     def send_debug_set_query(self, varidx, flag, value, var_type):
-        if var_type == 'BOOL':
-            #print("I'm sending a bool")
-            data = struct.pack(">H", varidx) + struct.pack(">B", flag) + struct.pack(">H", 1) + struct.pack(">B", value)
-        elif var_type == 'INT':
-            #print("I'm sending an int")
-            data = struct.pack(">H", varidx) + struct.pack(">B", flag) + struct.pack(">H", 4) + struct.pack(">I", value)
-        elif var_type == 'REAL':
-            #print("I'm sending a float")
+        if var_type in ['BOOL', 'STEP', 'TRANSITION', 'ACTION', 'SINT', 'USINT', 'BYTE']:
+            data = struct.pack(">H", varidx) + struct.pack(">B", flag) + struct.pack(">H", 1) + struct.pack(">B", int(value))
+        elif var_type in ['INT', 'UINT', 'WORD']:
+            data = struct.pack(">H", varidx) + struct.pack(">B", flag) + struct.pack(">H", 2) + struct.pack(">h", value)
+        elif var_type in ['DINT', 'UDINT', 'DWORD']:
+            data = struct.pack(">H", varidx) + struct.pack(">B", flag) + struct.pack(">H", 4) + struct.pack(">i", value)
+        elif var_type in ['LINT', 'ULINT', 'LWORD']:
+            data = struct.pack(">H", varidx) + struct.pack(">B", flag) + struct.pack(">H", 8) + struct.pack(">q", value)
+        elif var_type in ['REAL']:
+            data = struct.pack(">H", varidx) + struct.pack(">B", flag) + struct.pack(">H", 4) + struct.pack(">f", value)
+        elif var_type in ['LREAL']:
             data = struct.pack(">H", varidx) + struct.pack(">B", flag) + struct.pack(">H", 8) + struct.pack(">d", value)
         elif var_type == 'STRING':
             # For strings, serialize the length and the string itself
@@ -211,12 +214,9 @@ class RemoteDebugClient:
             request += crc_bytes
 
         
-        if function_code == FunctionCode.DEBUG_SET:
-            return self._send_request(request, True)
-        else:
-            return self._send_request(request, False)
-
-    def _send_request(self, request, should_print):
+        return self._send_request(request)
+        
+    def _send_request(self, request):
         try:
             if self.modbus_type == 'TCP':
                 if not self.sock:
@@ -236,9 +236,9 @@ class RemoteDebugClient:
                     return None
 
                 #if should_print == True:
-                    #print('request:')
-                    #res_hex = ' '.join([hex(ord(byte))[2:].zfill(2) for byte in request])
-                    #print(res_hex)
+                #    print('request:')
+                #    res_hex = ' '.join([hex(ord(byte))[2:].zfill(2) for byte in request])
+                #    print(res_hex)
 
                 ## Wait until timeout for the response to arrive
                 #start_time = time.time()
