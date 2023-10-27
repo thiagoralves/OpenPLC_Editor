@@ -775,11 +775,15 @@ class PLCObject(object):
             ret = False
         
         if self.DebuggerType == 'remote' and self.remote != None:
-            targetMD5 = self.remote.get_md5_hash()
-            sleep(1)
-            targetMD5 = self.remote.get_md5_hash()
-            sleep(1)
-            targetMD5 = self.remote.get_md5_hash()
+            if (self.remote.modbus_type == 'RTU'):
+                # Serial boards need an extra time to connect
+                targetMD5 = self.remote.get_md5_hash()
+                sleep(1)
+                targetMD5 = self.remote.get_md5_hash()
+                sleep(1)
+                targetMD5 = self.remote.get_md5_hash()
+            else:
+                targetMD5 = self.remote.get_md5_hash()
             if targetMD5 == None:
                 return False
             else:
