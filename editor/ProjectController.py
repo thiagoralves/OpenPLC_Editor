@@ -2250,7 +2250,6 @@ class ProjectController(ConfigTreeNode, PLCControler):
             remoteTarget = self._connector.ConnectRemoteTarget()
             if remoteTarget == None or remoteTarget == False:
                 self.logger.write_error("Error connecting to target board. Make sure your board is running OpenPLC Runtime with debug enabled, and that your connection settings match your board parameters.\n")
-                self._connector.DisconnectRemoteTarget()
                 self._Stop()
                 return
 
@@ -2292,7 +2291,6 @@ class ProjectController(ConfigTreeNode, PLCControler):
                 wx.CallAfter(self.UpdateMethodsFromPLCStatus)
             else:
                 self.logger.write_error("This project does not match the program running on target. Upload the project to target and try again.\n")
-                self._connector.DisconnectRemoteTarget()
                 self._Stop()
 
         else:
