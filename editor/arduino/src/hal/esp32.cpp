@@ -5,6 +5,8 @@ extern "C" {
 #include "Arduino.h"
 #include "../examples/Baremetal/defines.h"
 
+#include "ESP32_FastPWM.h"
+
 //OpenPLC HAL for ESP32 boards
 
 /******************PINOUT CONFIGURATION**************************
@@ -21,6 +23,42 @@ uint8_t pinMask_DIN[] = {PINMASK_DIN};
 uint8_t pinMask_AIN[] = {PINMASK_AIN};
 uint8_t pinMask_DOUT[] = {PINMASK_DOUT};
 uint8_t pinMask_AOUT[] = {PINMASK_AOUT};
+
+	#define PWM_DEFAULT_FREQ      490
+	
+    #define NUM_OF_PWM_PINS       8 //only 8 pins possible with independent frequency
+
+    #define PWM_CHANNEL_0_PIN     4
+    #define PWM_CHANNEL_1_PIN     13
+    #define PWM_CHANNEL_2_PIN     18
+    #define PWM_CHANNEL_3_PIN     19
+    #define PWM_CHANNEL_4_PIN     21
+    #define PWM_CHANNEL_5_PIN     22
+    #define PWM_CHANNEL_6_PIN     32
+    #define PWM_CHANNEL_7_PIN     33
+	
+    #define TIMER_CHANNEL_0   	0
+    #define TIMER_CHANNEL_1   	2	
+    #define TIMER_CHANNEL_2   	4
+    #define TIMER_CHANNEL_3   	6
+    #define TIMER_CHANNEL_4   	8
+    #define TIMER_CHANNEL_5   	10	
+    #define TIMER_CHANNEL_6   	12
+    #define TIMER_CHANNEL_7   	14
+	
+    #define PWM_RESOLUTION   	12	//12-bit
+	
+    ESP32_FAST_PWM *PWM_Instance[NUM_OF_PWM_PINS];
+
+    const uint8_t pins[] = {PWM_CHANNEL_0_PIN, PWM_CHANNEL_1_PIN, PWM_CHANNEL_2_PIN, PWM_CHANNEL_3_PIN,
+							PWM_CHANNEL_4_PIN, PWM_CHANNEL_5_PIN, PWM_CHANNEL_6_PIN, PWM_CHANNEL_7_PIN};
+
+    const uint8_t timers[] = {TIMER_CHANNEL_0, TIMER_CHANNEL_1, TIMER_CHANNEL_2, TIMER_CHANNEL_3,
+							  TIMER_CHANNEL_4, TIMER_CHANNEL_5, TIMER_CHANNEL_6, TIMER_CHANNEL_7};
+
+extern "C" uint8_t set_hardware_pwm(uint8_t, float, float); //this call is required for the C-based PWM block on the Editor
+
+bool pwm_initialized = false;
 
 void hardwareInit()
 {
@@ -43,6 +81,51 @@ void hardwareInit()
     {
         pinMode(pinMask_AOUT[i], OUTPUT);
     }
+}
+
+void init_pwm()
+{
+    // If PWM_CONTROLLER block is being used, disable pins from regular analogWrite
+    
+    for (int i = 0; i < NUM_ANALOG_OUTPUT; i++)
+    {
+        for (int j = 0; j < NUM_OF_PWM_PINS; j++)
+        {
+            if (pinMask_AOUT[i] == pins[j])
+            {
+                pinMask_AOUT[i] = 255; //disable pin
+            }
+        }
+    }
+
+    // Initialize PWM pins
+		for (int i = 0; i < NUM_OF_PWM_PINS; i++)
+		{
+			PWM_Instance[i] = new ESP32_FAST_PWM(pins[i], PWM_DEFAULT_FREQ, 0, timers[i], PWM_RESOLUTION); //12 bit resolution
+		}
+}
+
+uint8_t set_hardware_pwm(uint8_t ch, float freq, float duty)
+{
+	
+    if (pwm_initialized == false)
+    {
+        init_pwm();
+        pwm_initialized = true;
+    }
+
+
+    if (ch >= NUM_OF_PWM_PINS)
+    {
+        return 0;
+    }
+	
+    if (PWM_Instance[ch]->setPWM(pins[ch], freq, duty))
+    {
+        return 1;
+    }
+	
+    return 0;
 }
 
 void updateInputBuffers()
