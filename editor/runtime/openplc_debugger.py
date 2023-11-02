@@ -185,7 +185,10 @@ class RemoteDebugClient:
         return self._send_modbus_request(FunctionCode.DEBUG_GET_LIST, data)
     
     def get_md5_hash(self):
-        data = struct.pack(">BBBB", 0, 0, 0, 0)  # Dummy data - Modbus TCP parser requires messages with at least 6 bytes of data
+        endianness_check = 0xDEAD
+        # Pack the fixed value as a 16-bit unsigned short in big-endian byte order
+        # along with two extra dummy bytes to satisfy Modbus minimum packet size
+        data = struct.pack(">HBB", endianness_check, 0, 0)
         res = self._send_modbus_request(FunctionCode.DEBUG_GET_MD5, data)
         
         # Check if response is valid
