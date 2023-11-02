@@ -409,6 +409,7 @@ void handle_serial()
 }
 #endif
 
+
 void process_mbpacket()
 {
     uint8_t fcode  = mb_frame[1];
@@ -417,6 +418,7 @@ void process_mbpacket()
     uint8_t flag = mb_frame[4];
     uint16_t len = (uint16_t)mb_frame[5] << 8 | (uint16_t)mb_frame[6];
     void *value = &mb_frame[7];
+    void *endianness_check = &mb_frame[2];
     
     switch (fcode) 
     {
@@ -480,7 +482,7 @@ void process_mbpacket()
         break;
 
         case MB_FC_DEBUG_GET_MD5:
-            debugGetMd5();
+            debugGetMd5(endianness_check);
         break;
 
         default:
@@ -1041,8 +1043,26 @@ void debugGetTraceList(uint16_t numIndexes, uint8_t *indexArray)
     free(varidx_array);
 }
 
-void debugGetMd5()
+void debugGetMd5(void *endianness)
 {
+    // Check endianness
+    if ( *((uint16_t *)endianness) == 0xDEAD)
+    {
+        set_endianness(SAME_ENDIANNESS);
+    }
+    else if ( *((uint16_t *)endianness) == 0xADDE)
+    {
+        set_endianness(REVERSE_ENDIANNESS);
+    }
+    else
+    {
+        // Respond with an error indicating that the argument is wrong
+        mb_frame_len = 3;
+        mb_frame[1] = MB_FC_DEBUG_GET_MD5;
+        mb_frame[2] = MB_DEBUG_ERROR_OUT_OF_BOUNDS;
+        //return;
+    }
+
     mb_frame[1] = MB_FC_DEBUG_GET_MD5;
     mb_frame[2] = MB_DEBUG_SUCCESS;
 
