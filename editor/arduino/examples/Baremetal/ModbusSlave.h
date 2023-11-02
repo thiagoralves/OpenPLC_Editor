@@ -53,11 +53,14 @@ extern "C" void *get_var_addr(size_t);// {return 0;}
 extern "C" void force_var(size_t, bool, void *);// {}
 extern "C" void set_trace(size_t, bool, void *);// {}
 extern "C" void trace_reset(void);// {}
+extern "C" void set_endianness(uint8_t value);
 extern uint32_t __tick;
 
 #define MB_DEBUG_SUCCESS                 0x7E
 #define MB_DEBUG_ERROR_OUT_OF_BOUNDS     0x81
 #define MB_DEBUG_ERROR_OUT_OF_MEMORY     0x82
+#define SAME_ENDIANNESS                  0
+#define REVERSE_ENDIANNESS               1
 
 //Modbus registers struct
 struct MBinfo {
@@ -152,7 +155,7 @@ void debugInfo(void);
 void debugSetTrace(uint16_t varidx, uint8_t flag, uint16_t len, void *value);
 void debugGetTrace(uint16_t startidx, uint16_t endidx);
 void debugGetTraceList(uint16_t numIndexes, uint8_t *indexArray);
-void debugGetMd5(void);
+void debugGetMd5(void *endianness);
 
 
 /* Table of CRC values for high-order byte */
