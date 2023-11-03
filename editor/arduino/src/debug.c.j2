@@ -101,25 +101,31 @@ void force_var(size_t idx, bool forced, void *val)
     void *ptr = debug_vars[idx].ptr;
 
     if (forced) {
+        size_t var_size = get_var_size(idx);
         switch (debug_vars[idx].type) {
 {%- for t in debug.types -%}
     {% if '{}_ENUM'.format(t) in debug.enums %}
-        case {{ t }}_ENUM:
-            ((__IEC_{{ t }}_t *) ptr)->value = *(({{ t }} *) val);
+        case {{ t }}_ENUM: {
+            memcpy(&((__IEC_{{ t }}_t *) ptr)->value, val, var_size);
+            //((__IEC_{{ t }}_t *) ptr)->value = *(({{ t }} *) val);
             ((__IEC_{{ t }}_t *) ptr)->flags |= __IEC_FORCE_FLAG;
             break;
+        }
     {%- endif %}
     {%- if '{}_O_ENUM'.format(t) in debug.enums %}
-        case {{ t }}_O_ENUM:
-            *(((__IEC_{{ t }}_p *) ptr)->value) = *(({{ t }} *) val);
+        case {{ t }}_O_ENUM: {
+            memcpy((((__IEC_{{ t }}_p *) ptr)->value), val, var_size);
+            //*(((__IEC_{{ t }}_p *) ptr)->value) = *(({{ t }} *) val);
     {%- endif %}
     {%- if '{}_P_ENUM'.format(t) in debug.enums %}
-        case {{ t }}_P_ENUM:
-            ((__IEC_{{ t }}_p *) ptr)->fvalue = *(({{ t }} *) val);
+        case {{ t }}_P_ENUM: {
+            memcpy(&((__IEC_{{ t }}_p *) ptr)->fvalue, val, var_size);
+            //((__IEC_{{ t }}_p *) ptr)->fvalue = *(({{ t }} *) val);
     {%- endif %}
     {%- if '{}_O_ENUM'.format(t) in debug.enums or '{}_P_ENUM'.format(t) in debug.enums %}
             ((__IEC_{{ t }}_p *) ptr)->flags |= __IEC_FORCE_FLAG;
             break;
+        }
     {%- endif %}
 {%- endfor %}
         default:
