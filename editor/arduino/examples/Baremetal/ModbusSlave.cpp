@@ -1046,11 +1046,13 @@ void debugGetTraceList(uint16_t numIndexes, uint8_t *indexArray)
 void debugGetMd5(void *endianness)
 {
     // Check endianness
-    if ( *((uint16_t *)endianness) == 0xDEAD)
+    uint16_t endian_check = 0;
+    memcpy(&endian_check, endianness, 2);
+    if (endian_check == 0xDEAD)
     {
         set_endianness(SAME_ENDIANNESS);
     }
-    else if ( *((uint16_t *)endianness) == 0xADDE)
+    else if (endian_check == 0xADDE)
     {
         set_endianness(REVERSE_ENDIANNESS);
     }
