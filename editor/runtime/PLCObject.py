@@ -775,15 +775,14 @@ class PLCObject(object):
             ret = False
         
         if self.DebuggerType == 'remote' and self.remote != None:
-            if (self.remote.modbus_type == 'RTU'):
-                # Serial boards need an extra time to connect
+            # Older boards need some love. Let's send them love 10 times
+            targetMD5 = None
+            max_tries = 10
+            while targetMD5 == None and max_tries > 0:
                 targetMD5 = self.remote.get_md5_hash()
-                sleep(1)
-                targetMD5 = self.remote.get_md5_hash()
-                sleep(1)
-                targetMD5 = self.remote.get_md5_hash()
-            else:
-                targetMD5 = self.remote.get_md5_hash()
+                max_tries -= 1
+                sleep(0.3)
+                    
             if targetMD5 == None:
                 return False
             else:
