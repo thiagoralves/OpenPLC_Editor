@@ -293,6 +293,7 @@ class RemoteDebugClient:
         elif self.modbus_type == 'RTU':
             try:
                 self.serial = serial.Serial(port=self.serial_port, baudrate=self.baudrate, timeout=0.03)
+                time.sleep(2) #make sure connection happens
             except Exception as e:
                 #print(f"Serial port connection error: {str(e)}")
                 print("Serial port connection error: {}".format(str(e)))
