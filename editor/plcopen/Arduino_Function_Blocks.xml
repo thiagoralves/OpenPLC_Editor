@@ -406,6 +406,180 @@
         <xhtml:p><![CDATA[Configures the CPU internal PWM peripheral to generate a PWM signal through hardware. If the CPU does not have a PWM peripheral, compiling this block will result in a compilation error. CHANNEL is the PWM channel number. For most Arduino boards that number is the pin number for the PWM capable pin. FREQ is the desired PWM frequency in Hz. DUTY is the PWM duty cycle (between 0 and 100).]]></xhtml:p>
         </documentation>
       </pou>
+      <pou name="ARDUINOCAN_CONF" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="EN_PIN">
+              <type>
+                <WORD/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[Arduino CAN Enable pin]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="BR">
+              <type>
+                <LINT/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[Arduino CAN Baudrate]]></xhtml:p>
+              </documentation>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="DONE">
+              <type>
+                <BOOL/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[Arduino CAN configuration Done flag]]></xhtml:p>
+              </documentation>
+            </variable>
+          </outputVars>
+        </interface>
+      </pou>
+      <pou name="ARDUINOCAN_WRITE" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="ID">
+              <type>
+                <DWORD/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[Arduino CAN message ID]]></xhtml:p>
+              </documentation>
+            </variable>
+             <variable name="D0">
+              <type>
+                <USINT/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[Arduino CAN first payload byte]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="D1">
+              <type>
+                <USINT/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[Arduino CAN second payload byte]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="D2">
+              <type>
+                <USINT/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[Arduino CAN third payload byte]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="D3">
+              <type>
+                <USINT/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[Arduino CAN fourth payload byte]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="D4">
+              <type>
+                <USINT/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[Arduino CAN fifth payload byte]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="D5">
+              <type>
+                <USINT/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[Arduino CAN sixth payload byte]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="D6">
+              <type>
+                <USINT/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[Arduino CAN seventh payload byte]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="D7">
+              <type>
+                <USINT/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[Arduino CAN eighth payload byte]]></xhtml:p>
+              </documentation>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="DONE">
+              <type>
+                <BOOL/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[Arduino CAN write done flag]]></xhtml:p>
+              </documentation>
+            </variable>
+          </outputVars>
+        </interface>
+      </pou>
+      <pou name="ARDUINOCAN_WRITE_WORD" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="ID">
+              <type>
+                <DWORD/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[Arduino CAN message ID]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="DATA">
+              <type>
+                <LWORD/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[Arduino CAN payload]]></xhtml:p>
+              </documentation>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="DONE">
+              <type>
+                <BOOL/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[Arduino CAN write done flag]]></xhtml:p>
+              </documentation>
+            </variable>
+          </outputVars>
+        </interface>
+      </pou>
+      <pou name="ARDUINOCAN_READ" pouType="functionBlock">
+        <interface>
+          <outputVars>
+            <variable name="DATA">
+              <type>
+                <LWORD/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[Arduino CAN readed data from arduino can message]]></xhtml:p>
+              </documentation>
+            </variable>
+          </outputVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[DATA := 0;]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[CAN READ]]></xhtml:p>
+        </documentation>
+      </pou>
     </pous>
   </types>
   <instances>

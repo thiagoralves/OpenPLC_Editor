@@ -116,6 +116,59 @@ typedef struct {
 
 } CLOUD_BEGIN;
 
+// ARDUINOCAN
+
+typedef struct {
+  // FB Interface - IN, OUT, IN_OUT variables
+  __DECLARE_VAR(BOOL,EN)
+  __DECLARE_VAR(BOOL,ENO)
+  __DECLARE_VAR(BOOL,SETUP_BLOCK)
+  __DECLARE_VAR(SINT,EN_PIN)
+  __DECLARE_VAR(LINT,BR)
+  __DECLARE_VAR(BOOL,DONE) 
+  // FB private variables - TEMP, private and located variables
+} ARDUINOCAN_CONF;
+
+typedef struct {
+  // FB Interface - IN, OUT, IN_OUT variables
+  __DECLARE_VAR(BOOL,EN)
+  __DECLARE_VAR(BOOL,ENO)
+  __DECLARE_VAR(BOOL,SETUP_BLOCK)
+  __DECLARE_VAR(DWORD,ID)
+  __DECLARE_VAR(USINT,D0)
+  __DECLARE_VAR(USINT,D1)
+  __DECLARE_VAR(USINT,D2)
+  __DECLARE_VAR(USINT,D3)
+  __DECLARE_VAR(USINT,D4)
+  __DECLARE_VAR(USINT,D5)
+  __DECLARE_VAR(USINT,D6)
+  __DECLARE_VAR(USINT,D7)
+  __DECLARE_VAR(BOOL,DONE) 
+  // FB private variables - TEMP, private and located variables
+} ARDUINOCAN_WRITE;
+
+typedef struct {
+  // FB Interface - IN, OUT, IN_OUT variables
+  __DECLARE_VAR(BOOL,EN)
+  __DECLARE_VAR(BOOL,ENO)
+  __DECLARE_VAR(BOOL,SETUP_BLOCK)
+  __DECLARE_VAR(DWORD,ID)
+  __DECLARE_VAR(LWORD,DATA)
+  __DECLARE_VAR(BOOL,DONE) 
+  // FB private variables - TEMP, private and located variables
+} ARDUINOCAN_WRITE_WORD;
+
+
+typedef struct {
+  // FB Interface - IN, OUT, IN_OUT variables
+  __DECLARE_VAR(BOOL,EN)
+  __DECLARE_VAR(BOOL,ENO)
+  __DECLARE_VAR(BOOL,SETUP_BLOCK)
+  __DECLARE_VAR(LWORD,DATA)
+ 
+  // FB private variables - TEMP, private and located variables
+} ARDUINOCAN_READ;
+
 /************************************************************************
  *                     END OF ARDUINO LIB BLOCKS                        *
 ************************************************************************/
@@ -443,7 +496,143 @@ __end:
   return;
 } // PWM_CONTROLLER_body__() 
 
+//definition of external functions
+#include <stdbool.h>
+void *init_arduinocan(uint8_t,int);
+bool write_arduinocan(uint32_t,uint8_t,uint8_t,uint8_t,uint8_t,uint8_t,uint8_t,uint8_t,uint8_t);
+bool write_arduinocan_word(uint32_t, uint64_t);
+uint64_t read_arduinocan();
 
+//Init 
+//definition of blocks
+static void ARDUINOCAN_CONF_init__(ARDUINOCAN_CONF *data__, BOOL retain) {
+  __INIT_VAR(data__->EN,__BOOL_LITERAL(TRUE),retain)
+  __INIT_VAR(data__->ENO,__BOOL_LITERAL(TRUE),retain)
+  __INIT_VAR(data__->SETUP_BLOCK,__BOOL_LITERAL(FALSE),retain)
+  __INIT_VAR(data__->EN_PIN,0,retain)
+  __INIT_VAR(data__->BR,250000,retain)
+  __INIT_VAR(data__->DONE,__BOOL_LITERAL(FALSE),retain)
+}
+
+// Code part
+static void ARDUINOCAN_CONF_body__(ARDUINOCAN_CONF *data__) {
+  // Control execution
+  if (!__GET_VAR(data__->EN)) {
+    __SET_VAR(data__->,ENO,,__BOOL_LITERAL(FALSE));
+    return;
+  }
+  else {
+    __SET_VAR(data__->,ENO,,__BOOL_LITERAL(TRUE));
+  }
+  // // Initialise TEMP variables
+  if (!__GET_VAR(data__->SETUP_BLOCK)) {
+      init_arduinocan((uint8_t)__GET_VAR(data__->EN_PIN),(int)__GET_VAR(data__->BR));
+      __SET_VAR(data__->,SETUP_BLOCK,,__BOOL_LITERAL(TRUE));
+      __SET_VAR(data__->,DONE,,__BOOL_LITERAL(TRUE));
+
+  }
+  goto __end;
+
+__end:
+  return;
+  }
+
+// write single byte
+//definition of blocks
+static void ARDUINOCAN_WRITE_init__(ARDUINOCAN_WRITE *data__, BOOL retain) {
+  __INIT_VAR(data__->EN,__BOOL_LITERAL(TRUE),retain)
+  __INIT_VAR(data__->ENO,__BOOL_LITERAL(TRUE),retain)
+  __INIT_VAR(data__->ID,0,retain)
+  __INIT_VAR(data__->D0,0,retain)
+  __INIT_VAR(data__->D1,0,retain)
+  __INIT_VAR(data__->D2,0,retain)
+  __INIT_VAR(data__->D3,0,retain)
+  __INIT_VAR(data__->D4,0,retain)
+  __INIT_VAR(data__->D5,0,retain)
+  __INIT_VAR(data__->D6,0,retain)
+  __INIT_VAR(data__->D7,0,retain)
+  __INIT_VAR(data__->DONE,__BOOL_LITERAL(FALSE),retain)
+}
+
+// Code part
+static void ARDUINOCAN_WRITE_body__(ARDUINOCAN_WRITE *data__) {
+  // Control execution
+  if (!__GET_VAR(data__->EN)) {
+    __SET_VAR(data__->,ENO,,__BOOL_LITERAL(FALSE));
+    return;
+  }
+  else {
+    __SET_VAR(data__->,ENO,,__BOOL_LITERAL(TRUE));
+  }
+
+  __SET_VAR(data__->,DONE,,__BOOL_LITERAL(write_arduinocan((uint32_t)__GET_VAR(data__->ID),(uint8_t)__GET_VAR(data__->D0),
+                              (uint8_t)__GET_VAR(data__->D1), (uint8_t)__GET_VAR(data__->D2),(uint8_t)__GET_VAR(data__->D3),
+                                (uint8_t)__GET_VAR(data__->D4), (uint8_t)__GET_VAR(data__->D5),(uint8_t)__GET_VAR(data__->D6),
+                                                                                                 (uint8_t)__GET_VAR(data__->D7))));
+
+  goto __end;
+
+__end:
+  return;
+  }
+
+
+// write paylod in word
+//definition of blocks
+static void ARDUINOCAN_WRITE_WORD_init__(ARDUINOCAN_WRITE_WORD *data__, BOOL retain) {
+  __INIT_VAR(data__->EN,__BOOL_LITERAL(TRUE),retain)
+  __INIT_VAR(data__->ENO,__BOOL_LITERAL(TRUE),retain)
+  __INIT_VAR(data__->ID,0,retain)
+  __INIT_VAR(data__->DATA,0,retain)
+  __INIT_VAR(data__->DONE,__BOOL_LITERAL(FALSE),retain)
+}
+
+// Code part
+static void ARDUINOCAN_WRITE_WORD_body__(ARDUINOCAN_WRITE_WORD *data__) {
+  // Control execution
+  if (!__GET_VAR(data__->EN)) {
+    __SET_VAR(data__->,ENO,,__BOOL_LITERAL(FALSE));
+    return;
+  }
+  else {
+    __SET_VAR(data__->,ENO,,__BOOL_LITERAL(TRUE));
+  }
+  
+  __SET_VAR(data__->,DONE,,__BOOL_LITERAL(write_arduinocan_word(__GET_VAR(data__->ID),
+                              __GET_VAR(data__->DATA)))); 
+  goto __end;
+
+__end:
+  return;
+  }
+
+// read
+//definition of blocks
+static void ARDUINOCAN_READ_init__(ARDUINOCAN_READ *data__, BOOL retain) {
+  __INIT_VAR(data__->EN,__BOOL_LITERAL(TRUE),retain)
+  __INIT_VAR(data__->ENO,__BOOL_LITERAL(TRUE),retain)
+  __INIT_VAR(data__->SETUP_BLOCK,__BOOL_LITERAL(FALSE),retain)
+  __INIT_VAR(data__->DATA,0,retain)
+}
+// Code part
+static void ARDUINOCAN_READ_body__(ARDUINOCAN_READ *data__) {
+  // Control execution
+  if (!__GET_VAR(data__->EN)) {
+    __SET_VAR(data__->,ENO,,__BOOL_LITERAL(FALSE));
+    return;
+  }
+  else {
+    __SET_VAR(data__->,ENO,,__BOOL_LITERAL(TRUE));
+  }
+
+  __SET_VAR(data__->,DATA,,read_arduinocan());
+
+
+  goto __end;
+
+__end:
+  return;
+ }
 /************************************************************************
  *                     END OF ARDUINO LIB BLOCKS                        *
 ************************************************************************/

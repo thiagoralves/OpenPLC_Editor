@@ -24,3 +24,7 @@ extern uint8_t pinMask_AOUT[];
 #ifdef USE_SM_BLOCKS
 	#include "modules/sm_cards.c"
 #endif
+
+#ifdef USE_ARDUINOCAN_BLOCK
+	#include "modules/arduinocan.c"
+#endif
