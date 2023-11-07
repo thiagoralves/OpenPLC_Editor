@@ -48,27 +48,6 @@ void setupCycleDelay(unsigned long long cycle_time)
     timer_ms = millis() + scan_cycle;
 }
 
-void cycleDelay()
-{
-    //just wait until it is time to start a new cycle
-    #ifdef MODBUS_ENABLED
-    syncModbusBuffers();
-    #endif
-    while(timer_ms > millis())
-    {
-        #ifdef MODBUS_ENABLED
-        //Only run Modbus task again if we have at least 100ms gap until the next cycle
-        if (timer_ms - millis() >= 100)
-        {
-            syncModbusBuffers();
-        }
-        #endif
-	}
-    //noInterrupts();
-    timer_ms += scan_cycle; //set timer for the next scan cycle
-    //interrupts();
-}
-
 void setup() 
 {
     //Turn off WiFi radio on ESP32 and ESP8266 boards if we're not using WiFi
@@ -176,7 +155,8 @@ void mapEmptyBuffers()
         }
     }
 }
-void syncModbusBuffers()
+
+void modbusTask()
 {
     //Sync OpenPLC Buffers with Modbus Buffers	
     for (int i = 0; i < MAX_DIGITAL_OUTPUT; i++)
@@ -229,18 +209,41 @@ void syncModbusBuffers()
 }
 #endif
 
-void loop() 
+void plcCycleTask()
 {
     updateInputBuffers();
-	
-	#ifdef MODBUS_ENABLED
-	syncModbusBuffers();
-	#endif
-	
-    config_run__(__tick++);
+    config_run__(__tick++); //PLC Logic
     updateOutputBuffers();
     updateTime();
+}
 
-    //sleep until next scan cycle
-    cycleDelay();
+void scheduler()
+{
+    // Run tasks round robin - higher priority first
+
+    plcCycleTask();
+
+    #ifdef MODBUS_ENABLED
+        modbusTask();
+    #endif
+}
+
+void loop() 
+{
+    scheduler();
+
+    //set timer for the next scan cycle
+    timer_ms += scan_cycle; 
+
+    //sleep until next scan cycle (run lower priority tasks if time permits)
+    while(timer_ms > millis())
+    {
+        #ifdef MODBUS_ENABLED
+            //Only run Modbus task again if we have at least 10ms gap until the next cycle
+            if (timer_ms - millis() >= 10)
+            {
+                modbusTask();
+            }
+        #endif
+	}
 }
