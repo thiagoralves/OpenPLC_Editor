@@ -17,7 +17,7 @@
 uint32_t __tick = 0;
 
 unsigned long scan_cycle;
-unsigned long timer_ms = 0;
+unsigned long timer_us = 0;
 
 #include "arduino_libs.h"
 
@@ -44,8 +44,8 @@ int availableMemory(char *msg)
 
 void setupCycleDelay(unsigned long long cycle_time)
 {
-    scan_cycle = (uint32_t)(cycle_time/1000000);
-    timer_ms = millis() + scan_cycle;
+    scan_cycle = (uint32_t)(cycle_time/1000);
+    timer_us = micros() + scan_cycle;
 }
 
 void setup() 
@@ -233,14 +233,14 @@ void loop()
     scheduler();
 
     //set timer for the next scan cycle
-    timer_ms += scan_cycle; 
+    timer_us += scan_cycle; 
 
     //sleep until next scan cycle (run lower priority tasks if time permits)
-    while(timer_ms > millis())
+    while(timer_us > micros())
     {
         #ifdef MODBUS_ENABLED
             //Only run Modbus task again if we have at least 10ms gap until the next cycle
-            if (timer_ms - millis() >= 10)
+            if (timer_us - micros() >= 10000)
             {
                 modbusTask();
             }
