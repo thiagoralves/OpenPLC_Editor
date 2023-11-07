@@ -251,6 +251,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
 
         self.MandatoryParams = None
         self._builder = None
+        self._buildType = "simulator"
         self._connector = None
         self.DispatchDebugValuesTimer = None
         self.DebugValuesBuffers = []
@@ -837,8 +838,11 @@ class ProjectController(ConfigTreeNode, PLCControler):
         #print(type(IECCodeContent))
         IECCodeContent = self.remove_non_ascii(IECCodeContent)
         POUsIECCodeContent = self.remove_non_ascii(POUsIECCodeContent)
-        #plc_file.write(self.RemoveLocatedVariables(IECCodeContent+POUsIECCodeContent))
-        plc_file.write(IECCodeContent+POUsIECCodeContent)
+
+        if self._buildType == "simulator":
+            plc_file.write(self.RemoveLocatedVariables(IECCodeContent+POUsIECCodeContent))
+        else:
+            plc_file.write(IECCodeContent+POUsIECCodeContent)
         plc_file.close()
 
         hasher = hashlib.md5()
@@ -1935,6 +1939,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
         self.BlockButtons()
         #Clean build folder
         self._Clean()
+        self._buildType = "simulator"
         #Build Project
         if (self._Build() is False):
             self.UnblockButtons()
@@ -2187,6 +2192,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
     
     def _generateArduino(self):
         self._Clean()
+        self._buildType = "remote"
         if (self._Build() is True):
             # Get MD5 of the plc_debugger.c file and store that on target
             debuggerLocation = None
@@ -2220,6 +2226,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
         self.BlockButtons()
         #Clean build folder
         self._Clean()
+        self._buildType = "remote"
         #Build Project
         if (self._Build() is False):
             self.UnblockButtons()
