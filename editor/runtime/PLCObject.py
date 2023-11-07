@@ -883,28 +883,49 @@ class PLCObject(object):
                     trace_list.append(variable_idx)
 
                 try:
-                    while self.PLCStatus == PlcStatus.Started and trace_list:
-                        res = self.remote.send_debug_get_list_query(len(trace_list), trace_list)
-                        if res != None:
-                            response_code = struct.unpack('>B', res[8:9])[0]  # Unpack the response code as a byte
-                            if response_code == debugger.DebugResponse.SUCCESS:
-                                lastIndex = struct.unpack('>H', res[9:11])[0]
-                                tick = ctypes.c_uint32()
-                                tick.value = struct.unpack('>I', res[11:15])[0]
-                                TraceBuffer += res[17:]  # Add received traces to TraceBuffer
-                                if lastIndex == trace_list[-1]:
-                                    # All traces retrieved, exit the loop
-                                    break
+                    if self.PLCStatus == PlcStatus.Started and trace_list:
+                        # Define maximum number of traces
+                        batch_size = 60
+                        if self.remote.modbus_type == 'RTU':
+                            # We should limit Serial debuggers as they may have smaller buffers
+                            batch_size = 20
+                            
+                        total_traces = len(trace_list)
+                        processed_traces = 0
+
+                        while processed_traces < total_traces:
+                            batch = trace_list[processed_traces:processed_traces + batch_size]
+                            res = self.remote.send_debug_get_list_query(len(batch), batch)
+
+                            if res != None:
+                                response_code = struct.unpack('>B', res[8:9])[0]  # Unpack the response code as a byte
+                                if response_code == debugger.DebugResponse.SUCCESS:
+                                    lastIndex = struct.unpack('>H', res[9:11])[0]
+                                    tick = ctypes.c_uint32()
+                                    tick.value = struct.unpack('>I', res[11:15])[0]
+                                    TraceBuffer += res[17:]  # Add received traces to TraceBuffer
+                                    
+                                    if lastIndex == batch[-1]:
+                                        # All traces in the batch retrieved
+                                        processed_traces += len(batch)
+                                    else:
+                                        # Get the remaining traces in the next batch
+                                        processed_traces = trace_list.index(lastIndex) + 1
                                 else:
-                                    # Get the remaining traces
-                                    last_index_idx = trace_list.index(lastIndex) + 1
-                                    trace_list = trace_list[last_index_idx:]
-                            else:
-                                print("Error reading traces from remote: Invalid response")
-                                res_hex = ' '.join([hex(ord(byte))[2:].zfill(2) for byte in res])
-                                print(res_hex)
-                                TraceBuffer = None
-                                break
+                                    print("Error reading traces from remote: Invalid response")
+                                    res_hex = ' '.join([hex(ord(byte))[2:].zfill(2) for byte in res])
+                                    print(res_hex)
+                                    TraceBuffer = None
+                                    break
+                            if res == None:
+                                if processed_traces != 0:
+                                    # First batch was successfull, which probably means target is busy with a complex PLC program
+                                    # In that case, we should try again instead of failing
+                                    print("Failed to get some traces. It looks like your PLC task (higher priority) is taking too long and starving comms (lower priority). Debug timing may be innacurate")
+                                else:
+                                    print("Error reading traces from remote: NULL response object.")
+                                    TraceBuffer = None
+                                    break
                 except Exception as e:
                     print("Error reading traces from remote: {}".format(str(e)))
                     TraceBuffer = None
