@@ -300,8 +300,8 @@ static void MQTT_CONNECT_AUTH_body__(MQTT_CONNECT_AUTH *data__) {
   {
     // Make sure strings are NULL terminated
     __GET_VAR(data__->BROKER).body[__GET_VAR(data__->BROKER).len] = '\0';
-    __GET_VAR(data__->BROKER).body[__GET_VAR(data__->USER).len] = '\0';
-    __GET_VAR(data__->BROKER).body[__GET_VAR(data__->PASSWORD).len] = '\0';
+    __GET_VAR(data__->USER).body[__GET_VAR(data__->USER).len] = '\0';
+    __GET_VAR(data__->PASSWORD).body[__GET_VAR(data__->PASSWORD).len] = '\0';
 
     uint8_t mqtt_connected = connect_mqtt_auth(__GET_VAR(data__->BROKER).body, __GET_VAR(data__->PORT), __GET_VAR(data__->USER).body, __GET_VAR(data__->PASSWORD).body);
     __SET_VAR(data__->,SUCCESS,,mqtt_connected);
