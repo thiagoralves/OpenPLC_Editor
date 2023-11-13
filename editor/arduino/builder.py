@@ -287,7 +287,6 @@ OneWire \
 DallasTemperature \
 P1AM \
 CONTROLLINO \
-"Adafruit ADS1X15" \
 PubSubClient \
 ArduinoJson \
 arduinomqttclient \
