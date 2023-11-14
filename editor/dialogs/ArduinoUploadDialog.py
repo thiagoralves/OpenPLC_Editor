@@ -591,7 +591,7 @@ class ArduinoUploadDialog(wx.Dialog):
             define_file += '#define USE_P1AM_BLOCKS\n'
         if (self.plc_program.find('CLOUD_BEGIN;') > 0):
             define_file += '#define USE_CLOUD_BLOCKS\n'
-        if (self.plc_program.find('MQTT_CONNECT;') > 0):
+        if (self.plc_program.find('MQTT_CONNECT;') > 0) or (self.plc_program.find('MQTT_CONNECT_AUTH;') > 0):
             define_file += '#define USE_MQTT_BLOCKS\n'
         if (self.plc_program.find('ARDUINOCAN_CONF;') > 0):
             define_file += '#define USE_ARDUINOCAN_BLOCK\n'
