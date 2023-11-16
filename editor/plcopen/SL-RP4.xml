@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='utf-8'?>
+<project xmlns:ns1="http://www.plcopen.org/xml/tc6_0201" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.plcopen.org/xml/tc6_0201">
+<fileHeader companyName="OpenPLC" productName="SL-RP4" productVersion="1.0" creationDateTime="2023-04-26T04:54:00"/>
+<contentHeader name="SL-RP4" author="OpenPLC Lib Writter" modificationDateTime="2023-04-26T04:54:00">
+<coordinateInfo>
+<fbd>
+<scaling x="0" y="0"/>
+</fbd>
+<ld>
+<scaling x="0" y="0"/>
+</ld>
+<sfc>
+<scaling x="0" y="0"/>
+</sfc>
+</coordinateInfo>
+</contentHeader>
+<types>
+<dataTypes/>
+<pous>
+<pou name="ROTARY_SWITCH" pouType="functionBlock">
+<interface>
+<inputVars>
+<variable name="READ">
+<type>
+<BOOL/>
+</type>
+<documentation>
+<xhtml:p><![CDATA[READ]]></xhtml:p>
+</documentation>
+</variable>
+</inputVars>
+<outputVars>
+<variable name="ERROR">
+<type>
+<BOOL/>
+</type>
+<documentation>
+<xhtml:p><![CDATA[ERROR]]></xhtml:p>
+</documentation>
+</variable>
+<variable name="OUT">
+<type>
+<INT/>
+</type>
+<documentation>
+<xhtml:p><![CDATA[OUT]]></xhtml:p>
+</documentation>
+</variable>
+</outputVars>
+</interface>
+<body>
+<ST>
+<xhtml:p><![CDATA[
+  IF READ = TRUE THEN
+    OUT := 0;
+  END_IF;
+
+]]></xhtml:p></ST>
+</body>
+<documentation>
+<xhtml:p><![CDATA[Reads the rotary switch position on SL-RP4 when the READ input is triggered. If ERROR is TRUE then an error occurred while trying to read the rotary switch. If ERROR is FALSE, the switch position value will be available on output OUT]]></xhtml:p>
+</documentation>
+</pou>
+</pous>
+</types>
+<instances>
+<configurations/>
+</instances>
+</project>
