@@ -181,7 +181,7 @@ class ConfTreeNodeEditor(EditorPanel):
                 self.ConfNodeName = wx.TextCtrl(self.Editor,
                                                 size=wx.Size(150, 25))
                 self.ConfNodeName.SetFont(
-                    wx.Font(faces["size"] * 0.75, wx.DEFAULT, wx.NORMAL,
+                    wx.Font(round(faces["size"] * 0.75), wx.DEFAULT, wx.NORMAL,
                             wx.BOLD, faceName=faces["helv"]))
                 self.ConfNodeName.Bind(
                     wx.EVT_TEXT,
@@ -394,8 +394,9 @@ class ConfTreeNodeEditor(EditorPanel):
                     pos=wx.Point(0, 0), size=wx.Size(24, 24), style=0)
                 boxsizer.Add(staticbitmap, border=5, flag=wx.RIGHT)
 
+                label = element_infos["name"].replace('_', ' ')
                 statictext = wx.StaticText(self.ParamsEditor,
-                                           label="%s:" % _(element_infos["name"]))
+                                           label="%s:" % _(label))
                 boxsizer.Add(statictext, border=5,
                                    flag=wx.ALIGN_CENTER_VERTICAL | wx.RIGHT)
 
@@ -428,7 +429,7 @@ class ConfTreeNodeEditor(EditorPanel):
                             combobox.Append("")
                         if len(element_infos["type"]) > 0 and isinstance(element_infos["type"][0], tuple):
                             for choice, _xsdclass in element_infos["type"]:
-                                combobox.Append(choice)
+                                combobox.Append(choice.replace('_',' '))
                             name = element_infos["name"]
                             value = element_infos["value"]
 
@@ -449,7 +450,8 @@ class ConfTreeNodeEditor(EditorPanel):
                         if element_infos["value"] is None:
                             combobox.SetStringSelection("")
                         else:
-                            combobox.SetStringSelection(element_infos["value"])
+                            combobox.SetStringSelection(
+                                element_infos["value"].replace('_',' '))
                         combobox.Bind(wx.EVT_COMBOBOX, callback, combobox)
 
                 elif isinstance(element_infos["type"], dict):
@@ -581,7 +583,8 @@ class ConfTreeNodeEditor(EditorPanel):
 
     def GetChoiceContentCallBackFunction(self, choicectrl, path):
         def OnChoiceContentChanged(event):
-            self.SetConfNodeParamsAttribute(path, choicectrl.GetStringSelection())
+            self.SetConfNodeParamsAttribute(
+                path, choicectrl.GetStringSelection().replace(' ','_'))
             wx.CallAfter(self.RefreshConfNodeParamsSizer)
             event.Skip()
         return OnChoiceContentChanged

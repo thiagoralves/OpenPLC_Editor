@@ -1,5 +1,7 @@
 .project
 
+.svghmithumbs
+
 .directory
 .pytest_cache
 .cache
@@ -7,6 +9,7 @@
 
 syntax: regexp
 ^tests/.*/build$
+^exemples/.*/build$
 ^.idea/.*
 syntax: regexp
 ^.*\.pyc$
@@ -21,3 +24,5 @@ revision
 
 doc/_build
 doc/locale
+
+^.*\$py.class$

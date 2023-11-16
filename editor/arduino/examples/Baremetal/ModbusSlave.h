@@ -16,9 +16,9 @@ Copyright (C) 2022 OpenPLC - Thiago Alves
 #define COILS           0
 #define INPUTSTATUS     1
 #if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega168__) || defined(__AVR_ATmega32U4__) || defined(__AVR_ATmega16U4__)
-    #define MAX_MB_FRAME 32
+    #define MAX_MB_FRAME 128
 #else
-    #define MAX_MB_FRAME 64
+    #define MAX_MB_FRAME 256
 #endif
 #define MAX_SRV_CLIENTS 3 //how many clients should be able to connect to TCP server at the same time
 #define MBAP_SIZE       6
@@ -46,6 +46,22 @@ Copyright (C) 2022 OpenPLC - Thiago Alves
 #include "Controllino.h"
 #endif
 
+// Debugger functions
+extern "C" uint16_t get_var_count(void);
+extern "C" size_t get_var_size(size_t);// {return 0;}
+extern "C" void *get_var_addr(size_t);// {return 0;}
+extern "C" void force_var(size_t, bool, void *);// {}
+extern "C" void set_trace(size_t, bool, void *);// {}
+extern "C" void trace_reset(void);// {}
+extern "C" void set_endianness(uint8_t value);
+extern uint32_t __tick;
+
+#define MB_DEBUG_SUCCESS                 0x7E
+#define MB_DEBUG_ERROR_OUT_OF_BOUNDS     0x81
+#define MB_DEBUG_ERROR_OUT_OF_MEMORY     0x82
+#define SAME_ENDIANNESS                  0
+#define REVERSE_ENDIANNESS               1
+
 //Modbus registers struct
 struct MBinfo {
     uint8_t slaveid;
@@ -69,6 +85,11 @@ enum {
     MB_FC_WRITE_REG        = 0x06, // Preset Single Register 4xxxx
     MB_FC_WRITE_COILS      = 0x0F, // Write Multiple Coils (Outputs) 0xxxx
     MB_FC_WRITE_REGS       = 0x10, // Write block of contiguous registers 4xxxx
+    MB_FC_DEBUG_INFO       = 0x41, // Request debug variables count
+    MB_FC_DEBUG_SET        = 0x42, // Debug set trace (force variable)
+    MB_FC_DEBUG_GET        = 0x43, // Debug get trace (read variables)
+    MB_FC_DEBUG_GET_LIST   = 0x44, // Debug get trace list (read list of variables)
+    MB_FC_DEBUG_GET_MD5    = 0x45, // Debug get current program MD5
 };
 
 //Exception Codes
@@ -130,6 +151,12 @@ void readInputStatus(uint16_t startreg, uint16_t numregs);
 void readInputRegisters(uint16_t startreg, uint16_t numregs);
 void writeSingleCoil(uint16_t reg, uint16_t status);
 void writeMultipleCoils(uint16_t startreg, uint16_t numoutputs, uint16_t bytecount);
+void debugInfo(void);
+void debugSetTrace(uint16_t varidx, uint8_t flag, uint16_t len, void *value);
+void debugGetTrace(uint16_t startidx, uint16_t endidx);
+void debugGetTraceList(uint16_t numIndexes, uint8_t *indexArray);
+void debugGetMd5(void *endianness);
+
 
 /* Table of CRC values for high-order byte */
 const byte _auchCRCHi[] = {

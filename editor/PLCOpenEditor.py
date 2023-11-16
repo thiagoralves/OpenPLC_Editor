@@ -424,8 +424,6 @@ class PLCOpenEditorApp(wx.App):
         self.SetAppName('plcopeneditor')
         self.ParseCommandLine()
         InstallLocalRessources(beremiz_dir)
-        if wx.VERSION < (3, 0, 0):
-            wx.InitAllImageHandlers()
         util.ExceptionHandler.AddExceptHook(version.app_version)
         self.frame = PLCOpenEditor(None, fileOpen=self.fileOpen)
         return True

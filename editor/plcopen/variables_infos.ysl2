@@ -117,6 +117,11 @@ istylesheet xmlns:ppx="http://www.plcopen.org/xml/tc6_0201"
     template "ppx:dataType", mode="var_type" {
         apply "ppx:baseType", mode="var_type";
     }
+
+    template "*[self::ppx:type or self::ppx:baseType or self::ppx:returnType]/*", mode="var_type" {
+        variable "name" > «local-name()»
+        value "ns:SetType($name)";
+    }
     
     template "*[self::ppx:type or self::ppx:baseType or self::ppx:returnType]/ppx:struct", mode="var_type" {
         apply "ppx:variable", mode="var_type";
@@ -152,10 +157,6 @@ istylesheet xmlns:ppx="http://www.plcopen.org/xml/tc6_0201"
         value "ns:SetType($name)";
     }
     
-    template "*[self::ppx:type or self::ppx:baseType or self::ppx:returnType]/*", mode="var_type" {
-        variable "name" > «local-name()»
-        value "ns:SetType($name)";
-    }
     
     template "*[self::ppx:type or self::ppx:baseType or self::ppx:returnType]/ppx:derived", mode="var_edit" {
         variable "type_name" > «@name»

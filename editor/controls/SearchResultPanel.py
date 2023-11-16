@@ -320,7 +320,7 @@ class SearchResultPanel(wx.Panel):
             item, root_cookie = self.SearchResultsTree.GetNextChild(root, root_cookie)
 
     def ShowSearchResults(self, item):
-        data = self.SearchResultsTree.GetPyData(item)
+        data = self.SearchResultsTree.GetItemData(item)
         if isinstance(data, tuple):
             search_results = [data]
         else:

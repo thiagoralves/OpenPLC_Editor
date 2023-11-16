@@ -92,9 +92,9 @@ class _RequestPlug(object):
             if element["name"] == "ModbusRequest":
                 for child in element["children"]:
                     if child["name"] == "Function":
-                        list = list(modbus_function_dict.keys())
-                        list.sort()
-                        child["type"] = list
+                        _list = list(modbus_function_dict.keys())
+                        _list.sort()
+                        child["type"] = _list
         return infos
 
     def GetVariableLocationTree(self):
@@ -238,9 +238,9 @@ class _MemoryAreaPlug(object):
             if element["name"] == "MemoryArea":
                 for child in element["children"]:
                     if child["name"] == "MemoryAreaType":
-                        list = list(modbus_memtype_dict.keys())
-                        list.sort()
-                        child["type"] = list
+                        _list = list(modbus_memtype_dict.keys())
+                        _list.sort()
+                        child["type"] = _list
         return infos
 
     def GetVariableLocationTree(self):
@@ -317,11 +317,19 @@ class _ModbusTCPclientPlug(object):
                 </xsd:restriction>
             </xsd:simpleType>
           </xsd:attribute>
+          <xsd:attribute name="Request_Delay_in_ms" use="optional" default="0">
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:integer">
+                    <xsd:minInclusive value="0"/>
+                    <xsd:maxInclusive value="2147483647"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+          </xsd:attribute>
         </xsd:complexType>
       </xsd:element>
     </xsd:schema>
     """
-    # NOTE: Max value of 2147483647 (i32_max) for Invocation_Rate_in_ms
+    # NOTE: Max value of 2147483647 (i32_max) for Invocation_Rate_in_ms and Request_Delay_in_ms
     # corresponds to aprox 25 days.
     CTNChildrenTypes = [("ModbusRequest", _RequestPlug, "Request")]
     # TODO: Replace with CTNType !!!
@@ -563,11 +571,19 @@ class _ModbusRTUclientPlug(object):
                 </xsd:restriction>
             </xsd:simpleType>
           </xsd:attribute>
+          <xsd:attribute name="Request_Delay_in_ms" use="optional" default="0">
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:integer">
+                    <xsd:minInclusive value="0"/>
+                    <xsd:maxInclusive value="2147483647"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+          </xsd:attribute>
         </xsd:complexType>
       </xsd:element>
     </xsd:schema>
     """
-    # NOTE: Max value of 2147483647 (i32_max) for Invocation_Rate_in_ms
+    # NOTE: Max value of 2147483647 (i32_max) for Invocation_Rate_in_ms and Request_Delay_in_ms
     # corresponds to aprox 25 days.
     CTNChildrenTypes = [("ModbusRequest", _RequestPlug, "Request")]
     # TODO: Replace with CTNType !!!

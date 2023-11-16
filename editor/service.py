@@ -167,6 +167,27 @@ class PLCObjectAdapter(PLCObject):
     @expose
     def StopPLC(self, *args, **kwargs):
         return super().StopPLC(*args, **kwargs)
+    
+    @expose
+    def SetDebuggerType(self, *args, **kwargs):
+        return super().SetDebuggerType(*args, **kwargs)
+    
+    @expose
+    def DisconnectRemoteTarget(self, *args, **kwargs):
+        return super().DisconnectRemoteTarget(*args, **kwargs)
+    
+    @expose
+    def ConnectRemoteTarget(self, *args, **kwargs):
+        return super().ConnectRemoteTarget(*args, **kwargs)
+    
+    @expose
+    def ReadRemoteSettings(self, *args, **kwargs):
+        return super().ReadRemoteSettings(*args, **kwargs)
+    
+    @expose
+    def ConfigureRemote(self, *args, **kwargs):
+        return super().ConfigureRemote(*args, **kwargs)
+
 
 
 def stdout_write(msg):

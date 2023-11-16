@@ -2,9 +2,12 @@
 
 
 import csv
+import asyncio
+import functools
+from threading import Thread
 
-from opcua import Client
-from opcua import ua
+from asyncua import Client
+from asyncua import ua
 
 import wx
 import wx.lib.gizmos as gizmos  # Formerly wx.gizmos in Classic
@@ -150,7 +153,7 @@ class OPCUASubListPanel(wx.Panel):
             self.dvc.AppendTextColumn(colname,  idx, width=width, mode=dv.DATAVIEW_CELL_EDITABLE)
 
         DropTarget = NodeDropTarget(self)
-        self.dvc.SetDropTarget(DropTarget)
+        self.SetDropTarget(DropTarget)
 
         self.Sizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -182,33 +185,28 @@ class OPCUASubListPanel(wx.Panel):
         #             splitter.        panel.      splitter
         ClientPanel = self.GetParent().GetParent().GetParent()
         nodes = ClientPanel.GetSelectedNodes()
-        for node in nodes:
-            cname = node.get_node_class().name
-            dname = node.get_display_name().Text
-            if cname != "Variable":
-                self.log("Node {} ignored (not a variable)".format(dname))
+        for node, properties in nodes:
+            if properties.cname != "Variable":
+                self.log("Node {} ignored (not a variable)".format(properties.dname))
                 continue
 
-            tname = node.get_data_type_as_variant_type().name
+            tname = properties.variant_type
             if tname not in UA_IEC_types:
-                self.log("Node {} ignored (unsupported type)".format(dname))
+                self.log("Node {} ignored (unsupported type)".format(properties.dname))
                 continue
 
-            access = node.get_access_level()
             if {"input":ua.AccessLevel.CurrentRead,
-                "output":ua.AccessLevel.CurrentWrite}[self.direction] not in access:
-                self.log("Node {} ignored because of insuficient access rights".format(dname))
+                "output":ua.AccessLevel.CurrentWrite}[self.direction] not in properties.access:
+                self.log("Node {} ignored because of insuficient access rights".format(properties.dname))
                 continue
 
-            nsid = node.nodeid.NamespaceIndex
-            nid =  node.nodeid.Identifier
-            nid_type =  type(nid).__name__
-            iecid = nid
+            nid_type =  type(properties.nid).__name__
+            iecid = properties.nid
 
-            value = [dname,
-                     nsid,
+            value = [properties.dname,
+                     properties.nsid,
                      nid_type,
-                     nid,
+                     properties.nid,
                      tname,
                      iecid]
             self.model.AddRow(value)
@@ -239,18 +237,41 @@ def prepare_image_list():
     smileidx    = il.Add(wx.ArtProvider.GetBitmap(wx.ART_ADD_BOOKMARK, wx.ART_OTHER, isz))
 
 
+AsyncUAClientLoop = None
+def AsyncUAClientLoopProc():
+    asyncio.set_event_loop(AsyncUAClientLoop)
+    AsyncUAClientLoop.run_forever()
+
+def ExecuteSychronously(func, timeout=1):
+    def AsyncSychronizer(*args, **kwargs):
+        global AsyncUAClientLoop
+        # create asyncio loop
+        if AsyncUAClientLoop is None:
+            AsyncUAClientLoop = asyncio.new_event_loop()
+            Thread(target=AsyncUAClientLoopProc, daemon=True).start()
+        # schedule work in this loop
+        future = asyncio.run_coroutine_threadsafe(func(*args, **kwargs), AsyncUAClientLoop)
+        # wait max 5sec until connection completed
+        return future.result(timeout)
+    return AsyncSychronizer
+
+def ExecuteSychronouslyWithTimeout(timeout):
+    return functools.partial(ExecuteSychronously,timeout=timeout)
+
+
 class OPCUAClientPanel(wx.SplitterWindow):
     def __init__(self, parent, modeldata, log, config_getter):
         self.log = log
         wx.SplitterWindow.__init__(self, parent, -1)
 
-        self.ordered_nodes = []
+        self.ordered_nps = []
 
         self.inout_panel = wx.Panel(self)
         self.inout_sizer = wx.FlexGridSizer(cols=1, hgap=0, rows=2, vgap=0)
         self.inout_sizer.AddGrowableCol(0)
         self.inout_sizer.AddGrowableRow(1)
 
+        self.clientloop = None
         self.client = None
         self.config_getter = config_getter
 
@@ -279,15 +300,71 @@ class OPCUAClientPanel(wx.SplitterWindow):
 
     def OnClose(self):
         if self.client is not None:
-            self.client.disconnect()
+            asyncio.run(self.client.disconnect())
             self.client = None
 
     def __del__(self):
         self.OnClose()
 
+    async def GetAsyncUANodeProperties(self, node):
+        properties = type("UANodeProperties",(),dict(
+                nsid = node.nodeid.NamespaceIndex,
+                nid =  node.nodeid.Identifier,
+                dname = (await node.read_display_name()).Text,
+                cname = (await node.read_node_class()).name,
+            ))
+        if properties.cname == "Variable":
+            properties.access = await node.get_access_level()
+            properties.variant_type = (await node.read_data_type_as_variant_type()).name
+        return properties
+
+    @ExecuteSychronouslyWithTimeout(5)
+    async def ConnectAsyncUAClient(self, config):
+        client = Client(config["URI"])
+        
+        AuthType = config["AuthType"]
+        if AuthType=="UserPasword":
+            await client.set_user(config["User"])
+            await client.set_password(config["Password"])
+        elif AuthType=="x509":
+            await client.set_security_string(
+                "{Policy},{Mode},{Certificate},{PrivateKey}".format(**config))
+
+        await client.connect()
+        self.client = client
+
+        # load definition of server specific structures/extension objects
+        await self.client.load_type_definitions()
+
+        # returns root node object and its properties
+        rootnode = self.client.get_root_node()
+        return rootnode, await self.GetAsyncUANodeProperties(rootnode)
+
+    @ExecuteSychronously
+    async def DisconnectAsyncUAClient(self):
+        if self.client is not None:
+            await self.client.disconnect()
+            self.client = None
+
+    @ExecuteSychronously
+    async def GetAsyncUANodeChildren(self, node):
+        children = await node.get_children()
+        return [ (child, await self.GetAsyncUANodeProperties(child)) for child in children]
+
     def OnConnectButton(self, event):
         if self.connect_button.GetValue():
             
+            config = self.config_getter()
+            self.log("OPCUA browser: connecting to {}\n".format(config["URI"]))
+            
+            try :
+                rootnode, rootnodeproperties = self.ConnectAsyncUAClient(config)
+            except Exception as e:
+                self.log("Exception in OPCUA browser: "+repr(e)+"\n")
+                self.client = None
+                self.connect_button.SetValue(False)
+                return
+
             self.tree_panel = wx.Panel(self)
             self.tree_sizer = wx.FlexGridSizer(cols=1, hgap=0, rows=2, vgap=0)
             self.tree_sizer.AddGrowableCol(0)
@@ -308,22 +385,7 @@ class OPCUAClientPanel(wx.SplitterWindow):
 
             self.tree.SetMainColumn(0)
 
-            config = self.config_getter()
-            self.client = Client(config["URI"])
-            
-            AuthType = config["AuthType"]
-            if AuthType=="UserPasword":
-                self.client.set_user(config["User"])
-                self.client.set_password(config["Password"])
-            elif AuthType=="x509":
-                self.client.set_security_string(
-                    "{Policy},{Mode},{Certificate},{PrivateKey}".format(**config))
-
-            self.client.connect()
-            self.client.load_type_definitions()  # load definition of server specific structures/extension objects
-            rootnode = self.client.get_root_node()
-
-            rootitem = self.AddNodeItem(self.tree.AddRoot, rootnode)
+            rootitem = self.AddNodeItem(self.tree.AddRoot, rootnode, rootnodeproperties)
 
             # Populate first level so that root can be expanded
             self.CreateSubItems(rootitem)
@@ -335,7 +397,7 @@ class OPCUAClientPanel(wx.SplitterWindow):
 
             self.tree.Expand(rootitem)
 
-            hint = wx.StaticText(self, label = "Drag'n'drop desired variables from tree to Input or Output list")
+            hint = wx.StaticText(self.tree_panel, label = "Drag'n'drop desired variables from tree to Input or Output list")
 
             self.tree_sizer.Add(self.tree, flag=wx.GROW)
             self.tree_sizer.Add(hint, flag=wx.GROW)
@@ -345,29 +407,23 @@ class OPCUAClientPanel(wx.SplitterWindow):
 
             self.SplitVertically(self.tree_panel, self.inout_panel, 500)
         else:
-            self.client.disconnect()
-            self.client = None
+            self.DisconnectAsyncUAClient()
             self.Unsplit(self.tree_panel)
             self.tree_panel.Destroy()
 
-
     def CreateSubItems(self, item):
-        node, browsed = self.tree.GetPyData(item)
+        node, properties, browsed = self.tree.GetPyData(item)
         if not browsed:
-            for subnode in node.get_children():
-                self.AddNodeItem(lambda n: self.tree.AppendItem(item, n), subnode)
-            self.tree.SetPyData(item,(node, True))
+            children = self.GetAsyncUANodeChildren(node)
+            for subnode, subproperties in children:
+                self.AddNodeItem(lambda n: self.tree.AppendItem(item, n), subnode, subproperties)
+            self.tree.SetPyData(item,(node, properties, True))
 
-    def AddNodeItem(self, item_creation_func, node):
-        nsid = node.nodeid.NamespaceIndex
-        nid =  node.nodeid.Identifier
-        dname = node.get_display_name().Text
-        cname = node.get_node_class().name
+    def AddNodeItem(self, item_creation_func, node, properties):
+        item = item_creation_func(properties.dname)
 
-        item = item_creation_func(dname)
-
-        if cname == "Variable":
-            access = node.get_access_level()
+        if properties.cname == "Variable":
+            access = properties.access
             normalidx = fileidx
             r = ua.AccessLevel.CurrentRead in access
             w = ua.AccessLevel.CurrentWrite in access
@@ -379,14 +435,14 @@ class OPCUAClientPanel(wx.SplitterWindow):
                 ext = "WO"  # not sure this one exist
             else:
                 ext = "no access"  # not sure this one exist
-            cname = "Var "+node.get_data_type_as_variant_type().name+" (" + ext + ")"
+            cname = "Var "+properties.variant_type+" (" + ext + ")"
         else:
             normalidx = fldridx
 
-        self.tree.SetPyData(item,(node, False))
-        self.tree.SetItemText(item, cname, 1)
-        self.tree.SetItemText(item, str(nsid), 2)
-        self.tree.SetItemText(item, type(nid).__name__+": "+str(nid), 3)
+        self.tree.SetPyData(item,(node, properties, False))
+        self.tree.SetItemText(item, properties.cname, 1)
+        self.tree.SetItemText(item, str(properties.nsid), 2)
+        self.tree.SetItemText(item, type(properties.nid).__name__+": "+str(properties.nid), 3)
         self.tree.SetItemImage(item, normalidx, which = wx.TreeItemIcon_Normal)
         self.tree.SetItemImage(item, fldropenidx, which = wx.TreeItemIcon_Expanded)
 
@@ -404,28 +460,28 @@ class OPCUAClientPanel(wx.SplitterWindow):
         items = self.tree.GetSelections()
         items_pydata = [self.tree.GetPyData(item) for item in items]
 
-        nodes = [node for node, _unused in items_pydata]
+        nps = [(node,properties) for node, properties, unused in items_pydata]
 
         # append new nodes to ordered list
-        for node in nodes:
-            if node not in self.ordered_nodes:
-                self.ordered_nodes.append(node)
+        for np in nps:
+            if np not in self.ordered_nps:
+                self.ordered_nps.append(np)
 
         # filter out vanished items
-        self.ordered_nodes = [
-            node 
-            for node in self.ordered_nodes 
-            if node in nodes]
+        self.ordered_nps = [
+            np 
+            for np in self.ordered_nps 
+            if np in nps]
 
     def GetSelectedNodes(self):
-        return self.ordered_nodes 
+        return self.ordered_nps 
 
     def OnTreeBeginDrag(self, event):
         """
         Called when a drag is started in tree
         @param event: wx.TreeEvent
         """
-        if self.ordered_nodes:
+        if self.ordered_nps:
             # Just send a recognizable mime-type, drop destination
             # will get python data from parent
             data = wx.CustomDataObject(OPCUAClientDndMagicWord)
@@ -439,9 +495,10 @@ class OPCUAClientPanel(wx.SplitterWindow):
         
 
 class OPCUAClientList(list):
-    def __init__(self, log = lambda m:None):
+    def __init__(self, log, change_callback):
         super(OPCUAClientList, self).__init__(self)
         self.log = log
+        self.change_callback = change_callback
 
     def append(self, value):
         v = dict(list(zip(lstcolnames, value)))
@@ -472,26 +529,33 @@ class OPCUAClientList(list):
 
         list.append(self, [v[n] for n in lstcolnames])
 
+        self.change_callback()
+
         return True
 
+    def __delitem__(self, index):
+        list.__delitem__(self, index)
+        self.change_callback()
+
 class OPCUAClientModel(dict):
-    def __init__(self, log = lambda m:None):
+    def __init__(self, log, change_callback = lambda : None):
         super(OPCUAClientModel, self).__init__()
         for direction in directions:
-            self[direction] = OPCUAClientList(log)
+            self[direction] = OPCUAClientList(log, change_callback)
 
     def LoadCSV(self,path):
-        with open(path, 'rb') as csvfile:
+        with open(path, 'r') as csvfile:
             reader = csv.reader(csvfile, delimiter=',', quotechar='"')
             buf = {direction:[] for direction, _model in self.items()}
             for direction, model in self.items():
                 self[direction][:] = []
             for row in reader:
                 direction = row[0]
-                self[direction].append(row[1:])
+                # avoids calling change callback whe loading CSV
+                list.append(self[direction],row[1:])
 
     def SaveCSV(self,path):
-        with open(path, 'wb') as csvfile:
+        with open(path, 'w') as csvfile:
             for direction, data in self.items():
                 writer = csv.writer(csvfile, delimiter=',',
                                 quotechar='"', quoting=csv.QUOTE_MINIMAL)
@@ -505,6 +569,7 @@ class OPCUAClientModel(dict):
 #include <open62541/client_highlevel.h>
 #include <open62541/plugin/log_stdout.h>
 #include <open62541/plugin/securitypolicy.h>
+#include <open62541/plugin/securitypolicy_default.h>
 
 #include <open62541/types.h>
 #include <open62541/types_generated_handling.h>
@@ -571,7 +636,7 @@ void __cleanup_{locstr}(void)
     UA_ClientConfig_setDefault(cc);                                                                \\
     retval = UA_Client_connect(client, uri);
 
-/* Note : Policy is ignored here since open62541 client supports all policies by default */
+/* Note : Single policy is enforced here, by default open62541 client supports all policies */
 #define INIT_x509(Policy, UpperCaseMode, PrivateKey, Certificate)                                  \\
     LogInfo("OPC-UA Init x509 %s,%s,%s,%s", #Policy, #UpperCaseMode, PrivateKey, Certificate);     \\
                                                                                                    \\
@@ -579,7 +644,35 @@ void __cleanup_{locstr}(void)
     UA_ByteString privateKey  = loadFile(PrivateKey);                                              \\
                                                                                                    \\
     cc->securityMode = UA_MESSAGESECURITYMODE_##UpperCaseMode;                                     \\
-    UA_ClientConfig_setDefaultEncryption(cc, certificate, privateKey, NULL, 0, NULL, 0);           \\
+                                                                                                   \\
+    /* replacement for default behaviour */                                                        \\
+    /* UA_ClientConfig_setDefaultEncryption(cc, certificate, privateKey, NULL, 0, NULL, 0); */     \\
+    do{{                                                                                           \\
+        retval = UA_ClientConfig_setDefault(cc);                                                   \\
+        if(retval != UA_STATUSCODE_GOOD)                                                           \\
+            break;                                                                                 \\
+                                                                                                   \\
+        UA_SecurityPolicy *sp = (UA_SecurityPolicy*)                                               \\
+            UA_realloc(cc->securityPolicies, sizeof(UA_SecurityPolicy) * 2);                       \\
+        if(!sp){{                                                                                  \\
+            retval = UA_STATUSCODE_BADOUTOFMEMORY;                                                 \\
+            break;                                                                                 \\
+        }}                                                                                         \\
+        cc->securityPolicies = sp;                                                                 \\
+                                                                                                   \\
+        retval = UA_SecurityPolicy_##Policy(&cc->securityPolicies[cc->securityPoliciesSize],       \\
+                                                 certificate, privateKey, &cc->logger);            \\
+        if(retval != UA_STATUSCODE_GOOD) {{                                                        \\
+            UA_LOG_WARNING(&cc->logger, UA_LOGCATEGORY_USERLAND,                                   \\
+                           "Could not add SecurityPolicy Policy with error code %s",               \\
+                           UA_StatusCode_name(retval));                                            \\
+            UA_free(cc->securityPolicies);                                                         \\
+            cc->securityPolicies = NULL;                                                           \\
+            break;                                                                                 \\
+        }}                                                                                         \\
+                                                                                                   \\
+        ++cc->securityPoliciesSize;                                                                \\
+    }} while(0);                                                                                   \\
                                                                                                    \\
     retval = UA_Client_connect(client, uri);                                                       \\
                                                                                                    \\
@@ -761,7 +854,7 @@ int main(int argc, char *argv[]) {
 }
 """
 
-            with open(path, 'wb') as Cfile:
+            with open(path, 'w') as Cfile:
                 Cfile.write(Ccode)
 
 

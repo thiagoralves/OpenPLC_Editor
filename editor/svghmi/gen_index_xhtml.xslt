@@ -734,6 +734,21 @@
   </func:function>
   <xsl:variable name="_detachable_elements" select="func:detachable_elements($hmi_pages | $keypads)"/>
   <xsl:variable name="detachable_elements" select="$_detachable_elements[not(ancestor::*/@id = $_detachable_elements/@id)]"/>
+  <declarations:page-class/>
+  <xsl:template match="declarations:page-class">
+    <xsl:text>
+</xsl:text>
+    <xsl:text>/* </xsl:text>
+    <xsl:value-of select="local-name()"/>
+    <xsl:text> */
+</xsl:text>
+    <xsl:text>
+</xsl:text>
+    <xsl:text>class PageWidget extends Widget{}
+</xsl:text>
+    <xsl:text>
+</xsl:text>
+  </xsl:template>
   <declarations:detachable-elements/>
   <xsl:template match="declarations:detachable-elements">
     <xsl:text>
@@ -787,7 +802,15 @@
     <xsl:variable name="page_all_elements" select="func:all_related_elements($page)"/>
     <xsl:variable name="all_page_widgets" select="$hmi_widgets[@id = $page_all_elements/@id and @id != $page/@id]"/>
     <xsl:variable name="page_managed_widgets" select="$all_page_widgets[not(@id=$in_forEach_widget_ids)]"/>
-    <xsl:variable name="page_relative_widgets" select="$page_managed_widgets[func:is_descendant_path(func:widget(@id)/path/@value, $desc/path/@value)]"/>
+    <xsl:variable name="page_root_path" select="$desc/path[not(@assign)]"/>
+    <xsl:if test="count($page_root_path)&gt;1">
+      <xsl:message terminate="yes">
+        <xsl:text>Page id="</xsl:text>
+        <xsl:value-of select="$page/@id"/>
+        <xsl:text>" : only one root path can be declared</xsl:text>
+      </xsl:message>
+    </xsl:if>
+    <xsl:variable name="page_relative_widgets" select="$page_managed_widgets[func:is_descendant_path(func:widget(@id)/path/@value, $page_root_path/@value)]"/>
     <xsl:variable name="sumarized_page" select="func:sumarized_elements($page_all_elements)"/>
     <xsl:variable name="required_detachables" select="$sumarized_page/&#10;           ancestor-or-self::*[@id = $detachable_elements/@id]"/>
     <xsl:text>  "</xsl:text>
@@ -804,31 +827,35 @@
     <xsl:value-of select="$p/@h"/>
     <xsl:text>],
 </xsl:text>
-    <xsl:if test="$desc/path/@value">
-      <xsl:if test="count($desc/path/@index)=0">
+    <xsl:if test="count($page_root_path)=1">
+      <xsl:if test="count($page_root_path/@index)=0">
         <xsl:message terminate="no">
           <xsl:text>Page id="</xsl:text>
           <xsl:value-of select="$page/@id"/>
           <xsl:text>" : No match for path "</xsl:text>
-          <xsl:value-of select="$desc/path/@value"/>
+          <xsl:value-of select="$page_root_path/@value"/>
           <xsl:text>" in HMI tree</xsl:text>
         </xsl:message>
       </xsl:if>
       <xsl:text>    page_index: </xsl:text>
-      <xsl:value-of select="$desc/path/@index"/>
+      <xsl:value-of select="$page_root_path/@index"/>
       <xsl:text>,
 </xsl:text>
       <xsl:text>    page_class: "</xsl:text>
-      <xsl:value-of select="$indexed_hmitree/*[@hmipath = $desc/path/@value]/@class"/>
+      <xsl:value-of select="$indexed_hmitree/*[@hmipath = $page_root_path/@value]/@class"/>
       <xsl:text>",
 </xsl:text>
     </xsl:if>
     <xsl:text>    widgets: [
 </xsl:text>
+    <xsl:text>        [hmi_widgets["</xsl:text>
+    <xsl:value-of select="$page/@id"/>
+    <xsl:text>"], []],
+</xsl:text>
     <xsl:for-each select="$page_managed_widgets">
       <xsl:variable name="widget_paths_relativeness">
         <xsl:for-each select="func:widget(@id)/path">
-          <xsl:value-of select="func:is_descendant_path(@value, $desc/path/@value)"/>
+          <xsl:value-of select="func:is_descendant_path(@value, $page_root_path/@value)"/>
           <xsl:if test="position()!=last()">
             <xsl:text>,</xsl:text>
           </xsl:if>
@@ -1190,6 +1217,8 @@
 </xsl:text>
     <xsl:text>
 </xsl:text>
+    <xsl:text>const xmlns = "http://www.w3.org/2000/svg";
+</xsl:text>
     <xsl:text>let id = document.getElementById.bind(document);
 </xsl:text>
     <xsl:text>var svg_root = id("</xsl:text>
@@ -1440,7 +1469,7 @@
     <xsl:text>,{
 </xsl:text>
     <xsl:if test="$widget/@enable_expr">
-      <xsl:text>      assignments: [],
+      <xsl:text>      enable_assignments: [],
 </xsl:text>
       <xsl:text>      compute_enable: function(value, oldval, varnum) {
 </xsl:text>
@@ -1456,13 +1485,13 @@
             <xsl:if test="$varid = generate-id()">
               <xsl:text>          if(varnum == </xsl:text>
               <xsl:value-of select="$varnum"/>
-              <xsl:text>) this.assignments[</xsl:text>
+              <xsl:text>) this.enable_assignments[</xsl:text>
               <xsl:value-of select="position()-1"/>
               <xsl:text>] = value;
 </xsl:text>
               <xsl:text>          let </xsl:text>
               <xsl:value-of select="@assign"/>
-              <xsl:text> = this.assignments[</xsl:text>
+              <xsl:text> = this.enable_assignments[</xsl:text>
               <xsl:value-of select="position()-1"/>
               <xsl:text>];
 </xsl:text>
@@ -2131,7 +2160,7 @@
 </xsl:text>
     <xsl:text>    }
 </xsl:text>
-    <xsl:text>    
+    <xsl:text>
 </xsl:text>
     <xsl:text>    undeafen(index){
 </xsl:text>
@@ -2140,6 +2169,8 @@
     <xsl:text>        let [new_val, old_val] = this.incoming[index];
 </xsl:text>
     <xsl:text>        this.incoming[index] = undefined;
+</xsl:text>
+    <xsl:text>        this.lastdispatch[index] = Date.now();
 </xsl:text>
     <xsl:text>        this.do_dispatch(new_val, old_val, index);
 </xsl:text>
@@ -2388,7 +2419,9 @@
     </xsl:message>
   </xsl:template>
   <xsl:variable name="included_ids" select="$parsed_widgets/widget[not(@type = $excluded_types) and not(@id = $discardable_elements/@id)]/@id"/>
+  <xsl:variable name="page_ids" select="$parsed_widgets/widget[@type = 'Page']/@id"/>
   <xsl:variable name="hmi_widgets" select="$hmi_elements[@id = $included_ids]"/>
+  <xsl:variable name="page_widgets" select="$hmi_elements[@id = $page_ids]"/>
   <xsl:variable name="result_widgets" select="$result_svg_ns//*[@id = $hmi_widgets/@id]"/>
   <declarations:hmi-elements/>
   <xsl:template match="declarations:hmi-elements">
@@ -2402,7 +2435,7 @@
 </xsl:text>
     <xsl:text>var hmi_widgets = {
 </xsl:text>
-    <xsl:apply-templates mode="hmi_widgets" select="$hmi_widgets"/>
+    <xsl:apply-templates mode="hmi_widgets" select="$hmi_widgets | $page_widgets"/>
     <xsl:text>}
 </xsl:text>
     <xsl:text>
@@ -5557,7 +5590,7 @@
     <xsl:if test="$have_value">
       <xsl:text>    animate: function(){
 </xsl:text>
-      <xsl:text>        this.value_elt.textContent = String(this.display);
+      <xsl:text>        multiline_to_svg_text(this.value_elt, String(this.display));
 </xsl:text>
       <xsl:text>    },
 </xsl:text>
@@ -5595,7 +5628,7 @@
 </xsl:text>
     </xsl:for-each>
     <xsl:if test="$have_value">
-      <xsl:text>        this.value_elt.textContent = "";
+      <xsl:text>        multiline_to_svg_text(this.value_elt, "");
 </xsl:text>
     </xsl:if>
     <xsl:text>    },
@@ -6367,10 +6400,10 @@
       <xsl:variable name="target_page_path">
         <xsl:choose>
           <xsl:when test="arg">
-            <xsl:value-of select="$hmi_pages_descs[arg[1]/@value = $target_page_name]/path[1]/@value"/>
+            <xsl:value-of select="$hmi_pages_descs[arg[1]/@value = $target_page_name]/path[not(@assign)]/@value"/>
           </xsl:when>
           <xsl:otherwise>
-            <xsl:value-of select="$page_desc/path[1]/@value"/>
+            <xsl:value-of select="$page_desc/path[not(@assign)]/@value"/>
           </xsl:otherwise>
         </xsl:choose>
       </xsl:variable>
@@ -7193,6 +7226,128 @@
 </xsl:text>
     </xsl:for-each>
     <xsl:text>    ],
+</xsl:text>
+  </xsl:template>
+  <xsl:template match="widget[@type='Page']" mode="widget_desc">
+    <type>
+      <xsl:value-of select="@type"/>
+    </type>
+    <longdesc>
+      <xsl:text>
+</xsl:text>
+      <xsl:text>Arguments are either:
+</xsl:text>
+      <xsl:text>
+</xsl:text>
+      <xsl:text>- XXX reference path TODO
+</xsl:text>
+      <xsl:text>
+</xsl:text>
+      <xsl:text>- name=value: setting variable with literal value.
+</xsl:text>
+      <xsl:text>- name=other_name: copy variable content into another
+</xsl:text>
+      <xsl:text>
+</xsl:text>
+      <xsl:text>"active"+"inactive" labeled elements can be provided to show feedback when pressed
+</xsl:text>
+      <xsl:text>
+</xsl:text>
+      <xsl:text>Exemples:
+</xsl:text>
+      <xsl:text>
+</xsl:text>
+      <xsl:text>HMI:Page:notify=1@notify=/PLCVAR
+</xsl:text>
+      <xsl:text>HMI:Page:ack=2:notify=1@ack=.local_var@notify=/PLCVAR
+</xsl:text>
+      <xsl:text>
+</xsl:text>
+    </longdesc>
+    <shortdesc>
+      <xsl:text>Page </xsl:text>
+    </shortdesc>
+  </xsl:template>
+  <xsl:template match="widget[@type='Page']" mode="widget_defs">
+    <xsl:param name="hmi_element"/>
+    <xsl:variable name="disability">
+      <xsl:call-template name="defs_by_labels">
+        <xsl:with-param name="hmi_element" select="$hmi_element"/>
+        <xsl:with-param name="labels">
+          <xsl:text>/disabled</xsl:text>
+        </xsl:with-param>
+        <xsl:with-param name="mandatory" select="'no'"/>
+      </xsl:call-template>
+    </xsl:variable>
+    <xsl:value-of select="$disability"/>
+    <xsl:variable name="has_disability" select="string-length($disability)&gt;0"/>
+    <xsl:text>    assignments: {},
+</xsl:text>
+    <xsl:text>    dispatch: function(value, oldval, varnum) {
+</xsl:text>
+    <xsl:variable name="widget" select="."/>
+    <xsl:for-each select="path">
+      <xsl:variable name="varid" select="generate-id()"/>
+      <xsl:variable name="varnum" select="position()-1"/>
+      <xsl:if test="@assign">
+        <xsl:for-each select="$widget/path[@assign]">
+          <xsl:if test="$varid = generate-id()">
+            <xsl:text>        if(varnum == </xsl:text>
+            <xsl:value-of select="$varnum"/>
+            <xsl:text>) this.assignments["</xsl:text>
+            <xsl:value-of select="@assign"/>
+            <xsl:text>"] = value;
+</xsl:text>
+          </xsl:if>
+        </xsl:for-each>
+      </xsl:if>
+    </xsl:for-each>
+    <xsl:text>    },
+</xsl:text>
+    <xsl:text>    assign: function() {
+</xsl:text>
+    <xsl:variable name="paths" select="path"/>
+    <xsl:for-each select="arg[contains(@value,'=')]">
+      <xsl:variable name="name" select="substring-before(@value,'=')"/>
+      <xsl:variable name="value" select="substring-after(@value,'=')"/>
+      <xsl:variable name="index">
+        <xsl:for-each select="$paths">
+          <xsl:if test="@assign = $name">
+            <xsl:value-of select="position()-1"/>
+          </xsl:if>
+        </xsl:for-each>
+      </xsl:variable>
+      <xsl:variable name="isVarName" select="regexp:test($value,'^[a-zA-Z_][a-zA-Z0-9_]+$')"/>
+      <xsl:choose>
+        <xsl:when test="$isVarName">
+          <xsl:text>        const </xsl:text>
+          <xsl:value-of select="$value"/>
+          <xsl:text> = this.assignments["</xsl:text>
+          <xsl:value-of select="$value"/>
+          <xsl:text>"];
+</xsl:text>
+          <xsl:text>        if(</xsl:text>
+          <xsl:value-of select="$value"/>
+          <xsl:text> != undefined)
+</xsl:text>
+          <xsl:text>            this.apply_hmi_value(</xsl:text>
+          <xsl:value-of select="$index"/>
+          <xsl:text>, </xsl:text>
+          <xsl:value-of select="$value"/>
+          <xsl:text>);
+</xsl:text>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:text>        this.apply_hmi_value(</xsl:text>
+          <xsl:value-of select="$index"/>
+          <xsl:text>, </xsl:text>
+          <xsl:value-of select="$value"/>
+          <xsl:text>);
+</xsl:text>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:for-each>
+    <xsl:text>    },
 </xsl:text>
   </xsl:template>
   <xsl:template match="widget[@type='PathSlider']" mode="widget_desc">
@@ -8994,21 +9149,23 @@
 </xsl:text>
     <xsl:text>        // Compute visible Y range by merging fixed curves Y ranges
 </xsl:text>
-    <xsl:text>        for(let minmax of this.minmaxes){
+    <xsl:text>        for(let varopts of this.variables_options){
 </xsl:text>
-    <xsl:text>           if(minmax){
+    <xsl:text>            let minmax = varopts.minmax 
 </xsl:text>
-    <xsl:text>               let [min,max] = minmax;
+    <xsl:text>            if(minmax){
 </xsl:text>
-    <xsl:text>               if(min &lt; y_min)
+    <xsl:text>                let [min,max] = minmax;
 </xsl:text>
-    <xsl:text>                   y_min = min;
+    <xsl:text>                if(min &lt; y_min)
 </xsl:text>
-    <xsl:text>               if(max &gt; y_max)
+    <xsl:text>                    y_min = min;
 </xsl:text>
-    <xsl:text>                   y_max = max;
+    <xsl:text>                if(max &gt; y_max)
 </xsl:text>
-    <xsl:text>           }
+    <xsl:text>                    y_max = max;
+</xsl:text>
+    <xsl:text>            }
 </xsl:text>
     <xsl:text>        }
 </xsl:text>
@@ -9016,11 +9173,11 @@
 </xsl:text>
     <xsl:text>        if(y_min !== Infinity &amp;&amp; y_max !== -Infinity){
 </xsl:text>
-    <xsl:text>           this.fixed_y_range = true;
+    <xsl:text>            this.fixed_y_range = true;
 </xsl:text>
     <xsl:text>        } else {
 </xsl:text>
-    <xsl:text>           this.fixed_y_range = false;
+    <xsl:text>            this.fixed_y_range = false;
 </xsl:text>
     <xsl:text>        }
 </xsl:text>
@@ -10824,9 +10981,19 @@
 </xsl:text>
           <xsl:text>
 </xsl:text>
-          <xsl:text>                if (re.numeric_arg.test(ph.type) &amp;&amp; (typeof arg !== 'number' &amp;&amp; isNaN(arg))) {
+          <xsl:text>                if (re.numeric_arg.test(ph.type)){
 </xsl:text>
-          <xsl:text>                    throw new TypeError(sprintf('[sprintf] expecting number but found %T', arg))
+          <xsl:text>                    let argtype = typeof arg;
+</xsl:text>
+          <xsl:text>                    if ( argtype !== 'bigint') {
+</xsl:text>
+          <xsl:text>                        if ( argtype !== 'number' &amp;&amp; isNaN(arg) ) {
+</xsl:text>
+          <xsl:text>                            throw new TypeError(sprintf('[sprintf] expecting number but found %T', arg))
+</xsl:text>
+          <xsl:text>                        }
+</xsl:text>
+          <xsl:text>                    }
 </xsl:text>
           <xsl:text>                }
 </xsl:text>
@@ -11320,13 +11487,27 @@
 </xsl:text>
           <xsl:text>const dvgetters = {
 </xsl:text>
-          <xsl:text>    INT: (dv,offset) =&gt; [dv.getInt16(offset, true), 2],
+          <xsl:text>    SINT:  (dv,offset) =&gt; [dv.getInt8(offset, true), 1],
 </xsl:text>
-          <xsl:text>    BOOL: (dv,offset) =&gt; [dv.getInt8(offset, true), 1],
+          <xsl:text>    INT:   (dv,offset) =&gt; [dv.getInt16(offset, true), 2],
 </xsl:text>
-          <xsl:text>    NODE: (dv,offset) =&gt; [dv.getInt8(offset, true), 1],
+          <xsl:text>    DINT:  (dv,offset) =&gt; [dv.getInt32(offset, true), 4],
 </xsl:text>
-          <xsl:text>    REAL: (dv,offset) =&gt; [dv.getFloat32(offset, true), 4],
+          <xsl:text>    LINT:  (dv,offset) =&gt; [dv.getBigInt64(offset, true), 8],
+</xsl:text>
+          <xsl:text>    USINT: (dv,offset) =&gt; [dv.getUint8(offset, true), 1],
+</xsl:text>
+          <xsl:text>    UINT:  (dv,offset) =&gt; [dv.getUint16(offset, true), 2],
+</xsl:text>
+          <xsl:text>    UDINT: (dv,offset) =&gt; [dv.getUint32(offset, true), 4],
+</xsl:text>
+          <xsl:text>    ULINT: (dv,offset) =&gt; [dv.getBigUint64(offset, true), 8],
+</xsl:text>
+          <xsl:text>    BOOL:  (dv,offset) =&gt; [dv.getInt8(offset, true), 1],
+</xsl:text>
+          <xsl:text>    NODE:  (dv,offset) =&gt; [dv.getInt8(offset, true), 1],
+</xsl:text>
+          <xsl:text>    REAL:  (dv,offset) =&gt; [dv.getFloat32(offset, true), 4],
 </xsl:text>
           <xsl:text>    STRING: (dv, offset) =&gt; {
 </xsl:text>
@@ -11556,7 +11737,21 @@
 </xsl:text>
           <xsl:text>const typedarray_types = {
 </xsl:text>
+          <xsl:text>    SINT: (number) =&gt; new Int8Array([number]),
+</xsl:text>
           <xsl:text>    INT: (number) =&gt; new Int16Array([number]),
+</xsl:text>
+          <xsl:text>    DINT: (number) =&gt; new Int32Array([number]),
+</xsl:text>
+          <xsl:text>    LINT: (number) =&gt; new Int64Array([number]),
+</xsl:text>
+          <xsl:text>    USINT: (number) =&gt; new Uint8Array([number]),
+</xsl:text>
+          <xsl:text>    UINT: (number) =&gt; new Uint16Array([number]),
+</xsl:text>
+          <xsl:text>    UDINT: (number) =&gt; new Uint32Array([number]),
+</xsl:text>
+          <xsl:text>    ULINT: (number) =&gt; new Uint64Array([number]),
 </xsl:text>
           <xsl:text>    BOOL: (truth) =&gt; new Int8Array([truth]),
 </xsl:text>
@@ -12128,29 +12323,37 @@
 </xsl:text>
           <xsl:text>
 </xsl:text>
-          <xsl:text>var screensaver_timer = null;
+          <xsl:text>if(screensaver_delay){
 </xsl:text>
-          <xsl:text>function reset_screensaver_timer() {
+          <xsl:text>    var screensaver_timer = null;
 </xsl:text>
-          <xsl:text>    if(screensaver_timer){
+          <xsl:text>    function reset_screensaver_timer() {
 </xsl:text>
-          <xsl:text>        window.clearTimeout(screensaver_timer);
+          <xsl:text>        if(screensaver_timer){
+</xsl:text>
+          <xsl:text>            window.clearTimeout(screensaver_timer);
+</xsl:text>
+          <xsl:text>        }
+</xsl:text>
+          <xsl:text>        screensaver_timer = window.setTimeout(() =&gt; {
+</xsl:text>
+          <xsl:text>            switch_page("ScreenSaver");
+</xsl:text>
+          <xsl:text>            screensaver_timer = null;
+</xsl:text>
+          <xsl:text>        }, screensaver_delay*1000);
 </xsl:text>
           <xsl:text>    }
 </xsl:text>
-          <xsl:text>    screensaver_timer = window.setTimeout(() =&gt; {
+          <xsl:text>    document.body.addEventListener('pointerdown', reset_screensaver_timer);
 </xsl:text>
-          <xsl:text>        switch_page("ScreenSaver");
+          <xsl:text>    // initialize screensaver
 </xsl:text>
-          <xsl:text>        screensaver_timer = null;
-</xsl:text>
-          <xsl:text>    }, screensaver_delay*1000);
+          <xsl:text>    reset_screensaver_timer();
 </xsl:text>
           <xsl:text>}
 </xsl:text>
-          <xsl:text>if(screensaver_delay)
-</xsl:text>
-          <xsl:text>    document.body.addEventListener('pointerdown', reset_screensaver_timer);
+          <xsl:text>
 </xsl:text>
           <xsl:text>
 </xsl:text>
@@ -12314,6 +12517,12 @@
 </xsl:text>
           <xsl:text>
 </xsl:text>
+          <xsl:text>    // when entering a page, assignments are evaluated
+</xsl:text>
+          <xsl:text>    new_desc.widgets[0][0].assign();
+</xsl:text>
+          <xsl:text>
+</xsl:text>
           <xsl:text>    return true;
 </xsl:text>
           <xsl:text>};
@@ -12474,15 +12683,11 @@
 </xsl:text>
           <xsl:text>
 </xsl:text>
-          <xsl:text>// initialize screensaver
-</xsl:text>
-          <xsl:text>reset_screensaver_timer();
-</xsl:text>
-          <xsl:text>
-</xsl:text>
           <xsl:text>var reconnect_delay = 0;
 </xsl:text>
           <xsl:text>var periodic_reconnect_timer;
+</xsl:text>
+          <xsl:text>var force_reconnect = false;
 </xsl:text>
           <xsl:text>
 </xsl:text>
@@ -12504,6 +12709,8 @@
 </xsl:text>
           <xsl:text>        periodic_reconnect_timer = window.setTimeout(() =&gt; {
 </xsl:text>
+          <xsl:text>            force_reconnect = true;
+</xsl:text>
           <xsl:text>            ws.close();
 </xsl:text>
           <xsl:text>            periodic_reconnect_timer = null;
@@ -12511,12 +12718,6 @@
           <xsl:text>        }, 3600000);
 </xsl:text>
           <xsl:text>    }
-</xsl:text>
-          <xsl:text>
-</xsl:text>
-          <xsl:text>    // forget subscriptions remotely
-</xsl:text>
-          <xsl:text>    send_reset();
 </xsl:text>
           <xsl:text>
 </xsl:text>
@@ -12546,13 +12747,25 @@
 </xsl:text>
           <xsl:text>    ws = null;
 </xsl:text>
-          <xsl:text>    // reconect
+          <xsl:text>    // Do not attempt to reconnect immediately in case:
 </xsl:text>
-          <xsl:text>    // TODO : add visible notification while waiting for reload
+          <xsl:text>    //    - connection was closed by server (PLC stop)
+</xsl:text>
+          <xsl:text>    //    - connection was closed locally with an intention to reconnect
+</xsl:text>
+          <xsl:text>    if(evt.code=1000 &amp;&amp; !force_reconnect){
+</xsl:text>
+          <xsl:text>        window.alert("Connection closed by server");
+</xsl:text>
+          <xsl:text>        location.reload();
+</xsl:text>
+          <xsl:text>    }
 </xsl:text>
           <xsl:text>    window.setTimeout(create_ws, reconnect_delay);
 </xsl:text>
           <xsl:text>    reconnect_delay += 500;
+</xsl:text>
+          <xsl:text>    force_reconnect = false;
 </xsl:text>
           <xsl:text>};
 </xsl:text>
@@ -12585,8 +12798,6 @@
           <xsl:text>create_ws()
 </xsl:text>
           <xsl:text>
-</xsl:text>
-          <xsl:text>const xmlns = "http://www.w3.org/2000/svg";
 </xsl:text>
           <xsl:text>var edit_callback;
 </xsl:text>

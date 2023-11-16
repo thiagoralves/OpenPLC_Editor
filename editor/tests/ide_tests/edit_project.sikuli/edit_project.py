@@ -13,7 +13,7 @@ from sikuliberemiz import run_test
 
 def test(app):
 
-    app.doubleClick("1646062660770.png")
+    app.doubleClick("main")
 
     app.WaitIdleUI()
 
@@ -23,9 +23,12 @@ def test(app):
 
     app.type(Key.DOWN * 10, Key.CTRL)
 
+    # Zoom in to allow OCR
+    app.type("+")
+
     app.WaitIdleUI()
 
-    app.doubleClick("Hello world")
+    app.doubleClick("Hello")
 
     app.WaitIdleUI()
 
@@ -43,7 +46,7 @@ def test(app):
 
     app.k.Build()
 
-    app.waitForChangeAndIdleStdout()
+    app.waitPatternInStdout("Successfully built.", 10)
 
     app.k.Connect()
 

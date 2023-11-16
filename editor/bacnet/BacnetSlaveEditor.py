@@ -576,7 +576,7 @@ class ObjectTable(CustomTable):
                 PropertyConfig = self.BACnetObjectType.PropertyConfig[PropertyName]
                 grid.SetReadOnly(row, col, False)
                 GridCellEditorConstructorArgs = \
-                    PropertyConfig["GridCellEditorConstructorArgs"]
+                    PropertyConfig["GridCellEditorConstructorArgs"] \
                     if "GridCellEditorConstructorArgs" in PropertyConfig else []
                 grid.SetCellEditor(row, col, PropertyConfig["GridCellEditor"](*GridCellEditorConstructorArgs))
                 grid.SetCellRenderer(row, col, PropertyConfig["GridCellRenderer"]())

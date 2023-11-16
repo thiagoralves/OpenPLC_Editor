@@ -24,10 +24,17 @@ function init_widgets() {
 var has_watchdog = window.location.hash == "#watchdog";
 
 const dvgetters = {
-    INT: (dv,offset) => [dv.getInt16(offset, true), 2],
-    BOOL: (dv,offset) => [dv.getInt8(offset, true), 1],
-    NODE: (dv,offset) => [dv.getInt8(offset, true), 1],
-    REAL: (dv,offset) => [dv.getFloat32(offset, true), 4],
+    SINT:  (dv,offset) => [dv.getInt8(offset, true), 1],
+    INT:   (dv,offset) => [dv.getInt16(offset, true), 2],
+    DINT:  (dv,offset) => [dv.getInt32(offset, true), 4],
+    LINT:  (dv,offset) => [dv.getBigInt64(offset, true), 8],
+    USINT: (dv,offset) => [dv.getUint8(offset, true), 1],
+    UINT:  (dv,offset) => [dv.getUint16(offset, true), 2],
+    UDINT: (dv,offset) => [dv.getUint32(offset, true), 4],
+    ULINT: (dv,offset) => [dv.getBigUint64(offset, true), 8],
+    BOOL:  (dv,offset) => [dv.getInt8(offset, true), 1],
+    NODE:  (dv,offset) => [dv.getInt8(offset, true), 1],
+    REAL:  (dv,offset) => [dv.getFloat32(offset, true), 4],
     STRING: (dv, offset) => {
         const size = dv.getInt8(offset);
         return [
@@ -142,7 +149,14 @@ function send_blob(data) {
 };
 
 const typedarray_types = {
+    SINT: (number) => new Int8Array([number]),
     INT: (number) => new Int16Array([number]),
+    DINT: (number) => new Int32Array([number]),
+    LINT: (number) => new Int64Array([number]),
+    USINT: (number) => new Uint8Array([number]),
+    UINT: (number) => new Uint16Array([number]),
+    UDINT: (number) => new Uint32Array([number]),
+    ULINT: (number) => new Uint64Array([number]),
     BOOL: (truth) => new Int8Array([truth]),
     NODE: (truth) => new Int8Array([truth]),
     REAL: (number) => new Float32Array([number]),
@@ -428,18 +442,22 @@ document.body.addEventListener('contextmenu', e => {
     e.preventDefault();
 });
 
-var screensaver_timer = null;
-function reset_screensaver_timer() {
-    if(screensaver_timer){
-        window.clearTimeout(screensaver_timer);
+if(screensaver_delay){
+    var screensaver_timer = null;
+    function reset_screensaver_timer() {
+        if(screensaver_timer){
+            window.clearTimeout(screensaver_timer);
+        }
+        screensaver_timer = window.setTimeout(() => {
+            switch_page("ScreenSaver");
+            screensaver_timer = null;
+        }, screensaver_delay*1000);
     }
-    screensaver_timer = window.setTimeout(() => {
-        switch_page("ScreenSaver");
-        screensaver_timer = null;
-    }, screensaver_delay*1000);
-}
-if(screensaver_delay)
     document.body.addEventListener('pointerdown', reset_screensaver_timer);
+    // initialize screensaver
+    reset_screensaver_timer();
+}
+
 
 function detach_detachables() {
 
@@ -521,6 +539,9 @@ function switch_page(page_name, page_index) {
         ? page_name
         : page_name + "@" + hmitree_paths[page_index]);
 
+    // when entering a page, assignments are evaluated
+    new_desc.widgets[0][0].assign();
+
     return true;
 };
 
@@ -601,11 +622,9 @@ detach_detachables();
 // show main page
 switch_page(default_page);
 
-// initialize screensaver
-reset_screensaver_timer();
-
 var reconnect_delay = 0;
 var periodic_reconnect_timer;
+var force_reconnect = false;
 
 // Once connection established
 function ws_onopen(evt) {
@@ -616,13 +635,11 @@ function ws_onopen(evt) {
             window.clearTimeout(periodic_reconnect_timer);
         }
         periodic_reconnect_timer = window.setTimeout(() => {
+            force_reconnect = true;
             ws.close();
             periodic_reconnect_timer = null;
         }, 3600000);
     }
-
-    // forget subscriptions remotely
-    send_reset();
 
     // forget earlier subscriptions locally
     reset_subscription_periods();
@@ -637,10 +654,16 @@ function ws_onopen(evt) {
 function ws_onclose(evt) {
     console.log("Connection closed. code:"+evt.code+" reason:"+evt.reason+" wasClean:"+evt.wasClean+" Reload in "+reconnect_delay+"ms.");
     ws = null;
-    // reconect
-    // TODO : add visible notification while waiting for reload
+    // Do not attempt to reconnect immediately in case:
+    //    - connection was closed by server (PLC stop)
+    //    - connection was closed locally with an intention to reconnect
+    if(evt.code=1000 && !force_reconnect){
+        window.alert("Connection closed by server");
+        location.reload();
+    }
     window.setTimeout(create_ws, reconnect_delay);
     reconnect_delay += 500;
+    force_reconnect = false;
 };
 
 var ws_url =
@@ -657,7 +680,6 @@ function create_ws(){
 
 create_ws()
 
-const xmlns = "http://www.w3.org/2000/svg";
 var edit_callback;
 const localtypes = {"PAGE_LOCAL":null, "HMI_LOCAL":null}
 function edit_value(path, valuetype, callback, initial) {

@@ -170,6 +170,11 @@ istylesheet xmlns:ppx="http://www.plcopen.org/xml/tc6_0201"
         }
     }
     
+    template "*[self::ppx:type or self::ppx:baseType]/*", mode="var_class" {
+        param "default_class";
+        value "$default_class";
+    }
+  
     template "*[self::ppx:type or self::ppx:baseType]/ppx:derived", mode="var_class" {
         param "default_class";
         variable "type_name", "@name";
@@ -188,11 +193,10 @@ istylesheet xmlns:ppx="http://www.plcopen.org/xml/tc6_0201"
         value "@pouType";
     }
     
-    template "*[self::ppx:type or self::ppx:baseType]/*" mode="var_class" {
-        param "default_class";
-        value "$default_class";
+    template "*[self::ppx:type or self::ppx:baseType]/*", mode="var_type" {
+        > «local-name()»
     }
-  
+    
     template "*[self::ppx:type or self::ppx:baseType]/ppx:derived", mode="var_type" {
         > «@name»
     }
@@ -214,8 +218,8 @@ istylesheet xmlns:ppx="http://www.plcopen.org/xml/tc6_0201"
         > WSTRING
     }
   
-    template "*[self::ppx:type or self::ppx:baseType]/*", mode="var_type" {
-        > «local-name()»
+    template "*[self::ppx:type or self::ppx:baseType]/*", mode="var_edit" {
+        > false
     }
     
     template "*[self::ppx:type or self::ppx:baseType]/ppx:derived", mode="var_edit" {
@@ -231,8 +235,8 @@ istylesheet xmlns:ppx="http://www.plcopen.org/xml/tc6_0201"
         apply "ppx:baseType", mode="var_edit";
     }
     
-    template "*[self::ppx:type or self::ppx:baseType]/*", mode="var_edit" {
-        > false
+    template "*[self::ppx:type or self::ppx:baseType]/*", mode="var_debug" {
+        > true
     }
     
     template "*[self::ppx:type or self::ppx:baseType]/ppx:derived", mode="var_debug" {
@@ -259,10 +263,6 @@ istylesheet xmlns:ppx="http://www.plcopen.org/xml/tc6_0201"
     
     template "*[self::ppx:type or self::ppx:baseType]/ppx:struct", mode="var_debug" {
         > false
-    }
-    
-    template "*[self::ppx:type or self::ppx:baseType]/*", mode="var_debug" {
-        > true
     }
     
 }

@@ -31,7 +31,7 @@ import threading
 import shlex
 import traceback
 import threading
-from threading import Thread, Semaphore, Lock, currentThread
+from threading import Thread, Semaphore, Lock, current_thread
 import builtins
 from functools import partial
 
@@ -182,6 +182,12 @@ def Bpath(*args):
     return os.path.join(beremiz_dir, *args)
 
 
+import locale
+# Matiec's standard library relies on libC's locale-dependent
+# string to/from number convertions, but IEC-61131 counts
+# on '.' for decimal point. Therefore locale is reset to "C" */
+locale.setlocale(locale.LC_NUMERIC, "C")
+
 def SetupI18n():
     # Get folder containing translation files
     localedir = os.path.join(beremiz_dir, "locale")
@@ -202,20 +208,7 @@ def SetupI18n():
     # Define locale domain
     loc.AddCatalog(domain)
 
-    import locale
-    global default_locale
-    default_locale = locale.getdefaultlocale()[1]
-
-    # sys.stdout.encoding = default_locale
-    # if Beremiz_service is started from Beremiz IDE
-    # sys.stdout.encoding is None (that means 'ascii' encoding').
-    # And unicode string returned by wx.GetTranslation() are
-    # automatically converted to 'ascii' string.
-    def unicode_translation(message):
-        return wx.GetTranslation(message).encode(default_locale)
-
-    builtins.__dict__['_'] = unicode_translation
-    # builtins.__dict__['_'] = wx.GetTranslation
+    builtins.__dict__['_'] = wx.GetTranslation
 
 
 # Life is hard... have a candy.
@@ -232,10 +225,7 @@ if enablewx:
         import re
         import wx.adv
 
-        if wx.VERSION >= (3, 0, 0):
-            app = wx.App(redirect=False)
-        else:
-            app = wx.PySimpleApp(redirect=False)
+        app = wx.App(redirect=False)
         app.SetTopWindow(wx.Frame(None, -1))
 
         default_locale = None
@@ -369,7 +359,7 @@ if enablewx:
                 _servicename = self.pyroserver.servicename
                 _servicename = '' if _servicename is None else _servicename
                 dlg = ParamsEntryDialog(None, _("Enter a name "), defaultValue=_servicename)
-                dlg.SetTests([(lambda name: len(name) is not 0, _("Name must not be null!"))])
+                dlg.SetTests([(lambda name: len(name) != 0, _("Name must not be null!"))])
                 if dlg.ShowModal() == wx.ID_OK:
                     self.pyroserver.servicename = dlg.GetValue()
                     self.pyroserver.Restart()
@@ -446,10 +436,10 @@ if havewx:
         obj.res = default_evaluator(tocall, *args, **kwargs)
         wx_eval_lock.release()
 
-    main_thread_id = currentThread().ident
+    main_thread_id = current_thread().ident
     def evaluator(tocall, *args, **kwargs):
         # To prevent deadlocks, check if current thread is not one already main
-        current_id = currentThread().ident
+        current_id = current_thread().ident
 
         if main_thread_id != current_id:
             o = type('', (object,), dict(call=(tocall, args, kwargs), res=None))
@@ -533,7 +523,6 @@ if havetwisted:
         try:
             website = NS.RegisterWebsite(interface, webport)
             pyruntimevars["website"] = website
-            statuschange.append(NS.website_statuslistener_factory(website))
         except Exception:
             LogMessageAndException(_("Nevow Web service failed. "))
 
@@ -569,8 +558,9 @@ def FirstWorkerJob():
 
     # Beremiz IDE detects LOCAL:// runtime is ready by looking
     # for self.workdir in the daemon's stdout.
-    sys.stdout.write(_("Current working directory :") + WorkingDir + "\n")
-    sys.stdout.flush()
+    if sys.stdout:
+        sys.stdout.write(_("Current working directory :") + WorkingDir + "\n")
+        sys.stdout.flush()
 
     runtime.GetPLCObjectSingleton().AutoLoad(autostart)
 

@@ -854,6 +854,46 @@
       <xsl:text>Value to display</xsl:text>
     </path>
   </xsl:template>
+  <xsl:template match="widget[@type='Page']" mode="widget_desc">
+    <type>
+      <xsl:value-of select="@type"/>
+    </type>
+    <longdesc>
+      <xsl:text>
+</xsl:text>
+      <xsl:text>Arguments are either:
+</xsl:text>
+      <xsl:text>
+</xsl:text>
+      <xsl:text>- XXX reference path TODO
+</xsl:text>
+      <xsl:text>
+</xsl:text>
+      <xsl:text>- name=value: setting variable with literal value.
+</xsl:text>
+      <xsl:text>- name=other_name: copy variable content into another
+</xsl:text>
+      <xsl:text>
+</xsl:text>
+      <xsl:text>"active"+"inactive" labeled elements can be provided to show feedback when pressed
+</xsl:text>
+      <xsl:text>
+</xsl:text>
+      <xsl:text>Exemples:
+</xsl:text>
+      <xsl:text>
+</xsl:text>
+      <xsl:text>HMI:Page:notify=1@notify=/PLCVAR
+</xsl:text>
+      <xsl:text>HMI:Page:ack=2:notify=1@ack=.local_var@notify=/PLCVAR
+</xsl:text>
+      <xsl:text>
+</xsl:text>
+    </longdesc>
+    <shortdesc>
+      <xsl:text>Page </xsl:text>
+    </shortdesc>
+  </xsl:template>
   <xsl:template match="widget[@type='PathSlider']" mode="widget_desc">
     <type>
       <xsl:value-of select="@type"/>

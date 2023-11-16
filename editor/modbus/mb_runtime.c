@@ -373,6 +373,14 @@ static void *__mb_client_thread(void *_index)  {
 		clock_gettime(CLOCK_MONOTONIC, &cur_time);
 		fprintf(stderr, "Modbus client thread (%%d) - new cycle (%%ld:%%ld)!\n", client_node_id, cur_time.tv_sec, cur_time.tv_nsec);
 		*/
+		
+		/* Variable use to specify delay to introduce between any two consecutive requests we send out to the same client
+		 * Initially set to 0 since we don't want to introduce a delay before the very first request.
+		 */
+		struct timespec inter_request_delay;
+		inter_request_delay.tv_sec  = 0;
+		inter_request_delay.tv_nsec = 0;
+		
 		int req;
 		for (req=0; req < NUMBER_OF_CLIENT_REQTS; req ++){
 			/* just do the requests belonging to the client */
@@ -392,6 +400,14 @@ static void *__mb_client_thread(void *_index)  {
             fprintf(stderr, "Modbus client thread (%%d): RUNNING Modbus request %%d  (periodic = %%d  flag_exec_req = %%d)\n", 
                     client_node_id, req, client_nodes[client_requests[req].client_node_id].periodic_act, client_requests[req].flag_exec_req );
             */
+			
+			/* Insert a delay between any two consecutive requests to the same client
+			 * Needed because some clients will ignore our requests if we send them out too fast.
+			 *
+			 * Note that since we don't want to insert a delay before the very first request we will send, the inter_request_delay variable
+			 * is first initialised to 0. It will be set to the correct delay after the first (and second, third, etc..) request has completed.
+			 */
+			clock_nanosleep(CLOCK_MONOTONIC, 0 /* relative sleep */, &inter_request_delay, NULL);
             
 			int res_tmp = __execute_mb_request(req);
 			client_requests[req].tn_error_code = 0; // assume success
@@ -449,13 +465,19 @@ static void *__mb_client_thread(void *_index)  {
             client_requests[req].flag_mb_error_code = client_requests[req].mb_error_code;
             client_requests[req].flag_tn_error_code = client_requests[req].tn_error_code;
             
-            /* We have just finished excuting a client transcation request.
+            /* We have just finished executing a client transaction request.
              * If the current cycle was activated by user request we reset the flag used to ask to run it
              */
             if (0 != client_requests[req].flag_exec_req) {
                 client_requests[req].flag_exec_req     = 0;
                 client_requests[req].flag_exec_started = 0;   
             }
+            
+            /* We have just finished executing a client transaction request.
+             * Set the inter request delay before we send the next request. Value of delay is set by user in beremiz GUI
+             */
+            inter_request_delay.tv_sec  =  client_nodes[client_node_id].req_delay / 1000; /* ms to seconds */
+            inter_request_delay.tv_nsec = (client_nodes[client_node_id].req_delay %% 1000) * 1000 * 1000; /* ms to ns */
             
             //fprintf(stderr, "Modbus plugin: RUNNING<---> of Modbus request %%d  (periodic = %%d  flag_exec_req = %%d)\n", 
             //        req, client_nodes[client_requests[req].client_node_id].periodic_act, client_requests[req].flag_exec_req );
@@ -956,7 +978,7 @@ int __cleanup_%(locstr)s (){
  * running (i.e. before or after __init_() ets called)! 
  * 
  * The following functions are never called from other C code. They are 
- * called instead from the python code in runtime/Modbus_config.py, that
+ * called instead from the python code in modbus/web_settings.py, that
  * implements the web server extension for configuring Modbus parameters.
  */
 
@@ -974,7 +996,7 @@ const int __modbus_plugin_param_string_size = MODBUS_PARAM_STRING_SIZE;
 
 
 
-/* NOTE: We could have the python code in runtime/Modbus_config.py
+/* NOTE: We could have the python code in modbus/web_settings.py
  *       directly access the server_node_t and client_node_t structures,
  *       however this would create a tight coupling between these two
  *       disjoint pieces of code.
@@ -1017,6 +1039,7 @@ int                __modbus_get_ClientNode_baud       (int nodeid)  {return clie
 int                __modbus_get_ClientNode_parity     (int nodeid)  {return client_nodes[nodeid].node_address.addr.rtu.parity;   }
 int                __modbus_get_ClientNode_stop_bits  (int nodeid)  {return client_nodes[nodeid].node_address.addr.rtu.stop_bits;}
 u64                __modbus_get_ClientNode_comm_period(int nodeid)  {return client_nodes[nodeid].comm_period;                    }
+u64                __modbus_get_ClientNode_req_delay  (int nodeid)  {return client_nodes[nodeid].req_delay;                      }
 const char *       __modbus_get_ClientNode_addr_type  (int nodeid)  {return addr_type_str[client_nodes[nodeid].node_address.naf];}
                                                                                                                         
 const char *       __modbus_get_ServerNode_config_name(int nodeid)  {return server_nodes[nodeid].config_name;                    }
@@ -1037,6 +1060,7 @@ void __modbus_set_ClientNode_baud       (int nodeid, int          value)  {clien
 void __modbus_set_ClientNode_parity     (int nodeid, int          value)  {client_nodes[nodeid].node_address.addr.rtu.parity    = value;}
 void __modbus_set_ClientNode_stop_bits  (int nodeid, int          value)  {client_nodes[nodeid].node_address.addr.rtu.stop_bits = value;}
 void __modbus_set_ClientNode_comm_period(int nodeid, u64          value)  {client_nodes[nodeid].comm_period                     = value;}
+void __modbus_set_ClientNode_req_delay  (int nodeid, u64          value)  {client_nodes[nodeid].req_delay                       = value;}
                                                                                                                         
 
 void __modbus_set_ServerNode_host       (int nodeid, const char * value)  {if (strcmp(value,"#ANY#")==0) value = "";

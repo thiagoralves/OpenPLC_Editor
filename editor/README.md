@@ -1,6 +1,7 @@
 <!---
 [![docs](https://readthedocs.org/projects/beremiz/badge/?version=latest)](https://beremiz.readthedocs.io)
 -->
+[![CI Automated testing](https://github.com/beremiz/beremiz/actions/workflows/run_tests_in_docker.yml/badge.svg?branch=python3)](https://github.com/beremiz/beremiz/actions/workflows/run_tests_in_docker.yml)
 
 # Beremiz #
 
@@ -41,33 +42,16 @@ Searchable archive using search engine of your choice is available [here](http:/
 
 ## Build on Linux (developer setup) ##
 
-### Prerequisites (Ubuntu/Debian) :
+### System prerequisites (Ubuntu 22.04) :
 ```
-sudo apt-get install build-essential bison flex autoconf
-sudo apt-get install python2-dev libpython2.7-dev libgtk-3-dev libssl-dev libgl1-mesa-dev libglu1-mesa-dev python-setuptools
-
-python2 -m pip install  \
-    future              \
-    matplotlib          \
-    msgpack_python      \
-    u-msgpack-python    \
-    zeroconf2           \
-    enum34              \
-    pyro                \
-    sslpsk              \
-    posix_spawn         \
-    twisted             \
-    nevow               \
-    autobahn            \
-    click               \
-    opcua               \
-    pycountry           \
-    fonttools           \
-    Brotli              \
-    lxml==4.5.0         \
-    wxPython==4.1.1
-
+# install required system packages as root
+sudo apt-get install \
+  build-essential automake flex bison mercurial \
+  libgtk-3-dev libgl1-mesa-dev libglu1-mesa-dev \
+  libpython3.10-dev libssl-dev \
+  python3.10 virtualenv cmake git mercurial
 ```
+
 
 ### Prepare build directory
 
@@ -94,6 +78,16 @@ git clone https://github.com/beremiz/beremiz
 git clone https://github.com/beremiz/matiec
 ```
 
+### Python prerequisites (virtualenv) :
+```
+# setup isolated python environment
+virtualenv ~/Beremiz/venv
+
+# install required python packages
+~/Beremiz/venv/bin/pip install -r ~/Beremiz/beremiz/requirements.txt
+
+```
+
 ### Build MatIEC compiler
 
 ```
@@ -109,8 +103,12 @@ Only needed for CANopen support. Please read CanFestival manual to choose CAN in
 
 ```
 cd ~/Beremiz
-hg clone http://hg.beremiz.org/CanFestival-3
-cd ~/Beremiz/CanFestival-3
+
+hg clone http://hg.beremiz.org/canfestival
+#  -- or --
+git clone https://github.com/beremiz/canfestival
+
+cd ~/Beremiz/canfestival
 ./configure --can=virtual
 make
 ```
@@ -121,7 +119,11 @@ Only needed for Modbus support.
 
 ```
 cd ~/Beremiz
-hg clone https://hg.beremiz.org/Modbus
+
+hg clone http://hg.beremiz.org/Modbus
+#  -- or --
+git clone https://github.com/beremiz/Modbus
+
 cd ~/Beremiz/Modbus
 make
 ```
@@ -140,8 +142,7 @@ make MAKE_DEFINE='-fPIC' MY_BACNET_DEFINES='-DPRINT_ENABLED=1 -DBACAPP_ALL -DBAC
 ### Launch Beremiz IDE
 
 ```
-cd ~/Beremiz/beremiz
-python Beremiz.py
+~/Beremiz/venv/python ~/Beremiz/beremiz/Beremiz.py
 ```
 
 ## Run standalone Beremiz runtime ##
@@ -150,7 +151,7 @@ python Beremiz.py
 
 ```
 mkdir ~/beremiz_runtime_workdir
-python Beremiz_service.py -p 61194 -i localhost -x 0 -a 1 ~/beremiz_runtime_workdir
+~/Beremiz/venv/python ~/Beremiz/beremiz/Beremiz_service.py -p 61194 -i localhost -x 0 -a 1 ~/beremiz_runtime_workdir
 ```
 
 To connect IDE with runtime, enter target location URI in project's settings (project->Config->BeremizRoot/URI_location) pointed to your running Beremiz service in this case :

@@ -209,6 +209,7 @@ const "result_svg" apply "/", mode="inline_svg";
 const "result_svg_ns", "exsl:node-set($result_svg)";
 
 emit "preamble:inline-svg" {
+    | const xmlns = "http://www.w3.org/2000/svg";
     | let id = document.getElementById.bind(document);
     | var svg_root = id("«$svg/@id»");
 }

@@ -29,8 +29,9 @@ import pickle
 import sys
 import shutil
 import time
+import signal
 from time import time as gettime
-from threading import Lock, Timer, currentThread
+from threading import Lock, Timer, current_thread
 
 import wx.lib.buttons
 import wx.lib.statbmp
@@ -82,11 +83,11 @@ from IDEFrame import \
 
 from LocalRuntimeMixin import LocalRuntimeMixin
 
-	
 # Define OpenPLC Editor FileMenu extra items id
 [
     ID_OPENPLCFILEMENUUPDATE
 ] = [wx.NewId() for _init_coll_FileMenu_Items in range(1)]
+
 
 def AppendMenu(parent, help, id, kind, text):
     return parent.Append(wx.MenuItem(helpString=help, id=id, kind=kind, text=text))
@@ -106,7 +107,7 @@ else:
     }
 
 
-MainThread = currentThread().ident
+MainThread = current_thread().ident
 REFRESH_PERIOD = 0.1
 
 
@@ -157,7 +158,7 @@ class LogPseudoFile(object):
             self.LastRefreshTimer = None
 
     def _should_write(self):
-        if MainThread == currentThread().ident:
+        if MainThread == current_thread().ident:
             app = wx.GetApp()
             if app is not None:
                 self._write()
@@ -251,9 +252,9 @@ class Beremiz(IDEFrame, LocalRuntimeMixin):
                    kind=wx.ITEM_NORMAL, text=_('New') + '\tCTRL+N')
         AppendMenu(parent, help='', id=wx.ID_OPEN,
                    kind=wx.ITEM_NORMAL, text=_('Open') + '\tCTRL+O')
-        parent.Append(ID_FILEMENURECENTPROJECTS, _("&Recent Projects"), self.RecentProjectsMenu)
+        self.RecentProjectsMenuItem = parent.AppendSubMenu(self.RecentProjectsMenu, _("&Recent Projects"))
         parent.AppendSeparator()
-        parent.Append(wx.ID_ANY, _("&Tutorials and Examples"), self.TutorialsProjectsMenu)
+        parent.AppendSubMenu(self.TutorialsProjectsMenu, _("&Tutorials and Examples"))
 
         examples_dir = Bpath("examples")
         project_list = sorted(os.listdir(examples_dir))
@@ -449,6 +450,7 @@ class Beremiz(IDEFrame, LocalRuntimeMixin):
             # then we prefix CWD to PATH in order to ensure that
             # commands invoked by build process by default are
             # found here.
+            #os.environ["PATH"] = os.getcwd()+';'+os.environ["PATH"]
             os.environ["PATH"] = os.getcwd()+'\\mingw\\bin;'+os.environ["PATH"]
 
     def __init__(self, parent, projectOpen=None, buildpath=None, ctr=None, debug=True, logf=None):
@@ -514,6 +516,8 @@ class Beremiz(IDEFrame, LocalRuntimeMixin):
         self._Refresh(TITLE, EDITORTOOLBAR, FILEMENU, EDITMENU, DISPLAYMENU)
         self.RefreshAll()
         self.LogConsole.SetFocus()
+
+        signal.signal(signal.SIGTERM,self.signalTERM_handler)
 
     def RefreshTitle(self):
         name = _("OpenPLC Editor")
@@ -651,6 +655,11 @@ class Beremiz(IDEFrame, LocalRuntimeMixin):
             # prevent event to continue, i.e. cancel closing
             event.Veto()
 
+    def signalTERM_handler(self, sig, frame):
+        print ("Signal TERM caught: kill local runtime and quit, no save")
+        self.KillLocalRuntime()
+        sys.exit()
+
     def RefreshFileMenu(self):
         self.RefreshRecentProjectsMenu()
 
@@ -708,7 +717,7 @@ class Beremiz(IDEFrame, LocalRuntimeMixin):
             item = self.RecentProjectsMenu.FindItemByPosition(0)
             self.RecentProjectsMenu.Remove(item)
 
-        self.FileMenu.Enable(ID_FILEMENURECENTPROJECTS, len(recent_projects) > 0)
+        self.RecentProjectsMenuItem.Enable(len(recent_projects) > 0)
         for idx, projectpath in enumerate(recent_projects):
             text = '&%d: %s' % (idx + 1, projectpath)
 
@@ -985,14 +994,14 @@ class Beremiz(IDEFrame, LocalRuntimeMixin):
 
     def OnProjectTreeItemBeginEdit(self, event):
         selected = event.GetItem()
-        if self.ProjectTree.GetPyData(selected)["type"] == ITEM_CONFNODE:
+        if self.ProjectTree.GetItemData(selected)["type"] == ITEM_CONFNODE:
             event.Veto()
         else:
             IDEFrame.OnProjectTreeItemBeginEdit(self, event)
 
     def OnProjectTreeRightUp(self, event):
         item = event.GetItem()
-        item_infos = self.ProjectTree.GetPyData(item)
+        item_infos = self.ProjectTree.GetItemData(item)
 
         if item_infos["type"] == ITEM_CONFNODE:
             confnode_menu = wx.Menu(title='')
@@ -1028,7 +1037,7 @@ class Beremiz(IDEFrame, LocalRuntimeMixin):
 
     def OnProjectTreeItemActivated(self, event):
         selected = event.GetItem()
-        item_infos = self.ProjectTree.GetPyData(selected)
+        item_infos = self.ProjectTree.GetItemData(selected)
         if item_infos["type"] == ITEM_CONFNODE:
             item_infos["confnode"]._OpenView()
             event.Skip()
@@ -1039,7 +1048,7 @@ class Beremiz(IDEFrame, LocalRuntimeMixin):
 
     def ProjectTreeItemSelect(self, select_item):
         if select_item is not None and select_item.IsOk():
-            item_infos = self.ProjectTree.GetPyData(select_item)
+            item_infos = self.ProjectTree.GetItemData(select_item)
             if item_infos["type"] == ITEM_CONFNODE:
                 item_infos["confnode"]._OpenView(onlyopened=True)
             elif item_infos["type"] == ITEM_PROJECT:

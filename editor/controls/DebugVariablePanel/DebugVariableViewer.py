@@ -30,9 +30,6 @@ from functools import reduce
 
 import wx
 
-# TODO: Do this proper way! Do not use private functions from random libraries
-from matplotlib.backends.backend_wxagg import _rgba_to_wx_bitmap
-
 from dialogs.ForceVariableDialog import ForceVariableDialog
 
 # Viewer highlight types
@@ -305,9 +302,10 @@ class DebugVariableViewer(object):
                 srcX = srcBBox.x - (srcPos.x if destBBox.x == 0 else 0)
                 srcY = srcBBox.y - (srcPos.y if destBBox.y == 0 else 0)
 
-                # TODO: Do this proper way! Do not use private functions from random libraries
-                srcBmp = _rgba_to_wx_bitmap(
-                    srcPanel.get_renderer().buffer_rgba())
+                agg_bitmap = srcPanel.get_renderer()
+                srcBmp = wx.Bitmap.FromBufferRGBA(int(agg_bitmap.width), int(agg_bitmap.height),
+                                        agg_bitmap.buffer_rgba())
+
                 srcDC = wx.MemoryDC()
                 srcDC.SelectObject(srcBmp)
 

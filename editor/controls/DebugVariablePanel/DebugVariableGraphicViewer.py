@@ -31,9 +31,6 @@ import wx
 import matplotlib
 import matplotlib.pyplot
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
-
-# TODO: Do this proper way! Do not use private functions from random libraries
-from matplotlib.backends.backend_wxagg import _rgba_to_wx_bitmap
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 from mpl_toolkits.mplot3d import Axes3D
 
@@ -172,7 +169,7 @@ class DebugVariableGraphicDropTarget(wx.TextDropTarget):
                 # If mouse is dropped in left part of graph canvas, graph
                 # wall be merged orthogonally
                 merge_rect = wx.Rect(rect.x, rect.y,
-                                     rect.width / 2., rect.height)
+                                     rect.width // 2, rect.height)
                 if merge_rect.Contains(x, y):
                     merge_type = GRAPH_ORTHOGONAL
 
@@ -616,6 +613,7 @@ class DebugVariableGraphicViewer(DebugVariableViewer, FigureCanvas):
                          [pair for pair in enumerate(self.Labels)]):
                 # Get label bounding box
                 (x0, y0), (x1, y1) = t.get_window_extent().get_points()
+                x0, y0, x1, y1 = map(int,(x0, y0, x1, y1))
                 rect = wx.Rect(x0, height - y1, x1 - x0, y1 - y0)
                 # Check if mouse was over label
                 if rect.Contains(x, y):
@@ -727,6 +725,7 @@ class DebugVariableGraphicViewer(DebugVariableViewer, FigureCanvas):
                     directions):
                 # Check every label paired with corresponding item
                 (x0, y0), (x1, y1) = t.get_window_extent().get_points()
+                x0, y0, x1, y1 = map(int,(x0, y0, x1, y1))
                 rect = wx.Rect(x0, height - y1, x1 - x0, y1 - y0)
                 # Check if mouse was over label
                 if rect.Contains(event.x, height - event.y):
@@ -809,7 +808,7 @@ class DebugVariableGraphicViewer(DebugVariableViewer, FigureCanvas):
             # and mouse position
             if self.GraphType == GRAPH_ORTHOGONAL:
                 start_tick, end_tick = self.ParentWindow.GetRange()
-                tick = (start_tick + end_tick) / 2.
+                tick = (start_tick + end_tick) // 2.
             else:
                 tick = event.xdata
             self.ParentWindow.ChangeRange(int(-event.step) // 3, tick)
@@ -875,8 +874,8 @@ class DebugVariableGraphicViewer(DebugVariableViewer, FigureCanvas):
         # The minimum height take in account the height of all items, padding
         # inside figure and border around figure
         return wx.Size(200,
-                       CANVAS_BORDER[0] + CANVAS_BORDER[1] +
-                       2 * CANVAS_PADDING + VALUE_LABEL_HEIGHT * len(self.Items))
+                       int(CANVAS_BORDER[0] + CANVAS_BORDER[1] +
+                       2 * CANVAS_PADDING + VALUE_LABEL_HEIGHT * len(self.Items)) )
 
     def SetCanvasHeight(self, height):
         """
@@ -897,7 +896,7 @@ class DebugVariableGraphicViewer(DebugVariableViewer, FigureCanvas):
         # Calculate figure bounding box. Y coordinate is inverted in matplotlib
         # figure comparing to wx panel
         width, height = self.GetSize()
-        ax, ay, aw, ah = self.figure.gca().get_position().bounds
+        ax, ay, aw, ah = map(int, self.figure.gca().get_position().bounds)
         bbox = wx.Rect(ax * width, height - (ay + ah) * height - 1,
                        aw * width + 2, ah * height + 1)
 
@@ -1362,10 +1361,9 @@ class DebugVariableGraphicViewer(DebugVariableViewer, FigureCanvas):
         FigureCanvasAgg.draw(self)
 
         # Get bitmap of figure rendered
-        # TODO: Do this proper way! Do not use private functions from random libraries
-        self.bitmap = _rgba_to_wx_bitmap(self.get_renderer().buffer_rgba())
-        if wx.VERSION < (3, 0, 0):
-            self.bitmap.UseAlpha()
+        agg_bitmap = self.get_renderer()
+        self.bitmap = wx.Bitmap.FromBufferRGBA(int(agg_bitmap.width), int(agg_bitmap.height),
+                                        agg_bitmap.buffer_rgba())
 
         # Create DC for rendering graphics in bitmap
         destDC = wx.MemoryDC()

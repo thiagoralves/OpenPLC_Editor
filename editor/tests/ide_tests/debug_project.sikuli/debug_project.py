@@ -19,7 +19,7 @@ def test(app):
     
     app.k.Build()
     
-    app.waitForChangeAndIdleStdout()
+    app.waitPatternInStdout("Successfully built.", 10)
     
     app.k.Connect()
     
@@ -29,7 +29,7 @@ def test(app):
     
     app.waitForChangeAndIdleStdout()
     
-    app.click("1646062660770.png")
+    app.click("main")
 
     app.WaitIdleUI()
     

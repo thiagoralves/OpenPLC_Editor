@@ -2,7 +2,7 @@
 
 # Run python example throug command line, and check usual output
 
-coproc setsid $BEREMIZPYTHONPATH $BEREMIZPATH/Beremiz_cli.py -k --project-home ~/src/beremiz/exemples/python build transfer run;
+coproc setsid $BEREMIZPYTHONPATH $BEREMIZPATH/Beremiz_cli.py -k --project-home $BEREMIZPATH/exemples/python build transfer run;
 
 while read -u ${COPROC[0]} line; do 
     echo "$line"

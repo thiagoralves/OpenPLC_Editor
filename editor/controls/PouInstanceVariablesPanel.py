@@ -440,7 +440,7 @@ class PouInstanceVariablesPanel(wx.Panel):
     def OnVariablesListItemActivated(self, event):
         selected_item = event.GetItem()
         if selected_item is not None and selected_item.IsOk():
-            item_infos = self.VariablesList.GetPyData(selected_item)
+            item_infos = self.VariablesList.GetItemData(selected_item)
             if item_infos is not None:
 
                 item_button = self.VariablesList.IsOverItemRightImage(
@@ -460,7 +460,7 @@ class PouInstanceVariablesPanel(wx.Panel):
                         else:
                             tagname = None
                     else:
-                        parent_infos = self.VariablesList.GetPyData(selected_item.GetParent())
+                        parent_infos = self.VariablesList.GetItemData(selected_item.GetParent())
                         if item_infos.var_class == ITEM_ACTION:
                             tagname = ComputePouActionName(parent_infos.type, item_infos.name)
                         elif item_infos.var_class == ITEM_TRANSITION:
@@ -483,7 +483,7 @@ class PouInstanceVariablesPanel(wx.Panel):
             instance_path = self.InstanceChoice.GetStringSelection()
             item, flags = self.VariablesList.HitTest(event.GetPosition())
             if item is not None:
-                item_infos = self.VariablesList.GetPyData(item)
+                item_infos = self.VariablesList.GetItemData(item)
                 if item_infos is not None:
 
                     item_button = self.VariablesList.IsOverItemRightImage(

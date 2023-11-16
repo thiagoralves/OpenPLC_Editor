@@ -44,7 +44,7 @@ class POULibrary(object):
 
     def GetSTCode(self):
         if not self.program:
-            self.program = self.LibraryControler.GenerateProgram()[0]+"\n"
+            self.program = self.LibraryControler.GenerateProgram(noconfig=True)[0]+"\n"
         return self.program
 
     def GetName(self):
@@ -65,9 +65,14 @@ class POULibrary(object):
 
     def GlobalInstances(self):
         """
-        @return: [(instance_name, instance_type),...]
+        @return: [varlist_object, ...]
         """
-        return []
+        varlists = []
+        for configuration in self.LibraryControler.Project.getconfigurations():
+            varlist = configuration.getglobalVars()
+            if len(varlist)>0 :
+                varlists += varlist
+        return varlists
 
     def FatalError(self, message):
         """ Raise an exception that will trigger error message intended to 

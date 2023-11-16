@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<xsl:stylesheet xmlns:ns="beremiz" xmlns:regexp="http://exslt.org/regular-expressions" xmlns:str="http://exslt.org/strings" xmlns:ppx="http://www.plcopen.org/xml/tc6_0201" xmlns:exsl="http://exslt.org/common" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xhtml="http://www.w3.org/1999/xhtml" version="1.0" exclude-result-prefixes="ns" extension-element-prefixes="ns">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:exsl="http://exslt.org/common" xmlns:regexp="http://exslt.org/regular-expressions" xmlns:str="http://exslt.org/strings" xmlns:func="http://exslt.org/functions" xmlns:ppx="http://www.plcopen.org/xml/tc6_0201" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:ns="beremiz" version="1.0" extension-element-prefixes="ns" exclude-result-prefixes="ns">
   <xsl:output method="xml"/>
   <xsl:param name="tree"/>
   <xsl:template match="text()"/>
@@ -117,6 +117,12 @@
   <xsl:template mode="var_type" match="ppx:dataType">
     <xsl:apply-templates mode="var_type" select="ppx:baseType"/>
   </xsl:template>
+  <xsl:template mode="var_type" match="*[self::ppx:type or self::ppx:baseType or self::ppx:returnType]/*">
+    <xsl:variable name="name">
+      <xsl:value-of select="local-name()"/>
+    </xsl:variable>
+    <xsl:value-of select="ns:SetType($name)"/>
+  </xsl:template>
   <xsl:template mode="var_type" match="*[self::ppx:type or self::ppx:baseType or self::ppx:returnType]/ppx:struct">
     <xsl:apply-templates mode="var_type" select="ppx:variable"/>
   </xsl:template>
@@ -152,12 +158,6 @@
   <xsl:template mode="var_type" match="*[self::ppx:type or self::ppx:baseType or self::ppx:returnType]/ppx:wstring">
     <xsl:variable name="name">
       <xsl:text>WSTRING</xsl:text>
-    </xsl:variable>
-    <xsl:value-of select="ns:SetType($name)"/>
-  </xsl:template>
-  <xsl:template mode="var_type" match="*[self::ppx:type or self::ppx:baseType or self::ppx:returnType]/*">
-    <xsl:variable name="name">
-      <xsl:value-of select="local-name()"/>
     </xsl:variable>
     <xsl:value-of select="ns:SetType($name)"/>
   </xsl:template>

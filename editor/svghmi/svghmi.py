@@ -205,7 +205,7 @@ class SVGHMILibrary(POULibrary):
                 if len(node.path) == 1:
                     extern_variables_declarations += [
                         "extern __IEC_" + node.iectype + "_" +
-                        "t" if node.vartype is "VAR" else "p"
+                        "t" if node.vartype == "VAR" else "p"
                         + node.cpath + ";"]
 
         assert(found_heartbeat)
@@ -427,13 +427,12 @@ class SVGHMI(object):
         InkscapeGeomColumns = ["Id", "x", "y", "w", "h"]
 
         inkpath = get_inkscape_path()
-
         if inkpath is None:
             self.FatalError("SVGHMI: inkscape is not installed.")
 
         svgpath = self._getSVGpath()
         status, result, _err_result = ProcessLogger(self.GetCTRoot().logger,
-                                                     '"' + inkpath + '" -S "' + svgpath + '"',
+                                                     [inkpath, '-S', svgpath],
                                                      no_stdout=True,
                                                      no_stderr=True).spin()
         if status != 0:
@@ -611,7 +610,7 @@ class SVGHMI(object):
                 # print(transform.xslt.error_log)
                 # print(etree.tostring(result.xslt_profile,pretty_print=True))
 
-                with open(hash_path, 'wb') as digest_file:
+                with open(hash_path, 'w') as digest_file:
                     digest_file.write(digest)
             else:
                 self.GetCTRoot().logger.write("    No changes - XSLT transformation skipped\n")
@@ -655,10 +654,12 @@ browser_proc = None
 
 def svghmi_{location}_watchdog_trigger():
     global browser_proc
-    restart_proc = {svghmi_cmds[Watchdog]}
-    waitpid_timeout(restart_proc, "SVGHMI watchdog triggered command")
+    watchdog_proc = {svghmi_cmds[Watchdog]}
+    waitpid_timeout(watchdog_proc, "SVGHMI watchdog triggered command")
+    stop_proc = {svghmi_cmds[Stop]}
+    waitpid_timeout(stop_proc, "SVGHMI stop command")
     waitpid_timeout(browser_proc, "SVGHMI browser process")
-    browser_proc = None
+    browser_proc = {svghmi_cmds[Start]}
 
 max_svghmi_sessions = {maxConnections_total}
 
@@ -675,14 +676,14 @@ def _runtime_{location}_svghmi_start():
         factory = HMIWebSocketServerFactory()
         factory.setProtocolOptions(maxConnections={maxConnections})
 
-        svghmi_root.putChild("ws", WebSocketResource(factory))
+        svghmi_root.putChild(b"ws", WebSocketResource(factory))
 
         svghmi_listener = reactor.listenTCP({port}, Site(svghmi_root), interface='{interface}')
         path_list = []
         svghmi_servers["{interface}:{port}"] = (svghmi_root, svghmi_listener, path_list)
 
     svghmi_root.putChild(
-        '{path}',
+        b'{path}',
         NoCacheFile('{xhtml}',
             defaultType='application/xhtml+xml'))
 

@@ -5,13 +5,14 @@
 
 
 
-import os
+import os, sys
 import signal
 import shlex
 import posix_spawn
 
 PIPE = "42"
 
+fsencoding = sys.getfilesystemencoding()
 
 class Popen(object):
     def __init__(self, args, stdin=None, stdout=None):
@@ -34,6 +35,7 @@ class Popen(object):
             file_actions.add_dup2(p2cread, 0)
             # close other end
             file_actions.add_close(p2cwrite)
+        args = [s.encode(fsencoding) for s in args if type(s)==str]
         self.pid = posix_spawn.posix_spawnp(args[0], args, file_actions=file_actions)
         if stdout is not None:
             self.stdout = os.fdopen(c2pread)

@@ -1,42 +1,110 @@
 #include "POUS.h"
 
-void MQTT_EXAMPLE_init__(MQTT_EXAMPLE *data__, BOOL retain) {
-  __INIT_VAR(data__->BLINK_LED,__BOOL_LITERAL(FALSE),retain)
-  TON_init__(&data__->TON0,retain);
-  TOF_init__(&data__->TOF0,retain);
-  MQTT_CONNECT_init__(&data__->MQTT_CONNECT0,retain);
-  MQTT_SEND_init__(&data__->MQTT_SEND0,retain);
-  __INIT_VAR(data__->MQTT_CONNECTED,0,retain)
+void PT2_init__(PT2 *data__, BOOL retain) {
+  __INIT_VAR(data__->EN,__BOOL_LITERAL(TRUE),retain)
+  __INIT_VAR(data__->ENO,__BOOL_LITERAL(TRUE),retain)
+  __INIT_VAR(data__->IN1,__BOOL_LITERAL(FALSE),retain)
+  __INIT_VAR(data__->IN3,1,retain)
+  __INIT_VAR(data__->IN2,__BOOL_LITERAL(FALSE),retain)
+  __INIT_VAR(data__->IN_TIME,__time_to_timespec(1, 0, 0, 0, 0, 0),retain)
+  __INIT_VAR(data__->OUT1,__BOOL_LITERAL(FALSE),retain)
+  __INIT_VAR(data__->OUT2,__BOOL_LITERAL(FALSE),retain)
+  __INIT_VAR(data__->OUT3,__BOOL_LITERAL(FALSE),retain)
+  __INIT_VAR(data__->ERROR,__BOOL_LITERAL(FALSE),retain)
+  __INIT_VAR(data__->STARTED_TIMER_1,0,retain)
+  __INIT_VAR(data__->TIMER_1_INPUT,0,retain)
+  __INIT_VAR(data__->STARTED_TIMER_2,0,retain)
+  __INIT_VAR(data__->TIMER_2_INPUT,0,retain)
+  TOF_init__(&data__->TOF1,retain);
+  TOF_init__(&data__->TOF2,retain);
 }
 
 // Code part
-void MQTT_EXAMPLE_body__(MQTT_EXAMPLE *data__) {
+void PT2_body__(PT2 *data__) {
+  // Control execution
+  if (!__GET_VAR(data__->EN)) {
+    __SET_VAR(data__->,ENO,,__BOOL_LITERAL(FALSE));
+    return;
+  }
+  else {
+    __SET_VAR(data__->,ENO,,__BOOL_LITERAL(TRUE));
+  }
   // Initialise TEMP variables
 
-  __SET_VAR(data__->TON0.,EN,,__BOOL_LITERAL(TRUE));
-  __SET_VAR(data__->TON0.,IN,,!(__GET_VAR(data__->BLINK_LED,)));
-  __SET_VAR(data__->TON0.,PT,,__time_to_timespec(1, 500, 0, 0, 0, 0));
-  TON_body__(&data__->TON0);
-  __SET_VAR(data__->TOF0.,EN,,__GET_VAR(data__->TON0.ENO,));
-  __SET_VAR(data__->TOF0.,IN,,__GET_VAR(data__->TON0.Q,));
-  __SET_VAR(data__->TOF0.,PT,,__time_to_timespec(1, 500, 0, 0, 0, 0));
-  TOF_body__(&data__->TOF0);
-  __SET_VAR(data__->,BLINK_LED,,__GET_VAR(data__->TOF0.Q,));
-  __SET_VAR(data__->MQTT_CONNECT0.,CONNECT,,!(__GET_VAR(data__->MQTT_CONNECTED,)));
-  __SET_VAR(data__->MQTT_CONNECT0.,BROKER,,__STRING_LITERAL(18,"test.mosquitto.org"));
-  __SET_VAR(data__->MQTT_CONNECT0.,PORT,,1883);
-  MQTT_CONNECT_body__(&data__->MQTT_CONNECT0);
-  __SET_VAR(data__->,MQTT_CONNECTED,,__GET_VAR(data__->MQTT_CONNECT0.SUCCESS,));
-  __SET_VAR(data__->MQTT_SEND0.,SEND,,(__GET_VAR(data__->BLINK_LED,) && __GET_VAR(data__->MQTT_CONNECTED,)));
-  __SET_VAR(data__->MQTT_SEND0.,TOPIC,,__STRING_LITERAL(18,"openplc-test-topic"));
-  __SET_VAR(data__->MQTT_SEND0.,MESSAGE,,__STRING_LITERAL(19,"Hello from OpenPLC!"));
-  MQTT_SEND_body__(&data__->MQTT_SEND0);
+  __SET_VAR(data__->TOF1.,IN,,__GET_VAR(data__->TIMER_1_INPUT,));
+  __SET_VAR(data__->TOF1.,PT,,__time_to_timespec(1, 0, 5, 0, 0, 0));
+  TOF_body__(&data__->TOF1);
+  __SET_VAR(data__->TOF2.,IN,,__GET_VAR(data__->TIMER_2_INPUT,));
+  __SET_VAR(data__->TOF2.,PT,,__time_to_timespec(1, 0, 5, 0, 0, 0));
+  TOF_body__(&data__->TOF2);
+  if ((LE__BOOL__TIME(
+    (BOOL)__BOOL_LITERAL(TRUE),
+    NULL,
+    (UINT)2,
+    (TIME)__GET_VAR(data__->IN_TIME,),
+    (TIME)__time_to_timespec(1, 0, 0, 0, 0, 0)) || GT__BOOL__TIME(
+    (BOOL)__BOOL_LITERAL(TRUE),
+    NULL,
+    (UINT)2,
+    (TIME)__GET_VAR(data__->IN_TIME,),
+    (TIME)__time_to_timespec(1, 0, 300, 0, 0, 0)))) {
+    __SET_VAR(data__->,ERROR,,__BOOL_LITERAL(TRUE));
+  } else {
+    __SET_VAR(data__->,ERROR,,__BOOL_LITERAL(FALSE));
+  };
+  if (((__GET_VAR(data__->IN1,) == __BOOL_LITERAL(TRUE)) && (__GET_VAR(data__->STARTED_TIMER_1,) == __BOOL_LITERAL(FALSE)))) {
+    __SET_VAR(data__->,STARTED_TIMER_1,,__BOOL_LITERAL(TRUE));
+    __SET_VAR(data__->,TIMER_1_INPUT,,__BOOL_LITERAL(TRUE));
+  } else if (((__GET_VAR(data__->STARTED_TIMER_1,) == __BOOL_LITERAL(TRUE)) && (__GET_VAR(data__->TOF1.Q,) == __BOOL_LITERAL(TRUE)))) {
+    __SET_VAR(data__->,TIMER_1_INPUT,,__BOOL_LITERAL(FALSE));
+  } else if ((((__GET_VAR(data__->STARTED_TIMER_1,) == __BOOL_LITERAL(TRUE)) && (__GET_VAR(data__->TOF1.Q,) == __BOOL_LITERAL(FALSE))) && (__GET_VAR(data__->IN1,) == __BOOL_LITERAL(FALSE)))) {
+    __SET_VAR(data__->,STARTED_TIMER_1,,__BOOL_LITERAL(FALSE));
+    __SET_VAR(data__->,TIMER_1_INPUT,,__BOOL_LITERAL(FALSE));
+  };
+  if (((__GET_VAR(data__->IN2,) == __BOOL_LITERAL(TRUE)) && (__GET_VAR(data__->STARTED_TIMER_2,) == __BOOL_LITERAL(FALSE)))) {
+    __SET_VAR(data__->,STARTED_TIMER_2,,__BOOL_LITERAL(TRUE));
+    __SET_VAR(data__->,TIMER_2_INPUT,,__BOOL_LITERAL(TRUE));
+  } else if (((__GET_VAR(data__->STARTED_TIMER_2,) == __BOOL_LITERAL(TRUE)) && (__GET_VAR(data__->TOF2.Q,) == __BOOL_LITERAL(TRUE)))) {
+    __SET_VAR(data__->,TIMER_2_INPUT,,__BOOL_LITERAL(FALSE));
+  } else if ((((__GET_VAR(data__->STARTED_TIMER_2,) == __BOOL_LITERAL(TRUE)) && (__GET_VAR(data__->TOF2.Q,) == __BOOL_LITERAL(FALSE))) && (__GET_VAR(data__->IN2,) == __BOOL_LITERAL(FALSE)))) {
+    __SET_VAR(data__->,STARTED_TIMER_2,,__BOOL_LITERAL(FALSE));
+    __SET_VAR(data__->,TIMER_2_INPUT,,__BOOL_LITERAL(FALSE));
+  };
+  __SET_VAR(data__->,OUT1,,__GET_VAR(data__->TOF1.Q,));
+  __SET_VAR(data__->,OUT2,,__GET_VAR(data__->TOF2.Q,));
+  __SET_VAR(data__->,OUT3,,__GET_VAR(data__->IN3,));
 
   goto __end;
 
 __end:
   return;
-} // MQTT_EXAMPLE_body__() 
+} // PT2_body__() 
+
+
+
+
+
+void PROGRAM0_init__(PROGRAM0 *data__, BOOL retain) {
+  __INIT_VAR(data__->BUTTON,__BOOL_LITERAL(FALSE),retain)
+  __INIT_LOCATED(BOOL,__QX0_0,data__->TIMER_OUT,retain)
+  __INIT_LOCATED_VALUE(data__->TIMER_OUT,__BOOL_LITERAL(FALSE))
+  __INIT_VAR(data__->COUNTER_VALUE,0,retain)
+  PT2_init__(&data__->PT20,retain);
+}
+
+// Code part
+void PROGRAM0_body__(PROGRAM0 *data__) {
+  // Initialise TEMP variables
+
+  __SET_VAR(data__->PT20.,IN1,,__GET_VAR(data__->BUTTON,));
+  PT2_body__(&data__->PT20);
+  __SET_LOCATED(data__->,TIMER_OUT,,__GET_VAR(data__->PT20.OUT1,));
+
+  goto __end;
+
+__end:
+  return;
+} // PROGRAM0_body__() 
 
 
 

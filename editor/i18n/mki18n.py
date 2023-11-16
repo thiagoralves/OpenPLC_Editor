@@ -120,10 +120,7 @@ def getSupportedLanguageDict(appname):
 def getlanguageDict():
     languageDict = {}
     getSupportedLanguageDict('Beremiz')
-    if wx.VERSION >= (3, 0, 0):
-        _app = wx.App()
-    else:
-        _app = wx.PySimpleApp()
+    _app = wx.App()
 
     for lang in [x for x in dir(wx) if x.startswith("LANGUAGE")]:
         i = wx.Locale(wx.LANGUAGE_DEFAULT).GetLanguageInfo(getattr(wx, lang))

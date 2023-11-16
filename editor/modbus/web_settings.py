@@ -125,65 +125,86 @@ class MB_Parity(annotate.Choice):
 
 
 
+# The parameter coerce functions referenced in the TCPclient_parameters etc. lists.
+# These functions check wether the parameter has a legal value (i.e. they validate the parameter),
+# and if not changes it to the closest legal value (i.e. coerces the parameter value to a legal value)
+
+def _coerce_comm_period(value):
+    # Period may not be negative value
+    if (value < 0):
+        value = 0
+    return value
+
+def _coerce_req_delay(value):
+    # Request delay may not be negative value
+    # (i.e. delay between any two consecutive requests sent by a Beremiz RTU master or TCP client)
+    if (value < 0):
+        value = 0
+    return value
+
+
+
 # Parameters we will need to get from the C code, but that will not be shown
 # on the web interface. Common to all modbus entry types (client/server, tcp/rtu/ascii)
 #
-# The annotate type entry is basically useless and is completely ignored.
-# We kee that entry so that this list can later be correctly merged with the
-# following lists...
+# The annotate type entry is used to tell the web server the type of data entry widget to use.
+# (see the file twisted/nevow/formless/annotate.py for list of options)
+# Unfortunately an unsigned integer option does not exist.
 General_parameters = [
-    #    param. name       label                        ctype type         annotate type
-    # (C code var name)   (used on web interface)      (C data type)       (web data type)
+    #    param. name       label                        ctype type         annotate type            Coerce
+    # (C code var name)   (used on web interface)      (C data type)       (web data type)          function
     #                                                                      (annotate.String,
     #                                                                       annotate.Integer, ...)
-    ("config_name"      , _("")                      , ctypes.c_char_p,    annotate.String),
-    ("addr_type"        , _("")                      , ctypes.c_char_p,    annotate.String)
+    ("config_name"      , _("")                      , ctypes.c_char_p,    annotate.String,         None),
+    ("addr_type"        , _("")                      , ctypes.c_char_p,    annotate.String,         None)
     ]                                                                      
                                                                            
 # Parameters we will need to get from the C code, and that _will_ be shown
 # on the web interface.
 TCPclient_parameters = [                                                   
-    #    param. name       label                        ctype type         annotate type
-    # (C code var name)   (used on web interface)      (C data type)       (web data type)
+    #    param. name       label                        ctype type         annotate type            Coerce
+    # (C code var name)   (used on web interface)      (C data type)       (web data type)          function
     #                                                                      (annotate.String,
     #                                                                       annotate.Integer, ...)
-    ("host"             , _("Remote IP Address")     , ctypes.c_char_p,    MB_StrippedString),
-    ("port"             , _("Remote Port Number")    , ctypes.c_char_p,    MB_StrippedString),
-    ("comm_period"      , _("Invocation Rate (ms)")  , ctypes.c_ulonglong, annotate.Integer )
+    ("host"             , _("Remote IP Address")     , ctypes.c_char_p,    MB_StrippedString,         None),
+    ("port"             , _("Remote Port Number")    , ctypes.c_char_p,    MB_StrippedString,         None),
+    ("comm_period"      , _("Invocation Rate (ms)")  , ctypes.c_ulonglong, annotate.Integer ,         _coerce_comm_period),
+    ("req_delay"        , _("Request Delay (ms)")    , ctypes.c_ulonglong, annotate.Integer ,         _coerce_req_delay)
     ]
 
 RTUclient_parameters = [                                                   
-    #    param. name       label                        ctype type         annotate type
-    # (C code var name)   (used on web interface)      (C data type)       (web data type)
+    #    param. name       label                        ctype type         annotate type            Coerce
+    # (C code var name)   (used on web interface)      (C data type)       (web data type)          function
     #                                                                      (annotate.String,
     #                                                                       annotate.Integer, ...)
-    ("device"           , _("Serial Port")           , ctypes.c_char_p,    MB_StrippedString),
-    ("baud"             , _("Baud Rate")             , ctypes.c_int,       MB_Baud         ),
-    ("parity"           , _("Parity")                , ctypes.c_int,       MB_Parity       ),
-    ("stop_bits"        , _("Stop Bits")             , ctypes.c_int,       MB_StopBits     ),
-    ("comm_period"      , _("Invocation Rate (ms)")  , ctypes.c_ulonglong, annotate.Integer)
+    ("device"           , _("Serial Port")           , ctypes.c_char_p,    MB_StrippedString,        None),
+    ("baud"             , _("Baud Rate")             , ctypes.c_int,       MB_Baud         ,         None),
+    ("parity"           , _("Parity")                , ctypes.c_int,       MB_Parity       ,         None),
+    ("stop_bits"        , _("Stop Bits")             , ctypes.c_int,       MB_StopBits     ,         None),
+    ("comm_period"      , _("Invocation Rate (ms)")  , ctypes.c_ulonglong, annotate.Integer,         _coerce_comm_period),
+    ("req_delay"        , _("Request Delay (ms)")    , ctypes.c_ulonglong, annotate.Integer,         _coerce_req_delay)
     ]
 
 TCPserver_parameters = [                                                   
-    #    param. name       label                        ctype type         annotate type
-    # (C code var name)   (used on web interface)      (C data type)       (web data type)
+    #    param. name       label                        ctype type         annotate type            Coerce
+    # (C code var name)   (used on web interface)      (C data type)       (web data type)          function
     #                                                                      (annotate.String,
     #                                                                       annotate.Integer, ...)
-    ("host"             , _("Local IP Address")      , ctypes.c_char_p,    MB_StrippedString),
-    ("port"             , _("Local Port Number")     , ctypes.c_char_p,    MB_StrippedString),
-    ("slave_id"         , _("Slave ID")              , ctypes.c_ubyte,     annotate.Integer )
+    ("host"             , _("Local IP Address")      , ctypes.c_char_p,    MB_StrippedString,         None),
+    ("port"             , _("Local Port Number")     , ctypes.c_char_p,    MB_StrippedString,         None),
+    ("slave_id"         , _("Slave ID")              , ctypes.c_ubyte,     annotate.Integer ,         None)
     ]
 
 RTUslave_parameters = [                                                   
-    #    param. name       label                        ctype type         annotate type
-    # (C code var name)   (used on web interface)      (C data type)       (web data type)
+    #    param. name       label                        ctype type         annotate type            Coerce
+    # (C code var name)   (used on web interface)      (C data type)       (web data type)          function
     #                                                                      (annotate.String,
     #                                                                       annotate.Integer, ...)
-    ("device"           , _("Serial Port")           , ctypes.c_char_p,    MB_StrippedString),
-    ("baud"             , _("Baud Rate")             , ctypes.c_int,       MB_Baud         ),
-    ("parity"           , _("Parity")                , ctypes.c_int,       MB_Parity       ),
-    ("stop_bits"        , _("Stop Bits")             , ctypes.c_int,       MB_StopBits     ),
-    ("slave_id"         , _("Slave ID")              , ctypes.c_ubyte,     annotate.Integer)
+    ("device"           , _("Serial Port")           , ctypes.c_char_p,    MB_StrippedString,        None),
+    ("baud"             , _("Baud Rate")             , ctypes.c_int,       MB_Baud         ,         None),
+    ("parity"           , _("Parity")                , ctypes.c_int,       MB_Parity       ,         None),
+    ("stop_bits"        , _("Stop Bits")             , ctypes.c_int,       MB_StopBits     ,         None),
+    ("slave_id"         , _("Slave ID")              , ctypes.c_ubyte,     annotate.Integer,         None)
     ]
 
 
@@ -207,8 +228,6 @@ _server_WebParamListDict["ascii"] = []  # (Note: ascii not yet implemented in Be
 WebParamListDictDict = {}
 WebParamListDictDict['client'] = _client_WebParamListDict
 WebParamListDictDict['server'] = _server_WebParamListDict
-
-
 
 
 
@@ -294,7 +313,8 @@ def _GetModbusPLCConfiguration(WebNode_id):
     WebParamList   = _WebNodeList[WebNode_id]["WebParamList"]
     GetParamFuncs  = _WebNodeList[WebNode_id]["GetParamFuncs"]
 
-    for par_name, x1, x2, x3 in WebParamList:
+    for WebParamListEntry in WebParamList:
+        par_name = WebParamListEntry[0]
         value = GetParamFuncs[par_name](C_node_id)
         if value is not None:
             current_config[par_name] = value
@@ -334,6 +354,20 @@ def _GetModbusWebviewConfigurationValue(ctx, WebNode_id, argument):
         return ""
 
 
+def _CoerceConfigurationValues(WebNode_id, config):
+    """
+    Coerces any incorrect value in the passed configuration
+    to the nearest correct value.
+    For example, negative times in delay paramater are changed to 0, etc...
+    """
+    CoerceParamFuncs  = _WebNodeList[WebNode_id]["CoerceParamFuncs"]
+
+    for par_name in config:
+        CoerceFunction = CoerceParamFuncs[par_name]
+        if (config[par_name] is not None) and (CoerceFunction is not None):
+            config[par_name] = CoerceFunction(config[par_name])
+
+
 
 def OnModbusButtonSave(**kwargs):
     """
@@ -352,16 +386,30 @@ def OnModbusButtonSave(**kwargs):
     WebNode_id   =  kwargs.get("WebNode_id", None)
     WebParamList = _WebNodeList[WebNode_id]["WebParamList"]
     
-    for par_name, x1, x2, x3 in WebParamList:
+    for WebParamListEntry in WebParamList:
+        par_name = WebParamListEntry[0]
         value = kwargs.get(par_name, None)
         if value is not None:
             newConfig[par_name] = value
 
     # First check if configuration is OK.
-    # Note that this is not currently required, as we use drop down choice menus
-    # for baud, parity and sop bits, so the values should always be correct!
-    #if not _CheckWebConfiguration(newConfig):
-    #    return
+    # Note that this is currently not really required for most of the parameters,
+    # as we use drop down choice menus for baud, parity and sop bits
+    # (so these values should always be correct!).
+    # The timing properties (period in ms, delays in ms, etc.)
+    # do however need to be validated as the web interface does not
+    # enforce any limits on the values (e.g., they must be positive values).
+    # NOTE: It would be confusing for the user if we simply refuse to make the
+    # requested changes without giving any feedback that the changes were not applied,
+    # and why they were refused (i.e. at the moment the web page does not have
+    # any pop-up windows or special messages for that).
+    # That is why instead of returning without making the changes in case of error,
+    # we instead opt to change the requested configuration to the closest valid values
+    # and apply that instead. The user gets feedback on the applied values as these get
+    # shown on the web interface.
+    #
+    # TODO: Check IP address, Port number, etc...
+    _CoerceConfigurationValues(WebNode_id, newConfig)
     
     # store to file the new configuration so that 
     # we can recoup the configuration the next time the PLC
@@ -380,9 +428,11 @@ def OnModbusButtonSave(**kwargs):
 
 def OnModbusButtonReset(**kwargs):
     """
-    Function called when user clicks 'Delete' button in web interface
+    Function called when user clicks 'Reset' button in web interface
     The function will delete the file containing the persistent
-    Modbus configution
+    Modbus configution. More specifically, reset to the configuration
+    hardcoded in the source code (<=> configuration specified
+    in Beremiz IDE).
     """
 
     WebNode_id = kwargs.get("WebNode_id", None)
@@ -404,7 +454,7 @@ def OnModbusButtonReset(**kwargs):
 
 
 
-def _AddWebNode(C_node_id, node_type, GetParamFuncs, SetParamFuncs):
+def _AddWebNode(C_node_id, node_type, GetParamFuncs, SetParamFuncs, CoerceParamFuncs):
     """
     Load from the compiled code (.so file, aloready loaded into memmory)
     the configuration parameters of a specific Modbus plugin node.
@@ -422,7 +472,7 @@ def _AddWebNode(C_node_id, node_type, GetParamFuncs, SetParamFuncs):
     # For some operations we cannot use the config name (e.g. filename to store config)
     # because the user may be using characters that are invalid for that purpose ('/' for
     # example), so we create a hash of the config_name, and use that instead.
-    config_hash = hashlib.md5(config_name).hexdigest()
+    config_hash = hashlib.md5(config_name.encode()).hexdigest()
     
     #PLCObject.LogMessage("Modbus web server extension::_AddWebNode("+str(C_node_id)+") config_name="+config_name)
 
@@ -441,11 +491,12 @@ def _AddWebNode(C_node_id, node_type, GetParamFuncs, SetParamFuncs):
     WebNode_entry["config_name"  ] = config_name 
     WebNode_entry["config_hash"  ] = config_hash
     WebNode_entry["filename"     ] = os.path.join(_ModbusConfFiledir, "Modbus_config_" + config_hash + ".json")
-    WebNode_entry["GetParamFuncs"] = GetParamFuncs
-    WebNode_entry["SetParamFuncs"] = SetParamFuncs
     WebNode_entry["WebParamList" ] = WebParamListDictDict[node_type][addr_type] 
     WebNode_entry["addr_type"    ] = addr_type  # 'tcp', 'rtu', or 'ascii' (as returned by C function)
     WebNode_entry["node_type"    ] = node_type  # 'client', 'server'
+    WebNode_entry["GetParamFuncs"] = GetParamFuncs
+    WebNode_entry["SetParamFuncs"] = SetParamFuncs
+    WebNode_entry["CoerceParamFuncs"] = CoerceParamFuncs
         
     
     # Dictionary that contains the Modbus configuration currently being shown
@@ -489,7 +540,7 @@ def _AddWebNode(C_node_id, node_type, GetParamFuncs, SetParamFuncs):
         return str(_GetModbusWebviewConfigurationValue(ctx, WebNode_id, argument))
     
     webFormInterface = [(name, web_dtype (label=web_label, default=__GetWebviewConfigurationValue)) 
-                    for name, web_label, c_dtype, web_dtype in WebNode_entry["WebParamList"]]
+                    for name, web_label, c_dtype, web_dtype, coerce_function in WebNode_entry["WebParamList"]]
 
     # Configure the web interface to include the Modbus config parameters
     def __OnButtonSave(**kwargs):
@@ -567,43 +618,49 @@ def _runtime_%(location_str)s_modbus_websettings_init():
     # Map the get/set functions (written in C code) we will be using to get/set the configuration parameters
     # Will contain references to the C functions (implemented in beremiz/modbus/mb_runtime.c)
     GetClientParamFuncs = {}
-    SetClientParamFuncs = {}
     GetServerParamFuncs = {}
+    SetClientParamFuncs = {}
     SetServerParamFuncs = {}
+    CoerceClientParamFuncs = {}
+    CoerceServerParamFuncs = {}
 
     # XXX TODO : stop reading from PLC .so file. This code is template code
     #            that can use modbus extension build data
-    for name, web_label, c_dtype, web_dtype in TCPclient_parameters + RTUclient_parameters + General_parameters:
+    for name, web_label, c_dtype, web_dtype, coerce_function in TCPclient_parameters + RTUclient_parameters + General_parameters:
         ParamFuncName                      = "__modbus_get_ClientNode_" + name        
-        GetClientParamFuncs[name]          = getattr(PLCObject.PLClibraryHandle, ParamFuncName)
-        GetClientParamFuncs[name].restype  = c_dtype
-        GetClientParamFuncs[name].argtypes = [ctypes.c_int]
+        func                               = getattr(PLCObject.PLClibraryHandle, ParamFuncName)
+        func.restype                       = c_dtype
+        func.argtypes                      = [ctypes.c_int]
+        GetClientParamFuncs[name] = (lambda *a,**k: func(*a,**k).decode()) if c_dtype == ctypes.c_char_p else func
         
-    for name, web_label, c_dtype, web_dtype in TCPclient_parameters + RTUclient_parameters:
+    for name, web_label, c_dtype, web_dtype, coerce_function in TCPclient_parameters + RTUclient_parameters:
         ParamFuncName                      = "__modbus_set_ClientNode_" + name
         SetClientParamFuncs[name]          = getattr(PLCObject.PLClibraryHandle, ParamFuncName)
         SetClientParamFuncs[name].restype  = None
         SetClientParamFuncs[name].argtypes = [ctypes.c_int, c_dtype]
+        CoerceClientParamFuncs[name]       = coerce_function
 
     # XXX TODO : stop reading from PLC .so file. This code is template code
     #            that can use modbus extension build data
-    for name, web_label, c_dtype, web_dtype in TCPserver_parameters + RTUslave_parameters + General_parameters:
+    for name, web_label, c_dtype, web_dtype, coerce_function in TCPserver_parameters + RTUslave_parameters + General_parameters:
         ParamFuncName                      = "__modbus_get_ServerNode_" + name        
-        GetServerParamFuncs[name]          = getattr(PLCObject.PLClibraryHandle, ParamFuncName)
-        GetServerParamFuncs[name].restype  = c_dtype
-        GetServerParamFuncs[name].argtypes = [ctypes.c_int]
-        
-    for name, web_label, c_dtype, web_dtype in TCPserver_parameters + RTUslave_parameters:
+        func                               = getattr(PLCObject.PLClibraryHandle, ParamFuncName)
+        func.restype                       = c_dtype
+        func.argtypes                      = [ctypes.c_int]
+        GetServerParamFuncs[name] = (lambda *a,**k: func(*a,**k).decode()) if c_dtype == ctypes.c_char_p else func
+
+    for name, web_label, c_dtype, web_dtype, coerce_function in TCPserver_parameters + RTUslave_parameters:
         ParamFuncName                      = "__modbus_set_ServerNode_" + name
         SetServerParamFuncs[name]          = getattr(PLCObject.PLClibraryHandle, ParamFuncName)
         SetServerParamFuncs[name].restype  = None
         SetServerParamFuncs[name].argtypes = [ctypes.c_int, c_dtype]
+        CoerceServerParamFuncs[name]       = coerce_function
 
     for node_id in range(client_count):
-        _AddWebNode(node_id, "client" ,GetClientParamFuncs, SetClientParamFuncs)
+        _AddWebNode(node_id, "client" ,GetClientParamFuncs, SetClientParamFuncs, CoerceClientParamFuncs)
 
     for node_id in range(server_count):
-        _AddWebNode(node_id, "server", GetServerParamFuncs, SetServerParamFuncs)
+        _AddWebNode(node_id, "server", GetServerParamFuncs, SetServerParamFuncs, CoerceServerParamFuncs)
 
 
 

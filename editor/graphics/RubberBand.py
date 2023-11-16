@@ -139,6 +139,11 @@ class RubberBand(object):
 
         self.Redraw()
 
+    def SetRubberBandPen(self, dc):
+        # Set DC drawing style
+        dc.SetPen(wx.Pen(wx.WHITE, style=wx.DOT))
+        dc.SetLogicalFunction(wx.XOR)
+
     def DrawBoundingBoxes(self, bboxes, dc=None):
         """
         Draw a list of bounding box on Viewer in the order given using XOR
@@ -155,17 +160,16 @@ class RubberBand(object):
         scalex, scaley = dc.GetUserScale()
         dc.SetUserScale(1, 1)
 
-        # Set DC drawing style
-        dc.SetPen(wx.Pen(wx.WHITE, style=wx.DOT))
+        self.SetRubberBandPen(dc)
+
         dc.SetBrush(wx.TRANSPARENT_BRUSH)
-        dc.SetLogicalFunction(wx.XOR)
 
         # Draw the bounding boxes using viewer scale factor
         for bbox in bboxes:
             if bbox is not None:
                 dc.DrawRectangle(
-                    int(bbox.x * scalex), int(bbox.y * scaley),
-                    int(bbox.width * scalex), int(bbox.height * scaley))
+                    round(bbox.x * scalex), round(bbox.y * scaley),
+                    round(bbox.width * scalex), round(bbox.height * scaley))
 
         dc.SetLogicalFunction(wx.COPY)
 
@@ -214,6 +218,10 @@ def PatchRubberBandForGTK3():
 
     RubberBand.Erase = Erase
 
+    def SetRubberBandPen(self, dc):
+        dc.SetPen(wx.Pen(wx.BLACK, style=wx.DOT))
+
+    RubberBand.SetRubberBandPen = SetRubberBandPen
 
 if "gtk3" in wx.PlatformInfo:
     PatchRubberBandForGTK3()

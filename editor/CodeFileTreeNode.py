@@ -193,7 +193,7 @@ class CodeFile(object):
             self.CodeFile,
             pretty_print=True,
             xml_declaration=True,
-            encoding='utf-8'))
+            encoding='utf-8').decode())
         xmlfile.close()
 
         self.MarkCodeFileAsSaved()

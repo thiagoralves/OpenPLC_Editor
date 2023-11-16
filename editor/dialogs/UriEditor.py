@@ -2,6 +2,7 @@
 
 import wx
 from connectors import ConnectorSchemes, EditorClassFromScheme
+from controls.DiscoveryPanel import DiscoveryPanel
 
 
 class UriEditor(wx.Dialog):
@@ -32,7 +33,7 @@ class UriEditor(wx.Dialog):
         wx.Dialog.__init__(self,
                            name='UriEditor', parent=parent,
                            title=_('URI Editor'))
-        self.choices = ConnectorSchemes()
+        self.choices = [_("- Search local network -")] + ConnectorSchemes()
         self._init_ctrls(parent)
         self._init_sizers()
         self.scheme = None
@@ -42,7 +43,7 @@ class UriEditor(wx.Dialog):
 
     def OnTypeChoice(self, event):
         index = event.GetSelection()
-        self._replaceSchemeEditor(event.GetString())
+        self._replaceSchemeEditor(event.GetString() if index > 0 else None)
 
     def SetURI(self, uri):
         try:
@@ -79,6 +80,9 @@ class UriEditor(wx.Dialog):
         if scheme is not None:
             EditorClass = EditorClassFromScheme(scheme)
             self.scheme_editor = EditorClass(scheme, self)
+        else:
+            # None is for searching local network
+            self.scheme_editor = DiscoveryPanel(self)
 
         self.editor_sizer.Add(self.scheme_editor)
         self.scheme_editor.Refresh()

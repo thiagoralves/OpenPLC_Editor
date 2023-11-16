@@ -59,8 +59,13 @@
                     arg = arg()
                 }
 
-                if (re.numeric_arg.test(ph.type) && (typeof arg !== 'number' && isNaN(arg))) {
-                    throw new TypeError(sprintf('[sprintf] expecting number but found %T', arg))
+                if (re.numeric_arg.test(ph.type)){
+                    let argtype = typeof arg;
+                    if ( argtype !== 'bigint') {
+                        if ( argtype !== 'number' && isNaN(arg) ) {
+                            throw new TypeError(sprintf('[sprintf] expecting number but found %T', arg))
+                        }
+                    }
                 }
 
                 if (re.number.test(ph.type)) {

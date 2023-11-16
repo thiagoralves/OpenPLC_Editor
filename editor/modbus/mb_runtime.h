@@ -124,7 +124,8 @@ typedef struct{
 	    node_addr_t	node_address;
 	    int		mb_nd;      // modbus library node used for this client
 	    int		init_state; // store how far along the client's initialization has progressed
-	    u64		comm_period;// period to use when periodically sending requests to remote server
+	    u64		comm_period;// period to use when periodically sending requests to remote server (in ms)
+	    u64		req_delay;  // delay between 2 consecutive requests sent to remote slaves/server (in ms)
 	    int		prev_error; // error code of the last printed error message (0 when no error) 
 	    pthread_t   thread_id;  // thread handling all communication for this client node
 	    pthread_t	timer_thread_id;  // thread handling periodical timer for this client node

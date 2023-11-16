@@ -89,6 +89,8 @@ else:
 ZOOM_FACTORS = [math.sqrt(2) ** x for x in range(-6, MAX_ZOOMIN)]
 
 
+WX_NO_LOGICAL = "gtk3" in wx.PlatformInfo
+
 def GetVariableCreationFunction(variable_type):
     def variableCreationFunction(viewer, id, specific_values):
         return FBD_Variable(viewer,
@@ -243,8 +245,8 @@ class ViewerDropTarget(wx.TextDropTarget):
         tagname = self.ParentWindow.GetTagName()
         pou_name, pou_type = self.ParentWindow.Controler.GetEditedElementType(tagname, self.ParentWindow.Debug)
         x, y = self.ParentWindow.CalcUnscrolledPosition(x, y)
-        x = x // self.ParentWindow.ViewScale[0]
-        y = y // self.ParentWindow.ViewScale[1]
+        x = int(x / self.ParentWindow.ViewScale[0])
+        y = int(y / self.ParentWindow.ViewScale[1])
         scaling = self.ParentWindow.Scaling
         message = None
         try:
@@ -284,10 +286,10 @@ class ViewerDropTarget(wx.TextDropTarget):
                         block = FBD_Block(self.ParentWindow, values[0], blockname, id, inputs=blockinputs)
                         width, height = block.GetMinSize()
                         if scaling is not None:
-                            x = int(round(x / scaling[0]) * scaling[0])
-                            y = int(round(y / scaling[1]) * scaling[1])
-                            width = int(round(width / scaling[0] + 0.5) * scaling[0])
-                            height = int(round(height / scaling[1] + 0.5) * scaling[1])
+                            x = round(x / scaling[0]) * scaling[0]
+                            y = round(y / scaling[1]) * scaling[1]
+                            width = round(width / scaling[0] + 0.5) * scaling[0]
+                            height = round(height / scaling[1] + 0.5) * scaling[1]
                         block.SetPosition(x, y)
                         block.SetSize(width, height)
                         self.ParentWindow.AddBlock(block)
@@ -715,7 +717,7 @@ class Viewer(EditorPanel, DebugViewer):
             faces["size"] -= 1
         self.Editor.SetFont(font)
         self.MiniTextDC = wx.MemoryDC(wx.Bitmap(1, 1))
-        self.MiniTextDC.SetFont(wx.Font(faces["size"], wx.SWISS, wx.NORMAL, wx.NORMAL, faceName=faces["helv"]))
+        self.MiniTextDC.SetFont(wx.Font(int(faces["size"] * 0.75), wx.SWISS, wx.NORMAL, wx.NORMAL, faceName=faces["helv"]))
 
         self.CurrentScale = None
         self.SetScale(ZOOM_FACTORS.index(1.0), False)
@@ -803,8 +805,8 @@ class Viewer(EditorPanel, DebugViewer):
                 pos = mouse_event.GetLogicalPosition(dc)
                 xmax = self.GetScrollRange(wx.HORIZONTAL) - self.GetScrollThumb(wx.HORIZONTAL)
                 ymax = self.GetScrollRange(wx.VERTICAL) - self.GetScrollThumb(wx.VERTICAL)
-                scrollx = max(0, round(pos.x * self.ViewScale[0] - mouse_pos.x) / SCROLLBAR_UNIT)
-                scrolly = max(0, round(pos.y * self.ViewScale[1] - mouse_pos.y) / SCROLLBAR_UNIT)
+                scrollx = max(0, round(pos.x * self.ViewScale[0] - mouse_pos.x) // SCROLLBAR_UNIT)
+                scrolly = max(0, round(pos.y * self.ViewScale[1] - mouse_pos.y) // SCROLLBAR_UNIT)
                 if scrollx > xmax or scrolly > ymax:
                     self.RefreshScrollBars(max(0, scrollx - xmax), max(0, scrolly - ymax))
                     self.Scroll(scrollx, scrolly)
@@ -824,6 +826,8 @@ class Viewer(EditorPanel, DebugViewer):
         dc.SetFont(self.GetFont())
         self.Editor.DoPrepareDC(dc)
         dc.SetUserScale(self.ViewScale[0], self.ViewScale[1])
+        if WX_NO_LOGICAL:
+            dc.SetLogicalFunction = lambda *a,**k: None
 
     def GetLogicalDC(self):
         dc = wx.ClientDC(self.Editor)
@@ -1369,7 +1373,7 @@ class Viewer(EditorPanel, DebugViewer):
         element.SetPosition(instance.x, instance.y)
         element.SetSize(instance.width, instance.height)
         for i, output_connector in enumerate(instance.outputs):
-            connector_pos = wx.Point(int(output_connector.position.x), int(output_connector.position.y))
+            connector_pos = wx.Point(*map(int, output_connector.position))
             if isinstance(element, FBD_Block):
                 connector = element.GetConnector(connector_pos,
                                                  output_name=output_connector.name)
@@ -1385,7 +1389,7 @@ class Viewer(EditorPanel, DebugViewer):
                 if connectors["outputs"].index(connector) == i:
                     connector.SetPosition(connector_pos)
         for i, input_connector in enumerate(instance.inputs):
-            connector_pos = wx.Point(int(input_connector.position.x), int(input_connector.position.y))
+            connector_pos = wx.Point(*map(int,input_connector.position))
             if isinstance(element, FBD_Block):
                 connector = element.GetConnector(connector_pos,
                                                  input_name=input_connector.name)
@@ -1548,7 +1552,7 @@ class Viewer(EditorPanel, DebugViewer):
                     self.ParentWindow.AddDebugVariable(iec_path)
                     self.ForceDataValue(iec_path, dialog.GetValue())
         return ForceVariableFunction
-
+    
     def GetForceBoolFunction(self, iec_path, element_state):
         iec_type = self.GetDataType(iec_path)
         def ForceBoolFunction(event):
@@ -1570,12 +1574,11 @@ class Viewer(EditorPanel, DebugViewer):
     def GetChangeConnectionTypeMenuFunction(self, type):
         def ChangeConnectionTypeMenu(event):
             self.ChangeConnectionType(self.SelectedElement, type)
-        return ChangeConnectionTypeMenu     
+        return ChangeConnectionTypeMenu
 
     def PopupForceMenu(self):
         iec_path = self.GetElementIECPath(self.SelectedElement)
         if iec_path is not None:
-            #This is a contact (boolean)
             menu = wx.Menu(title='')
             true_item = self.AppendItem(menu, 
                 _("Force True"), 
@@ -1583,6 +1586,7 @@ class Viewer(EditorPanel, DebugViewer):
             false_item = self.AppendItem(menu, 
                 _("Force False"), 
                 self.GetForceBoolFunction(iec_path.upper(), False))
+
             ritem = self.AppendItem(menu,
                 _("Release value"),
                 self.GetReleaseVariableMenuFunction(iec_path.upper()))
@@ -1628,6 +1632,7 @@ class Viewer(EditorPanel, DebugViewer):
                     self.Editor.ReleaseMouse()
                 self.Editor.PopupMenu(menu)
                 menu.Destroy()
+
 
     def PopupBlockMenu(self, connector=None):
         menu = wx.Menu(title='')
@@ -2311,13 +2316,12 @@ class Viewer(EditorPanel, DebugViewer):
             if not event.Dragging() and (gettime() - self.LastHighlightCheckTime) > REFRESH_PERIOD:
                 self.LastHighlightCheckTime = gettime()
                 highlighted = self.FindElement(event, connectors=False)
-                if self.HighlightedElement is not None and self.HighlightedElement != highlighted:
-                    self.HighlightedElement.SetHighlighted(False)
-                    self.HighlightedElement = None
-                if highlighted is not None:
-                    if not self.Debug and isinstance(highlighted, (Wire, Graphic_Group)):
-                        highlighted.HighlightPoint(pos)
-                    if self.HighlightedElement != highlighted:
+                if self.HighlightedElement != highlighted:
+                    if self.HighlightedElement is not None:
+                        self.HighlightedElement.SetHighlighted(False)
+                    if highlighted is not None:
+                        if not self.Debug and isinstance(highlighted, (Wire, Graphic_Group)):
+                            highlighted.HighlightPoint(pos)
                         highlighted.SetHighlighted(True)
                 self.HighlightedElement = highlighted
             if self.rubberBand.IsShown():

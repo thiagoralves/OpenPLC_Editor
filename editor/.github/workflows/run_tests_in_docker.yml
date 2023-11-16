@@ -1,0 +1,76 @@
+name: CI Automated testing
+
+on:
+  push:
+    branches: [ python3 ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+          path: beremiz
+
+    - uses: actions/checkout@v3
+      with:
+          repository: beremiz/matiec
+          ref: e5be6a1f036d21cd7b5ee75ef352783a7cfcc1a7
+          path: matiec
+
+    - uses: actions/checkout@v3
+      with:
+          repository: open62541/open62541
+          ref: v1.3.6
+          path: open62541
+          submodules: recursive
+
+    - name: Restore cached docker image
+      id: cache-docker-restore
+      uses: actions/cache/restore@v3
+      env:
+        cache-name: cache-docker
+      with:
+        path: /tmp/latest.tar
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('beremiz/tests/tools/Docker', 'beremiz/requirements.txt') }}
+
+    - if: ${{ steps.cache-docker-restore.outputs.cache-hit == false }}
+      name: Create docker image
+      run: |
+        cd beremiz/tests/tools/Docker
+        ./build_docker_image.sh
+        docker image save --output="/tmp/latest.tar" beremiz_sikuli
+
+    - if: ${{ steps.cache-docker-restore.outputs.cache-hit == false }}
+      name: Save docker image in cache
+      id: cache-docker-save
+      uses: actions/cache/save@v3
+      with:
+        path: /tmp/latest.tar
+        key: ${{ steps.cache-docker-restore.outputs.cache-primary-key }}
+
+    - if: ${{ steps.cache-docker-restore.outputs.cache-hit != false }}
+      name: Re-use docker image
+      run: |
+        docker image load --input="/tmp/latest.tar" 
+
+    - name: Create docker container
+      run: |
+        cd beremiz/tests/tools/Docker
+        ./create_docker_container.sh ${{ github.workspace }}/test
+        
+    - name: Run tests in docker
+      run: |
+        cd beremiz/tests/tools/Docker
+        ./do_test_in_docker.sh
+
+    - name: Upload test resuts artifact
+      uses: actions/upload-artifact@v3
+      if: failure()
+      with:
+        name: test_results
+        path: ${{ github.workspace }}/test
+        retention-days: 5

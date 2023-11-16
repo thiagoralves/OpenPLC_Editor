@@ -243,7 +243,7 @@ class DebugVariableTextViewer(DebugVariableViewer, wx.Panel):
         # Test if mouse has been pressed in this bounding box. In that case
         # start a move drag'n drop of item variable
         x, y = event.GetPosition()
-        item_path_bbox = wx.Rect(20, (height - h) / 2, w, h)
+        item_path_bbox = wx.Rect(20, (height - h) // 2, w, h)
         if item_path_bbox.Contains(x, y):
             self.ShowButtons(False)
             data = wx.TextDataObject(str((item.GetVariable(), "debug", "move")))

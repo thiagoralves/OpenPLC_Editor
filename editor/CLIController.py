@@ -78,38 +78,11 @@ class CLIController(LocalRuntimeMixin, ProjectController):
         log = Log()
         LocalRuntimeMixin.__init__(self, log, use_gui=False)
         ProjectController.__init__(self, None, log)
-        self.CLIStatusTimer = None
-        self.KillCLIStatusTimer = False
-
-
-    def StartCLIStatusTimer(self):
-        if self.CLIStatusTimer is not None:
-            return
-        self.CLIStatusTimer = Timer(0.5, self.CLIStatusTimerProc)
-        self.KillCLIStatusTimer = False
-        self.CLIStatusTimer.start()
-
-    def StopCLIStatusTimer(self):
-        if self.CLIStatusTimer is None:
-            return
-        self.KillCLIStatusTimer = True
-        self.CLIStatusTimer.cancel()
-        self.CLIStatusTimer = None
-
-    def CLIStatusTimerProc(self):
-        self.CLIStatusTimer = None
-        if not self.KillCLIStatusTimer:
-            self.PullPLCStatusProc(None)
-            self.StartCLIStatusTimer()
 
     def _SetConnector(self, connector, update_status=True):
         self._connector = connector
         self.previous_log_count = [None]*LogLevelsCount
-        if connector is not None:
-            self.StartCLIStatusTimer()
-        else:
-            self.StopCLIStatusTimer()
-            if update_status:
+        if connector is None and update_status:
                 self.UpdateMethodsFromPLCStatus()
 
     def UpdatePLCLog(self, log_count):
@@ -143,6 +116,9 @@ class CLIController(LocalRuntimeMixin, ProjectController):
                 _("\"%s\" is not a valid Beremiz project\n") % self.session.project_home)
             return True
 
+        if not os.path.isabs(self.session.project_home):
+            self.session.project_home = os.path.join(os.getcwd(), self.session.project_home)
+
         errmsg, error = self.LoadProject(self.session.project_home, self.session.buildpath)
         if error:
             self.logger.write_error(errmsg)
@@ -154,14 +130,9 @@ class CLIController(LocalRuntimeMixin, ProjectController):
 
     @with_project_loaded
     def build_project(self, target):
+
         if target:
             self.SetParamsAttribute("BeremizRoot.TargetType", target)
-        elif sys.platform.startswith('linux'):
-            self.SetParamsAttribute("BeremizRoot.TargetType", "Linux")
-        elif sys.platform.startswith('darwin'):
-            self.SetParamsAttribute("BeremizRoot.TargetType", "OSX")
-        elif sys.platform.startswith('win'):
-            self.SetParamsAttribute("BeremizRoot.TargetType", "Win32")
             
         return 0 if self._Build() else 1
 

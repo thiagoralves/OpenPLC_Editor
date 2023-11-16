@@ -19,22 +19,22 @@ class IEC_TIME(Structure):
     """
     Must be changed according to changes in iec_types.h
     """
-    _fields_ = [("s", c_long),   # tv_sec
-                ("ns", c_long)]  # tv_nsec
+    _fields_ = [("s", c_int32),   # tv_sec
+                ("ns", c_int32)]  # tv_nsec
 
 
-def _t(t, u=lambda x: x.contents, p=lambda t, x: t(x)):
+def _t(t, u=lambda x: x.value, p=lambda t, x: t(x)):
     return (t, u, p)
 
 
 def _ttime():
     return (IEC_TIME,
-            lambda x: td(0, x.contents.s, x.contents.ns/1000.0),
+            lambda x: td(0, x.s, x.ns/1000.0),
             lambda t, x: t(x.days * 24 * 3600 + x.seconds, x.microseconds*1000))
 
 
 SameEndianessTypeTranslator = {
-    "BOOL":       _t(c_uint8, lambda x: bool(x.contents)),
+    "BOOL":       _t(c_uint8, lambda x: bool(x.value)),
     "STEP":       _t(c_uint8),
     "TRANSITION": _t(c_uint8),
     "ACTION":     _t(c_uint8),
@@ -42,8 +42,8 @@ SameEndianessTypeTranslator = {
     "USINT":      _t(c_uint8),
     "BYTE":       _t(c_uint8),
     "STRING":     (IEC_STRING,
-                   lambda x: x.contents.body[:x.contents.len],
-                   lambda t, x: t(len(x), x)),
+                   lambda x: x.body[:x.len],
+                   lambda t, x: t(len(x), x.encode() if type(x)==str else x)),
     "INT":        _t(c_int16),
     "UINT":       _t(c_uint16),
     "WORD":       _t(c_uint16),
@@ -92,12 +92,8 @@ def UnpackDebugBuffer(buff, indexes):
             size = sizeof(c_type)
 
         if c_type is not None and (buffoffset + size) <= buffsize:
-            n = cast(cursor, POINTER(c_type))
-            value = unpack_func(n)
-            if iectype not in ["BOOL", "DATE", "DT", "STRING", "TIME", "TOD"]:
-                value = value.value
-            elif iectype == "STRING":
-                value = value.decode()
+            ptr = cast(cursor, POINTER(c_type))
+            value = unpack_func(ptr.contents)
             buffoffset += size
             res.append(value)
         else:

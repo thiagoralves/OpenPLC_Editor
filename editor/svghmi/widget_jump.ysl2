@@ -143,8 +143,8 @@ widget_page("Jump"){
             otherwise value "$page_desc/arg[1]/@value";
         }
         const "target_page_path" choose {
-            when "arg" value "$hmi_pages_descs[arg[1]/@value = $target_page_name]/path[1]/@value";
-            otherwise value "$page_desc/path[1]/@value";
+            when "arg" value "$hmi_pages_descs[arg[1]/@value = $target_page_name]/path[not(@assign)]/@value";
+            otherwise value "$page_desc/path[not(@assign)]/@value";
         }
 
         if "not(func:same_class_paths($target_page_path, path[1]/@value))"

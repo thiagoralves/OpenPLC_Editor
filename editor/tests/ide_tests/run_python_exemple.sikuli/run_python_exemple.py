@@ -20,7 +20,7 @@ def test(app):
     
     app.k.Build()
     
-    app.waitForChangeAndIdleStdout()
+    app.waitPatternInStdout("Successfully built.", 10)
     
     app.k.Connect()
     

@@ -25,6 +25,7 @@
 
 
 import os
+import sys
 import wx
 import subprocess
 from dialogs import MessageBoxOnce
@@ -33,8 +34,8 @@ from dialogs import MessageBoxOnce
 def _get_inkscape_path():
     """ Return the Inkscape binary path """
 
-    if wx.Platform == '__WXMSW__':
-        from six.moves import winreg
+    if sys.platform.startswith('win32'):
+        import winreg
         inkcmd = None
         tries = [(winreg.HKEY_LOCAL_MACHINE, 'Software\\Classes\\svgfile\\shell\\Inkscape\\command'),
                  (winreg.HKEY_LOCAL_MACHINE, 'Software\\Classes\\inkscape.svg\\shell\\open\\command'),
@@ -76,7 +77,7 @@ def _get_inkscape_version():
     if inkpath is None:
         return None
     return list(map(int, 
-        subprocess.check_output([inkpath,"--version"]).split()[1].split('.')))
+        subprocess.check_output([inkpath,"--version"]).split()[1].split(b'.')))
 
 _inkscape_version = None
 def get_inkscape_version():

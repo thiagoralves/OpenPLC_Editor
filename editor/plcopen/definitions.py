@@ -24,7 +24,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
+
 from os.path import join
 import util.paths as paths
 from util.TranslationCatalogs import NoTranslate
@@ -176,4 +176,3 @@ ANY_TO_ANY_FILTERS = {
 
 # remove gettext override
 del _
-

@@ -79,11 +79,11 @@ class BrowseValuesLibraryDialog(wx.Dialog):
 
     def GetValueInfos(self):
         selected = self.ValuesLibrary.GetSelection()
-        return self.ValuesLibrary.GetPyData(selected)
+        return self.ValuesLibrary.GetItemData(selected)
 
     def OnOK(self, event):
         selected = self.ValuesLibrary.GetSelection()
-        if not selected.IsOk() or self.ValuesLibrary.GetPyData(selected) is None:
+        if not selected.IsOk() or self.ValuesLibrary.GetItemData(selected) is None:
             message = wx.MessageDialog(self, _("No valid value selected!"), _("Error"), wx.OK | wx.ICON_ERROR)
             message.ShowModal()
             message.Destroy()

@@ -33,9 +33,9 @@ class OSX_target(toolchain_gcc):
 
     def getBuilderCFLAGS(self):
         return toolchain_gcc.getBuilderCFLAGS(self) + \
-            ["-fPIC", "-Wno-implicit-function-declaration",
-             "-Wno-int-conversion", "-Wno-parentheses-equality",
-             "-Wno-varargs", "-arch", platform.machine()]
+            ["-fPIC", "-Wno-deprecated-declarations",
+             "-Wno-implicit-function-declaration", "-Wno-int-conversion",
+             "-Wno-parentheses-equality", "-Wno-varargs", "-arch", platform.machine()]
 
     def getBuilderLDFLAGS(self):
         return toolchain_gcc.getBuilderLDFLAGS(self) + ["-shared", "-arch", platform.machine()]

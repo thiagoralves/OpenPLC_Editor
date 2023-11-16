@@ -114,3 +114,10 @@ class CustomStyledTextCtrl(wx.stc.StyledTextCtrl):
     def AppendText(self, text):
         self.GotoPos(self.GetLength())
         self.AddText(text)
+
+    if wx.VERSION < (4, 1, 0):
+        def StartStyling(self, pos, mask=0xff):
+            wx.stc.StyledTextCtrl.StartStyling(self, pos, mask)
+    else:
+        def StartStyling(self, pos, *ignored):
+            wx.stc.StyledTextCtrl.StartStyling(self, pos)

@@ -223,6 +223,7 @@ class HMIProtocol(WebSocketServerProtocol):
         _hmi_session = HMISession(self)
         registered = svghmi_session_manager.register(_hmi_session)
         self._hmi_session = _hmi_session
+        self._hmi_session.reset()
 
     def onClose(self, wasClean, code, reason):
         global svghmi_session_manager
@@ -306,15 +307,15 @@ class NoCacheFile(File):
 def waitpid_timeout(proc, helpstr="", timeout = 3):
     if proc is None:
         return
-    def waitpid_timeout_loop(pid=proc.pid, timeout = timeout):
+    def waitpid_timeout_loop(proc = proc, timeout = timeout):
         try:
-            while os.waitpid(pid,os.WNOHANG) == (0,0):
+            while proc.poll() is None:
                 time.sleep(1)
                 timeout = timeout - 1
                 if not timeout:
                     GetPLCObjectSingleton().LogMessage(
                         LogLevelsDict["WARNING"], 
-                        "Timeout waiting for {} PID: {}".format(helpstr, str(pid)))
+                        "Timeout waiting for {} PID: {}".format(helpstr, str(proc.pid)))
                     break
         except OSError:
             # workaround exception "OSError: [Errno 10] No child processes"

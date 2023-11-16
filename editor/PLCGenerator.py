@@ -277,21 +277,27 @@ class ProgramGenerator(object):
                   ("\n", ())]
         var_number = 0
 
-        varlists = [(varlist, varlist.getvariable()[:]) for varlist in configuration.getglobalVars()]
+        varlists = configuration.getglobalVars()[:]
 
         extra_variables = self.Controler.GetConfigurationExtraVariables()
-        extra_global_vars = None
-        if len(extra_variables) > 0 and len(varlists) == 0:
-            extra_global_vars = PLCOpenParser.CreateElement("globalVars", "interface")
-            configuration.setglobalVars([extra_global_vars])
-            varlists = [(extra_global_vars, [])]
+        extra_CTN_globals = []
 
-        for variable in extra_variables:
-            varlists[-1][0].appendvariable(variable)
-            varlists[-1][1].append(variable)
+        for item in extra_variables:
+            if item.getLocalTag() == "globalVars":
+                varlists.append(item)
+            else:
+                extra_CTN_globals.append(item)
+
+        if len(extra_CTN_globals) > 0:
+            extra_varlist = PLCOpenParser.CreateElement("globalVars", "interface")
+
+            for variable in extra_CTN_globals:
+                extra_varlist.appendvariable(variable)
+
+            varlists.append(extra_varlist)
 
         # Generate any global variable in configuration
-        for varlist, varlist_variables in varlists:
+        for varlist in varlists:
             variable_type = errorVarTypes.get("VAR_GLOBAL", "var_local")
             # Generate variable block with modifier
             config += [("  VAR_GLOBAL", ())]
@@ -303,7 +309,7 @@ class ProgramGenerator(object):
                 config += [(" NON_RETAIN", (tagname, variable_type, (var_number, var_number + len(varlist.getvariable())), "non_retain"))]
             config += [("\n", ())]
             # Generate any variable of this block
-            for var in varlist_variables:
+            for var in varlist.getvariable():
                 vartype_content = var.gettype().getcontent()
                 if vartype_content.getLocalTag() == "derived":
                     var_type = vartype_content.getname()
@@ -330,12 +336,6 @@ class ProgramGenerator(object):
                 config += [(";\n", ())]
                 var_number += 1
             config += [("  END_VAR\n", ())]
-
-        if extra_global_vars is not None:
-            configuration.remove(extra_global_vars)
-        else:
-            for variable in extra_variables:
-                varlists[-1][0].remove(variable)
 
         # Generate any resource in the configuration
         for resource in configuration.getresource():
@@ -458,7 +458,7 @@ class ProgramGenerator(object):
         return resrce
 
     # Generate the entire program for current project
-    def GenerateProgram(self, log):
+    def GenerateProgram(self, log, noconfig=False):
         log("Collecting data types")
         # Find all data types defined
         for datatype in self.Project.getdataTypes():
@@ -480,6 +480,8 @@ class ProgramGenerator(object):
         for pou_name in list(self.PouComputed.keys()):
             log("Generate POU %s"%pou_name)
             self.GeneratePouProgram(pou_name)
+        if noconfig:
+            return
         # Generate every configurations defined
         log("Generate Config(s)")
         for config in self.Project.getconfigurations():
@@ -1765,7 +1767,7 @@ class PouProgramGenerator(object):
         return program
 
 
-def GenerateCurrentProgram(controler, project, errors, warnings):
+def GenerateCurrentProgram(controler, project, errors, warnings, **kwargs):
     generator = ProgramGenerator(controler, project, errors, warnings)
     if hasattr(controler, "logger"):
         def log(txt):
@@ -1774,5 +1776,5 @@ def GenerateCurrentProgram(controler, project, errors, warnings):
         def log(txt):
             pass
 
-    generator.GenerateProgram(log)
+    generator.GenerateProgram(log,**kwargs)
     return generator.GetGeneratedProgram()

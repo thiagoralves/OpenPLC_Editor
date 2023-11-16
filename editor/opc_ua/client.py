@@ -22,6 +22,9 @@ Open62541IncludePaths = [os.path.join(Open62541Path, *dirs) for dirs in [
     ("include",),
     ("arch",)]]
 
+# Tests need to use other default hosts
+OPCUA_DEFAULT_HOST = os.environ.get("OPCUA_DEFAULT_HOST", "127.0.0.1")
+
 class OPCUAClientEditor(ConfTreeNodeEditor):
     CONFNODEEDITOR_TABS = [
         (_("OPC-UA Client"), "CreateOPCUAClient_UI")]
@@ -79,7 +82,7 @@ class OPCUAClient(object):
               </xsd:complexType>
             </xsd:element>
           </xsd:sequence>
-          <xsd:attribute name="Server_URI" type="xsd:string" use="optional" default="opc.tcp://localhost:4840"/>
+          <xsd:attribute name="Server_URI" type="xsd:string" use="optional" default="opc.tcp://"""+OPCUA_DEFAULT_HOST+""":4840"/>
         </xsd:complexType>
       </xsd:element>
     </xsd:schema>
@@ -88,7 +91,7 @@ class OPCUAClient(object):
     EditorType = OPCUAClientEditor
 
     def __init__(self):
-        self.modeldata = OPCUAClientModel(self.Log)
+        self.modeldata = OPCUAClientModel(self.Log, self.CTNMarkModified)
 
         filepath = self.GetFileName()
         if os.path.isfile(filepath):
@@ -99,9 +102,15 @@ class OPCUAClient(object):
 
     def GetModelData(self):
         return self.modeldata
-    
+
     def GetConfig(self):
-        cfg = lambda path: self.GetParamsAttributes("OPCUAClient."+path)["value"]
+        def cfg(path): 
+            try:
+                attr=self.GetParamsAttributes("OPCUAClient."+path)
+            except ValueError:
+                return None
+            return attr["value"]
+
         AuthType = cfg("AuthType")
         res = dict(URI=cfg("Server_URI"), AuthType=AuthType)
 
@@ -133,7 +142,7 @@ class OPCUAClient(object):
         c_code = '#include "beremiz.h"\n'
         c_code += self.modeldata.GenerateC(c_path, locstr, self.GetConfig())
 
-        with open(c_path, 'wb') as c_file:
+        with open(c_path, 'w') as c_file:
             c_file.write(c_code)
 
         LDFLAGS = ['"' + os.path.join(Open62541LibraryPath, "libopen62541.a") + '"', '-lcrypto']

@@ -16,9 +16,44 @@
   </contentHeader>
   <types>
     <dataTypes>
+      <dataType name="HMI_SINT">
+        <baseType>
+          <SINT/>
+        </baseType>
+      </dataType>
       <dataType name="HMI_INT">
         <baseType>
           <INT/>
+        </baseType>
+      </dataType>
+      <dataType name="HMI_DINT">
+        <baseType>
+          <DINT/>
+        </baseType>
+      </dataType>
+      <dataType name="HMI_LINT">
+        <baseType>
+          <LINT/>
+        </baseType>
+      </dataType>
+      <dataType name="HMI_USINT">
+        <baseType>
+          <USINT/>
+        </baseType>
+      </dataType>
+      <dataType name="HMI_UINT">
+        <baseType>
+          <UINT/>
+        </baseType>
+      </dataType>
+      <dataType name="HMI_UDINT">
+        <baseType>
+          <UDINT/>
+        </baseType>
+      </dataType>
+      <dataType name="HMI_ULINT">
+        <baseType>
+          <ULINT/>
         </baseType>
       </dataType>
       <dataType name="HMI_REAL">

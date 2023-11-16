@@ -14,10 +14,10 @@
     #endif
 #endif
 
-unsigned long __tick = 0;
+uint32_t __tick = 0;
 
 unsigned long scan_cycle;
-unsigned long timer_ms = 0;
+unsigned long timer_us = 0;
 
 #include "arduino_libs.h"
 
@@ -44,29 +44,8 @@ int availableMemory(char *msg)
 
 void setupCycleDelay(unsigned long long cycle_time)
 {
-    scan_cycle = (uint32_t)(cycle_time/1000000);
-    timer_ms = millis() + scan_cycle;
-}
-
-void cycleDelay()
-{
-    //just wait until it is time to start a new cycle
-    #ifdef MODBUS_ENABLED
-    syncModbusBuffers();
-    #endif
-    while(timer_ms > millis())
-    {
-        #ifdef MODBUS_ENABLED
-        //Only run Modbus task again if we have at least 100ms gap until the next cycle
-        if (timer_ms - millis() >= 100)
-        {
-            syncModbusBuffers();
-        }
-        #endif
-	}
-    //noInterrupts();
-    timer_ms += scan_cycle; //set timer for the next scan cycle
-    //interrupts();
+    scan_cycle = (uint32_t)(cycle_time/1000);
+    timer_us = micros() + scan_cycle;
 }
 
 void setup() 
@@ -105,9 +84,9 @@ void setup()
                     if (pinMask_AOUT[i] == MBSERIAL_TXPIN)
                         pinMask_AOUT[i] = 255;
                 }
-                mbconfig_serial_iface(&MBSERIAL_IFACE, MBSERIAL_BAUD, MBSERIAL_TXPIN);
+                mbconfig_serial_iface((HardwareSerial *)&MBSERIAL_IFACE, MBSERIAL_BAUD, MBSERIAL_TXPIN);
             #else
-                mbconfig_serial_iface(&MBSERIAL_IFACE, MBSERIAL_BAUD, -1);
+                mbconfig_serial_iface((HardwareSerial *)&MBSERIAL_IFACE, MBSERIAL_BAUD, -1);;
             #endif
 	
 	        //Set the Slave ID
@@ -176,7 +155,8 @@ void mapEmptyBuffers()
         }
     }
 }
-void syncModbusBuffers()
+
+void modbusTask()
 {
     //Sync OpenPLC Buffers with Modbus Buffers	
     for (int i = 0; i < MAX_DIGITAL_OUTPUT; i++)
@@ -229,18 +209,41 @@ void syncModbusBuffers()
 }
 #endif
 
-void loop() 
+void plcCycleTask()
 {
     updateInputBuffers();
-	
-	#ifdef MODBUS_ENABLED
-	syncModbusBuffers();
-	#endif
-	
-    config_run__(__tick++);
+    config_run__(__tick++); //PLC Logic
     updateOutputBuffers();
     updateTime();
+}
 
-    //sleep until next scan cycle
-    cycleDelay();
+void scheduler()
+{
+    // Run tasks round robin - higher priority first
+
+    plcCycleTask();
+
+    #ifdef MODBUS_ENABLED
+        modbusTask();
+    #endif
+}
+
+void loop() 
+{
+    scheduler();
+
+    //set timer for the next scan cycle
+    timer_us += scan_cycle; 
+
+    //sleep until next scan cycle (run lower priority tasks if time permits)
+    while(timer_us > micros())
+    {
+        #ifdef MODBUS_ENABLED
+            //Only run Modbus task again if we have at least 10ms gap until the next cycle
+            if (timer_us - micros() >= 10000)
+            {
+                modbusTask();
+            }
+        #endif
+	}
 }

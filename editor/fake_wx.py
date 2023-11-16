@@ -11,7 +11,8 @@ def get_translation(txt):
 
 class FakeObject:
     def __init__(self, *args, **kwargs):
-        self.__classname__ = kwargs["__classname__"]
+        if "__classname__" in kwargs:
+            self.__classname__ = kwargs["__classname__"]
 
     def __getattr__(self,name):
         if name.startswith('__'):
@@ -22,14 +23,25 @@ class FakeObject:
         return FakeObject(__classname__=self.__classname__+"()")
 
     def __getitem__(self, key):
-        raise IndexError(key)
+        return FakeObject(__classname__=self.__classname__+"["+repr(key)+"]")
 
     def __str__(self):
         return self.__classname__
 
     def __or__(self, other):
         return FakeObject(__classname__=self.__classname__+"|"+other.__classname__)
+    
+    def __hash__(self) -> int:
+        return id(self)
 
+    def __cmp__(self,other):
+        return True
+    __lt__=__cmp__
+    __le__=__cmp__
+    __eq__=__cmp__
+    __ne__=__cmp__
+    __gt__=__cmp__
+    __ge__=__cmp__
 
 class FakeClass:
     def __init__(self, *args, **kwargs):
@@ -86,6 +98,7 @@ for name, classes in [
     ('wx.dataview',['PyDataViewIndexListModel']),
     ('matplotlib.backends.backend_agg',[]),
     ('wx.aui',[]),
+    ('wx.html',['HtmlWindow']),
     ('mpl_toolkits.mplot3d',[])]:
     modpath = None
     parentmod = None

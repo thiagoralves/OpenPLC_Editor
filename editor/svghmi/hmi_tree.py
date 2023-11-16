@@ -17,7 +17,15 @@ from lxml import etree
 HMI_TYPES_DESC = {
     "HMI_NODE":{},
     "HMI_STRING":{},
+    "HMI_SINT":{},
     "HMI_INT":{},
+    "HMI_DINT":{},
+    "HMI_LINT":{},
+    "HMI_DINT":{},
+    "HMI_USINT":{},
+    "HMI_UINT":{},
+    "HMI_UDINT":{},
+    "HMI_ULINT":{},
     "HMI_BOOL":{},
     "HMI_REAL":{}
 }
@@ -150,10 +158,10 @@ class HMITreeNode(object):
         s = hashlib.new('md5')
         self._hash(s)
         # limit size to HMI_HASH_SIZE as in svghmi.c
-        return list(map(ord,s.digest()))[:8]
+        return s.digest()[:8]
 
     def _hash(self, s):
-        s.update(str((self.name,self.nodetype)))
+        s.update(self.name.encode() + self.nodetype.encode())
         if hasattr(self, "children"):
             for c in self.children:
                 c._hash(s)

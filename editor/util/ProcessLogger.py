@@ -46,6 +46,7 @@ class outputThread(Thread):
         self.callback = callback
         self.endcallback = endcallback
         self.fd = fd
+        self.daemon = True
 
     def run(self):
         outchunk = None
@@ -77,7 +78,7 @@ class ProcessLogger(object):
                  no_stdout=False, no_stderr=False, no_gui=True,
                  timeout=None, outlimit=None, errlimit=None,
                  endlog=None, keyword=None, kill_it=False, cwd=None,
-                 encoding=None, output_encoding=None):
+                 encoding=None, output_encoding=None, env=None):
         self.logger = logger
         if not isinstance(Command, list):
             self.Command_str = Command
@@ -90,7 +91,7 @@ class ProcessLogger(object):
                 else:
                     self.Command.append(word)
         else:
-            self.Command = Command
+            self.Command = [x if type(x)==str else x.decode() for x in Command]
             self.Command_str = subprocess.list2cmdline(self.Command)
 
         fsencoding = sys.getfilesystemencoding()
@@ -121,7 +122,8 @@ class ProcessLogger(object):
             "cwd":    os.getcwd() if cwd is None else cwd,
             "stdin":  subprocess.PIPE,
             "stdout": subprocess.PIPE,
-            "stderr": subprocess.PIPE
+            "stderr": subprocess.PIPE,
+            "env":    env
         }
 
         if no_gui and os.name in ("nt", "ce"):
@@ -226,11 +228,10 @@ class ProcessLogger(object):
 
     def endlog(self):
         if self.endlock.acquire(False):
-            if hasattr(self, 'outt'): 
-                if not self.outt.finished and self.kill_it:
-                    self.kill()
-                self.finishsem.release()
-                self.spinwakeup()
+            if not self.outt.finished and self.kill_it:
+                self.kill()
+            self.finishsem.release()
+            self.spinwakeup()
 
     def spinwakeup(self):
         with self.spinwakeuplock:

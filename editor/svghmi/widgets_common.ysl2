@@ -134,7 +134,7 @@ template "svg:*", mode="hmi_widgets" {
     |   "«@id»": new «$widget/@type»Widget ("«@id»",«$freq»,[«$args»],[«$variables»],«$enable_expr»,{
     if "$widget/@enable_expr" {
 
-    |       assignments: [],
+    |       enable_assignments: [],
     |       compute_enable: function(value, oldval, varnum) {
     |         let result = false;
     |         do {
@@ -142,8 +142,8 @@ template "svg:*", mode="hmi_widgets" {
             const "varid","generate-id()";
             const "varnum","position()-1";
             if "@assign" foreach "$widget/path[@assign]" if "$varid = generate-id()" {
-    |           if(varnum == «$varnum») this.assignments[«position()-1»] = value;
-    |           let «@assign» = this.assignments[«position()-1»];
+    |           if(varnum == «$varnum») this.enable_assignments[«position()-1»] = value;
+    |           let «@assign» = this.enable_assignments[«position()-1»];
     |           if(«@assign» == undefined) break;
             }
         }
@@ -464,11 +464,12 @@ emit "preamble:widget-base-class" {
                 }
             }
         }
-        
+
         undeafen(index){
             this.deafen[index] = undefined;
             let [new_val, old_val] = this.incoming[index];
             this.incoming[index] = undefined;
+            this.lastdispatch[index] = Date.now();
             this.do_dispatch(new_val, old_val, index);
         }
 
@@ -600,12 +601,14 @@ template "widget", mode="widget_class" {
 }
 
 const "included_ids","$parsed_widgets/widget[not(@type = $excluded_types) and not(@id = $discardable_elements/@id)]/@id";
+const "page_ids","$parsed_widgets/widget[@type = 'Page']/@id";
 const "hmi_widgets","$hmi_elements[@id = $included_ids]";
+const "page_widgets","$hmi_elements[@id = $page_ids]";
 const "result_widgets","$result_svg_ns//*[@id = $hmi_widgets/@id]";
 
 emit "declarations:hmi-elements" {
     | var hmi_widgets = {
-    apply "$hmi_widgets", mode="hmi_widgets";
+    apply "$hmi_widgets | $page_widgets", mode="hmi_widgets";
     | }
     |
 }

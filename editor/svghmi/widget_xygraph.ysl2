@@ -58,20 +58,21 @@ widget_class("XYGraph") {
             let y_min = Infinity, y_max = -Infinity;
 
             // Compute visible Y range by merging fixed curves Y ranges
-            for(let minmax of this.minmaxes){
-               if(minmax){
-                   let [min,max] = minmax;
-                   if(min < y_min)
-                       y_min = min;
-                   if(max > y_max)
-                       y_max = max;
-               }
+            for(let varopts of this.variables_options){
+                let minmax = varopts.minmax 
+                if(minmax){
+                    let [min,max] = minmax;
+                    if(min < y_min)
+                        y_min = min;
+                    if(max > y_max)
+                        y_max = max;
+                }
             }
 
             if(y_min !== Infinity && y_max !== -Infinity){
-               this.fixed_y_range = true;
+                this.fixed_y_range = true;
             } else {
-               this.fixed_y_range = false;
+                this.fixed_y_range = false;
             }
 
             this.ymin = y_min;

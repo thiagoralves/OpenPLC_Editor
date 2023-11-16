@@ -137,6 +137,10 @@ def "func:detachable_elements" {
 const "_detachable_elements", "func:detachable_elements($hmi_pages | $keypads)";
 const "detachable_elements", "$_detachable_elements[not(ancestor::*/@id = $_detachable_elements/@id)]";
 
+emit "declarations:page-class" {
+    | class PageWidget extends Widget{}
+}
+
 emit "declarations:detachable-elements" {
     |
     | var detachable_elements = {
@@ -165,8 +169,13 @@ template "svg:*", mode="page_desc" {
 
     const "all_page_widgets","$hmi_widgets[@id = $page_all_elements/@id and @id != $page/@id]";
     const "page_managed_widgets","$all_page_widgets[not(@id=$in_forEach_widget_ids)]";
+
+    const "page_root_path", "$desc/path[not(@assign)]";
+    if "count($page_root_path)>1"
+        error > Page id="«$page/@id»" : only one root path can be declared
+
     const "page_relative_widgets",
-        "$page_managed_widgets[func:is_descendant_path(func:widget(@id)/path/@value, $desc/path/@value)]";
+        "$page_managed_widgets[func:is_descendant_path(func:widget(@id)/path/@value, $page_root_path/@value)]";
 
     // Take closest ancestor in detachable_elements
     // since nested detachable elements are filtered out
@@ -178,19 +187,19 @@ template "svg:*", mode="page_desc" {
            ancestor-or-self::*[@id = $detachable_elements/@id]""";
 
     |   "«$pagename»": {
-    //|     widget: hmi_widgets["«@id»"],
     |     bbox: [«$p/@x», «$p/@y», «$p/@w», «$p/@h»],
-    if "$desc/path/@value" {
-        if "count($desc/path/@index)=0"
-            warning > Page id="«$page/@id»" : No match for path "«$desc/path/@value»" in HMI tree
-    |     page_index: «$desc/path/@index»,
-    |     page_class: "«$indexed_hmitree/*[@hmipath = $desc/path/@value]/@class»",
+    if "count($page_root_path)=1"{
+        if "count($page_root_path/@index)=0"
+            warning > Page id="«$page/@id»" : No match for path "«$page_root_path/@value»" in HMI tree
+    |     page_index: «$page_root_path/@index»,
+    |     page_class: "«$indexed_hmitree/*[@hmipath = $page_root_path/@value]/@class»",
     }
     |     widgets: [
+    |         [hmi_widgets["«$page/@id»"], []],
     foreach "$page_managed_widgets" {
         const "widget_paths_relativeness" 
             foreach "func:widget(@id)/path" {
-                value "func:is_descendant_path(@value, $desc/path/@value)";
+                value "func:is_descendant_path(@value, $page_root_path/@value)";
                 if "position()!=last()" > ,
             }
     |         [hmi_widgets["«@id»"], [«$widget_paths_relativeness»]]`if "position()!=last()" > ,`

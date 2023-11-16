@@ -117,7 +117,8 @@ def process_pipeline(session, processors, **kwargs):
         click.echo("Press Ctrl+C to quit")
         try:
             while True:
-                time.sleep(1)
+                session.controller.UpdateMethodsFromPLCStatus()
+                time.sleep(0.5)
         except KeyboardInterrupt:
             pass
 

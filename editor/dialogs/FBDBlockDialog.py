@@ -72,7 +72,7 @@ class FBDBlockDialog(BlockPreviewDialog):
 
         # Create Library panel and add it to static box
         self.LibraryPanel = LibraryPanel(self)
-        self.LibraryPanel.SetInitialSize(wx.Size(-1, 400))
+        self.LibraryPanel.SetInitialSize(wx.Size(300, 400))
 
         # Set function to call when selection in Library panel changed
         setattr(self.LibraryPanel, "_OnTreeItemSelected",

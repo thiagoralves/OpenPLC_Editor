@@ -243,7 +243,7 @@ del __ext_name__
         # write generated content to python file
         runtimefile_path = os.path.join(buildpath,
                                         "runtime_%s.py" % location_str)
-        runtimefile = open(runtimefile_path, 'w')
+        runtimefile = open(runtimefile_path, 'wb')
         runtimefile.write(PyFileContent.encode('utf-8'))
         runtimefile.close()
 

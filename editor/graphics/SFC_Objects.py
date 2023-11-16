@@ -1463,7 +1463,7 @@ class SFC_Divergence(Graphic_Element):
         dc.SetUserScale(1, 1)
         dc.SetPen(MiterPen(HIGHLIGHTCOLOR))
         dc.SetBrush(wx.Brush(HIGHLIGHTCOLOR))
-        dc.SetLogicalFunction(wx.AND)
+        #dc.SetLogicalFunction(wx.AND)
         # Draw two rectangles for representing the contact
         posx = self.Pos.x
         width = self.Size[0]
@@ -1474,7 +1474,7 @@ class SFC_Divergence(Graphic_Element):
                          int(round((self.Pos.y - 1) * scaley)) - 2,
                          int(round((width + 3) * scalex)) + 5,
                          int(round((self.Size.height + 3) * scaley)) + 5)
-        dc.SetLogicalFunction(wx.COPY)
+        #dc.SetLogicalFunction(wx.COPY)
         dc.SetUserScale(scalex, scaley)
 
     # Draws divergence
@@ -1733,7 +1733,7 @@ class SFC_Jump(Graphic_Element):
         dc.SetUserScale(1, 1)
         dc.SetPen(MiterPen(HIGHLIGHTCOLOR))
         dc.SetBrush(wx.Brush(HIGHLIGHTCOLOR))
-        dc.SetLogicalFunction(wx.AND)
+        #dc.SetLogicalFunction(wx.AND)
         points = [wx.Point(int(round((self.Pos.x - 2) * scalex)) - 3,
                            int(round((self.Pos.y - 2) * scaley)) - 2),
                   wx.Point(int(round((self.Pos.x + self.Size[0] + 2) * scalex)) + 4,
@@ -1741,7 +1741,7 @@ class SFC_Jump(Graphic_Element):
                   wx.Point(int(round((self.Pos.x + self.Size[0] / 2) * scalex)),
                            int(round((self.Pos.y + self.Size[1] + 3) * scaley)) + 4)]
         dc.DrawPolygon(points)
-        dc.SetLogicalFunction(wx.COPY)
+        #dc.SetLogicalFunction(wx.COPY)
         dc.SetUserScale(scalex, scaley)
 
     # Draws divergence

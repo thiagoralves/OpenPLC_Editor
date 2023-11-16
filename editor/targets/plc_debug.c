@@ -270,7 +270,7 @@ void __publish_debug(void)
                 default:
                     break;
                 }
-                force_list_apply_cursor++;                                                      \
+                force_list_apply_cursor++;
             }
 
             /* Reset buffer cursor */

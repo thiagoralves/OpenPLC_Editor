@@ -104,7 +104,7 @@ class BeremizIDELauncher(object):
 
     def CreateApplication(self):
 
-        BeremizAppType = wx.App if wx.VERSION >= (3, 0, 0) else wx.PySimpleApp
+        BeremizAppType = wx.App
 
         class BeremizApp(BeremizAppType):
             def OnInit(_self):  # pylint: disable=no-self-argument
@@ -113,8 +113,6 @@ class BeremizIDELauncher(object):
 
         self.app = BeremizApp(redirect=self.debug)
         self.app.SetAppName('beremiz')
-        if wx.VERSION < (3, 0, 0):
-            wx.InitAllImageHandlers()
 
     def ShowSplashScreen(self):
         class Splash(AdvancedSplash):

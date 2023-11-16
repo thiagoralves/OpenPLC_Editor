@@ -182,7 +182,7 @@ class SponsorsDialog(wx.Dialog):
         self.m_staticText2.Wrap( -1 )
         self.m_staticText2.SetFont( wx.Font( 20, 74, 90, 92, False, "Arial Black" ) )
         bSizer3.Add( self.m_staticText2, 0, wx.ALL|wx.EXPAND, 5 )
-        self.m_staticText3 = wx.StaticText( self, wx.ID_ANY, u"You can enjoy a free and open source IEC 61131-3 programming environment thanks to the help and support of the following GOLD sponsors:", wx.DefaultPosition, wx.Size( 450,40 ), 0 )
+        self.m_staticText3 = wx.StaticText( self, wx.ID_ANY, u"You can enjoy a free and open source IEC 61131-3 programming environment thanks to the help and support of the following GOLD sponsors:", wx.DefaultPosition, wx.Size( 550,60 ), 0 )
         self.m_staticText3.Wrap( -1 )
         self.m_staticText3.SetFont( wx.Font( 10, 74, 90, 90, False, "Arial" ) )
         bSizer3.Add( self.m_staticText3, 0, wx.LEFT|wx.RIGHT, 20 )

@@ -843,7 +843,7 @@ class VariablePanel(wx.Panel):
             item = base_menu.Append(wx.ID_ANY, helpString='', kind=wx.ITEM_NORMAL, item=base_type)
             self.Bind(wx.EVT_MENU, self.GetVariableTypeFunction(base_type), item)
 
-        type_menu.AppendMenu(wx.ID_ANY, _("Base Types"), base_menu)
+        type_menu.Append(wx.ID_ANY, _("Base Types"), base_menu)
 
     def BuildUserTypesMenu(self, type_menu):
         # build a submenu containing user-defined types
@@ -853,7 +853,7 @@ class VariablePanel(wx.Panel):
             item = datatype_menu.Append(wx.ID_ANY, helpString='', kind=wx.ITEM_NORMAL, item=datatype)
             self.Bind(wx.EVT_MENU, self.GetVariableTypeFunction(datatype), item)
 
-        type_menu.AppendMenu(wx.ID_ANY, _("User Data Types"), datatype_menu)
+        type_menu.Append(wx.ID_ANY, _("User Data Types"), datatype_menu)
 
     def BuildLibsTypesMenu(self, type_menu):
         for category in self.Controler.GetConfNodeDataTypes():
@@ -864,7 +864,7 @@ class VariablePanel(wx.Panel):
                     item = confnode_datatype_menu.Append(wx.ID_ANY, helpString='', kind=wx.ITEM_NORMAL, item=datatype)
                     self.Bind(wx.EVT_MENU, self.GetVariableTypeFunction(datatype), item)
 
-                type_menu.AppendMenu(wx.ID_ANY, category["name"], confnode_datatype_menu)
+                type_menu.Append(wx.ID_ANY, category["name"], confnode_datatype_menu)
 
     def BuildProjectTypesMenu(self, type_menu, classtype):
         # build a submenu containing function block types
@@ -878,7 +878,7 @@ class VariablePanel(wx.Panel):
                 item = functionblock_menu.Append(wx.ID_ANY, helpString='', kind=wx.ITEM_NORMAL, item=functionblock_type)
                 self.Bind(wx.EVT_MENU, self.GetVariableTypeFunction(functionblock_type), item)
 
-            type_menu.AppendMenu(wx.ID_ANY, _("Function Block Types"), functionblock_menu)
+            type_menu.Append(wx.ID_ANY, _("Function Block Types"), functionblock_menu)
 
     def BuildArrayTypesMenu(self, type_menu):
         item = type_menu.Append(wx.ID_ANY, helpString='', kind=wx.ITEM_NORMAL, item=_("Array"))

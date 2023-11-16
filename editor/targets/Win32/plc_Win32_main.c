@@ -35,12 +35,6 @@ void PLC_GetTime(IEC_TIME *CURRENT_TIME)
 	(*CURRENT_TIME).tv_nsec = timetmp.millitm * 1000000;
 }
 
-void PLC_timer_notify()
-{
-    PLC_GetTime(&__CURRENT_TIME);
-    __run();
-}
-
 HANDLE PLC_timer = NULL;
 void PLC_SetTimer(unsigned long long next, unsigned long long period)
 {
@@ -65,9 +59,12 @@ void PlcLoop()
 {
     PLC_shutdown = 0;
     while(!PLC_shutdown) {
-        if (WaitForSingleObject(PLC_timer, INFINITE) != WAIT_OBJECT_0)
+        if (WaitForSingleObject(PLC_timer, INFINITE) != WAIT_OBJECT_0){
             PLC_shutdown = 1;
-        PLC_timer_notify();
+            break;
+        }
+        PLC_GetTime(&__CURRENT_TIME);
+        __run();
     }
 }
 
@@ -82,7 +79,6 @@ int startPLC(int argc,char **argv)
 {
 	unsigned long thread_id = 0;
     BOOL tmp;
-    setlocale(LC_NUMERIC, "C");
 
     debug_sem = CreateSemaphore(
                             NULL,           // default security attributes
@@ -173,9 +169,16 @@ void LeaveDebugSection(void)
 
 int stopPLC()
 {
-    CloseHandle(PLC_timer);
+ 	
+    PLC_shutdown = 1;
+    // force last wakeup of PLC thread
+    SetWaitableTimer(PLC_timer, 0, 0, NULL, NULL, 0);
+    // wait end of PLC thread
     WaitForSingleObject(PLC_thread, INFINITE);
+
     __cleanup();
+
+    CloseHandle(PLC_timer);
     CloseHandle(debug_wait_sem);
     CloseHandle(debug_sem);
     CloseHandle(python_wait_sem);

@@ -87,10 +87,12 @@ def GetAboutDialogInfo(info):
                          "the IEC 61131-3 international standard.\n\nBased on PLCOpen Editor and Beremiz by Andrey Skvortsov, Sergey Surkov, Edouard Tisserant and Laurent Bessard.")
     #info.Developers = "Thiago Alves <thiagoralves@gmail.com>"
     info.Developers = (
-        "Thiago Alves <thiagoralves@gmail.com>",
+        "Thiago Alves <thiago.alves@autonomylogic.com>",
+        "Edouard Tisserant <contact@beremiz.fr>",
+        "Mario de Sousa <msousa@fe.up.pt>",
+        "GP Orcullo <kinsamanka@gmail.com>",
         "Andrey Skvortsov <andrej.skvortzov@gmail.com>",
         "Sergey Surkov <surkov.sv@summatechnology.ru>",
-        "Edouard Tisserant <edouard.tisserant@gmail.com>",
         "Laurent Bessard <laurent.bessard@gmail.com>")
     info.License = (
         '\n This program is free software; you can redistribute it and/or\n'
@@ -219,6 +221,6 @@ def GetAboutDialogInfo(info):
 
 app_version = "3.0 beta"
 #rev = GetAppRevision()
-rev = "Release: 2023-08-07 dev-python3"
+rev = "Release: 2023-11-15 dev-python3"
 if rev is not None:
     app_version = app_version + "\n" + rev.rstrip()

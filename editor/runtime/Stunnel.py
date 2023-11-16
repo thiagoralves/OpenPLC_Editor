@@ -1,7 +1,7 @@
 
 
 import os
-from binascii import b2a_hqx
+from binascii import b2a_base64
 try:
     from runtime.spawn_subprocess import call
 except ImportError:
@@ -25,9 +25,10 @@ def restartStunnel():
 
 def PSKgen(ID, PSKpath):
 
-    # b2a_hqx output len is 4/3 input len
+    # secret string length is 256
+    # b2a_base64 output len is 4/3 input len
     secret = os.urandom(192)  # int(256/1.3333)
-    secretstring = b2a_hqx(secret)
+    secretstring = b2a_base64(secret)
 
     PSKstring = ID+":"+secretstring
     with open(PSKpath, 'w') as f:

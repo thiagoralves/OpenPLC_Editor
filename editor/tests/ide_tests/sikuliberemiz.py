@@ -4,16 +4,26 @@ import os
 import sys
 import subprocess
 import traceback
+import signal
+import re
 from threading import Thread, Event, Lock
 from time import time as timesec
+from xml.sax.saxutils import escape as escape_xml
 
 import sikuli
 
 beremiz_path = os.environ["BEREMIZPATH"]
 python_bin = os.environ.get("BEREMIZPYTHONPATH", "/usr/bin/python")
-
 opj = os.path.join
 
+tessdata_path = os.environ["TESSDATAPATH"]
+
+ansi_escape = re.compile(r'(?:\x1B[@-_]|[\x80-\x9F])[0-?]*[ -/]*[@-~]')
+def escape_ansi(line):
+    return ansi_escape.sub('', line)
+
+def escape(txt):
+    return escape_xml(escape_ansi(txt))
 
 class KBDShortcut:
     """Send shortut to app by calling corresponding methods.
@@ -58,6 +68,7 @@ class IDEIdleObserver:
             app (class BeremizApp)
         """
         self.r = sikuli.Region(self.sikuliapp.window())
+        self.targetOffset = self.r.getTopLeft()
 
         self.idechanged = False
         
@@ -108,7 +119,8 @@ class stdoutIdleObserver:
         self.pattern = None
         self.success_event = Event()
 
-        self.thread = Thread(target = self._waitStdoutProc).start()
+        if self.proc is not None:
+            self.thread = Thread(target = self._waitStdoutProc).start()
 
     def __del__(self):
         pass  # self.thread.join() ?
@@ -118,7 +130,6 @@ class stdoutIdleObserver:
             a = self.proc.stdout.readline()
             if len(a) == 0 or a is None: 
                 break
-            sys.stdout.write(a)
             self.ReportOutput(a)
             self.event.set()
             if self.pattern is not None and a.find(self.pattern) >= 0:
@@ -170,7 +181,6 @@ class stdoutIdleObserver:
         found = 0
         self.pattern = pattern
         end_time = timesec() + timeout
-        self.event.clear()
         while True:
             remain = end_time - timesec()
             if remain <= 0 :
@@ -188,7 +198,7 @@ class stdoutIdleObserver:
         return res
 
 class BeremizApp(IDEIdleObserver, stdoutIdleObserver):
-    def __init__(self, projectpath=None, exemple=None):
+    def __init__(self, projectpath=None, exemple=None, testproject=None):
         """
         Starts Beremiz IDE, waits for main window to appear, maximize it.
 
@@ -199,30 +209,40 @@ class BeremizApp(IDEIdleObserver, stdoutIdleObserver):
             Returns:
                 Sikuli App class instance
         """
+        self.ocropts = sikuli.OCR.globalOptions()
+        self.ocropts.dataPath(tessdata_path)
+        
+        # 0 use legacy Tesseract (not so good, but repeatable)
+        # 1 use RNN Tesseract (better but non-repeatable)
+        # 2 use both
+        self.ocropts.oem(0)
+        self.ocropts.psm(12)
+        self.ocropts.smallFont()
 
-        sikuli.OCR.Options().smallFont()
-
-        self.screenshotnum = 0
+        self.imgnum = 0
         self.starttime = timesec()
         self.screen = sikuli.Screen()
 
-        self.report = open("report.html", "w")
-        self.report.write("""<!doctype html>
-<html>
+        self.report = open("report.xhtml", "w")
+        self.report.write("""\
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8">
-    <meta name="color-scheme" content="light dark">
+    <meta charset="utf-8"/>
+    <meta name="color-scheme" content="light dark"/>
     <title>Test report</title>
   </head>
   <body>
 """)
 
-        command = [python_bin, opj(beremiz_path,"Beremiz.py"), "--log=/dev/stdout"]
+        command = ["setsid", python_bin, opj(beremiz_path,"Beremiz.py"), "--log=/dev/stdout"]
 
         if exemple is not None:
             command.append(opj(beremiz_path,"exemples",exemple))
         elif projectpath is not None:
             command.append(projectpath)
+        elif testproject is not None:
+            command.append(opj(beremiz_path,"tests","projects",testproject))
+
 
         # App class is broken in Sikuli 2.0.5: can't start process with arguments.
         # 
@@ -270,20 +290,74 @@ class BeremizApp(IDEIdleObserver, stdoutIdleObserver):
         stdoutIdleObserver.__init__(self)
 
         # stubs for common sikuli calls to allow adding hooks later
-        for name in ["click","doubleClick","type","rightClick","wait"]:
-            def makeMyMeth(n):
+        for name, takes_matches in [
+            ("click", True),
+            ("doubleClick", True),
+            ("type", False),
+            ("rightClick", True),
+            ("wait", False)]:
+            def makeMyMeth(n,m):
                 def myMeth(*args, **kwargs):
                     self.ReportScreenShot("Begin: " + n + "(" + repr(args) + "," + repr(kwargs) + ")")
+                    if m:
+                        args = map(self.handle_PFRML_arg, args)
+                        kwargs = dict(map(lambda k,v:(k,self.handle_PFRML_arg(v)), kwargs.items()))
                     try:
                         getattr(sikuli, n)(*args, **kwargs)
                     finally:
                         self.ReportScreenShot("end: " + n + "(" + repr(args) + "," + repr(kwargs) + ")")
                 return myMeth
-            setattr(self, name, makeMyMeth(name))
+            setattr(self, name, makeMyMeth(name,takes_matches))
+
+    def handle_PFRML_arg(self, arg):
+        if type(arg)==list:
+            return self.findBest(*arg)
+        if type(arg)==str and not arg.endswith(".png"):
+            return self.findBest(arg)
+        return arg
+
+    def findBest(self, *args):
+        #match = self.r.findBest(*args)
+        match = None 
+        matches = sikuli.OCR.readWords(self.r) + sikuli.OCR.readLines(self.r)
+        for m in matches:
+            mText = m.getText().encode('ascii', 'ignore')
+            for arg in args:
+                if arg in mText or arg in mText.translate(None, "\"`'|-. "):
+                    if match is None:
+                        match = m
+                    if mText == arg:
+                        match = m
+                        break
+        if match is None:
+            self.ReportText("Not found: " + repr(args) + " OCR content: ")
+            for m in matches:
+                self.ReportText(repr(m) + ": " + m.getText().encode('ascii', 'ignore'))
+            raise Exception("Not Found: " + repr(args))
+        
+        # translate match to screen ref
+        #match.setTargetOffset(self.targetOffset)
+        match.setTopLeft(match.getTopLeft().offset(self.targetOffset))
+
+        self.ReportTextImage("Found for " + repr(args) + ": " +
+            " ".join([repr(match), repr(match.getTarget()), repr(match.getTargetOffset())]),
+            self.screen.capture(match))
+        return match.getTarget()
+
+    def dragNdrop(self, src, dst):
+        self.ReportScreenShot("Drag: (" + repr(src) + ")")
+        sikuli.drag(self.handle_PFRML_arg(src))
+        sikuli.mouseMove(5,0)
+        sikuli.dropAt(self.handle_PFRML_arg(dst))
+        self.ReportScreenShot("Drop: (" + repr(dst) + ")")
 
     def close(self):
-        self.sikuliapp.close()
-        self.sikuliapp = None
+
+        self.ReportScreenShot("Close app")
+        os.kill(self.proc.pid, signal.SIGKILL)
+        #self.sikuliapp.close()
+        #self.sikuliapp = None
+
         self.report.write("""
   </body>
 </html>""")
@@ -296,21 +370,59 @@ class BeremizApp(IDEIdleObserver, stdoutIdleObserver):
         stdoutIdleObserver.__del__(self)
 
     def ReportScreenShot(self, msg):
-        elapsed = "%.3fs: "%(timesec() - self.starttime)
-        fname = "capture"+str(self.screenshotnum)+".png"
         cap = self.screen.capture(self.r)
-        cap.save(".", fname)
-        self.screenshotnum = self.screenshotnum + 1
-        self.report.write( "<p>" + elapsed + msg + "<br/><img src=\""+ fname + "\">" + "</p>")
+        self.ReportTextImage(msg, cap)
+
+    def ReportTextImage(self, msg, img):
+        elapsed = "%.3fs: "%(timesec() - self.starttime)
+        fname = "capture"+str(self.imgnum)+".png"
+        sys.stdout.write(elapsed + " [" + fname + "] " + msg + "\n")
+        img.save(".", fname)
+        self.imgnum = self.imgnum + 1
+        self.report.write( "<p>" + escape(elapsed + msg) + "<br/><img src=\""+ fname + "\"/>" + "</p>")
 
     def ReportText(self, text):
         elapsed = "%.3fs: "%(timesec() - self.starttime)
-        self.report.write("<p>" + elapsed + text + "</p>")
+        #res = u"<p><![CDATA[" + elapsed + text + "]]></p>"
+        sys.stdout.write(elapsed + text + "\n")
+        res = u"<p>" + escape(elapsed + text) + "</p>"
+        self.report.write(res)
 
     def ReportOutput(self, text):
         elapsed = "%.3fs: "%(timesec() - self.starttime)
-        self.report.write("<pre>" + elapsed + text + "</pre>")
+        sys.stdout.write(elapsed + text)
+        self.report.write("<pre>" + escape(elapsed + text) + "</pre>")
 
+
+class AuxiliaryProcess(stdoutIdleObserver):
+    def __init__(self, beremiz_app, command):
+        self.app = beremiz_app
+        self.app.ReportText("Launching process " + repr(command))
+        self.proc = subprocess.Popen(command, stdout=subprocess.PIPE, bufsize=0)
+        self.app.ReportText("Launched process " + repr(command) + " PID: " + str(self.proc.pid))
+        stdoutIdleObserver.__init__(self)
+
+    def close(self):
+        if self.proc is not None:
+            proc = self.proc
+            self.proc = None
+            # self.proc.stdout.close()
+            self.app.ReportText("Kill process PID: " + str(proc.pid))
+            try:
+                os.kill(proc.pid, signal.SIGTERM)
+            except OSError:
+                pass
+            proc.wait()
+            # self.thread.join()
+
+    def ReportOutput(self, text):
+        self.app.ReportOutput("Aux: "+text)
+
+    def ReportScreenShot(self, msg):
+        self.app.ReportOutput("Aux: "+msg)
+
+    def __del__(self):
+        self.close()
 
 def run_test(func, *args, **kwargs):
     app = BeremizApp(*args, **kwargs)
@@ -322,7 +434,6 @@ def run_test(func, *args, **kwargs):
         # and catch exception cleanly anyhow
         e_type, e_value, e_traceback = sys.exc_info()
         err_msg = "\n".join(traceback.format_exception(e_type, e_value, e_traceback))
-        sys.stdout.write(err_msg)
         app.ReportOutput(err_msg)
         success = False
 

@@ -137,10 +137,10 @@ def GetRTUClientNodePrinted(self, child):
     params: child - the correspondent subplugin in Beremiz
     """
     node_init_template = '''/*node %(locnodestr)s*/
-{"%(locnodestr)s", "%(config_name)s", "%(device)s", "", {naf_rtu, {.rtu = {NULL, %(baud)s /*baud*/, %(parity)s /*parity*/, 8 /*data bits*/, %(stopbits)s, 0 /* ignore echo */}}}, -1 /* mb_nd */, 0 /* init_state */, %(coms_period)s /* communication period */}'''
+{"%(locnodestr)s", "%(config_name)s", "%(device)s", "", {naf_rtu, {.rtu = {NULL, %(baud)s /*baud*/, %(parity)s /*parity*/, 8 /*data bits*/, %(stopbits)s, 0 /* ignore echo */}}}, -1 /* mb_nd */, 0 /* init_state */, %(coms_period)s /* communication period  (ms)*/, %(coms_delay)s /* inter request delay (ms)*/, 0 /* prev_error */}'''
 
     location = ".".join(map(str, child.GetCurrentLocation()))
-    config_name, device, baud, parity, stopbits, coms_period = GetCTVals(child, list(range(6)))
+    config_name, device, baud, parity, stopbits, coms_period, coms_delay = GetCTVals(child, list(range(7)))
 
     node_dict = {"locnodestr": location,
                  "config_name": config_name,
@@ -148,7 +148,8 @@ def GetRTUClientNodePrinted(self, child):
                  "baud": baud,
                  "parity": modbus_serial_parity_dict[parity],
                  "stopbits": stopbits,
-                 "coms_period": coms_period}
+                 "coms_period": coms_period,
+                 "coms_delay": coms_delay}
     return node_init_template % node_dict
 
 
@@ -158,16 +159,17 @@ def GetTCPClientNodePrinted(self, child):
     params: child - the correspondent subplugin in Beremiz
     """
     node_init_template = '''/*node %(locnodestr)s*/
-{"%(locnodestr)s", "%(config_name)s", "%(host)s", "%(port)s", {naf_tcp, {.tcp = {NULL, NULL, DEF_CLOSE_ON_SILENCE}}}, -1 /* mb_nd */, 0 /* init_state */, %(coms_period)s /* communication period */, 0 /* prev_error */}'''
+{"%(locnodestr)s", "%(config_name)s", "%(host)s", "%(port)s", {naf_tcp, {.tcp = {NULL, NULL, DEF_CLOSE_ON_SILENCE}}}, -1 /* mb_nd */, 0 /* init_state */, %(coms_period)s /* communication period (ms)*/, %(coms_delay)s /* inter request delay (ms)*/, 0 /* prev_error */}'''
 
     location = ".".join(map(str, child.GetCurrentLocation()))
-    config_name, host, port, coms_period = GetCTVals(child, list(range(4)))
+    config_name, host, port, coms_period, coms_delay = GetCTVals(child, list(range(5)))
 
     node_dict = {"locnodestr": location,
                  "config_name": config_name,
                  "host": host,
                  "port": port,
-                 "coms_period": coms_period}
+                 "coms_period": coms_period,
+                 "coms_delay": coms_delay}
     return node_init_template % node_dict
 
 

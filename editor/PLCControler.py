@@ -445,12 +445,12 @@ class PLCControler(object):
             return len(self.GetInstanceList(pou_infos, name, debug)) > 0
         return False
 
-    def GenerateProgram(self, filepath=None):
+    def GenerateProgram(self, filepath=None, **kwargs):
         errors = []
         warnings = []
         if self.Project is not None:
             try:
-                self.ProgramChunks = GenerateCurrentProgram(self, self.Project, errors, warnings)
+                self.ProgramChunks = GenerateCurrentProgram(self, self.Project, errors, warnings,**kwargs)
                 self.NextCompiledProject = self.Copy(self.Project)
                 program_text = "".join([item[0] for item in self.ProgramChunks])
                 if filepath is not None:
@@ -1144,28 +1144,35 @@ class PLCControler(object):
 
     def GetConfigurationExtraVariables(self):
         global_vars = []
-        for var_name, var_type, var_initial in self.GetConfNodeGlobalInstances():
-            tempvar = PLCOpenParser.CreateElement("variable", "globalVars")
-            tempvar.setname(var_name)
+        for global_instance in self.GetConfNodeGlobalInstances():
+            if type(global_instance)==tuple:
+                # usual global without modifier from a CTN or a library
+                var_name, var_type, var_initial = global_instance
+                tempvar = PLCOpenParser.CreateElement("variable", "globalVars")
+                tempvar.setname(var_name)
 
-            tempvartype = PLCOpenParser.CreateElement("type", "variable")
-            if var_type in self.GetBaseTypes():
-                tempvartype.setcontent(PLCOpenParser.CreateElement(
-                    var_type.lower()
-                    if var_type in ["STRING", "WSTRING"]
-                    else var_type, "dataType"))
+                tempvartype = PLCOpenParser.CreateElement("type", "variable")
+                if var_type in self.GetBaseTypes():
+                    tempvartype.setcontent(PLCOpenParser.CreateElement(
+                        var_type.lower()
+                        if var_type in ["STRING", "WSTRING"]
+                        else var_type, "dataType"))
+                else:
+                    tempderivedtype = PLCOpenParser.CreateElement("derived", "dataType")
+                    tempderivedtype.setname(var_type)
+                    tempvartype.setcontent(tempderivedtype)
+                tempvar.settype(tempvartype)
+
+                if var_initial != "":
+                    value = PLCOpenParser.CreateElement("initialValue", "variable")
+                    value.setvalue(var_initial)
+                    tempvar.setinitialValue(value)
+
+                global_vars.append(tempvar)
             else:
-                tempderivedtype = PLCOpenParser.CreateElement("derived", "dataType")
-                tempderivedtype.setname(var_type)
-                tempvartype.setcontent(tempderivedtype)
-            tempvar.settype(tempvartype)
+                # case of varlists from a TC6 library
+                global_vars.append(global_instance)
 
-            if var_initial != "":
-                value = PLCOpenParser.CreateElement("initialValue", "variable")
-                value.setvalue(var_initial)
-                tempvar.setinitialValue(value)
-
-            global_vars.append(tempvar)
         return global_vars
 
     # Function that returns the block definition associated to the block type given

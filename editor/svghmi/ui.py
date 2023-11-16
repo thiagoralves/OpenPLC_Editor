@@ -335,7 +335,7 @@ class WidgetLibBrowser(wx.SplitterWindow):
         self.main_sizer.AddGrowableCol(0)
         self.main_sizer.AddGrowableRow(2)
 
-        self.staticmsg = wx.StaticText(self, label = _("Drag selected Widget from here to Inkscape"))
+        self.staticmsg = wx.StaticText(self.main_panel, label = _("Drag selected Widget from here to Inkscape"))
         self.preview = wx.Panel(self.main_panel, size=(-1, _preview_height + _preview_margin*2))
         self.signature_sizer = wx.BoxSizer(wx.VERTICAL)
         self.args_box = wx.StaticBox(self.main_panel, -1,
@@ -436,7 +436,7 @@ class WidgetLibBrowser(wx.SplitterWindow):
             # Get Preview panel size
             sz = self.preview.GetClientSize()
             w = self.bmp.GetWidth()
-            dc.DrawBitmap(self.bmp, (sz.width - w)/2, _preview_margin)
+            dc.DrawBitmap(self.bmp, (sz.width - w)//2, _preview_margin)
 
 
 
@@ -475,9 +475,7 @@ class WidgetLibBrowser(wx.SplitterWindow):
         status, result, _err_result = ProcessLogger(
             #self.Controler.GetCTRoot().logger,
             None,
-            '"' + inkpath + '" "' + svgpath + '" ' +
-            export_opt + ' "' + thumbpath +
-            '" -D -h ' + str(_preview_height)).spin()
+            [ inkpath, svgpath, export_opt, thumbpath, "-D", "-h", str(_preview_height)]).spin()
         if status != 0:
             self.msg = _("Inkscape couldn't generate thumbnail.")
             return False

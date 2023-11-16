@@ -1,0 +1,9 @@
+*.pyc
+**/__pycache__
+.vscode
+**/build/**
+*.class
+**/.svghmithumbs/**
+**/my_*.der
+**/my_*.pem
+tests/tools/Docker/requirements.txt

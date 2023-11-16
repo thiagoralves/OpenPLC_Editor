@@ -127,10 +127,23 @@ class DiscoveryPanel(wx.Panel, listmix.ColumnSorterMixin):
         self.IfacesMonitorTimer.Start(2000)
         self.Bind(wx.EVT_TIMER, self.IfacesMonitor, self.IfacesMonitorTimer)
 
+    def _cleanup(self):
+        if self.IfacesMonitorTimer is not None:
+            self.IfacesMonitorTimer.Stop()
+            self.IfacesMonitorTimer = None
+        if self.Browser is not None:
+            self.Browser.cancel()
+            self.Browser = None
+        if self.ZeroConfInstance is not None:
+            self.ZeroConfInstance.close()
+            self.ZeroConfInstance = None
+
     def __del__(self):
-        self.IfacesMonitorTimer.Stop()
-        self.Browser.cancel()
-        self.ZeroConfInstance.close()
+        self._cleanup()
+
+    def Destroy(self):
+        self._cleanup()
+        wx.Panel.Destroy(self)
 
     def IfacesMonitor(self, event):
         NewState = get_all_addresses(socket.AF_INET)

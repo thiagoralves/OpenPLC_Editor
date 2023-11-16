@@ -252,8 +252,8 @@ class ProjectPropertiesPanel(wx.Notebook):
             elif item == "contentDescription":
                 self.ContentDescription.SetValue(value)
             elif item == "pageSize":
-                self.PageWidth.SetValue(value[0])
-                self.PageHeight.SetValue(value[1])
+                self.PageWidth.SetValue(int(value[0]))
+                self.PageHeight.SetValue(int(value[1]))
             elif item == "scaling":
                 for language, (x, y) in list(value.items()):
                     if language in self.Scalings:

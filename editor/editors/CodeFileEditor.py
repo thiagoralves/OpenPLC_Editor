@@ -287,7 +287,13 @@ class CodeEditor(CustomStyledTextCtrl):
         doc_end_pos = self.GetLength()
         for section in self.Controler.SECTIONS_NAMES:
             section_comments = self.SectionsComments[section]
-            start_pos, end_pos = self.FindText(0, doc_end_pos, section_comments["comment"])
+            txttofind = section_comments["comment"]
+            results = self.FindText(0, doc_end_pos, txttofind)
+            if wx.VERSION < (4, 1, 0):
+                start_pos = results
+                end_pos = start_pos+len(txttofind)
+            else:
+                start_pos, end_pos = results
             self.StartStyling(start_pos)
             self.SetStyling(end_pos - start_pos, STC_CODE_SECTION)
             self.SetLineState(self.LineFromPosition(start_pos), 1)
@@ -594,7 +600,7 @@ class CodeEditor(CustomStyledTextCtrl):
                 highlight_end_pos = self.GetLineEndPosition(end[0] - 1) + end[1] + 2
             self.StartStyling(highlight_start_pos)
             self.SetStyling(highlight_end_pos - highlight_start_pos, highlight_type)
-            self.StartStyling(highlight_end_pos)
+            self.StartStyling(highlight_end_pos, 0x00)
             self.SetStyling(len(self.GetText()) - highlight_end_pos, stc.STC_STYLE_DEFAULT)
 
 

@@ -1,0 +1,57 @@
+Files changed from main Beremiz repo:
+
+ - BeremizIDE.py:
+Change PATH variable to include mingw
+
+ - IDEFrame.py:
+Added automatic update on file menu
+
+ - ProjectController.py
+New toolbar buttons
+Run function modified to clean, build, connect, transfer and run
+Default scaling changed for new projects
+
+ - editor/connectors
+Current Beremiz PYRO connector is broken. Use GP Orcullo one.
+
+ - LocalRuntimeMixin.py
+Current Beremiz Service is broken. Using separate service.py from GP Orcullo
+
+ - PLCController.py
+Added functionality to sort items
+
+ - features.py
+Removed unused features
+
+ - Viewer.py
+Added force menu to FBD variables and coils
+
+ - GraphicCommons.py, LD_Objects.py, SFC_Objects.py
+Fixed highlight not showing
+
+ - dialogs/FBDVariableDialog.py
+Fixed bug on macOS when variables are double-clicked (see https://github.com/beremiz/beremiz/pull/24/files )
+
+ - dialogs/FBDBlockDialog.py
+Increased dialog size to 300,400 => self.LibraryPanel.SetInitialSize(wx.Size(300, 400))
+
+ - version.py
+Changed version information
+
+ - /Arduino
+New folder with Arduino functionality (arduino runtime, compiler, etc)
+ 
+ - /dialogs/ArduinoUploadDialog.py
+Upload dialog for Arduino boards
+ 
+ - /dialogs/EditorUpdateDialog.py
+Editor auto-updater
+ 
+ - /plcopen/definitions.py
+New FB libraries (Arduino, Cloud, P1AM...) along with .xml files associated with each library
+
+ - /controls/LocationCellEditor.py
+Fixed "location is identical to previous one" bug
+ 
+
+Also, images folder was changed with new icons and logos.

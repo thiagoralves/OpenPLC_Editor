@@ -127,8 +127,7 @@ class TextViewer(EditorPanel):
         self.Editor.SetUseTabs(0)
 
         self.Editor.SetModEventMask(wx.stc.STC_MOD_BEFOREINSERT |
-                                    wx.stc.STC_MOD_BEFOREDELETE |
-                                    wx.stc.STC_PERFORMED_USER)
+                                    wx.stc.STC_MOD_BEFOREDELETE)
 
         self.Bind(wx.stc.EVT_STC_STYLENEEDED, self.OnStyleNeeded, self.Editor)
         self.Editor.Bind(wx.stc.EVT_STC_MARGINCLICK, self.OnMarginClick)
@@ -192,8 +191,8 @@ class TextViewer(EditorPanel):
     def Colourise(self, start, end):
         self.Editor.Colourise(start, end)
 
-    def StartStyling(self, pos):
-        self.Editor.StartStyling(pos)
+    def StartStyling(self, *a, **k):
+        self.Editor.StartStyling(*a, **k)
 
     INDIC0 = 0
     INDIC1 = 1
@@ -215,25 +214,24 @@ class TextViewer(EditorPanel):
         self.SearchResults = None
         self.CurrentFindHighlight = None
 
+    Buffering = "Off"
     def OnModification(self, event):
         if not self.DisableEvents:
             mod_type = event.GetModificationType()
             if mod_type & wx.stc.STC_MOD_BEFOREINSERT:
                 if self.CurrentAction is None:
-                    self.StartBuffering()
+                    self.Buffering = "ShouldStart"
                 elif self.CurrentAction[0] != "Add" or self.CurrentAction[1] != event.GetPosition() - 1:
-                    self.Controler.EndBuffering()
-                    self.StartBuffering()
+                    self.Buffering = "ShouldRestart"
                 self.CurrentAction = ("Add", event.GetPosition())
-                wx.CallAfter(self.RefreshModel)
+                self.RefreshModelAfter()
             elif mod_type & wx.stc.STC_MOD_BEFOREDELETE:
                 if self.CurrentAction is None:
-                    self.StartBuffering()
+                    self.Buffering = "ShouldStart"
                 elif self.CurrentAction[0] != "Delete" or self.CurrentAction[1] != event.GetPosition() + 1:
-                    self.Controler.EndBuffering()
-                    self.StartBuffering()
+                    self.Buffering = "ShouldRestart"
                 self.CurrentAction = ("Delete", event.GetPosition())
-                wx.CallAfter(self.RefreshModel)
+                self.RefreshModelAfter()
         event.Skip()
 
     def OnDoDrop(self, event):
@@ -381,7 +379,7 @@ class TextViewer(EditorPanel):
             elif values[3] == self.TagName:
                 self.ResetBuffer()
                 event.SetDragText(values[0])
-                wx.CallAfter(self.RefreshModel)
+                self.RefreshModelAfter()
             else:
                 message = _("Variable don't belong to this POU!")
             if message is not None:
@@ -431,10 +429,14 @@ class TextViewer(EditorPanel):
             self.ParentWindow.RefreshFileMenu()
             self.ParentWindow.RefreshEditMenu()
 
+    def EndBuffering(self):
+        self.Controler.EndBuffering()
+
     def ResetBuffer(self):
         if self.CurrentAction is not None:
-            self.Controler.EndBuffering()
+            self.EndBuffering()
             self.CurrentAction = None
+            self.Buffering == "Off"
 
     def GetBufferState(self):
         if not self.Debug and self.TextSyntax != "ALL":
@@ -834,11 +836,28 @@ class TextViewer(EditorPanel):
                 self.RemoveHighlight(*self.CurrentFindHighlight)
             self.CurrentFindHighlight = None
 
+    pending_model_refresh=False
     def RefreshModel(self):
+        self.pending_model_refresh=False
         self.RefreshJumpList()
         self.Colourise(0, -1)
+
+        if self.Buffering == "ShouldStart":
+            self.StartBuffering()
+            self.Buffering == "On"
+        elif self.Buffering == "ShouldRestart":
+            self.EndBuffering()
+            self.StartBuffering()
+            self.Buffering == "On"
+
         self.Controler.SetEditedElementText(self.TagName, self.GetText())
         self.ResetSearchResults()
+
+    def RefreshModelAfter(self):
+        if self.pending_model_refresh:
+            return
+        self.pending_model_refresh=True
+        wx.CallAfter(self.RefreshModel)
 
     def OnKeyDown(self, event):
         key = event.GetKeyCode()
@@ -958,6 +977,6 @@ class TextViewer(EditorPanel):
             if highlight_start_pos < end_pos and highlight_end_pos > start_pos:
                 self.StartStyling(highlight_start_pos)
                 self.SetStyling(highlight_end_pos - highlight_start_pos, highlight_type)
-                self.StartStyling(highlight_start_pos)
+                self.StartStyling(highlight_end_pos, 0x00)
                 until_end = max(0, len(self.Editor.GetText()) - highlight_end_pos)
                 self.SetStyling(until_end, wx.stc.STC_STYLE_DEFAULT)

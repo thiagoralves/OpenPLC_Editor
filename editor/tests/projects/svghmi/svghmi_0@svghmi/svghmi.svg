@@ -136,11 +136,11 @@ hmi_widgets[&quot;g443-3&quot;].off_action = function(){
      inkscape:current-layer="hmi0"
      showgrid="false"
      units="px"
-     inkscape:zoom="0.40092403"
-     inkscape:cx="2333.0807"
-     inkscape:cy="1015.6842"
-     inkscape:window-width="1600"
-     inkscape:window-height="836"
+     inkscape:zoom="2.2679688"
+     inkscape:cx="1135.0439"
+     inkscape:cy="130.37028"
+     inkscape:window-width="1850"
+     inkscape:window-height="1036"
      inkscape:window-x="0"
      inkscape:window-y="27"
      inkscape:window-maximized="1"
@@ -149,6 +149,33 @@ hmi_widgets[&quot;g443-3&quot;].off_action = function(){
      inkscape:snap-global="true"
      inkscape:snap-bbox="true"
      inkscape:bbox-nodes="true" />
+  <rect
+     y="-800"
+     x="1480"
+     height="720"
+     width="1280"
+     id="rect1282"
+     style="color:#000000;fill:#000000"
+     inkscape:label="HMI:Page:ScreenSaver:20:u=&quot;nobody&quot;@u=user_role" />
+  <g
+     transform="translate(-1072.3531,-845.86571)"
+     inkscape:label="HMI:VarInit:&quot;admin&quot;@user_role"
+     id="g304">
+    <text
+       id="text302"
+       y="-108.39357"
+       x="3726.6924"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:18.66666603px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       xml:space="preserve"><tspan
+         y="-108.39357"
+         x="3726.6924"
+         id="tspan298"
+         sodipodi:role="line">declaration of user_level HMI local variable</tspan><tspan
+         id="tspan300"
+         y="-85.060234"
+         x="3726.6924"
+         sodipodi:role="line">(not a PLC variable)</tspan></text>
+  </g>
   <use
      x="0"
      y="0"
@@ -6568,6 +6595,18 @@ hmi_widgets[&quot;g443-3&quot;].off_action = function(){
            id="tspan947-2-1"
            sodipodi:role="line">Back</tspan></text>
     </g>
+    <text
+       inkscape:label="HMI:Display@user_role"
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50.03883362px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:end;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:end;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="1258.67"
+       y="-99.803093"
+       id="text296"><tspan
+         sodipodi:role="line"
+         id="tspan294"
+         x="1258.67"
+         y="-99.803093"
+         style="text-align:end;text-anchor:end;stroke-width:1px">user</tspan></text>
   </g>
   <text
      xml:space="preserve"
@@ -7867,7 +7906,7 @@ hmi_widgets[&quot;g443-3&quot;].off_action = function(){
     </g>
   </g>
   <g
-     transform="translate(73.327079,-819.60552)"
+     transform="translate(73.327079,-879.60552)"
      inkscape:label="HMI:Jump:Freq0"
      id="g1294-6">
     <g
@@ -8582,14 +8621,6 @@ hmi_widgets[&quot;g443-3&quot;].off_action = function(){
            sodipodi:role="line">Home</tspan></text>
     </g>
   </g>
-  <rect
-     y="-800"
-     x="1480"
-     height="720"
-     width="1280"
-     id="rect1282"
-     style="color:#000000;fill:#000000"
-     inkscape:label="HMI:Page:ScreenSaver:12" />
   <g
      id="g1280"
      transform="matrix(4.3157423,0,0,4.3157423,1737.4823,-785.25938)"
@@ -8871,5 +8902,55 @@ hmi_widgets[&quot;g443-3&quot;].off_action = function(){
            sodipodi:role="line"
            id="tspan1503-0" /></text>
     </g>
+  </g>
+  <text
+     inkscape:label="HMI:Display@user_role"
+     xml:space="preserve"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50.03883362px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:end;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:end;fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
+     x="2680.3477"
+     y="-398.63266"
+     id="text296-3"><tspan
+       sodipodi:role="line"
+       id="tspan294-6"
+       x="2680.3477"
+       y="-398.63266"
+       style="text-align:end;text-anchor:end;stroke-width:1px;fill:#ffff00;">user</tspan></text>
+  <text
+     inkscape:label="HMI:Display@user_role"
+     xml:space="preserve"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50.03883362px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:end;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:end;fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     x="1258.5922"
+     y="703.35767"
+     id="text296-3-7"><tspan
+       sodipodi:role="line"
+       id="tspan294-6-5"
+       x="1258.5922"
+       y="703.35767"
+       style="text-align:end;text-anchor:end;fill:#ffff00;stroke-width:1px">user</tspan></text>
+  <g
+     id="g242"
+     inkscape:label="HMI:Assign:u=&quot;admin&quot;@u=user_role"
+     transform="matrix(0.699363,0,0,0.699363,-1374.9838,537.10221)"
+     style="stroke-width:1.42987263">
+    <rect
+       style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;vector-effect:none;fill:#ffa32a;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:5.40424299;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+       id="rect236"
+       width="225.46321"
+       height="70.051811"
+       x="3457.5356"
+       y="99.406891"
+       ry="30.536264"
+       rx="30.536266" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:56.68354416px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.42987251px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="3570.8057"
+       y="153.18002"
+       id="text240"><tspan
+         style="stroke-width:1.42987251px"
+         sodipodi:role="line"
+         id="tspan238"
+         x="3570.8057"
+         y="153.18002">login</tspan></text>
   </g>
 </svg>

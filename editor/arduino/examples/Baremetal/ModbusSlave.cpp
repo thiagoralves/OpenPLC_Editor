@@ -129,11 +129,6 @@ void mbconfig_serial_iface(HardwareSerial* port, long baud, int txPin)
 #ifdef MBTCP
 void mbconfig_ethernet_iface(uint8_t *mac, uint8_t *ip, uint8_t *dns, uint8_t *gateway, uint8_t *subnet)
 {
-    //Serial.begin(115200);
-    //while (!Serial) {
-    //    ; // wait for serial port to connect. Needed for native USB port only
-    //}
-    //Serial.println("Serial ready!");
     #ifdef MBTCP_ETHERNET
         if (ip == NULL)
             Ethernet.begin(mac);
@@ -157,7 +152,6 @@ void mbconfig_ethernet_iface(uint8_t *mac, uint8_t *ip, uint8_t *dns, uint8_t *g
         #elif defined(BOARD_PORTENTA)
             if (ip != NULL && subnet != NULL && gateway != NULL)
             {
-                Serial.println("Trying to start with a fixed IP");
                 WiFi.config(IPAddress(ip), IPAddress(subnet), IPAddress(gateway));
             }
         #else
@@ -175,17 +169,12 @@ void mbconfig_ethernet_iface(uint8_t *mac, uint8_t *ip, uint8_t *dns, uint8_t *g
         #endif
         WiFi.begin(MBTCP_SSID, MBTCP_PWD);
         int num_tries = 0;
-        Serial.print("Connecting to SSID");
         while (WiFi.status() != WL_CONNECTED) 
         {
-            Serial.print(".");
             delay(500);
             num_tries++;
             if (num_tries == 10) break;
         }
-        Serial.print("IP: ");
-        IPAddress myIP = WiFi.localIP();
-        Serial.println(myIP);
     #endif
     mb_server.begin();
 }
@@ -420,11 +409,16 @@ void handle_serial()
 }
 #endif
 
+
 void process_mbpacket()
 {
     uint8_t fcode  = mb_frame[1];
     uint16_t field1 = (uint16_t)mb_frame[2] << 8 | (uint16_t)mb_frame[3];
     uint16_t field2 = (uint16_t)mb_frame[4] << 8 | (uint16_t)mb_frame[5];
+    uint8_t flag = mb_frame[4];
+    uint16_t len = (uint16_t)mb_frame[5] << 8 | (uint16_t)mb_frame[6];
+    void *value = &mb_frame[7];
+    void *endianness_check = &mb_frame[2];
     
     switch (fcode) 
     {
@@ -466,6 +460,29 @@ void process_mbpacket()
         case MB_FC_WRITE_COILS:
             //field1 = startreg, field2 = numoutputs
             writeMultipleCoils(field1, field2, mb_frame[6]);
+        break;
+
+        case MB_FC_DEBUG_INFO:
+            debugInfo();
+        break;
+
+        case MB_FC_DEBUG_GET:
+            //field1 = startidx, field2 = endidx
+            debugGetTrace(field1, field2);
+        break;
+
+        case MB_FC_DEBUG_GET_LIST:
+            //field1 = numIndexes
+            debugGetTraceList(field1, &mb_frame[4]);
+        break;
+
+        case MB_FC_DEBUG_SET:
+            //field1 = varidx
+            debugSetTrace(field1, flag, len, value);
+        break;
+
+        case MB_FC_DEBUG_GET_MD5:
+            debugGetMd5(endianness_check);
         break;
 
         default:
@@ -785,6 +802,282 @@ void writeMultipleCoils(uint16_t startreg, uint16_t numoutputs, uint16_t bytecou
         //increment the register
         startreg++;
     }
+}
+
+/**
+ * @brief Sends a Modbus response frame for the DEBUG_INFO function code.
+ *
+ * This function constructs a Modbus response frame for the DEBUG_INFO function code.
+ * The response frame includes the number of variables defined in the PLC program.
+ *
+ * Modbus Response Frame (DEBUG_INFO):
+ * +-----+-------+-------+
+ * | MB  | Count | Count |
+ * | FC  |       |       |
+ * +-----+-------+-------+
+ * |0x41 | High  | Low   |
+ * |     | Byte  | Byte  |
+ * |     |       |       |
+ * +-----+-------+-------+
+ *
+ * @return void
+ */
+void debugInfo()
+{
+    uint16_t variableCount = get_var_count();
+    mb_frame_len = 4;
+    mb_frame[1] = MB_FC_DEBUG_INFO;
+    mb_frame[2] = (uint8_t)(variableCount >> 8); // High byte
+    mb_frame[3] = (uint8_t)(variableCount & 0xFF); // Low byte
+}
+
+/**
+ * @brief Sends a Modbus response frame for the DEBUG_SET function code.
+ *
+ * This function constructs a Modbus response frame for the DEBUG_SET function code.
+ * The response frame indicates whether the set trace command was successful or if
+ * there was an error, such as an out-of-bounds index.
+ *
+ * Modbus Response Frame (DEBUG_SET):
+ * +-----+------+
+ * | MB  | Resp.|
+ * | FC  | Code |
+ * +-----+------+
+ * |0x42 | Code |
+ * +-----+------+
+ *
+ * @param varidx The index of the variable to set trace for.
+ * @param flag The trace flag.
+ * @param len The length of the trace data.
+ * @param value Pointer to the trace data.
+ * 
+ * @return void
+ */
+void debugSetTrace(uint16_t varidx, uint8_t flag, uint16_t len, void *value)
+{
+    uint16_t variableCount = get_var_count();
+    if (varidx >= variableCount || len > (MAX_MB_FRAME - 7))
+    {
+        // Respond with an error indicating that the index is out of range
+        mb_frame_len = 3;
+        mb_frame[1] = MB_FC_DEBUG_SET;
+        mb_frame[2] = MB_DEBUG_ERROR_OUT_OF_BOUNDS;
+        return;
+    }
+
+    // Execute set trace command
+    set_trace((size_t)varidx, (bool)flag, value);
+
+    // Response
+    mb_frame_len = 3;
+    mb_frame[1] = MB_FC_DEBUG_SET;
+    mb_frame[2] = MB_DEBUG_SUCCESS;
+}
+
+/**
+ * @brief Sends a Modbus response frame for the DEBUG_GET function code.
+ *
+ * This function constructs a Modbus response frame for the DEBUG_GET function code.
+ * The response frame includes the trace data for variables within the specified index range.
+ *
+ * Modbus Response Frame (DEBUG_GET):
+ * +-----+-------+-------+-------+-------+-------+-------+-------+-------+------+-------+
+ * | MB  | Resp. | Last  | Last  | Tick  | Tick  | Tick  | Tick  | Resp. | Resp.| Data  |
+ * | FC  | Code  | Index | Index |       |       |       |       | Size  | Size | Bytes |
+ * +-----+-------+-------+-------+-------+-------+-------+-------+-------+------+-------+
+ * |0x44 | Code  | High  | Low   | High  | Mid   | Mid   | Low   | High  | Low  | Data  |
+ * |     |       | Byte  | Byte  | Byte  | Byte  | Byte  | Byte  | Byte  | Byte | Bytes |
+ * +-----+-------+-------+-------+-------+-------+-------+-------+-------+------+-------+
+ *
+ * @param startidx The start index of the variables to get trace for.
+ * @param endidx The end index of the variables to get trace for.
+ * 
+ * @return void
+ */
+void debugGetTrace(uint16_t startidx, uint16_t endidx)
+{
+    uint16_t variableCount = get_var_count();
+    // Verify that startidx and endidx fall within the valid range of variables
+    if (startidx >= variableCount || endidx >= variableCount || startidx > endidx) 
+    {
+        // Respond with an error indicating that the indices are out of range
+        mb_frame_len = 3;
+        mb_frame[1] = MB_FC_DEBUG_GET;
+        mb_frame[2] = MB_DEBUG_ERROR_OUT_OF_BOUNDS;
+        return;
+    }
+
+    uint16_t lastVarIdx = startidx;
+    size_t responseSize = 0;
+    uint8_t *responsePtr = &(mb_frame[11]); // Start of response data
+    
+    for (uint16_t varidx = startidx; varidx <= endidx; varidx++) 
+    {
+        size_t varSize = get_var_size(varidx);
+        if ((responseSize + 11) + varSize <= MAX_MB_FRAME) // Make sure the response fits
+        {
+            void *varAddr = get_var_addr(varidx);
+
+            // Copy the variable value to the response buffer
+            memcpy(responsePtr, varAddr, varSize);
+
+            // Update response pointer and size
+            responsePtr += varSize;
+            responseSize += varSize;
+
+            // Update the lastVarIdx
+            lastVarIdx = varidx;
+        }
+        else 
+        {
+            // Response buffer is full, break the loop
+            break;
+        }
+    }
+
+    mb_frame_len = 7 + responseSize; // Update response length
+    mb_frame[1] = MB_FC_DEBUG_GET;
+    mb_frame[2] = MB_DEBUG_SUCCESS;
+    mb_frame[3] = (uint8_t)(lastVarIdx >> 8); // High byte
+    mb_frame[4] = (uint8_t)(lastVarIdx & 0xFF); // Low byte
+    mb_frame[5] = (uint8_t)((__tick >> 24) & 0xFF); // Highest byte
+    mb_frame[6] = (uint8_t)((__tick >> 16) & 0xFF); // Second highest byte
+    mb_frame[7] = (uint8_t)((__tick >> 8) & 0xFF);  // Second lowest byte
+    mb_frame[8] = (uint8_t)(__tick & 0xFF);         // Lowest byte
+    mb_frame[9] = (uint8_t)(responseSize >> 8); // High byte
+    mb_frame[10] = (uint8_t)(responseSize & 0xFF); // Low byte
+}
+
+/**
+ * @brief Sends a Modbus response frame for the DEBUG_GET_LIST function code.
+ *
+ * This function constructs a Modbus response frame for the DEBUG_GET_LIST function code.
+ * The response frame includes the trace data for variables specified in the provided index list.
+ *
+ * Modbus Response Frame (DEBUG_GET_LIST):
+ * +-----+-------+-------+-------+-------+-------+-------+-------+-------+------+-------+
+ * | MB  | Resp. | Last  | Last  | Tick  | Tick  | Tick  | Tick  | Resp. | Resp.| Data  |
+ * | FC  | Code  | Index | Index |       |       |       |       | Size  | Size | Bytes |
+ * +-----+-------+-------+-------+-------+-------+-------+-------+-------+------+-------+
+ * |0x44 | Code  | High  | Low   | High  | Mid   | Mid   | Low   | High  | Low  | Data  |
+ * |     |       | Byte  | Byte  | Byte  | Byte  | Byte  | Byte  | Byte  | Byte | Bytes |
+ * +-----+-------+-------+-------+-------+-------+-------+-------+-------+------+-------+
+ *
+ * @param numIndexes The number of indexes requested.
+ * @param indexArray Pointer to the array containing variable indexes.
+ * 
+ * @return void
+ */
+void debugGetTraceList(uint16_t numIndexes, uint8_t *indexArray)
+{
+    uint16_t response_idx = 11;  // Start of response data in the response buffer
+    uint16_t responseSize = 0;
+    uint16_t lastVarIdx = 0;
+    uint16_t variableCount = get_var_count();
+    uint16_t *varidx_array = NULL;
+
+    // Allocate space for all indexes
+    varidx_array = (uint16_t *)malloc(numIndexes * sizeof(uint16_t));
+    if (varidx_array == NULL)
+    {
+        // Respond with a memory error
+        mb_frame_len = 3;
+        mb_frame[1] = MB_FC_DEBUG_GET_LIST;
+        mb_frame[2] = MB_DEBUG_ERROR_OUT_OF_MEMORY;
+        return;
+    }
+
+    // Copy all indexes to array
+    for (uint16_t i = 0; i < numIndexes; i++)
+    {
+        varidx_array[i] = (uint16_t)indexArray[i * 2] << 8 | indexArray[i * 2 + 1];
+    }
+
+    // Validate if all requested indexes are in range
+    for (uint16_t i = 0; i < numIndexes; i++) 
+    {
+        if (varidx_array[i] >= variableCount) 
+        {
+            // Respond with an error indicating that the index is out of range
+            mb_frame_len = 3;
+            mb_frame[1] = MB_FC_DEBUG_GET_LIST;
+            mb_frame[2] = MB_DEBUG_ERROR_OUT_OF_BOUNDS;
+            free(varidx_array);
+            return;
+        }
+
+        // Add requested indexes and their traces to the response buffer
+        size_t varSize = get_var_size(varidx_array[i]);
+
+        // Make sure there is enough space in the response buffer
+        if (response_idx + varSize <= MAX_MB_FRAME) 
+        {
+            // Add variable data to the response buffer
+            void *varAddr = get_var_addr(varidx_array[i]);
+            memcpy(&mb_frame[response_idx], varAddr, varSize);
+            response_idx += varSize;
+            responseSize += varSize;
+
+            // Update the lastVarIdx
+            lastVarIdx = varidx_array[i];
+        } 
+        else 
+        {
+            // Response buffer is full, break the loop
+            break;
+        }
+    }
+
+    // Update response length, lastVarIdx, and response size
+    mb_frame_len = response_idx;
+    mb_frame[1] = MB_FC_DEBUG_GET_LIST;
+    mb_frame[2] = MB_DEBUG_SUCCESS;
+    mb_frame[3] = (uint8_t)(lastVarIdx >> 8); // High byte
+    mb_frame[4] = (uint8_t)(lastVarIdx & 0xFF); // Low byte
+    mb_frame[5] = (uint8_t)((__tick >> 24) & 0xFF); // Highest byte
+    mb_frame[6] = (uint8_t)((__tick >> 16) & 0xFF); // Second highest byte
+    mb_frame[7] = (uint8_t)((__tick >> 8) & 0xFF);  // Second lowest byte
+    mb_frame[8] = (uint8_t)(__tick & 0xFF);         // Lowest byte
+    mb_frame[9] = (uint8_t)(responseSize >> 8); // High byte
+    mb_frame[10] = (uint8_t)(responseSize & 0xFF); // Low byte
+    free(varidx_array);
+}
+
+void debugGetMd5(void *endianness)
+{
+    // Check endianness
+    uint16_t endian_check = 0;
+    memcpy(&endian_check, endianness, 2);
+    if (endian_check == 0xDEAD)
+    {
+        set_endianness(SAME_ENDIANNESS);
+    }
+    else if (endian_check == 0xADDE)
+    {
+        set_endianness(REVERSE_ENDIANNESS);
+    }
+    else
+    {
+        // Respond with an error indicating that the argument is wrong
+        mb_frame_len = 3;
+        mb_frame[1] = MB_FC_DEBUG_GET_MD5;
+        mb_frame[2] = MB_DEBUG_ERROR_OUT_OF_BOUNDS;
+        //return;
+    }
+
+    mb_frame[1] = MB_FC_DEBUG_GET_MD5;
+    mb_frame[2] = MB_DEBUG_SUCCESS;
+
+    // Copy MD5 string byte by byte to mb_frame starting from index 3
+    const char md5[] = PROGRAM_MD5;
+    int md5_len = 0;
+    for (md5_len = 0; md5[md5_len] != '\0'; md5_len++) 
+    {
+        mb_frame[md5_len + 3] = md5[md5_len];
+    }
+
+    // Calculate mb_frame_len (MD5 string length + 3)
+    mb_frame_len = md5_len + 3;
 }
 
 uint16_t calcCrc() 

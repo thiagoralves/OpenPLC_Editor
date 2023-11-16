@@ -92,7 +92,7 @@ widget_defs("Input") {
 
     if "$have_value" {
     |     animate: function(){
-    |         this.value_elt.textContent = String(this.display);
+    |         multiline_to_svg_text(this.value_elt, String(this.display));
     |     },
     }
 
@@ -114,7 +114,7 @@ widget_defs("Input") {
     }
 
     if "$have_value" {
-    |         this.value_elt.textContent = "";
+    |         multiline_to_svg_text(this.value_elt, "");
     }
     |     },
 }
