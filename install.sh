@@ -31,7 +31,7 @@ fi
 
 #Installing Python dependencies
 python3 -m venv "$VENV_DIR"
-"$VENV_DIR/bin/python3" -m pip install wheel jinja2 lxml==4.6.2 future matplotlib zeroconf pyserial pypubsub pyro5
+"$VENV_DIR/bin/python3" -m pip install wheel jinja2 lxml==4.6.2 future matplotlib zeroconf pyserial pypubsub pyro5 attrdict3
 "$VENV_DIR/bin/python3" -m pip install wxPython==4.2.1 
 
 
