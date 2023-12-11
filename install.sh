@@ -12,7 +12,7 @@ echo "[INSTALLING DEPENDENCIES]"
 if [ -x /bin/yum ]; then
     yum clean expire-cache
     yum check-update
-    sudo yum -q -y install make automake gcc gcc-c++ bison flex autoconf git python3 gtk3-devel
+    sudo yum -q -y install make automake gcc gcc-c++ bison flex autoconf git python3 python3-devel libxml2-devel libxslt-devel gtk3-devel
 #Installing dependencies for Ubuntu/Mint/Debian
 elif [ -x /usr/bin/apt-get ]; then
     sudo apt-get -qq update
