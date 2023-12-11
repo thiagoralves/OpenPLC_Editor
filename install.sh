@@ -1,24 +1,39 @@
 #!/bin/bash
 
+OPENPLC_DIR="$PWD"
+VENV_DIR="$OPENPLC_DIR/.venv"
+
 echo "Installing OpenPLC Editor"
 echo "Please be patient. This may take a couple minutes..."
 echo ""
 echo "[INSTALLING DEPENDENCIES]"
 
-sudo apt -y -qq update
 
-sudo apt -y -qq install python3
-sudo apt -y -qq install python3-pip
-sudo apt -y -qq install python3-wxgtk4.0
-sudo apt -y -qq install build-essential bison flex autoconf
-
-if [ $? -ne 0 ]; then
-    #Manual install
-    echo "Manually installing python3-wxgtk4.0..."
-    sudo dpkg -i ./wxpython/python3-wxgtk4.0_4.0.7+dfsg-10_amd64.deb
+if [ -x /bin/yum ]; then
+    yum clean expire-cache
+    yum check-update
+    sudo yum -q -y install make automake gcc gcc-c++ bison flex autoconf git python3 gtk3-devel
+#Installing dependencies for Ubuntu/Mint/Debian
+elif [ -x /usr/bin/apt-get ]; then
+    sudo apt-get -qq update
+    sudo apt-get install -y build-essential bison flex autoconf \
+                          automake make git libgtk-3-dev\
+                          python3 python3-venv
+#Installing dependencies for opensuse tumbleweed
+elif [ -x /usr/bin/zypper ]; then
+    sudo zypper ref
+    sudo zypper in -y make automake gcc gcc-c++ bison flex autoconf
+    sudo zypper in -y python python-xml python3 python3-pip
+else
+    echo "Unsupported linux distro."
+    exit 1
 fi
 
-pip3 install lxml matplotlib zeroconf pyserial gnosis simplejson nevow jinja2
+#Installing Python dependencies
+python3 -m venv "$VENV_DIR"
+"$VENV_DIR/bin/python3" -m pip install wheel jinja2 lxml==4.6.2 future matplotlib zeroconf pyserial pypubsub pyro5
+"$VENV_DIR/bin/python3" -m pip install wxPython==4.2.1 
+
 
 echo ""
 echo "[COMPILING MATIEC]"
@@ -34,7 +49,7 @@ cd ..
 WORKING_DIR=$(pwd)
 echo -e "#!/bin/bash\n\
 cd \"$WORKING_DIR\"\n\
-python3 ./editor/Beremiz.py" > openplc_editor.sh
+./.venv/bin/python3 ./editor/Beremiz.py" > openplc_editor.sh
 chmod +x ./openplc_editor.sh
 
 mkdir -p ~/.local/share/applications
