@@ -744,6 +744,7 @@ class Viewer(EditorPanel, DebugViewer):
         self.Editor.Bind(wx.EVT_MOUSEWHEEL, self.OnMouseWheelWindow)
         self.Editor.Bind(wx.EVT_SIZE, self.OnMoveWindow)
         self.Editor.Bind(wx.EVT_MOUSE_EVENTS, self.OnViewerMouseEvent)
+        self.Editor.Bind(wx.EVT_MOUSE_CAPTURE_LOST, lambda evt: None)
 
     def SetCurrentCursor(self, cursor):
         if self.Mode != MODE_MOTION:
