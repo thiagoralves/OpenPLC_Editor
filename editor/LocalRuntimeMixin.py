@@ -26,7 +26,7 @@ class LocalRuntimeMixin():
 
     def StartLocalRuntime(self):
         if (self.local_runtime is None) or (self.local_runtime.exitcode is not None):
-                        # create temporary directory for runtime working directory
+            # create temporary directory for runtime working directory
             self.local_runtime_tmpdir = tempfile.mkdtemp()
             # choose an arbitrary random port for runtime
             self.runtime_port = int(random.random() * 1000) + 61131
