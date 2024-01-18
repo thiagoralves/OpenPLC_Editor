@@ -116,10 +116,10 @@ class EditorUpdateDialog(wx.Dialog):
         #Download revision file from GitHub
         if platform.system() == 'Darwin':
             context = ssl._create_unverified_context() #bypass SSL errors on macOS - TODO: fix it later
-            cloud_file = urllib.request.urlopen('https://github.com/thiagoralves/OpenPLC_Editor/blob/dev-python3/revision?raw=true', context=context)
+            cloud_file = urllib.request.urlopen('https://github.com/thiagoralves/OpenPLC_Editor/blob/master/revision?raw=true', context=context)
         else:
-            cloud_file = urllib.request.urlopen('https://github.com/thiagoralves/OpenPLC_Editor/blob/dev-python3/revision?raw=true')
-        
+            cloud_file = urllib.request.urlopen('https://github.com/thiagoralves/OpenPLC_Editor/blob/master/revision?raw=true')
+	
         cloud_revision = int(cloud_file.read().decode('utf-8'))
         if (cloud_revision > local_revision):
             wx.CallAfter(self.shouldUpdate, local_revision, cloud_revision)
