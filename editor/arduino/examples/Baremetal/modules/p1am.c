@@ -12,7 +12,7 @@ uint8_t p1am_init()
     {
         modules_initialized = P1.init();
         //P1.init takes a while, so we need to reset scan cycle timer
-        timer_ms = millis() + scan_cycle;
+        timer_us = micros() + scan_cycle;
     }
     
     return modules_initialized;

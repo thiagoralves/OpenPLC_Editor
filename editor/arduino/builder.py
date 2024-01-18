@@ -61,7 +61,7 @@ def readBoardInstalled(platform):
     hals = loadHals()
     cli_command = ''
     if os_platform.system() == 'Windows':
-        cli_command = 'editor\\arduino\\bin\\arduino-cli-w32'
+        cli_command = 'editor\\arduino\\bin\\arduino-cli-w64'
     elif os_platform.system() == 'Darwin':
         cli_command = 'editor/arduino/bin/arduino-cli-mac'
     else:
@@ -84,7 +84,7 @@ def readBoardsInstalled():
     hals = loadHals()
     cli_command = ''
     if os_platform.system() == 'Windows':
-        cli_command = 'editor\\arduino\\bin\\arduino-cli-w32'
+        cli_command = 'editor\\arduino\\bin\\arduino-cli-w64'
     elif os_platform.system() == 'Darwin':
         cli_command = 'editor/arduino/bin/arduino-cli-mac'
     else:
@@ -116,7 +116,7 @@ def readBoardsInstalled():
 def setLangArduino():
     cli_command = ''
     if os_platform.system() == 'Windows':
-        cli_command = 'editor\\arduino\\bin\\arduino-cli-w32'
+        cli_command = 'editor\\arduino\\bin\\arduino-cli-w64'
     elif os_platform.system() == 'Darwin':
         cli_command = 'editor/arduino/bin/arduino-cli-mac'
     else:
@@ -210,7 +210,7 @@ def build(st_file, platform, source_file, port, txtCtrl, update_subsystem):
 
         cli_command = ''
         if os_platform.system() == 'Windows':
-            cli_command = 'editor\\arduino\\bin\\arduino-cli-w32'
+            cli_command = 'editor\\arduino\\bin\\arduino-cli-w64'
         elif os_platform.system() == 'Darwin':
             cli_command = 'editor/arduino/bin/arduino-cli-mac'
         else:
@@ -247,6 +247,7 @@ https://raw.githubusercontent.com/CONTROLLINO-PLC/CONTROLLINO_Library/master/Boa
 https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json \
 https://facts-engineering.gitlab.io/facts-open-source/p1am/beta_file_hosting/package_productivity-P1AM_200-boardmanagermodule_index.json \
 https://raw.githubusercontent.com/VEA-SRL/IRUINO_Library/main/package_vea_index.json \
+https://raw.githubusercontent.com/facts-engineering/facts-engineering.github.io/master/package_productivity-P1AM-boardmanagermodule_index.json \
 "2>&1"')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
@@ -260,6 +261,7 @@ https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectron
 https://raw.githubusercontent.com/CONTROLLINO-PLC/CONTROLLINO_Library/master/Boards/package_ControllinoHardware_index.json \
 https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json \
 https://facts-engineering.gitlab.io/facts-open-source/p1am/beta_file_hosting/package_productivity-P1AM_200-boardmanagermodule_index.json \
+https://raw.githubusercontent.com/facts-engineering/facts-engineering.github.io/master/package_productivity-P1AM-boardmanagermodule_index.json \
 https://raw.githubusercontent.com/VEA-SRL/IRUINO_Library/main/package_vea_index.json')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
@@ -537,8 +539,8 @@ void updateTime()
     wx.CallAfter(scrollToEnd, txtCtrl)
 
     # if (os.name == 'nt'):
-    #    compilation = subprocess.check_output('editor\\arduino\\bin\\arduino-cli-w32 compile -v --libraries=editor\\arduino --build-property compiler.c.extra_flags="-Ieditor\\arduino\\src\\lib" --build-property compiler.cpp.extra_flags="-Ieditor\\arduino\\src\\lib" --export-binaries -b ' + platform + ' editor\\arduino\\examples\\Baremetal\\Baremetal.ino 2>&1')
-    #compilation = subprocess.Popen(['editor\\arduino\\bin\\arduino-cli-w32', 'compile', '-v', '--libraries=..\\..\\', '--build-property', 'compiler.c.extra_flags="-I..\\src\\lib"', '--build-property', 'compiler.cpp.extra_flags="I..\\src\\lib"', '--export-binaries', '-b', platform, '..\\examples\\Baremetal\\Baremetal.ino'], cwd='editor\\arduino\\src', stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+    #    compilation = subprocess.check_output('editor\\arduino\\bin\\arduino-cli-w64 compile -v --libraries=editor\\arduino --build-property compiler.c.extra_flags="-Ieditor\\arduino\\src\\lib" --build-property compiler.cpp.extra_flags="-Ieditor\\arduino\\src\\lib" --export-binaries -b ' + platform + ' editor\\arduino\\examples\\Baremetal\\Baremetal.ino 2>&1')
+    #compilation = subprocess.Popen(['editor\\arduino\\bin\\arduino-cli-w64', 'compile', '-v', '--libraries=..\\..\\', '--build-property', 'compiler.c.extra_flags="-I..\\src\\lib"', '--build-property', 'compiler.cpp.extra_flags="I..\\src\\lib"', '--export-binaries', '-b', platform, '..\\examples\\Baremetal\\Baremetal.ino'], cwd='editor\\arduino\\src', stdout = subprocess.PIPE, stderr = subprocess.PIPE)
     # else:
     #    compilation = subprocess.check_output('editor/arduino/bin/arduino-cli-l64 compile -v --libraries=editor/arduino --build-property compiler.c.extra_flags="-Ieditor/arduino/src/lib" --build-property compiler.cpp.extra_flags="-Ieditor/arduino/src/lib" --export-binaries -b ' + platform + ' editor/arduino/examples/Baremetal/Baremetal.ino 2>&1')
     #compiler_logs += compilation.decode('utf-8')
@@ -550,7 +552,7 @@ void updateTime()
     compiler_logs += '\n'
 
     if os_platform.system() == 'Windows':
-        compilation = subprocess.Popen(['editor\\arduino\\bin\\arduino-cli-w32', 'compile', '-v', '--libraries=editor\\arduino', '--build-property', 'compiler.c.extra_flags="-Ieditor\\arduino\\src\\lib"', '--build-property',
+        compilation = subprocess.Popen(['editor\\arduino\\bin\\arduino-cli-w64', 'compile', '-v', '--libraries=editor\\arduino', '--build-property', 'compiler.c.extra_flags="-Ieditor\\arduino\\src\\lib"', '--build-property',
                                        'compiler.cpp.extra_flags="-Ieditor\\arduino\\src\\lib"', '--export-binaries', '-b', platform, 'editor\\arduino\\examples\\Baremetal\\Baremetal.ino'], creationflags=0x08000000, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     elif os_platform.system() == 'Darwin':
         compilation = subprocess.Popen(['editor/arduino/bin/arduino-cli-mac', 'compile', '-v', '--libraries=editor/arduino', '--build-property', 'compiler.c.extra_flags="-Ieditor/arduino/src/lib"', '--build-property',
@@ -572,7 +574,7 @@ void updateTime()
             wx.CallAfter(txtCtrl.SetValue, compiler_logs)
             wx.CallAfter(scrollToEnd, txtCtrl)
             if os_platform.system() == 'Windows':
-                compiler_logs += runCommand('editor\\arduino\\bin\\arduino-cli-w32 upload --port ' +
+                compiler_logs += runCommand('editor\\arduino\\bin\\arduino-cli-w64 upload --port ' +
                                             port + ' --fqbn ' + platform + ' editor\\arduino\\examples\\Baremetal/')
             elif os_platform.system() == 'Darwin':
                 compiler_logs += runCommand('editor/arduino/bin/arduino-cli-mac upload --port ' +

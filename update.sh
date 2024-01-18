@@ -7,7 +7,7 @@ if [ -d "./OpenPLC_Editor" ]
 then
     rm -Rf OpenPLC_Editor
 fi
-git clone --branch dev-python3 https://github.com/thiagoralves/OpenPLC_Editor
+git clone https://github.com/thiagoralves/OpenPLC_Editor
 if [ -d "./OpenPLC_Editor/editor" ]
 then
     mv "./OpenPLC_Editor/editor" ./new_editor
