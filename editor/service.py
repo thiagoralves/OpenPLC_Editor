@@ -26,6 +26,10 @@ from pubsub import pub
 import wx
 import wx.adv
 
+sys.path.insert(0,'./editor') #Fix for Windows
+sys.path.insert(0,'./') #Fix for Windows
+sys.path.insert(0,'./editor/runtime') #Fix for Windows
+
 from runtime import default_evaluator, MainWorker, PlcStatus
 from runtime.PLCObject import PLCObject
 import util.paths as paths
