@@ -1548,7 +1548,8 @@ class Viewer(EditorPanel, DebugViewer):
 
         def ForceVariableFunction(event):
             if iec_type is not None:
-                dialog = ForceVariableDialog(self.ParentWindow, iec_type, str(element.GetValue()))
+                #dialog = ForceVariableDialog(self.ParentWindow, iec_type, str(element.GetValue()))
+                dialog = ForceVariableDialog(self.ParentWindow, iec_type, "0")
                 if dialog.ShowModal() == wx.ID_OK:
                     self.ParentWindow.AddDebugVariable(iec_path)
                     self.ForceDataValue(iec_path, dialog.GetValue())
