@@ -1064,7 +1064,8 @@ class PouProgramGenerator(object):
                     same_paths.setdefault(str_path, [])
                     same_paths[str_path].append((path[:-1], num))
             else:
-                factorized_paths.append(path)
+                if path != None:
+                    factorized_paths.append(path)
                 uncomputed_index.remove(num)
         for same_path, elements in list(same_paths.items()):
             if len(elements) > 1:
