@@ -856,6 +856,7 @@ class PLCObject(object):
         """
         self._resumeDebug()  # Re-enable debugger
         TraceBuffer = None
+        ForcedVariablesIdx = []
         while self.PLCStatus == PlcStatus.Started:
             if self.DebuggerType == 'simulation':
                 tick = ctypes.c_uint32()
@@ -934,8 +935,15 @@ class PLCObject(object):
                 for item in self.tracesList:
                     variable_idx, force_value, iec_type = item
                     if force_value != None:
+                        if variable_idx not in ForcedVariablesIdx:
+                            ForcedVariablesIdx.append(variable_idx)
                         #value = force_status._obj.value
                         self.remote.send_debug_set_query(variable_idx, True, force_value, iec_type)
+                    else:
+                        if variable_idx in ForcedVariablesIdx:
+                            self.remote.send_debug_set_query(variable_idx, False, 0, iec_type)
+                            ForcedVariablesIdx.remove(variable_idx)
+
                 
                 sleep(0.03) # Thread queries data every 30ms
 
