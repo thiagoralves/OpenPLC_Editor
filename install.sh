@@ -18,7 +18,7 @@ elif [ -x /usr/bin/apt-get ]; then
     sudo apt-get -qq update
     sudo apt-get install -y build-essential bison flex autoconf \
                           automake make git libgtk-3-dev\
-                          python3.9 python3-venv
+                          python3.9 python3.9-venv
 #Installing dependencies for opensuse tumbleweed
 elif [ -x /usr/bin/zypper ]; then
     sudo zypper ref
