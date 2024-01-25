@@ -137,25 +137,28 @@ class RemoteDebugClient:
         return self._send_modbus_request(FunctionCode.DEBUG_INFO, data)
     
     def send_debug_set_query(self, varidx, flag, value, var_type):
-        if var_type in ['BOOL', 'STEP', 'TRANSITION', 'ACTION', 'SINT', 'USINT', 'BYTE']:
-            data = struct.pack(">H", varidx) + struct.pack(">B", flag) + struct.pack(">H", 1) + struct.pack(">B", int(value))
-        elif var_type in ['INT', 'UINT', 'WORD']:
-            data = struct.pack(">H", varidx) + struct.pack(">B", flag) + struct.pack(">H", 2) + struct.pack(">h", value)
-        elif var_type in ['DINT', 'UDINT', 'DWORD']:
-            data = struct.pack(">H", varidx) + struct.pack(">B", flag) + struct.pack(">H", 4) + struct.pack(">i", value)
-        elif var_type in ['LINT', 'ULINT', 'LWORD']:
-            data = struct.pack(">H", varidx) + struct.pack(">B", flag) + struct.pack(">H", 8) + struct.pack(">q", value)
-        elif var_type in ['REAL']:
-            data = struct.pack(">H", varidx) + struct.pack(">B", flag) + struct.pack(">H", 4) + struct.pack(">f", value)
-        elif var_type in ['LREAL']:
-            data = struct.pack(">H", varidx) + struct.pack(">B", flag) + struct.pack(">H", 8) + struct.pack(">d", value)
-        elif var_type == 'STRING':
-            # For strings, serialize the length and the string itself
-            data = struct.pack(">H", varidx) + struct.pack(">B", flag) + struct.pack(">H", len(value)) + value
+        if flag == False:
+            data = struct.pack(">H", varidx) + struct.pack(">B", flag) + struct.pack(">H", 1) + struct.pack(">B", 0)
         else:
-            # Handle unsupported data types or raise an error if needed
-            #raise TypeError("Unsupported data type: {}".format(type(value)))
-            print("Unsupported data type: {}".format(var_type))
+            if var_type in ['BOOL', 'STEP', 'TRANSITION', 'ACTION', 'SINT', 'USINT', 'BYTE']:
+                data = struct.pack(">H", varidx) + struct.pack(">B", flag) + struct.pack(">H", 1) + struct.pack(">B", int(value))
+            elif var_type in ['INT', 'UINT', 'WORD']:
+                data = struct.pack(">H", varidx) + struct.pack(">B", flag) + struct.pack(">H", 2) + struct.pack(">h", value)
+            elif var_type in ['DINT', 'UDINT', 'DWORD']:
+                data = struct.pack(">H", varidx) + struct.pack(">B", flag) + struct.pack(">H", 4) + struct.pack(">i", value)
+            elif var_type in ['LINT', 'ULINT', 'LWORD']:
+                data = struct.pack(">H", varidx) + struct.pack(">B", flag) + struct.pack(">H", 8) + struct.pack(">q", value)
+            elif var_type in ['REAL']:
+                data = struct.pack(">H", varidx) + struct.pack(">B", flag) + struct.pack(">H", 4) + struct.pack(">f", value)
+            elif var_type in ['LREAL']:
+                data = struct.pack(">H", varidx) + struct.pack(">B", flag) + struct.pack(">H", 8) + struct.pack(">d", value)
+            elif var_type == 'STRING':
+                # For strings, serialize the length and the string itself
+                data = struct.pack(">H", varidx) + struct.pack(">B", flag) + struct.pack(">H", len(value)) + value
+            else:
+                # Handle unsupported data types or raise an error if needed
+                #raise TypeError("Unsupported data type: {}".format(type(value)))
+                print("Unsupported data type: {}".format(var_type))
         
         return self._send_modbus_request(FunctionCode.DEBUG_SET, data)
 
