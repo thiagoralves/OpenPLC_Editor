@@ -16,9 +16,13 @@ if [ -x /bin/yum ]; then
 #Installing dependencies for Ubuntu/Mint/Debian
 elif [ -x /usr/bin/apt-get ]; then
     sudo apt-get -qq update
+    #Add deadsnakes PPA for Python3.9 support on newer distros
+    sudo apt-get install software-properties-common -y
+    sudo add-apt-repository ppa:deadsnakes/ppa -y
+    sudo apt-get -qq update
     sudo apt-get install -y build-essential bison flex autoconf \
                           automake make git libgtk-3-dev\
-                          python3.9 python3.9-venv
+                          python3.9 python3.9-venv python3.9-dev
 #Installing dependencies for opensuse tumbleweed
 elif [ -x /usr/bin/zypper ]; then
     sudo zypper ref
