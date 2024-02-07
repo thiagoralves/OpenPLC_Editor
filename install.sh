@@ -54,6 +54,13 @@ cd ..
 WORKING_DIR=$(pwd)
 echo -e "#!/bin/bash\n\
 cd \"$WORKING_DIR\"\n\
+if [ -d \"./new_editor\" ]\n\
+then\n\
+    rm -Rf editor\n\
+    rm -Rf ./matiec/lib\n\
+    mv ./new_editor ./editor\n\
+    mv ./new_lib ./matiec/lib\n\
+fi\n\
 ./.venv/bin/python3 ./editor/Beremiz.py" > openplc_editor.sh
 chmod +x ./openplc_editor.sh
 
