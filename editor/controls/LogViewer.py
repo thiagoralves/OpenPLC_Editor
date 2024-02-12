@@ -524,6 +524,12 @@ class LogViewer(DebugViewer, wx.Panel):
 
     def RefreshView(self):
         width, height = self.MessagePanel.GetClientSize()
+        #Can't create bitmap with a zero height or width
+        if height == 0:
+            height = 1 
+        if width == 0:
+            width = 1
+
         bitmap = wx.Bitmap(width, height)
         dc = wx.BufferedDC(wx.ClientDC(self.MessagePanel), bitmap)
         dc.Clear()
