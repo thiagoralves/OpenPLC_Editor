@@ -1,6 +1,8 @@
 # OpenPLC Editor
-OpenPLC Editor - IDE capable of creating programs for the OpenPLC Runtime
+OpenPLC Editor - IDE capable of creating programs for the OpenPLC Runtime.
+
 The codebase has been updated to Python3 and wxPython Phoenix.
+
 Runs on: Windows, Linux, macOS
 
 ## Install
