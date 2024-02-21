@@ -8,6 +8,7 @@ Runs on: Windows, Linux, macOS
 ### Linux
 
 clone the project
+
 cd to the root of the project and then
 
 ```
