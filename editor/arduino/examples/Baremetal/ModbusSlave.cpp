@@ -86,11 +86,11 @@ void write_discrete(uint16_t addr, bool regtype, bool value)
         bitWrite(modbus.input_status[byte_addr], bit_addr, value);
 }
 
-void mbconfig_serial_iface(HardwareSerial* port, long baud, int txPin)
+void mbconfig_serial_iface(Stream* port, long baud, int txPin)
 {
     mb_serialport = port;
     mb_txpin = txPin;
-    (*port).begin(baud);
+    //(*port).begin(baud); //Initialization already happened on main .ino file
 
     //RS-485 control
     if (txPin >= 0) 

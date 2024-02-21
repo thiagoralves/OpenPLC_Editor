@@ -84,9 +84,11 @@ void setup()
                     if (pinMask_AOUT[i] == MBSERIAL_TXPIN)
                         pinMask_AOUT[i] = 255;
                 }
-                mbconfig_serial_iface((HardwareSerial *)&MBSERIAL_IFACE, MBSERIAL_BAUD, MBSERIAL_TXPIN);
+                MBSERIAL_IFACE.begin(MBSERIAL_BAUD); //Initialize serial interface
+                mbconfig_serial_iface(&MBSERIAL_IFACE, MBSERIAL_BAUD, MBSERIAL_TXPIN);
             #else
-                mbconfig_serial_iface((HardwareSerial *)&MBSERIAL_IFACE, MBSERIAL_BAUD, -1);;
+                MBSERIAL_IFACE.begin(MBSERIAL_BAUD); //Initialize serial interface
+                mbconfig_serial_iface(&MBSERIAL_IFACE, MBSERIAL_BAUD, -1);;
             #endif
 	
 	        //Set the Slave ID

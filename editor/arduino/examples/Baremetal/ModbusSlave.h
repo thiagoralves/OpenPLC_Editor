@@ -127,7 +127,7 @@ extern uint16_t mb_t35; // frame delay
 bool init_mbregs(uint8_t size_holding, uint8_t size_coils, uint8_t input_regs, uint8_t input_status);
 bool get_discrete(uint16_t addr, bool regtype);
 void write_discrete(uint16_t addr, bool regtype, bool value);
-void mbconfig_serial_iface(HardwareSerial* port, long baud, int txPin);
+void mbconfig_serial_iface(Stream* port, long baud, int txPin);
 #ifdef MBTCP
 void mbconfig_ethernet_iface(uint8_t *mac, uint8_t *ip, uint8_t *dns, uint8_t *gateway, uint8_t *subnet);
 #endif
