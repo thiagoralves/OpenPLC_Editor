@@ -456,7 +456,10 @@ class Beremiz(IDEFrame, LocalRuntimeMixin):
     def __init__(self, parent, projectOpen=None, buildpath=None, ctr=None, debug=True, logf=None):
 
         # Add beremiz's icon in top left corner of the frame
-        self.icon = wx.Icon(Bpath("images", "brz.ico"), wx.BITMAP_TYPE_ICO)
+        if os.name == 'posix':
+            self.icon = wx.Icon(Bpath("images", "brz.png"), wx.BITMAP_TYPE_ICO)
+        else:
+            self.icon = wx.Icon(Bpath("images", "brz.ico"), wx.BITMAP_TYPE_ICO)
         self.__init_execute_path()
 
         IDEFrame.__init__(self, parent, debug)
