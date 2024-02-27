@@ -758,7 +758,12 @@ class ProjectController(ConfigTreeNode, PLCControler):
                     resdict = result.groupdict()
                     # rewrite string for variadic location as a tuple of
                     # integers
-                    resdict['LOC'] = tuple(map(int, resdict['LOC'].split(',')))
+                    loc_list = resdict['LOC'].split(',')
+                    if '' in loc_list:
+                        self.logger.write_error(_("Error in ST/IL/SFC code generator : Invalid location for variable at %s\n") % str(resdict['NAME']))
+                        return None
+                    loc_list.remove('')
+                    resdict['LOC'] = tuple(map(int, loc_list))
                     # set located size to 'X' if not given
                     if not resdict['SIZE']:
                         resdict['SIZE'] = 'X'
@@ -952,6 +957,8 @@ class ProjectController(ConfigTreeNode, PLCControler):
         # Keep track of generated located variables for later use by
         # self._Generate_C
         self.PLCGeneratedLocatedVars = self.GetLocations()
+        if self.PLCGeneratedLocatedVars == None:
+            return False
         # Keep track of generated C files for later use by self.CTNGenerate_C
         self.PLCGeneratedCFiles = C_files
         # compute CFLAGS for plc
