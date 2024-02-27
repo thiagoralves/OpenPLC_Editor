@@ -30,6 +30,7 @@ import ctypes
 import time
 from threading import Timer, Lock, Thread, Semaphore, Condition
 import signal
+import json
 
 _debug = os.path.exists("BEREMIZ_DEBUG")
 
@@ -57,11 +58,14 @@ class outputThread(Thread):
             else:
                 self.retval = self.Proc.returncode
 
-            outchunk = self.fd.readline()
+            outchunk_b = self.fd.read()
+            outchunk = outchunk_b.decode(json.detect_encoding(outchunk_b), errors='backslashreplace')
+
             if self.callback:
                 self.callback(outchunk)
         while outchunk != '' and not self.killed:
-            outchunk = self.fd.readline()
+            outchunk_b = self.fd.read()
+            outchunk = outchunk_b.decode(json.detect_encoding(outchunk_b), errors='backslashreplace')
             if self.callback:
                 self.callback(outchunk)
         if self.endcallback:
@@ -142,7 +146,7 @@ class ProcessLogger(object):
         if _debug and self.logger:
             self.logger.write("(DEBUG) launching:\n" + self.Command_str + "\n")
 
-        self.Proc = subprocess.Popen(self.Command, encoding="utf-8", **popenargs)
+        self.Proc = subprocess.Popen(self.Command, **popenargs)
 
         self.outt = outputThread(
             self.Proc,
