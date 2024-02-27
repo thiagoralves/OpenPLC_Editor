@@ -32,7 +32,7 @@ def runCommand(command):
     if cmd_response == None:
         return ''
 
-    return cmd_response.decode('utf-8')
+    return cmd_response.decode('utf-8', errors='backslashreplace')
 
 def loadHals():
     # load hals list from json file, or construct it
@@ -330,8 +330,8 @@ STM32_PWM')
         compilation = subprocess.Popen(
             ['../bin/iec2c', 'plc_prog.st'], cwd='./editor/arduino/src', stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = compilation.communicate()
-    compiler_logs += stdout.decode('UTF-8')
-    compiler_logs += stderr.decode('UTF-8')
+    compiler_logs += stdout.decode('UTF-8', errors='backslashreplace')
+    compiler_logs += stderr.decode('UTF-8', errors='backslashreplace')
     wx.CallAfter(txtCtrl.SetValue, compiler_logs)
     wx.CallAfter(scrollToEnd, txtCtrl)
 
@@ -561,8 +561,8 @@ void updateTime()
         compilation = subprocess.Popen(['editor/arduino/bin/arduino-cli-l64', 'compile', '-v', '--libraries=editor/arduino', '--build-property', 'compiler.c.extra_flags="-Ieditor/arduino/src/lib"', '--build-property',
                                        'compiler.cpp.extra_flags="-Ieditor/arduino/src/lib"', '--export-binaries', '-b', platform, 'editor/arduino/examples/Baremetal/Baremetal.ino'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = compilation.communicate()
-    compiler_logs += stdout.decode('UTF-8')
-    compiler_logs += stderr.decode('UTF-8')
+    compiler_logs += stdout.decode('UTF-8', errors='backslashreplace')
+    compiler_logs += stderr.decode('UTF-8', errors='backslashreplace')
     if (compilation.returncode != 0):
         compiler_logs += '\nCOMPILATION FAILED!\n'
     wx.CallAfter(txtCtrl.SetValue, compiler_logs)
