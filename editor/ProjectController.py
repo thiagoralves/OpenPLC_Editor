@@ -762,7 +762,6 @@ class ProjectController(ConfigTreeNode, PLCControler):
                     if '' in loc_list:
                         self.logger.write_error(_("Error in ST/IL/SFC code generator : Invalid location for variable at %s\n") % str(resdict['NAME']))
                         return None
-                    loc_list.remove('')
                     resdict['LOC'] = tuple(map(int, loc_list))
                     # set located size to 'X' if not given
                     if not resdict['SIZE']:
