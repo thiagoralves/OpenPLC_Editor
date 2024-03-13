@@ -2603,7 +2603,7 @@ class GraphicPrintout(wx.Printout):
         self.PageSize = page_size
         if self.PageSize[0] == 0 or self.PageSize[1] == 0:
             self.PageSize = (1050, 1485)
-        self.Preview = preview
+        self.IsPreview = preview
         self.Margins = margins
         self.FontSize = 5
         self.TextMargin = 3
@@ -2624,9 +2624,9 @@ class GraphicPrintout(wx.Printout):
 
     def OnBeginDocument(self, startPage, endPage):
         dc = self.GetDC()
-        if not self.Preview and isinstance(dc, wx.PostScriptDC):
+        if not self.IsPreview and isinstance(dc, wx.PostScriptDC):
             dc.SetResolution(720)
-        super(GraphicPrintout, self).OnBeginDocument(startPage, endPage)
+        return super(GraphicPrintout, self).OnBeginDocument(startPage, endPage)
 
     def OnPrintPage(self, page):
         dc = self.GetDC()
@@ -2634,12 +2634,12 @@ class GraphicPrintout(wx.Printout):
         dc.Clear()
         dc.SetUserScale(1.0, 1.0)
         dc.SetDeviceOrigin(0, 0)
-        dc.printing = not self.Preview
+        dc.printing = not self.IsPreview
 
         # Get the size of the DC in pixels
         ppiPrinterX, ppiPrinterY = self.GetPPIPrinter()
         pw, ph = self.GetPageSizePixels()
-        dw, dh = dc.GetSizeTuple()
+        dw, dh = dc.GetSize().Get()
         Xscale = (dw * ppiPrinterX) / (pw * 25.4)
         Yscale = (dh * ppiPrinterY) / (ph * 25.4)
 
