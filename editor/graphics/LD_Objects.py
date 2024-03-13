@@ -977,6 +977,8 @@ class LD_Coil(Graphic_Element):
         if getattr(dc, "printing", False) and not isinstance(dc, wx.PostScriptDC):
             # Draw an clipped ellipse for representing the coil
             clipping_box = dc.GetClippingBox()
+            if len(clipping_box) == 5:
+                clipping_box = (clipping_box[1],clipping_box[2],clipping_box[3],clipping_box[4])
             dc.SetClippingRegion(self.Pos.x - 1, self.Pos.y, self.Size[0] + 2, self.Size[1] + 1)
             dc.DrawEllipse(self.Pos.x, self.Pos.y - int(self.Size[1] * (sqrt(2) - 1.) / 2.) + 1, self.Size[0], int(self.Size[1] * sqrt(2)) - 1)
             dc.DestroyClippingRegion()
