@@ -241,7 +241,7 @@ def build(st_file, platform, source_file, port, txtCtrl, update_subsystem):
         compiler_logs += runCommand(
             cli_command + ' config remove board_manager.additional_urls \
 https://arduino.esp8266.com/stable/package_esp8266com_index.json \
-https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json \
+https://espressif.github.io/arduino-esp32/package_esp32_dev_index.json \
 https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectronics_index.json \
 https://raw.githubusercontent.com/CONTROLLINO-PLC/CONTROLLINO_Library/master/Boards/package_ControllinoHardware_index.json \
 https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json \
@@ -256,7 +256,7 @@ https://raw.githubusercontent.com/facts-engineering/facts-engineering.github.io/
         compiler_logs += runCommand(
             cli_command + ' config add board_manager.additional_urls \
 https://arduino.esp8266.com/stable/package_esp8266com_index.json \
-https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json \
+https://espressif.github.io/arduino-esp32/package_esp32_dev_index.json \
 https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectronics_index.json \
 https://raw.githubusercontent.com/CONTROLLINO-PLC/CONTROLLINO_Library/master/Boards/package_ControllinoHardware_index.json \
 https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json \
