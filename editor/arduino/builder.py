@@ -167,7 +167,6 @@ arduinomqttclient \
 RP2040_PWM \
 AVR_PWM \
 megaAVR_PWM \
-ESP32_FastPWM \
 SAMD_PWM \
 SAMDUE_PWM \
 Portenta_H7_PWM \
