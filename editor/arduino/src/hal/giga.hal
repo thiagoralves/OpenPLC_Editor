@@ -1,0 +1,6 @@
+# HAL configuration
+# Format :
+# Board type, FQBN
+
+Arduino Giga, arduino:mbed_giga
+
