@@ -405,7 +405,7 @@ static void CLOUD_ADD_BOOL_body__(CLOUD_ADD_BOOL *data__) {
   
   if (!__GET_VAR(data__->SUCCESS))
   {
-    cloud_add_bool(__GET_VAR(data__->VAR_NAME).body, &data__->internal_int);
+    cloud_add_bool(__GET_VAR(data__->VAR_NAME).body, (int *)&data__->internal_int);
     __SET_VAR(data__->,SUCCESS,,1);
   }
   
@@ -436,7 +436,7 @@ static void CLOUD_ADD_DINT_body__(CLOUD_ADD_DINT *data__) {
   
   if (!__GET_VAR(data__->SUCCESS))
   {
-    cloud_add_int(__GET_VAR(data__->VAR_NAME).body, &data__->DINT_VAR);
+    cloud_add_int(__GET_VAR(data__->VAR_NAME).body, (int *)&data__->DINT_VAR);
     __SET_VAR(data__->,SUCCESS,,1);
   }
   
@@ -467,7 +467,7 @@ static void CLOUD_ADD_REAL_body__(CLOUD_ADD_REAL *data__) {
   
   if (!__GET_VAR(data__->SUCCESS))
   {
-    cloud_add_float(__GET_VAR(data__->VAR_NAME).body, &data__->REAL_VAR);
+    cloud_add_float(__GET_VAR(data__->VAR_NAME).body, (float *)&data__->REAL_VAR);
     __SET_VAR(data__->,SUCCESS,,1);
   }
   
