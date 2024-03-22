@@ -1026,16 +1026,19 @@ class Connector(DebugDataConsumer, ToolTipProducer):
     """
 
     # Create a new connector
-    def __init__(self, parent, name, type, position, direction, negated=False, edge="none", onlyone=False):
+    def __init__(self, parent, name, value_type, position, direction, negated=False, edge="none", onlyone=False):
         DebugDataConsumer.__init__(self)
         ToolTipProducer.__init__(self, parent.Parent)
         self.ParentBlock = parent
         self.Name = name
-        self.Type = type
+        # Fix for arrays
+        if type(value_type) == tuple:
+            value_type = value_type[0].upper()
+        self.Type = value_type
         self.Pos = position
         self.Direction = direction
         self.Wires = []
-        if self.ParentBlock.IsOfType("BOOL", type):
+        if self.ParentBlock.IsOfType("BOOL", value_type):
             self.Negated = negated
             self.Edge = edge
         else:
@@ -1141,8 +1144,11 @@ class Connector(DebugDataConsumer, ToolTipProducer):
         return self.ParentBlock.IsOfType(type, reference) or self.ParentBlock.IsOfType(reference, type)
 
     # Changes the connector name
-    def SetType(self, type):
-        self.Type = type
+    def SetType(self, value_type):
+        # Fix for arrays
+        if type(value_type) == tuple:
+            value_type = value_type[0].upper()
+        self.Type = value_type
         for wire, _handle in self.Wires:
             wire.SetValid(wire.IsConnectedCompatible())
 
