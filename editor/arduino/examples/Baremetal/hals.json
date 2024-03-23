@@ -338,6 +338,22 @@
       "user_dout": "01, 02, 03, 04, 05, 12, 13, 14, 15, 16",
       "user_aout": "25, 26"
     },
+    "ESP32-S3": {
+      "platform": "esp32:esp32:esp32s3",
+      "define": "BOARD_ESP32",
+      "source": "esp32.cpp",
+      "version": "0",
+      "last_update": 0,
+      "core": "esp32:esp32",
+      "default_din": "6, 7, 8, 9",
+      "default_ain": "1, 2, 3, 4",
+      "default_dout": "34, 35",
+      "default_aout": "36, 37",
+      "user_din": "6, 7, 8, 9",
+      "user_ain": "1, 2, 3, 4",
+      "user_dout": "34, 35",
+      "user_aout": "36, 37"
+    },
     "ESP8266 D1-mini": {
       "platform": "esp8266:esp8266:d1_mini",
       "define": "BOARD_ESP8266",
