@@ -857,6 +857,13 @@ class PLCObject(object):
         self._resumeDebug()  # Re-enable debugger
         TraceBuffer = None
         ForcedVariablesIdx = []
+
+        # Define maximum number of traces
+        batch_size = 60
+        if self.DebuggerType == 'remote' and self.remote.modbus_type == 'RTU':
+            # We should limit Serial debuggers as they may have smaller buffers
+            batch_size = 20
+        
         while self.PLCStatus == PlcStatus.Started:
             if self.DebuggerType == 'simulation':
                 tick = ctypes.c_uint32()
@@ -887,13 +894,7 @@ class PLCObject(object):
                     variable_idx, force_status, iec_type = item
                     trace_list.append(variable_idx)
                 try:
-                    if self.PLCStatus == PlcStatus.Started and trace_list:
-                        # Define maximum number of traces
-                        batch_size = 60
-                        if self.remote.modbus_type == 'RTU':
-                            # We should limit Serial debuggers as they may have smaller buffers
-                            batch_size = 20
-                            
+                    if self.PLCStatus == PlcStatus.Started and trace_list:                           
                         total_traces = len(trace_list)
                         processed_traces = 0
                         while processed_traces < total_traces:
@@ -913,6 +914,17 @@ class PLCObject(object):
                                     else:
                                         # Get the remaining traces in the next batch
                                         processed_traces = trace_list.index(lastIndex) + 1
+                                elif response_code == debugger.DebugResponse.ERROR_OUT_OF_BOUNDS:
+                                    print("Error reading traces from remote: request of indexes out of bounds")
+                                    TraceBuffer = None
+                                elif response_code == debugger.DebugResponse.ERROR_OUT_OF_MEMORY:
+                                    if batch_size > 2:
+                                        batch_size -= 1
+                                        print("Error reading traces from remote: out of memory.\nReducing batch size to " + str(batch_size))
+                                    else:
+                                        print("Error reading traces from remote: FATAL out of memory. Can't reduce batch size any further")
+                                    TraceBuffer = None
+                                    break
                                 else:
                                     print("Error reading traces from remote: Invalid response")
                                     res_hex = ' '.join([hex(ord(byte))[2:].zfill(2) for byte in res])
