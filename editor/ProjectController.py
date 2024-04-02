@@ -1700,7 +1700,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
                 if len(Traces) > 0:
                     for debug_tick, debug_buff in Traces:
                         debug_vars = UnpackDebugBuffer(
-                            debug_buff, self.TracedIECTypes)
+                            debug_buff, self.TracedIECTypes, self._buildType == 'simulator')
                         if debug_vars is not None:
                             for IECPath, values_buffer, value in zip(
                                     self.TracedIECPath,
