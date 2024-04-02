@@ -71,7 +71,7 @@ TypeTranslator = SameEndianessTypeTranslator
 DebugTypesSize = dict([(key, sizeof(t)) for key, (t, p, u) in SameEndianessTypeTranslator.items() if t is not None])
 
 
-def UnpackDebugBuffer(buff, indexes):
+def UnpackDebugBuffer(buff, indexes, calc_string_size):
     res = []
     buffoffset = 0
     buffsize = len(buff)
@@ -81,13 +81,14 @@ def UnpackDebugBuffer(buff, indexes):
                                                              (None, None, None))
 
         cursor = c_void_p(buffptr + buffoffset)
-        if iectype == "STRING":
+        if iectype == "STRING" and calc_string_size == True:
             # strlen is stored in c_uint8 and sizeof(c_uint8) is 1
-            # first check we can read size
+            # first check we can read size.
             if (buffoffset + 1) <= buffsize:
                 size = 1 + cast(cursor,POINTER(c_type)).contents.len
             else:
                 return None
+        
         else:
             size = sizeof(c_type)
 
