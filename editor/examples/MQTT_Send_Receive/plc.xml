@@ -1,0 +1,849 @@
+<?xml version='1.0' encoding='utf-8'?>
+<project xmlns:ns1="http://www.plcopen.org/xml/tc6_0201" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.plcopen.org/xml/tc6_0201">
+  <fileHeader companyName="Unknown" productName="Unnamed" productVersion="1" creationDateTime="2022-08-16T15:49:17"/>
+  <contentHeader name="Unnamed" modificationDateTime="2024-04-03T10:23:07">
+    <coordinateInfo>
+      <fbd>
+        <scaling x="10" y="10"/>
+      </fbd>
+      <ld>
+        <scaling x="10" y="10"/>
+      </ld>
+      <sfc>
+        <scaling x="10" y="10"/>
+      </sfc>
+    </coordinateInfo>
+  </contentHeader>
+  <types>
+    <dataTypes/>
+    <pous>
+      <pou name="MQTT_Example" pouType="program">
+        <interface>
+          <localVars>
+            <variable name="blink_led">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="TON0">
+              <type>
+                <derived name="TON"/>
+              </type>
+            </variable>
+            <variable name="TOF0">
+              <type>
+                <derived name="TOF"/>
+              </type>
+            </variable>
+            <variable name="MQTT_CONNECT0">
+              <type>
+                <derived name="MQTT_CONNECT"/>
+              </type>
+            </variable>
+            <variable name="MQTT_SEND0">
+              <type>
+                <derived name="MQTT_SEND"/>
+              </type>
+            </variable>
+            <variable name="mqtt_connected">
+              <type>
+                <BOOL/>
+              </type>
+              <initialValue>
+                <simpleValue value="0"/>
+              </initialValue>
+            </variable>
+            <variable name="mqtt_subscribed">
+              <type>
+                <BOOL/>
+              </type>
+              <initialValue>
+                <simpleValue value="0"/>
+              </initialValue>
+            </variable>
+            <variable name="mqtt_sent">
+              <type>
+                <BOOL/>
+              </type>
+              <initialValue>
+                <simpleValue value="0"/>
+              </initialValue>
+            </variable>
+            <variable name="mqtt_received">
+              <type>
+                <BOOL/>
+              </type>
+              <initialValue>
+                <simpleValue value="0"/>
+              </initialValue>
+            </variable>
+            <variable name="msg_received">
+              <type>
+                <string/>
+              </type>
+            </variable>
+            <variable name="MQTT_SUBSCRIBE0">
+              <type>
+                <derived name="MQTT_SUBSCRIBE"/>
+              </type>
+            </variable>
+            <variable name="MQTT_RECEIVE0">
+              <type>
+                <derived name="MQTT_RECEIVE"/>
+              </type>
+            </variable>
+          </localVars>
+        </interface>
+        <body>
+          <LD>
+            <leftPowerRail localId="1" height="800" width="10">
+              <position x="90" y="110"/>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="20"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="60"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="100"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="140"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="180"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="220"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="260"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="300"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="340"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="380"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="420"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="460"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="500"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="540"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="580"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="620"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="660"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="700"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="740"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="780"/>
+              </connectionPointOut>
+            </leftPowerRail>
+            <rightPowerRail localId="2" height="800" width="10">
+              <position x="990" y="110"/>
+              <connectionPointIn>
+                <relPosition x="0" y="20"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="60"/>
+                <connection refLocalId="4" formalParameter="ENO">
+                  <position x="990" y="170"/>
+                  <position x="730" y="170"/>
+                </connection>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="100"/>
+                <connection refLocalId="6">
+                  <position x="990" y="210"/>
+                  <position x="850" y="210"/>
+                </connection>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="140"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="180"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="220"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="260"/>
+                <connection refLocalId="18">
+                  <position x="990" y="370"/>
+                  <position x="900" y="370"/>
+                </connection>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="300"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="340"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="380"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="420"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="460"/>
+                <connection refLocalId="23">
+                  <position x="990" y="570"/>
+                  <position x="900" y="570"/>
+                </connection>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="500"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="540"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="580"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="620"/>
+                <connection refLocalId="20">
+                  <position x="990" y="730"/>
+                  <position x="900" y="730"/>
+                </connection>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="660"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="700"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="740"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="780"/>
+              </connectionPointIn>
+            </rightPowerRail>
+            <block localId="3" typeName="TON" instanceName="TON0" height="140" width="90">
+              <position x="350" y="130"/>
+              <inputVariables>
+                <variable formalParameter="EN">
+                  <connectionPointIn>
+                    <relPosition x="0" y="40"/>
+                    <connection refLocalId="1">
+                      <position x="350" y="170"/>
+                      <position x="100" y="170"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN">
+                  <connectionPointIn>
+                    <relPosition x="0" y="80"/>
+                    <connection refLocalId="5">
+                      <position x="350" y="210"/>
+                      <position x="210" y="210"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="PT">
+                  <connectionPointIn>
+                    <relPosition x="0" y="120"/>
+                    <connection refLocalId="7">
+                      <position x="350" y="250"/>
+                      <position x="310" y="250"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="ENO">
+                  <connectionPointOut>
+                    <relPosition x="90" y="40"/>
+                  </connectionPointOut>
+                </variable>
+                <variable formalParameter="Q">
+                  <connectionPointOut>
+                    <relPosition x="90" y="80"/>
+                  </connectionPointOut>
+                </variable>
+                <variable formalParameter="ET">
+                  <connectionPointOut>
+                    <relPosition x="90" y="120"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <block localId="4" typeName="TOF" instanceName="TOF0" height="140" width="90" executionOrderId="0">
+              <position x="640" y="130"/>
+              <inputVariables>
+                <variable formalParameter="EN">
+                  <connectionPointIn>
+                    <relPosition x="0" y="40"/>
+                    <connection refLocalId="3" formalParameter="ENO">
+                      <position x="640" y="170"/>
+                      <position x="440" y="170"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN">
+                  <connectionPointIn>
+                    <relPosition x="0" y="80"/>
+                    <connection refLocalId="3" formalParameter="Q">
+                      <position x="640" y="210"/>
+                      <position x="440" y="210"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="PT">
+                  <connectionPointIn>
+                    <relPosition x="0" y="120"/>
+                    <connection refLocalId="8">
+                      <position x="640" y="250"/>
+                      <position x="590" y="250"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="ENO">
+                  <connectionPointOut>
+                    <relPosition x="90" y="40"/>
+                  </connectionPointOut>
+                </variable>
+                <variable formalParameter="Q">
+                  <connectionPointOut>
+                    <relPosition x="90" y="80"/>
+                  </connectionPointOut>
+                </variable>
+                <variable formalParameter="ET">
+                  <connectionPointOut>
+                    <relPosition x="90" y="120"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <contact localId="5" height="20" width="30" negated="true">
+              <position x="180" y="200"/>
+              <connectionPointIn>
+                <relPosition x="0" y="10"/>
+                <connection refLocalId="1">
+                  <position x="180" y="210"/>
+                  <position x="100" y="210"/>
+                </connection>
+              </connectionPointIn>
+              <connectionPointOut>
+                <relPosition x="30" y="10"/>
+              </connectionPointOut>
+              <variable>blink_led</variable>
+            </contact>
+            <coil localId="6" height="20" width="30" negated="false">
+              <position x="820" y="200"/>
+              <connectionPointIn>
+                <relPosition x="0" y="10"/>
+                <connection refLocalId="4" formalParameter="Q">
+                  <position x="820" y="210"/>
+                  <position x="730" y="210"/>
+                </connection>
+              </connectionPointIn>
+              <connectionPointOut>
+                <relPosition x="30" y="10"/>
+              </connectionPointOut>
+              <variable>blink_led</variable>
+            </coil>
+            <inVariable localId="7" height="40" width="70" negated="false">
+              <position x="240" y="230"/>
+              <connectionPointOut>
+                <relPosition x="70" y="20"/>
+              </connectionPointOut>
+              <expression>T#500ms</expression>
+            </inVariable>
+            <inVariable localId="8" height="40" width="70" negated="false" executionOrderId="0">
+              <position x="520" y="230"/>
+              <connectionPointOut>
+                <relPosition x="70" y="20"/>
+              </connectionPointOut>
+              <expression>T#500ms</expression>
+            </inVariable>
+            <comment localId="9" height="70" width="910">
+              <position x="90" y="20"/>
+              <content>
+                <xhtml:p><![CDATA[This example cascades two timers (TON and TOF) to generate a square wave. The square wave is used to trigger the MQTT send block. The code also subscribes to the same topic where the message is being sent and then check the topic to receive messages using the MQTT_RECEIVE block. For this example to work, Modbus/TCP must be enabled during compilation, preferably with no IP, Gateway, Subnet and DNS information (all blank) so that it can get configured automatically through DHCP.]]></xhtml:p>
+              </content>
+            </comment>
+            <block localId="10" typeName="MQTT_CONNECT" instanceName="MQTT_CONNECT0" height="140" width="130">
+              <position x="490" y="330"/>
+              <inputVariables>
+                <variable formalParameter="CONNECT">
+                  <connectionPointIn>
+                    <relPosition x="0" y="40"/>
+                    <connection refLocalId="16">
+                      <position x="490" y="370"/>
+                      <position x="270" y="370"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="BROKER">
+                  <connectionPointIn>
+                    <relPosition x="0" y="80"/>
+                    <connection refLocalId="11">
+                      <position x="490" y="410"/>
+                      <position x="440" y="410"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="PORT">
+                  <connectionPointIn>
+                    <relPosition x="0" y="120"/>
+                    <connection refLocalId="12">
+                      <position x="490" y="450"/>
+                      <position x="440" y="450"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="SUCCESS">
+                  <connectionPointOut>
+                    <relPosition x="130" y="40"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="11" height="40" width="170" negated="false">
+              <position x="270" y="390"/>
+              <connectionPointOut>
+                <relPosition x="170" y="20"/>
+              </connectionPointOut>
+              <expression>'test.mosquitto.org'</expression>
+            </inVariable>
+            <inVariable localId="12" height="40" width="50" negated="false">
+              <position x="390" y="430"/>
+              <connectionPointOut>
+                <relPosition x="50" y="20"/>
+              </connectionPointOut>
+              <expression>1883</expression>
+            </inVariable>
+            <block localId="13" typeName="MQTT_SEND" instanceName="MQTT_SEND0" height="140" width="130">
+              <position x="490" y="690"/>
+              <inputVariables>
+                <variable formalParameter="SEND">
+                  <connectionPointIn>
+                    <relPosition x="0" y="40"/>
+                    <connection refLocalId="19">
+                      <position x="490" y="730"/>
+                      <position x="310" y="730"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="TOPIC">
+                  <connectionPointIn>
+                    <relPosition x="0" y="80"/>
+                    <connection refLocalId="14">
+                      <position x="490" y="770"/>
+                      <position x="440" y="770"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="MESSAGE">
+                  <connectionPointIn>
+                    <relPosition x="0" y="120"/>
+                    <connection refLocalId="15">
+                      <position x="490" y="810"/>
+                      <position x="440" y="810"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="SUCCESS">
+                  <connectionPointOut>
+                    <relPosition x="130" y="40"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="14" height="40" width="170" negated="false" executionOrderId="0">
+              <position x="270" y="750"/>
+              <connectionPointOut>
+                <relPosition x="170" y="20"/>
+              </connectionPointOut>
+              <expression>'openplc-test-topic'</expression>
+            </inVariable>
+            <inVariable localId="15" height="40" width="180" negated="false" executionOrderId="0">
+              <position x="260" y="790"/>
+              <connectionPointOut>
+                <relPosition x="180" y="20"/>
+              </connectionPointOut>
+              <expression>'Hello from OpenPLC!'</expression>
+            </inVariable>
+            <contact localId="16" height="20" width="30" negated="true">
+              <position x="240" y="360"/>
+              <connectionPointIn>
+                <relPosition x="0" y="10"/>
+                <connection refLocalId="1">
+                  <position x="240" y="370"/>
+                  <position x="100" y="370"/>
+                </connection>
+              </connectionPointIn>
+              <connectionPointOut>
+                <relPosition x="30" y="10"/>
+              </connectionPointOut>
+              <variable>mqtt_connected</variable>
+            </contact>
+            <contact localId="17" height="20" width="30" negated="false">
+              <position x="160" y="720"/>
+              <connectionPointIn>
+                <relPosition x="0" y="10"/>
+                <connection refLocalId="1">
+                  <position x="160" y="730"/>
+                  <position x="100" y="730"/>
+                </connection>
+              </connectionPointIn>
+              <connectionPointOut>
+                <relPosition x="30" y="10"/>
+              </connectionPointOut>
+              <variable>mqtt_connected</variable>
+            </contact>
+            <coil localId="18" height="20" width="30" negated="false">
+              <position x="870" y="360"/>
+              <connectionPointIn>
+                <relPosition x="0" y="10"/>
+                <connection refLocalId="10" formalParameter="SUCCESS">
+                  <position x="870" y="370"/>
+                  <position x="620" y="370"/>
+                </connection>
+              </connectionPointIn>
+              <connectionPointOut>
+                <relPosition x="30" y="10"/>
+              </connectionPointOut>
+              <variable>mqtt_connected</variable>
+            </coil>
+            <contact localId="19" height="20" width="30" negated="false" edge="rising">
+              <position x="280" y="720"/>
+              <connectionPointIn>
+                <relPosition x="0" y="10"/>
+                <connection refLocalId="17">
+                  <position x="280" y="730"/>
+                  <position x="190" y="730"/>
+                </connection>
+              </connectionPointIn>
+              <connectionPointOut>
+                <relPosition x="30" y="10"/>
+              </connectionPointOut>
+              <variable>blink_led</variable>
+            </contact>
+            <coil localId="20" negated="false" width="30" height="20">
+              <position x="870" y="720"/>
+              <connectionPointIn>
+                <relPosition x="0" y="10"/>
+                <connection refLocalId="13" formalParameter="SUCCESS">
+                  <position x="870" y="730"/>
+                  <position x="620" y="730"/>
+                </connection>
+              </connectionPointIn>
+              <connectionPointOut>
+                <relPosition x="30" y="10"/>
+              </connectionPointOut>
+              <variable>mqtt_sent</variable>
+            </coil>
+            <block localId="21" typeName="MQTT_SUBSCRIBE" instanceName="MQTT_SUBSCRIBE0" width="130" height="100">
+              <position x="490" y="530"/>
+              <inputVariables>
+                <variable formalParameter="SUBSCRIBE">
+                  <connectionPointIn>
+                    <relPosition x="0" y="40"/>
+                    <connection refLocalId="22">
+                      <position x="490" y="570"/>
+                      <position x="270" y="570"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="TOPIC">
+                  <connectionPointIn>
+                    <relPosition x="0" y="80"/>
+                    <connection refLocalId="24">
+                      <position x="490" y="610"/>
+                      <position x="450" y="610"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="SUCCESS">
+                  <connectionPointOut>
+                    <relPosition x="130" y="40"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <contact localId="22" negated="false" edge="rising" width="30" height="20">
+              <position x="240" y="560"/>
+              <connectionPointIn>
+                <relPosition x="0" y="10"/>
+                <connection refLocalId="1">
+                  <position x="240" y="570"/>
+                  <position x="100" y="570"/>
+                </connection>
+              </connectionPointIn>
+              <connectionPointOut>
+                <relPosition x="30" y="10"/>
+              </connectionPointOut>
+              <variable>mqtt_connected</variable>
+            </contact>
+            <coil localId="23" negated="false" width="30" height="20">
+              <position x="870" y="560"/>
+              <connectionPointIn>
+                <relPosition x="0" y="10"/>
+                <connection refLocalId="21" formalParameter="SUCCESS">
+                  <position x="870" y="570"/>
+                  <position x="620" y="570"/>
+                </connection>
+              </connectionPointIn>
+              <connectionPointOut>
+                <relPosition x="30" y="10"/>
+              </connectionPointOut>
+              <variable>mqtt_subscribed</variable>
+            </coil>
+            <inVariable localId="24" height="40" width="170" negated="false" executionOrderId="0">
+              <position x="280" y="590"/>
+              <connectionPointOut>
+                <relPosition x="170" y="20"/>
+              </connectionPointOut>
+              <expression>'openplc-test-topic'</expression>
+            </inVariable>
+            <leftPowerRail localId="25" width="10" height="600">
+              <position x="90" y="910"/>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="20"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="60"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="100"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="140"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="180"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="220"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="260"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="300"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="340"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="380"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="420"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="460"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="500"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="540"/>
+              </connectionPointOut>
+              <connectionPointOut formalParameter="">
+                <relPosition x="10" y="580"/>
+              </connectionPointOut>
+            </leftPowerRail>
+            <rightPowerRail localId="26" width="10" height="600">
+              <position x="990" y="910"/>
+              <connectionPointIn>
+                <relPosition x="0" y="20"/>
+                <connection refLocalId="31">
+                  <position x="990" y="930"/>
+                  <position x="900" y="930"/>
+                </connection>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="60"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="100"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="140"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="180"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="220"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="260"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="300"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="340"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="380"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="420"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="460"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="500"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="540"/>
+              </connectionPointIn>
+              <connectionPointIn>
+                <relPosition x="0" y="580"/>
+              </connectionPointIn>
+            </rightPowerRail>
+            <block localId="27" typeName="MQTT_RECEIVE" instanceName="MQTT_RECEIVE0" width="150" height="100">
+              <position x="480" y="890"/>
+              <inputVariables>
+                <variable formalParameter="RECEIVE">
+                  <connectionPointIn>
+                    <relPosition x="0" y="40"/>
+                    <connection refLocalId="28">
+                      <position x="480" y="930"/>
+                      <position x="310" y="930"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="TOPIC">
+                  <connectionPointIn>
+                    <relPosition x="0" y="80"/>
+                    <connection refLocalId="30">
+                      <position x="480" y="970"/>
+                      <position x="440" y="970"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="RECEIVED">
+                  <connectionPointOut>
+                    <relPosition x="150" y="40"/>
+                  </connectionPointOut>
+                </variable>
+                <variable formalParameter="MESSAGE">
+                  <connectionPointOut>
+                    <relPosition x="150" y="80"/>
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <contact localId="28" height="20" width="30" negated="false" executionOrderId="0" edge="rising">
+              <position x="280" y="920"/>
+              <connectionPointIn>
+                <relPosition x="0" y="10"/>
+                <connection refLocalId="29">
+                  <position x="280" y="930"/>
+                  <position x="190" y="930"/>
+                </connection>
+              </connectionPointIn>
+              <connectionPointOut>
+                <relPosition x="30" y="10"/>
+              </connectionPointOut>
+              <variable>blink_led</variable>
+            </contact>
+            <contact localId="29" height="20" width="30" negated="false" executionOrderId="0">
+              <position x="160" y="920"/>
+              <connectionPointIn>
+                <relPosition x="0" y="10"/>
+                <connection refLocalId="25">
+                  <position x="160" y="930"/>
+                  <position x="100" y="930"/>
+                </connection>
+              </connectionPointIn>
+              <connectionPointOut>
+                <relPosition x="30" y="10"/>
+              </connectionPointOut>
+              <variable>mqtt_connected</variable>
+            </contact>
+            <inVariable localId="30" height="40" width="170" negated="false" executionOrderId="0">
+              <position x="270" y="950"/>
+              <connectionPointOut>
+                <relPosition x="170" y="20"/>
+              </connectionPointOut>
+              <expression>'openplc-test-topic'</expression>
+            </inVariable>
+            <coil localId="31" negated="false" width="30" height="20">
+              <position x="870" y="920"/>
+              <connectionPointIn>
+                <relPosition x="0" y="10"/>
+                <connection refLocalId="27" formalParameter="RECEIVED">
+                  <position x="870" y="930"/>
+                  <position x="630" y="930"/>
+                </connection>
+              </connectionPointIn>
+              <connectionPointOut>
+                <relPosition x="30" y="10"/>
+              </connectionPointOut>
+              <variable>mqtt_received</variable>
+            </coil>
+            <outVariable localId="32" width="120" height="40" negated="false">
+              <position x="700" y="950"/>
+              <connectionPointIn>
+                <relPosition x="0" y="20"/>
+                <connection refLocalId="27" formalParameter="MESSAGE">
+                  <position x="700" y="970"/>
+                  <position x="630" y="970"/>
+                </connection>
+              </connectionPointIn>
+              <expression>msg_received</expression>
+            </outVariable>
+          </LD>
+        </body>
+      </pou>
+    </pous>
+  </types>
+  <instances>
+    <configurations>
+      <configuration name="Config0">
+        <resource name="Res0">
+          <task name="task0" priority="0" interval="T#20ms">
+            <pouInstance name="instance0" typeName="MQTT_Example"/>
+          </task>
+        </resource>
+      </configuration>
+    </configurations>
+  </instances>
+</project>
