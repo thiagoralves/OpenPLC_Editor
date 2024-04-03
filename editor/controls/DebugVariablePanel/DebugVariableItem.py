@@ -255,7 +255,7 @@ class DebugVariableItem(DebugDataConsumer):
 
                 if self.VariableType in ["STRING", "WSTRING"]:
                     # String data value is CRC
-                    num_value = (binascii.crc32(value.encode()) & STRING_CRC_MASK)
+                    num_value = (binascii.crc32(value) & STRING_CRC_MASK)
                 elif self.VariableType in ["TIME", "TOD", "DT", "DATE"]:
                     # Numeric value of time type variables
                     # is represented in seconds
