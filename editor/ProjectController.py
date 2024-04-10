@@ -2238,7 +2238,15 @@ class ProjectController(ConfigTreeNode, PLCControler):
             f.close()
 
             self.generate_embed_plc_debugger()
-            dialog = ArduinoUploadDialog.ArduinoUploadDialog(self.AppFrame, program, MD5)
+
+            # Get the Arduino Extension file if it exists
+            arduino_ext_path = os.path.join(self._getBuildPath(), "CFile_0.c")
+            arduino_ext_contents = None
+            if os.path.exists(arduino_ext_path):
+                f = open(arduino_ext_path)
+                arduino_ext_contents = f.read()
+
+            dialog = ArduinoUploadDialog.ArduinoUploadDialog(self.AppFrame, program, arduino_ext_contents, MD5)
             dialog.ShowModal()
 
     def _Repair(self):
