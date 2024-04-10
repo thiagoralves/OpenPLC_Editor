@@ -618,10 +618,6 @@ class ArduinoUploadDialog(wx.Dialog):
             f.write(self.arduino_sketch)
 
         #Write file to disk
-        if platform.system() == 'Windows':
-            base_path = 'editor\\arduino\\examples\\Baremetal\\'
-        else:
-            base_path = 'editor/arduino/examples/Baremetal/'
         f = open(base_path+'defines.h', 'w')
         f.write(define_file)
         f.flush()
