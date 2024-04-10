@@ -795,7 +795,8 @@ class VariablesEditor(wx.Panel):
     def OnVariablesGridCellChange(self, event):
         row, col = event.GetRow(), event.GetCol()
         colname = self.Table.GetColLabelValue(col, False)
-        value = self.Table.GetValue(row, col)
+        #value = self.Table.GetValue(row, col)
+        value = event.String
         message = None
 
         if colname == "Name" and value != "":
@@ -808,9 +809,11 @@ class VariablesEditor(wx.Panel):
                                    if var_row != row]:
                 message = _("A variable with \"%s\" as name already exists!") % value
             else:
+                self.Table.SetValue(row, col, value)
                 self.RefreshModel()
                 wx.CallAfter(self.RefreshView)
         else:
+            self.Table.SetValue(row, col, value)
             self.RefreshModel()
             wx.CallAfter(self.RefreshView)
 
