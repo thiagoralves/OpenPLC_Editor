@@ -21,6 +21,10 @@ unsigned long timer_us = 0;
 
 #include "arduino_libs.h"
 
+#ifdef USE_ARDUINO_SKETCH
+    #include "ext/arduino_sketch.h"
+#endif
+
 extern uint8_t pinMask_DIN[];
 extern uint8_t pinMask_AIN[];
 extern uint8_t pinMask_DOUT[];
@@ -120,6 +124,10 @@ void setup()
 	#endif
 
     setupCycleDelay(common_ticktime__);
+
+    #ifdef USE_ARDUINO_SKETCH
+        sketch_setup();
+    #endif
 }
 
 #ifdef MODBUS_ENABLED
@@ -224,6 +232,10 @@ void scheduler()
     // Run tasks round robin - higher priority first
 
     plcCycleTask();
+
+    #ifdef USE_ARDUINO_SKETCH
+        sketch_loop();
+    #endif
 
     #ifdef MODBUS_ENABLED
         modbusTask();
