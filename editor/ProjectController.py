@@ -1220,7 +1220,8 @@ class ProjectController(ConfigTreeNode, PLCControler):
                        self.LocationCFilesAndCFLAGS if loc and DoCalls]]
 
         # Generate main, based on template
-        if not self.BeremizRoot.getDisable_Extensions():
+        # NOTE: For now the runtime extensions are disabled on OpenPLC as it breaks OpenPLC debugger
+        if False: #not self.BeremizRoot.getDisable_Extensions():
             plc_main_code = targets.GetCode("plc_main_head.c") % {
                 "calls_prototypes": "\n".join([(
                     "int __init_%(s)s(int argc,char **argv);\n" +
