@@ -23,13 +23,14 @@ import glob
 class ArduinoUploadDialog(wx.Dialog):
     """Dialog to configure upload parameters"""
 
-    def __init__(self, parent, st_code, md5):
+    def __init__(self, parent, st_code, arduino_ext, md5):
         """
         Constructor
         @param parent: Parent wx.Window of dialog for modal
         @param st_code: Compiled PLC program as ST code.
         """
         self.plc_program = st_code
+        self.arduino_sketch = arduino_ext
         self.md5 = md5
         self.last_update = 0
         self.update_subsystem = True
@@ -533,6 +534,12 @@ class ArduinoUploadDialog(wx.Dialog):
         builder_thread.start()
     
     def generateDefinitionsFile(self):
+
+        if platform.system() == 'Windows':
+            base_path = 'editor\\arduino\\examples\\Baremetal\\'
+        else:
+            base_path = 'editor/arduino/examples/Baremetal/'
+        
         #Store program MD5 on target
         define_file = '//Program MD5\n'
         define_file += '#define PROGRAM_MD5 "' + str(self.md5) + '"\n'
@@ -601,6 +608,14 @@ class ArduinoUploadDialog(wx.Dialog):
             define_file += '#define USE_ARDUINOCAN_BLOCK\n'
         if (self.plc_program.find('ARDUINOCAN_READ;') > 0):
             define_file += '#define USE_ARDUINOCAN_BLOCK\n'
+
+        #Generate Arduino Extension (sketch) define
+        if self.arduino_sketch != None:
+            define_file += '#define USE_ARDUINO_SKETCH\n'
+            define_file += '#define ARDUINO_PLATFORM\n'
+            #Copy the sketch contents to the .h file
+            f = open(os.path.join(base_path, 'ext', 'arduino_sketch.h'), 'w')
+            f.write(self.arduino_sketch)
 
         #Write file to disk
         if platform.system() == 'Windows':
