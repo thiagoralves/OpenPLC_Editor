@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='utf-8'?>
+<CFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <variables>
+    <variable name="SerialMSG" type="STRING"/>
+    <variable name="PrintMSG" type="BOOL"/>
+  </variables>
+  <sketch>
+    <xhtml:p><![CDATA[
+
+
+// This is the Arduino side of the project. The functions sketch_setup() and
+// sketch_loop() provide the same functionality of the setup() and loop()
+// functions of a regular Arduino sketch. On top of this code editor there is a
+// variable table. You can add variables there that are shared between the 
+// arduino code and the PLC code. Since they are shared, you can, for example,
+// read a sensor on the arduino sketch and use the reading in a PLC program. 
+// On the PLC side you must declare the same variable with the class "external"
+// before being able to use it in your program.
+
+// This Arduino sketch implementation is compatible with virtually every library
+// or code you can possibly run on the regular Arduino IDE. You can create your
+// own functions and also #include external libraries (as long as they are also
+// installed on your Arduino IDE). The only catch is that your sketch_loop() 
+// function cannot block (long while loop or delays), or else your PLC code will
+// block as well.
+
+// Notes about this particular demo: Since this demo uses the serial port, you
+// cannot enable Modbus Serial on your project, otherwise it will conflict with
+// the messages being printed from this sketch. Also, this sketch shares a
+// STRING with the PLC side. This is not a regular c-string, it is an IEC 61131
+// STRING. Variables shared between the PLC and Arduino sketch are always IEC
+// 61131 variables. For normal datatypes like INT, REAL, DINT, etc, there are
+// direct equivalents in C (int16_t, float and int32_t respectively), so you
+// shouldn't have any problems with those. An IEC STRING however is a more 
+// complex structure. You can typecast an IEC STRING into a c-string by using 
+// (char *)STRING.body as shown in the example below.
+
+void sketch_setup()
+{
+    Serial.begin(115200);
+    Serial.println("Hello World! I'm starting now...");
+}
+
+void sketch_loop()
+{
+    if (PrintMSG)
+    {
+        Serial.println((char *)SerialMSG.body);
+    }
+}
+]]></xhtml:p>
+  </sketch>
+</CFile>
