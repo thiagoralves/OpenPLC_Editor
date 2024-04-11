@@ -49,7 +49,7 @@ HIGHLIGHT_TYPES = {
     SEARCH_RESULT_HIGHLIGHT: STC_CODE_SEARCH_RESULT,
 }
 
-EDGE_COLUMN = 80
+EDGE_COLUMN = 240
 
 
 def GetSectionsText(controler, sections_headers):
@@ -152,7 +152,7 @@ class CodeEditor(CustomStyledTextCtrl):
         self.SectionsComments = {}
         for section in self.Controler.SECTIONS_NAMES:
             section_comment = " %s section " % (section)
-            len_headers = EDGE_COLUMN - len(section_comment)
+            len_headers = (EDGE_COLUMN // 3) - len(section_comment)
             section_comment = \
                 self.COMMENT_HEADER * (len_headers // 2) + \
                 section_comment + \
