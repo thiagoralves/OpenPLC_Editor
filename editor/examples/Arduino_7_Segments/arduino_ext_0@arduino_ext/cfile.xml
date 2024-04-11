@@ -1,0 +1,101 @@
+<?xml version='1.0' encoding='utf-8'?>
+<CFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <variables>
+    <variable name="current_count" type="INT"/>
+  </variables>
+  <sketch>
+    <xhtml:p><![CDATA[
+
+
+// This is the Arduino side of the project. The functions sketch_setup() and
+// sketch_loop() provide the same functionality of the setup() and loop()
+// functions of a regular Arduino sketch. On top of this code editor there is a
+// variable table. You can add variables there that are shared between the 
+// arduino code and the PLC code. Since they are shared, you can, for example,
+// read a sensor on the arduino sketch and use the reading in a PLC program. 
+// On the PLC side you must declare the same variable with the class "external"
+// before being able to use it in your program.
+
+// This Arduino sketch implementation is compatible with virtually every library
+// or code you can possibly run on the regular Arduino IDE. You can create your
+// own functions and also #include external libraries (as long as they are also
+// installed on your Arduino IDE). The only catch is that your sketch_loop() 
+// function cannot block (long while loop or delays), or else your PLC code will
+// block as well.
+
+// Notes about this particular demo: This code was taken from the Seven Segment
+// demo on Wokwi at: https://wokwi.com/projects/385425800021357569.
+// The value displayed in the 7 segment display is taken from the 
+// 'current_count' variable which is shared with the main PLC program.
+// You can run this code on the Wokwi simulation by selecting "compile only"
+// on the upload dialog. At the end of the compilation, a message will appear
+// showing the location of the compiled file. You can then upload this file
+// to the Wokwi simulation by pressing F1 and selecting "Upload Firmware and
+// Start Simulation..."
+
+// Define the pins for each segment (a to g) and the common cathode pin
+
+const int segmentPins[8] = {2, 3, 4, 5, 6, 7, 8};
+const int commonCathodePin = 9;
+
+// 7-segment display layout
+//       A
+//      ---
+//  F |  G  | B
+//      ---
+//  E |     | C
+//      ---
+//       D
+
+// Define the numbers to display on the seven-segment display
+const byte numbers[11] = {
+    B11111100, // 0
+    B01100000, // 1
+    B11011010, // 2
+    B11110010, // 3
+    B01100110, // 4
+    B10110110, // 5
+    B10111110, // 6
+    B11100000, // 7
+    B11111110, // 8
+    B11110110  // 9
+};
+
+// Function to display a digit on the seven-segment display
+void displayNumber(int num) 
+{
+    // Turn off all segments
+    for (int i = 0; i < 8; i++) 
+    {
+        digitalWrite(segmentPins[i], LOW);
+    }
+
+    // Activate segments based on the number to be displayed
+    for (int i = 0; i < 8; i++) 
+    {
+        if (bitRead(numbers[num], i) == HIGH) 
+        {
+            digitalWrite(segmentPins[7-i], HIGH);
+        }
+    }
+}
+
+void sketch_setup()
+{
+    // Set segment pins as outputs
+    for (int i = 0; i < 7; i++) 
+    {
+        pinMode(segmentPins[i], OUTPUT);
+    }
+
+    // Set common cathode pin as output
+    pinMode(commonCathodePin, OUTPUT);
+}
+
+void sketch_loop()
+{
+    displayNumber(current_count);
+}
+]]></xhtml:p>
+  </sketch>
+</CFile>
