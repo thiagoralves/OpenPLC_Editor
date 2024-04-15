@@ -107,7 +107,7 @@ class CodeFile(object):
 
         filepath = self.CodeFileName()
         if os.path.isfile(filepath):
-            xmlfile = open(filepath, 'r')
+            xmlfile = open(filepath, 'r', encoding='utf-8', errors='backslashreplace')
             codefile_xml = xmlfile.read()
             xmlfile.close()
 
