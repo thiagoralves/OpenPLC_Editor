@@ -285,7 +285,7 @@ class CodeEditor(CustomStyledTextCtrl):
             self.SetLineState(line, 0)
 
         doc_end_pos = self.GetLength()
-        for section in self.Controler.SECTIONS_NAMES:
+        """for section in self.Controler.SECTIONS_NAMES:
             section_comments = self.SectionsComments[section]
             txttofind = section_comments["comment"]
             results = self.FindText(0, doc_end_pos, txttofind)
@@ -299,7 +299,7 @@ class CodeEditor(CustomStyledTextCtrl):
             self.SetLineState(self.LineFromPosition(start_pos), 1)
 
         self.StartStyling(end_pos)
-        self.SetStyling(doc_end_pos - end_pos, stc.STC_STYLE_DEFAULT)
+        self.SetStyling(doc_end_pos - end_pos, stc.STC_STYLE_DEFAULT)"""
 
     def DoGetBestSize(self):
         return self.ParentWindow.GetBestSize()
