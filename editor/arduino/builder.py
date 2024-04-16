@@ -34,139 +34,11 @@ def runCommand(command):
 
     return cmd_response.decode('utf-8', errors='backslashreplace')
 
-def loadHals():
-    # load hals list from json file, or construct it
-    if (os.name == 'nt'):
-        jfile = 'editor\\arduino\\examples\\Baremetal\\hals.json'
-    else:
-        jfile = 'editor/arduino/examples/Baremetal/hals.json'
-    
-    f = open(jfile, 'r')
-    jsonStr = f.read()
-    f.close()
-    return(json.loads(jsonStr))
 
-def saveHals(halObj):
-    jsonStr = json.dumps(halObj)
-    if (os.name == 'nt'):
-        jfile = 'editor\\arduino\\examples\\Baremetal\\hals.json'
-    else:
-        jfile = 'editor/arduino/examples/Baremetal/hals.json'
-    f = open(jfile, 'w')
-    f.write(jsonStr)
-    f.flush()
-    f.close()
-    
-def readBoardInstalled(platform):
-    hals = loadHals()
-    cli_command = ''
-    if os_platform.system() == 'Windows':
-        cli_command = 'editor\\arduino\\bin\\arduino-cli-w64'
-    elif os_platform.system() == 'Darwin':
-        cli_command = 'editor/arduino/bin/arduino-cli-mac'
-    else:
-        cli_command = 'editor/arduino/bin/arduino-cli-l64'
-    for board in hals:
-            if hals[board]['platform'] == platform:
-                board_details = runCommand(cli_command + ' board details -b ' + platform)
-                board_details = board_details.splitlines()
-                board_version = '0'
-                for line in board_details:
-                    if "Board version:" in line:
-                        board_version = line.split('Board version:')[1]
-                        board_version = ''.join(board_version.split()) #remove white spaces
-                        hals[board]['version'] = board_version
-                        saveHals(hals)
-                        break
-
-def readBoardsInstalled():
-    hasToSave = False
-    hals = loadHals()
-    cli_command = ''
-    if os_platform.system() == 'Windows':
-        cli_command = 'editor\\arduino\\bin\\arduino-cli-w64'
-    elif os_platform.system() == 'Darwin':
-        cli_command = 'editor/arduino/bin/arduino-cli-mac'
-    else:
-        cli_command = 'editor/arduino/bin/arduino-cli-l64'
-    boardInstalled = runCommand(cli_command + ' board listall')
-    try:
-        for board in hals:
-            if board in boardInstalled:
-                platform = hals[board]['platform']
-                board_details = runCommand(cli_command + ' board details -b ' + platform)
-                board_details = board_details.splitlines()
-                board_version = '0'
-                for line in board_details:
-                    if "Board version:" in line:
-                        board_version = line.split('Board version:')[1]
-                        board_version = ''.join(board_version.split()) #remove white spaces
-                        hals[board]['version'] = board_version
-                        hasToSave = True
-                        break
-            if board not in boardInstalled:
-                hals[board]['version'] = '0'
-                hasToSave = True
-    
-        if hasToSave:
-            saveHals(hals)
-    except:
-        pass
-
-def setLangArduino():
-    cli_command = ''
-    if os_platform.system() == 'Windows':
-        cli_command = 'editor\\arduino\\bin\\arduino-cli-w64'
-    elif os_platform.system() == 'Darwin':
-        cli_command = 'editor/arduino/bin/arduino-cli-mac'
-    else:
-        cli_command = 'editor/arduino/bin/arduino-cli-l64'
-
-    # Initialize arduino-cli config - if it hasn't been initialized yet
-    runCommand(cli_command + ' config init')
-
-    # Disabling this as it is causing more problems than solutions
-    """
-    dump = runCommand(cli_command + ' config dump')
-    dump = dump.splitlines()
-    arduino_dir = ''
-    for line in dump:
-        if 'data:' in line:
-            #get the directory of arduino ide
-            arduino_dir = line.split('data:')[1]
-            arduino_dir = ''.join(arduino_dir.split()) #remove white spaces
-
-        if 'locale:' in line:
-            if 'en' not in line:
-                #remove the line from dump variable
-                dump.remove(line)
-            else:
-                return #already set to english
-                
-    dump.append('locale: en')
-    dump = '\n'.join(dump)
-    #write on the config file all the lines# Open the file in write mode
-    with open(arduino_dir + '/arduino-cli.yaml', 'w') as f:
-        # Write the variable to the file
-        f.write(str(dump))
-
-    #runCommand('echo ' + dump + ' > ' + arduino_dir + '/arduino-cli.yaml')
-    """
-
-
-def build(st_file, platform, source_file, port, txtCtrl, update_subsystem):
+def build(st_file, platform, source_file, port, txtCtrl, hals, update_subsystem):
     global compiler_logs
-    compiler_logs = ''   
-    setLangArduino()
- 
-    #check if platform is installed in the arduino ide
-    readBoardInstalled(platform)
-
-    hals = loadHals()
+    compiler_logs = ''
     
-    
-    
-
     #Check if board is installed
     board_installed = False
     core = ''
@@ -302,8 +174,6 @@ Portenta_H7_PWM \
 STM32_PWM')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
-
-        readBoardsInstalled()
 
     # Generate C files
     compiler_logs += "Compiling .st file...\n"
