@@ -53,7 +53,7 @@ bool init_mbregs(uint8_t size_holding, uint8_t size_coils, uint8_t size_inputreg
 
     modbus.holding = (uint16_t *)malloc(size_holding * sizeof(uint16_t));
     if (modbus.holding == NULL) return false;
-    memset(modbus.holding, 0, size_holding * sizeof(uint8_t));
+    memset(modbus.holding, 0, size_holding * sizeof(uint16_t));
 
     modbus.input_status = (uint8_t *)malloc(size_inputstatus * sizeof(uint8_t));
     if (modbus.input_status == NULL) return false;
@@ -61,7 +61,7 @@ bool init_mbregs(uint8_t size_holding, uint8_t size_coils, uint8_t size_inputreg
 
     modbus.input_regs = (uint16_t *)malloc(size_inputregs * sizeof(uint16_t));
     if (modbus.input_regs == NULL) return false;
-    memset(modbus.input_regs, 0, size_inputregs * sizeof(uint8_t));
+    memset(modbus.input_regs, 0, size_inputregs * sizeof(uint16_t));
 
     return true;
 }
