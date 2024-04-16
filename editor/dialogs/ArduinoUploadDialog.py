@@ -45,6 +45,7 @@ class ArduinoUploadDialog(wx.Dialog):
         
         # load Hals automatically and initialize the board_type_comboChoices
         self.loadHals()
+        self.updateInstalledBoards()
         board_type_comboChoices = []
         for board in self.hals:
             board_name = ""
@@ -518,14 +519,16 @@ class ArduinoUploadDialog(wx.Dialog):
         elif self.com_port_combo.GetValue() in self.com_port_combo_choices:
             port = self.com_port_combo_choices[self.com_port_combo.GetValue()]
         
-        compiler_thread = threading.Thread(target=builder.build, args=(self.plc_program, platform, source, port, self.output_text, self.update_subsystem))
+        compiler_thread = threading.Thread(target=builder.build, args=(self.plc_program, platform, source, port, self.output_text, self.hals, self.update_subsystem))
         compiler_thread.start()
         compiler_thread.join()
-        wx.CallAfter(self.upload_button.Enable, True)   
+        wx.CallAfter(self.upload_button.Enable, True)
         if (self.update_subsystem):
             self.update_subsystem = False
             self.last_update = time.time()
         self.saveSettings()
+        self.updateInstalledBoards()
+        self.loadSettings() # Get the correct board name if an update or install occurred
 
 
     def OnUpload(self, event):
@@ -680,7 +683,16 @@ class ArduinoUploadDialog(wx.Dialog):
                 self.update_subsystem = True
                 self.last_update = time.time()
 
-            wx.CallAfter(self.board_type_combo.SetValue, settings['board_type'])
+            #Get the correct name for the board_type
+            board = settings['board_type'].split(' [')[0]
+            board_name = ""
+            if board in self.hals:
+                if self.hals[board]['version'] == "0":
+                    board_name = board + ' [NOT INSTALLED]'
+                else:
+                    board_name = board + ' [' + self.hals[board]['version'] + ']'
+
+            wx.CallAfter(self.board_type_combo.SetValue, board_name)
             wx.CallAfter(self.com_port_combo.SetValue, settings['com_port'])
             wx.CallAfter(self.check_modbus_serial.SetValue, settings['mb_serial'])
             wx.CallAfter(self.serial_iface_combo.SetValue, settings['serial_iface'])
@@ -721,3 +733,50 @@ class ArduinoUploadDialog(wx.Dialog):
         f.write(jsonStr)
         f.flush()
         f.close()
+
+    def updateInstalledBoards(self):
+        if platform.system() == 'Windows':
+            cli_command = 'editor\\arduino\\bin\\arduino-cli-w64'
+        elif platform.system() == 'Darwin':
+            cli_command = 'editor/arduino/bin/arduino-cli-mac'
+        else:
+            cli_command = 'editor/arduino/bin/arduino-cli-l64'
+        
+        core_list = builder.runCommand(cli_command + ' core list')
+
+        if core_list == None or core_list == '':
+            print("Error reading core list")
+            return
+
+        # Build list of all installed cores
+        lines = core_list.split('\n')
+        if (len(lines) < 2):
+            print("Error building list of installed platforms")
+            return
+        
+        core_list = []
+        versions_list = []
+        for line in lines:
+            # Remove white spaces
+            line = line.split(' ')
+            while ('' in line):
+                line.remove('')
+            if (len(line) < 2):
+                print("Error removing whitespace from string")
+                continue
+            core = line[0]
+            version = line[1]
+            core_list.append(core)
+            versions_list.append((core, version))
+        
+        # Update installed boards in list
+        for board in self.hals:
+            if self.hals[board]['core'] not in core_list:
+                self.hals[board]['version'] = '0'
+            else:
+                for version in versions_list:
+                    if self.hals[board]['core'] == version[0]:
+                        self.hals[board]['version'] = version[1]
+                        break
+        
+        self.saveHals()
