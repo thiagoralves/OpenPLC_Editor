@@ -5,11 +5,17 @@ extern "C" {
 #include "Arduino.h"
 #include "../examples/Baremetal/defines.h"
 
+// Disable PWM logs from the PWM Controller lib
+#define _PWM_LOGLEVEL_       0
+
 #if defined(__AVR__)
     #include "AVR_PWM.h"
 #else
     #include "SAMDUE_PWM.h"
 #endif
+
+// Disable PWM logs from the PWM Controller lib
+#define _PWM_LOGLEVEL_       0
 
 //OpenPLC HAL for Arduino Mega and Arduino Due
 
