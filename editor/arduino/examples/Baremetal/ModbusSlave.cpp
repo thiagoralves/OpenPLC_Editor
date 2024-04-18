@@ -345,6 +345,7 @@ void handle_serial()
     //Check if packet is too big or too small
     if ((*mb_serialport).available() > MAX_MB_FRAME || (*mb_serialport).available() < 6)
     {
+        (*mb_serialport).println("Packet too big");
         (*mb_serialport).flush();
         return;
     }
@@ -356,11 +357,28 @@ void handle_serial()
     }
 
     //Validate crc
-    uint16_t packet_crc = ((mb_frame[mb_frame_len - 2] << 8) | mb_frame[mb_frame_len - 1]);
-    if (packet_crc != calcCrc()) 
+    uint16_t packet_crc;
+    //Ignore CRC errors when using debugger functions
+    if (mb_frame[1] != MB_FC_DEBUG_INFO && mb_frame[1] != MB_FC_DEBUG_SET && mb_frame[1] != MB_FC_DEBUG_GET && mb_frame[1] != MB_FC_DEBUG_GET_LIST && mb_frame[1] != MB_FC_DEBUG_GET_MD5)
     {
-        (*mb_serialport).flush();
-        return;
+        packet_crc = ((mb_frame[mb_frame_len - 2] << 8) | mb_frame[mb_frame_len - 1]);
+        if (packet_crc != calcCrc()) 
+        {
+            char buffer[100];
+            (*mb_serialport).println("Invalid CRC for packet: ");
+            int offset = 0; // Initialize offset for buffer
+            for (int i = 0; i < mb_frame_len; i++)
+            {
+                offset += sprintf(buffer + offset, "%02X ", mb_frame[i]);
+            }
+            (*mb_serialport).println(buffer);
+            (*mb_serialport).print("Packet_crc: ");
+            (*mb_serialport).println(packet_crc);
+            (*mb_serialport).print("Calc CRC: ");
+            (*mb_serialport).println(calcCrc());
+            (*mb_serialport).flush();
+            return;
+        }
     }
 
     //Validate SlaveID
@@ -974,11 +992,11 @@ void debugGetTraceList(uint16_t numIndexes, uint8_t *indexArray)
     uint16_t responseSize = 0;
     uint16_t lastVarIdx = 0;
     uint16_t variableCount = get_var_count();
-    uint16_t *varidx_array = NULL;
+    uint16_t varidx_array[20];
 
     // Allocate space for all indexes
-    varidx_array = (uint16_t *)malloc(numIndexes * sizeof(uint16_t));
-    if (varidx_array == NULL)
+    //varidx_array = (uint16_t *)malloc(numIndexes * sizeof(uint16_t));
+    if (numIndexes > 20)
     {
         // Respond with a memory error
         mb_frame_len = 3;
