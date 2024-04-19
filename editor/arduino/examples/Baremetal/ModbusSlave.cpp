@@ -992,11 +992,17 @@ void debugGetTraceList(uint16_t numIndexes, uint8_t *indexArray)
     uint16_t responseSize = 0;
     uint16_t lastVarIdx = 0;
     uint16_t variableCount = get_var_count();
-    uint16_t varidx_array[20];
+    #ifdef MBSERIAL
+        uint16_t varidx_array[20];
+	uint8_t varidx_size = 20;
+    #else
+	uint16_t varidx_array[60];
+	uint8_t varidx_size = 60;
+    #endif
 
     // Allocate space for all indexes
     //varidx_array = (uint16_t *)malloc(numIndexes * sizeof(uint16_t));
-    if (numIndexes > 20)
+    if (numIndexes > varidx_size)
     {
         // Respond with a memory error
         mb_frame_len = 3;
