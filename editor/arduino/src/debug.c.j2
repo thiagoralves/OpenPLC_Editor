@@ -51,6 +51,10 @@ uint16_t get_var_count(void)
 
 size_t get_var_size(size_t idx)
 {
+    if (idx >= VAR_COUNT)
+    {
+        return 0;
+    }
     switch (debug_vars[idx].type) {
 {%- for t in debug.types -%}
     {% if '{}_ENUM'.format(t) in debug.enums %}
