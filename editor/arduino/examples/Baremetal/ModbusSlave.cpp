@@ -992,11 +992,17 @@ void debugGetTraceList(uint16_t numIndexes, uint8_t *indexArray)
     uint16_t responseSize = 0;
     uint16_t lastVarIdx = 0;
     uint16_t variableCount = get_var_count();
-    uint16_t *varidx_array = NULL;
 
-    // Allocate space for all indexes
-    varidx_array = (uint16_t *)malloc(numIndexes * sizeof(uint16_t));
-    if (varidx_array == NULL)
+    #ifdef MBSERIAL
+        #define VARIDX_SIZE 20
+    #else
+        #define VARIDX_SIZE 60
+    #endif
+
+    uint16_t varidx_array[VARIDX_SIZE];
+
+    // Validate if buffer has space for all indexes
+    if (numIndexes > VARIDX_SIZE)
     {
         // Respond with a memory error
         mb_frame_len = 3;
@@ -1020,7 +1026,6 @@ void debugGetTraceList(uint16_t numIndexes, uint8_t *indexArray)
             mb_frame_len = 3;
             mb_frame[1] = MB_FC_DEBUG_GET_LIST;
             mb_frame[2] = MB_DEBUG_ERROR_OUT_OF_BOUNDS;
-            free(varidx_array);
             return;
         }
 
@@ -1058,7 +1063,6 @@ void debugGetTraceList(uint16_t numIndexes, uint8_t *indexArray)
     mb_frame[8] = (uint8_t)(__tick & 0xFF);         // Lowest byte
     mb_frame[9] = (uint8_t)(responseSize >> 8); // High byte
     mb_frame[10] = (uint8_t)(responseSize & 0xFF); // Low byte
-    free(varidx_array);
 }
 
 void debugGetMd5(void *endianness)
