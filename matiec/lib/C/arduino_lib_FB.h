@@ -496,12 +496,6 @@ __end:
   return;
 } // PWM_CONTROLLER_body__() 
 
-//definition of external functions
-#include <stdbool.h>
-void *init_arduinocan(uint8_t,int);
-bool write_arduinocan(uint32_t,uint8_t,uint8_t,uint8_t,uint8_t,uint8_t,uint8_t,uint8_t,uint8_t);
-bool write_arduinocan_word(uint32_t, uint64_t);
-uint64_t read_arduinocan();
 
 //Init 
 //definition of blocks
@@ -526,10 +520,8 @@ static void ARDUINOCAN_CONF_body__(ARDUINOCAN_CONF *data__) {
   }
   // // Initialise TEMP variables
   if (!__GET_VAR(data__->SETUP_BLOCK)) {
-      init_arduinocan((uint8_t)__GET_VAR(data__->EN_PIN),(int)__GET_VAR(data__->BR));
-      __SET_VAR(data__->,SETUP_BLOCK,,__BOOL_LITERAL(TRUE));
-      __SET_VAR(data__->,DONE,,__BOOL_LITERAL(TRUE));
-
+      __SET_VAR(data__->,SETUP_BLOCK,,__BOOL_LITERAL(FALSE));
+      __SET_VAR(data__->,DONE,,__BOOL_LITERAL(FALSE));
   }
   goto __end;
 
@@ -565,10 +557,7 @@ static void ARDUINOCAN_WRITE_body__(ARDUINOCAN_WRITE *data__) {
     __SET_VAR(data__->,ENO,,__BOOL_LITERAL(TRUE));
   }
 
-  __SET_VAR(data__->,DONE,,__BOOL_LITERAL(write_arduinocan((uint32_t)__GET_VAR(data__->ID),(uint8_t)__GET_VAR(data__->D0),
-                              (uint8_t)__GET_VAR(data__->D1), (uint8_t)__GET_VAR(data__->D2),(uint8_t)__GET_VAR(data__->D3),
-                                (uint8_t)__GET_VAR(data__->D4), (uint8_t)__GET_VAR(data__->D5),(uint8_t)__GET_VAR(data__->D6),
-                                                                                                 (uint8_t)__GET_VAR(data__->D7))));
+  __SET_VAR(data__->,DONE,,__BOOL_LITERAL(FALSE));
 
   goto __end;
 
@@ -598,8 +587,7 @@ static void ARDUINOCAN_WRITE_WORD_body__(ARDUINOCAN_WRITE_WORD *data__) {
     __SET_VAR(data__->,ENO,,__BOOL_LITERAL(TRUE));
   }
   
-  __SET_VAR(data__->,DONE,,__BOOL_LITERAL(write_arduinocan_word(__GET_VAR(data__->ID),
-                              __GET_VAR(data__->DATA)))); 
+  __SET_VAR(data__->,DONE,,__BOOL_LITERAL(FALSE)); 
   goto __end;
 
 __end:
@@ -625,7 +613,7 @@ static void ARDUINOCAN_READ_body__(ARDUINOCAN_READ *data__) {
     __SET_VAR(data__->,ENO,,__BOOL_LITERAL(TRUE));
   }
 
-  __SET_VAR(data__->,DATA,,read_arduinocan());
+  __SET_VAR(data__->,DATA,,__BOOL_LITERAL(FALSE));
 
 
   goto __end;
