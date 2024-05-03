@@ -28,23 +28,42 @@ elif [ -x /usr/bin/zypper ]; then
     sudo zypper ref
     sudo zypper in -y make automake gcc gcc-c++ bison flex autoconf
     sudo zypper in -y python python-xml python3.9 python3-pip
+# some linux distros also use pkg, so check against the uname
+elif [ -x /usr/sbin/pkg ] && [ $(uname) == "FreeBSD" ]; then
+    sudo pkg install -y python autoconf-2.72 automake bison \
+        py39-Jinja2 py39-lxml py39-matplotlib py39-future \
+        py39-pyserial py39-wxPython42 py39-wheel
 else
     echo "Unsupported linux distro."
     exit 1
 fi
 
 #Installing Python dependencies
-python3.9 -m venv "$VENV_DIR"
-"$VENV_DIR/bin/python" -m pip install --upgrade pip
-"$VENV_DIR/bin/python" -m pip install wheel jinja2 lxml==4.6.2 future matplotlib zeroconf pyserial pypubsub pyro5 attrdict3
-"$VENV_DIR/bin/python" -m pip install wxPython==4.2.0 
+if [ $(uname) == "FreeBSD" ]; then
+    # use system packages on FreeBSD
+    python3.9 -m venv --system-site-packages "$VENV_DIR"
+    "$VENV_DIR/bin/python" -m pip install --upgrade pip 
+    "$VENV_DIR/bin/python" -m pip install zeroconf pypubsub pyro5 attrdict3
+else
+    python3.9 -m venv "$VENV_DIR"
+    "$VENV_DIR/bin/python" -m pip install --upgrade pip
+    "$VENV_DIR/bin/python" -m pip install wheel jinja2 lxml==4.6.2 future matplotlib zeroconf pyserial pypubsub pyro5 attrdict3
+    "$VENV_DIR/bin/python" -m pip install wxPython==4.2.0
+fi
 
 
 echo ""
 echo "[COMPILING MATIEC]"
 cd matiec
 autoreconf -i
-./configure
+
+# clang treats this as an error while gcc treats it as a warning
+if [ $(uname) == "FreeBSD" ]; then
+    CXXFLAGS="-Wno-error=reserved-user-defined-literal" ./configure
+else
+    ./configure
+fi
+
 make -s
 cp ./iec2c ../editor/arduino/bin/
 echo ""
