@@ -291,7 +291,7 @@ class SearchResultPanel(wx.Panel):
             start_idx = start[1]
             end_idx = reduce(lambda x, y: x + y, [len(x) + 1 for x in text_lines[:end[0] - start[0]]], end[1] + 1)
             style = wx.TextAttr(wx.BLACK, wx.Colour(206, 204, 247))
-        elif infos["type"] is not None and infos["matches"] > 1:
+        elif infos["type"] is not None and infos["matches"] is not None and infos["matches"] > 1:
             text = _("(%d matches)") % infos["matches"]
             start_idx, end_idx = 0, len(text)
             style = wx.TextAttr(wx.Colour(0, 127, 174))
