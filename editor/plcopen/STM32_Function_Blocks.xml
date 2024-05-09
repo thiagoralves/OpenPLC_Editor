@@ -1,0 +1,265 @@
+<?xml version='1.0' encoding='utf-8'?>
+<project xmlns:ns1="http://www.plcopen.org/xml/tc6_0201" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.plcopen.org/xml/tc6_0201">
+  <fileHeader companyName="OpenPLC" productName="STM32 Function Blocks Library" productVersion="1.0" creationDateTime="2021-11-11T02:33:11"/>
+  <contentHeader name="STM32 Function Blocks" author="ERAY YILMAZ" modificationDateTime="2024-06-05T02:33:11">
+    <coordinateInfo>
+      <fbd>
+        <scaling x="0" y="0"/>
+      </fbd>
+      <ld>
+        <scaling x="0" y="0"/>
+      </ld>
+      <sfc>
+        <scaling x="0" y="0"/>
+      </sfc>
+    </coordinateInfo>
+  </contentHeader>
+  <types>
+    <dataTypes/>
+    <pous>
+      <pou name="STM32CAN_CONF" pouType="functionBlock">
+        <interface>
+          <inputVars>
+			<variable name="CONF">
+              <type>
+                <BOOL/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[STM32 CAN Enable pin]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="BR">
+              <type>
+                <LINT/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[STM32 CAN Baudrate]]></xhtml:p>
+              </documentation>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="DONE">
+              <type>
+                <BOOL/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[STM32 CAN configuration Done flag]]></xhtml:p>
+              </documentation>
+            </variable>
+          </outputVars>
+        </interface>
+      </pou>
+      <pou name="STM32CAN_WRITE" pouType="functionBlock">
+        <interface>
+          <inputVars>
+		    <variable name="EN_PIN">
+              <type>
+                <BOOL/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[STM32 CAN Enable pin]]></xhtml:p>
+              </documentation>
+            </variable>
+			<variable name="CH">
+              <type>
+                <USINT/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[STM32 CAN Channel pin]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="ID">
+              <type>
+                <DWORD/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[STM32 CAN message ID]]></xhtml:p>
+              </documentation>
+            </variable>
+             <variable name="D0">
+              <type>
+                <BYTE/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[STM32 CAN first payload byte]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="D1">
+              <type>
+                <BYTE/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[STM32 CAN second payload byte]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="D2">
+              <type>
+                <BYTE/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[STM32 CAN third payload byte]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="D3">
+              <type>
+                <BYTE/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[STM32 CAN fourth payload byte]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="D4">
+              <type>
+                <BYTE/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[STM32 CAN fifth payload byte]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="D5">
+              <type>
+                <BYTE/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[STM32 CAN sixth payload byte]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="D6">
+              <type>
+                <BYTE/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[STM32 CAN seventh payload byte]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="D7">
+              <type>
+                <BYTE/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[STM32 CAN eighth payload byte]]></xhtml:p>
+              </documentation>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="DONE">
+              <type>
+                <BOOL/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[STM32 CAN write done flag]]></xhtml:p>
+              </documentation>
+            </variable>
+          </outputVars>
+        </interface>
+      </pou>
+      <pou name="STM32CAN_READ" pouType="functionBlock">
+        <interface>
+		<inputVars>
+		    <variable name="EN_PIN">
+              <type>
+                <BOOL/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[STM32 CAN Enable pin]]></xhtml:p>
+              </documentation>
+            </variable>
+		  </inputVars>
+          <outputVars>
+		    <variable name="DONE">
+              <type>
+                <BOOL/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[STM32 CAN write done flag]]></xhtml:p>
+              </documentation>
+            </variable>
+			<variable name="ID">
+              <type>
+                <DWORD/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[STM32 CAN message ID]]></xhtml:p>
+              </documentation>
+            </variable>
+             <variable name="D0">
+              <type>
+                <BYTE/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[STM32 CAN first payload byte]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="D1">
+              <type>
+                <BYTE/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[STM32 CAN second payload byte]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="D2">
+              <type>
+                <BYTE/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[STM32 CAN third payload byte]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="D3">
+              <type>
+                <BYTE/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[STM32 CAN fourth payload byte]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="D4">
+              <type>
+                <BYTE/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[STM32 CAN fifth payload byte]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="D5">
+              <type>
+                <BYTE/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[STM32 CAN sixth payload byte]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="D6">
+              <type>
+                <BYTE/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[STM32 CAN seventh payload byte]]></xhtml:p>
+              </documentation>
+            </variable>
+            <variable name="D7">
+              <type>
+                <BYTE/>
+              </type>
+              <documentation>
+                <xhtml:p><![CDATA[STM32 CAN eighth payload byte]]></xhtml:p>
+              </documentation>
+            </variable>
+          </outputVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[DATA := 0;]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[CAN READ]]></xhtml:p>
+        </documentation>
+      </pou>
+    </pous>
+  </types>
+  <instances>
+    <configurations/>
+  </instances>
+</project>
