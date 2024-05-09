@@ -171,6 +171,8 @@ ESP32_FastPWM \
 SAMD_PWM \
 SAMDUE_PWM \
 Portenta_H7_PWM \
+CAN \
+STM32_CAN \
 STM32_PWM')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
