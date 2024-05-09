@@ -44,6 +44,7 @@
 (* Not in the standard, but useful nonetheless. *)
 {#include "sema.txt" }
 {#include "arduino.txt" }
+{#include "stm32.txt" }
 {#include "p1am.txt" }
 {#include "communication_blocks.txt" }
 
