@@ -611,7 +611,13 @@ class ArduinoUploadDialog(wx.Dialog):
             define_file += '#define USE_ARDUINOCAN_BLOCK\n'
         if (self.plc_program.find('ARDUINOCAN_READ;') > 0):
             define_file += '#define USE_ARDUINOCAN_BLOCK\n'
-
+        if (self.plc_program.find('STM32CAN_CONF;') > 0):
+            define_file += '#define USE_STM32CAN_BLOCK\n'
+        if (self.plc_program.find('STM32CAN_WRITE;') > 0):
+            define_file += '#define USE_STM32CAN_BLOCK\n'
+        if (self.plc_program.find('STM32CAN_READ;') > 0):
+            define_file += '#define USE_STM32CAN_BLOCK\n'
+        
         #Generate Arduino Extension (sketch) define
         if self.arduino_sketch != None:
             define_file += '#define USE_ARDUINO_SKETCH\n'
