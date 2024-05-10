@@ -1892,7 +1892,7 @@ __end:
 #include "arduino_lib_FB.h"
 #include "p1am_FB.h"
 #include "communication.h"
-
+#include "can.h"
 
 #include "MQTT.h"
 #include "sm_cards.h"

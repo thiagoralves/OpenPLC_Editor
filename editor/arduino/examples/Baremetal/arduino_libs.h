@@ -28,3 +28,7 @@ extern uint8_t pinMask_AOUT[];
 #ifdef USE_ARDUINOCAN_BLOCK
 	#include "modules/arduinocan.c"
 #endif
+
+#ifdef USE_STM32CAN_BLOCK
+	#include "modules/stm32can.c"
+#endif
