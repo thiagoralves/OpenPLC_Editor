@@ -19,7 +19,6 @@ CAN_message_t CAN_RX_msg;
 uint8_t init_stm32can(int baudrate)
 {   
 
-    Serial.begin(115200);
     Can.begin();
     Can.setBaudRate(baudrate);
 	//Can1.begin();
@@ -40,7 +39,7 @@ uint8_t write_stm32can(	uint8_t ch,
 {	
 	if(ch == 1){
 		CAN1_TX_msg.id 				= id;
-		CAN1_TX_msg.flags.extended 	= 1;  	// To enable extended ID.
+		CAN1_TX_msg.flags.extended 		= 1;  	// To enable extended ID.
 		CAN1_TX_msg.len 			= 8;
 		CAN1_TX_msg.buf[0] 	=  d0;
 		CAN1_TX_msg.buf[1] 	=  d1;
@@ -59,7 +58,7 @@ uint8_t write_stm32can(	uint8_t ch,
 	
 	if(ch == 2){
 		CAN2_TX_msg.id 				= id;
-		CAN2_TX_msg.flags.extended 	= 1;  	// To enable extended ID.
+		CAN2_TX_msg.flags.extended 		= 1;  	// To enable extended ID.
 		CAN2_TX_msg.len 			= 8;
 		CAN2_TX_msg.buf[0] 	=  d0;
 		CAN2_TX_msg.buf[1] 	=  d1;
@@ -92,41 +91,14 @@ uint8_t read_stm32can(uint32_t* id,
     if (Can.read(CAN_RX_msg)) {
         // Assuming id is a pointer to a uint32_t, and CAN_RX_msg.id is uint32_t
         *id = CAN_RX_msg.id;
-		Serial.print(" Extended ID: ");
-		Serial.print(CAN_RX_msg.id);
-        // Assigning received data to the provided pointers
         *d0 = CAN_RX_msg.buf[0];
-		Serial.print("D0: ");
-		Serial.print(CAN_RX_msg.buf[0]);
-		
-        *d1 = CAN_RX_msg.buf[1];
-		Serial.print("D1:");
-		Serial.print(CAN_RX_msg.buf[1]);
-		
+        *d1 = CAN_RX_msg.buf[1];		
         *d2 = CAN_RX_msg.buf[2];
-		Serial.print("D2:");
-		Serial.print(CAN_RX_msg.buf[2]);
-		
-        *d3 = CAN_RX_msg.buf[3];
-		Serial.print("D3:");
-		Serial.print(CAN_RX_msg.buf[3]);
-		
+	*d3 = CAN_RX_msg.buf[3];
         *d4 = CAN_RX_msg.buf[4];
-		Serial.print("D4:");
-		Serial.print(CAN_RX_msg.buf[4]);
-		
         *d5 = CAN_RX_msg.buf[5];
-		Serial.print("D5: ");
-		Serial.print(CAN_RX_msg.buf[5]);
-		
         *d6 = CAN_RX_msg.buf[6];
-		Serial.print("D6: ");
-		Serial.print(CAN_RX_msg.buf[6]);
-		
         *d7 = CAN_RX_msg.buf[7];
-		Serial.print("D7: ");
-		Serial.println(CAN_RX_msg.buf[7]);
-        
         return 1;
     }
     return 0;
