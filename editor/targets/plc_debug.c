@@ -372,6 +372,7 @@ void __publish_debug(void)
                     /* replace pointer with pointer to force_buffer */                  \
                     ((__IEC_##TYPENAME##_p *)varp)->value =                             \
                         (TYPENAME *)force_buffer_cursor;                                \
+                    (((__IEC_##TYPENAME##_p *)varp)->fvalue) = *((TYPENAME *)force);    \
                     /* mark variable as forced */                                       \
                     ((__IEC_##TYPENAME##_p *)varp)->flags |= __IEC_FORCE_FLAG;          \
                     /* inc force_buffer cursor */                                       \
