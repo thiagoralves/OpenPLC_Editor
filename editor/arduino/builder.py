@@ -171,8 +171,6 @@ ESP32_FastPWM \
 SAMD_PWM \
 SAMDUE_PWM \
 Portenta_H7_PWM \
-CAN \
-STM32_CAN \
 STM32_PWM')
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
@@ -193,14 +191,14 @@ STM32_PWM')
     time.sleep(0.2)  # make sure plc_prog.st was written to disk
 
     if os_platform.system() == 'Windows':
-        compilation = subprocess.Popen(['editor\\arduino\\bin\\iec2c.exe', 'plc_prog.st'], cwd='editor\\arduino\\src',
+        compilation = subprocess.Popen(['editor\\arduino\\bin\\iec2c.exe', '-f', '-l', '-p', 'plc_prog.st'], cwd='editor\\arduino\\src',
                                        creationflags=0x08000000, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     elif os_platform.system() == 'Darwin':
-        compilation = subprocess.Popen(['../bin/iec2c_mac', 'plc_prog.st'],
+        compilation = subprocess.Popen(['../bin/iec2c_mac', '-f', '-l', '-p', 'plc_prog.st'],
                                        cwd='./editor/arduino/src', stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     else:
         compilation = subprocess.Popen(
-            ['../bin/iec2c', 'plc_prog.st'], cwd='./editor/arduino/src', stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            ['../bin/iec2c', '-f', '-l', '-p', 'plc_prog.st'], cwd='./editor/arduino/src', stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = compilation.communicate()
     compiler_logs += stdout.decode('UTF-8', errors='backslashreplace')
     compiler_logs += stderr.decode('UTF-8', errors='backslashreplace')
