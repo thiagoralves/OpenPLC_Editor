@@ -86,7 +86,7 @@ class FBDVariableDialog(BlockPreviewDialog):
         self.LeftGridSizer.Add(execution_order_label, flag=wx.GROW)
 
         # Create spin control for defining variable execution order
-        self.ExecutionOrder = wx.SpinCtrl(self, min=0, style=wx.SP_ARROW_KEYS)
+        self.ExecutionOrder = wx.SpinCtrl(self, min=0, max=10000, style=wx.SP_ARROW_KEYS)
         self.Bind(wx.EVT_SPINCTRL, self.OnExecutionOrderChanged,
                   self.ExecutionOrder)
         self.LeftGridSizer.Add(self.ExecutionOrder, flag=wx.GROW)
