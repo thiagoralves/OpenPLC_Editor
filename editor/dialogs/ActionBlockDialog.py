@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # This file is part of Beremiz, a Integrated Development Environment for
@@ -25,334 +24,207 @@
 
 
 
-import re
-
 import wx
+import wx.grid
+import wx.lib.buttons
 
-from graphics.FBD_Objects import FBD_Block
-from controls.LibraryPanel import LibraryPanel
-from dialogs.BlockPreviewDialog import BlockPreviewDialog
-
+from controls import CustomGrid, CustomTable
+from plcopen.BlockInstanceCollector import _ActionInfos
+from util.BitmapLibrary import GetBitmap
+from util.TranslationCatalogs import NoTranslate
 # -------------------------------------------------------------------------------
-#                                    Helpers
-# -------------------------------------------------------------------------------
-
-
-def GetBlockTypeDefaultNameModel(blocktype):
-    return re.compile("%s[0-9]+" % blocktype if blocktype is not None else ".*")
-
-# -------------------------------------------------------------------------------
-#                         Set Block Parameters Dialog
+#                                  Helpers
 # -------------------------------------------------------------------------------
 
 
-class FBDBlockDialog(BlockPreviewDialog):
-    """
-    Class that implements a dialog for defining parameters of a FBD block graphic
-    element
-    """
+def GetActionTableColnames():
+    _ = NoTranslate
+    return [_("Qualifier"), _("Duration"), _("Type"), _("Value"), _("Indicator")]
 
-    def __init__(self, parent, controller, tagname):
+
+def GetTypeList():
+    _ = NoTranslate
+    return [_("Action"), _("Variable"), _("Inline")]
+
+# -------------------------------------------------------------------------------
+#                               Action Table
+# -------------------------------------------------------------------------------
+
+
+class ActionTable(CustomTable):
+
+    def GetValue(self, row, col):
+        if row < self.GetNumberRows():
+            colname = self.GetColLabelValue(col, False)
+            value = getattr(self.data[row], colname.lower())
+            if colname == "Type":
+                return _(value)
+            return value
+
+    def SetValue(self, row, col, value):
+        if col < len(self.colnames):
+            colname = self.GetColLabelValue(col, False)
+            if colname == "Type":
+                value = self.Parent.TranslateType[value]
+            elif colname == "Qualifier" and not self.Parent.DurationList[value]:
+                self.data[row].duration = ""
+            setattr(self.data[row], colname.lower(), value)
+
+    def _updateColAttrs(self, grid):
         """
-        Constructor
-        @param parent: Parent wx.Window of dialog for modal
-        @param controller: Reference to project controller
-        @param tagname: Tagname of project POU edited
+        wx.Grid -> update the column attributes to add the
+        appropriate renderer given the column name.
+
+        Otherwise default to the default renderer.
         """
-        BlockPreviewDialog.__init__(self, parent, controller, tagname,
-                                    title=_('Block Properties'))
 
-        # Init common sizers
-        self._init_sizers(2, 0, 1, 0, 3, 2)
+        for row in range(self.GetNumberRows()):
+            for col in range(self.GetNumberCols()):
+                editor = None
+                renderer = None
+                readonly = False
+                colname = self.GetColLabelValue(col, False)
+                if colname == "Qualifier":
+                    editor = wx.grid.GridCellChoiceEditor(self.Parent.QualifierList)
+                if colname == "Duration":
+                    editor = wx.grid.GridCellTextEditor()
+                    renderer = wx.grid.GridCellStringRenderer()
+                    readonly = not self.Parent.DurationList[self.data[row].qualifier]
+                elif colname == "Type":
+                    editor = wx.grid.GridCellChoiceEditor(self.Parent.TypeList)
+                elif colname == "Value":
+                    value_type = self.data[row].type
+                    if value_type == "Action":
+                        editor = wx.grid.GridCellChoiceEditor(self.Parent.ActionList)
+                    elif value_type == "Variable":
+                        editor = wx.grid.GridCellChoiceEditor(self.Parent.VariableList)
+                    elif value_type == "Inline":
+                        editor = wx.grid.GridCellTextEditor()
+                        renderer = wx.grid.GridCellStringRenderer()
+                elif colname == "Indicator":
+                    editor = wx.grid.GridCellChoiceEditor(self.Parent.VariableList)
 
-        # Create static box around library panel
-        type_staticbox = wx.StaticBox(self, label=_('Type:'))
-        left_staticboxsizer = wx.StaticBoxSizer(type_staticbox, wx.VERTICAL)
-        self.LeftGridSizer.Add(left_staticboxsizer, border=5, flag=wx.GROW)
+                grid.SetCellEditor(row, col, editor)
+                grid.SetCellRenderer(row, col, renderer)
+                grid.SetReadOnly(row, col, readonly)
 
-        # Create Library panel and add it to static box
-        self.LibraryPanel = LibraryPanel(self)
-        self.LibraryPanel.SetInitialSize(wx.Size(300, 400))
+            self.ResizeRow(grid, row)
 
-        # Set function to call when selection in Library panel changed
-        setattr(self.LibraryPanel, "_OnTreeItemSelected",
-                self.OnLibraryTreeItemSelected)
-        left_staticboxsizer.Add(self.LibraryPanel, 1, border=5,
-                                      flag=wx.GROW | wx.TOP)
+# -------------------------------------------------------------------------------
+#                            Action Block Dialog
+# -------------------------------------------------------------------------------
 
-        # Create sizer for other block parameters
-        top_right_gridsizer = wx.FlexGridSizer(cols=2, hgap=0, rows=4, vgap=5)
-        top_right_gridsizer.AddGrowableCol(1)
-        self.RightGridSizer.Add(top_right_gridsizer, flag=wx.GROW)
 
-        # Create label for block name
-        name_label = wx.StaticText(self, label=_('Name:'))
-        top_right_gridsizer.Add(name_label,
-                                      flag=wx.ALIGN_CENTER_VERTICAL)
+class ActionBlockDialog(wx.Dialog):
 
-        # Create text control for defining block name
-        self.BlockName = wx.TextCtrl(self)
-        self.Bind(wx.EVT_TEXT, self.OnNameChanged, self.BlockName)
-        top_right_gridsizer.Add(self.BlockName, flag=wx.GROW)
+    def __init__(self, parent):
+        wx.Dialog.__init__(self, parent, title=_('Edit action block properties'))
 
-        # Create label for extended block input number
-        inputs_label = wx.StaticText(self, label=_('Inputs:'))
-        top_right_gridsizer.Add(inputs_label,
-                                      flag=wx.ALIGN_CENTER_VERTICAL)
+        main_sizer = wx.FlexGridSizer(cols=1, hgap=0, rows=3, vgap=10)
+        main_sizer.AddGrowableCol(0)
+        main_sizer.AddGrowableRow(1)
 
-        # Create spin control for defining extended block input number
-        self.Inputs = wx.SpinCtrl(self, min=2, max=20,
-                                  style=wx.SP_ARROW_KEYS)
-        self.Bind(wx.EVT_SPINCTRL, self.OnInputsChanged, self.Inputs)
-        top_right_gridsizer.Add(self.Inputs, flag=wx.GROW)
+        top_sizer = wx.FlexGridSizer(cols=5, hgap=5, rows=1, vgap=0)
+        top_sizer.AddGrowableCol(0)
+        top_sizer.AddGrowableRow(0)
+        main_sizer.Add(top_sizer, border=20,
+                            flag=wx.GROW | wx.TOP | wx.LEFT | wx.RIGHT)
 
-        # Create label for block execution order
-        execution_order_label = wx.StaticText(self,
-                                              label=_('Execution Order:'))
-        top_right_gridsizer.Add(execution_order_label,
-                                      flag=wx.ALIGN_CENTER_VERTICAL)
+        actions_label = wx.StaticText(self, label=_('Actions:'))
+        top_sizer.Add(actions_label, flag=wx.ALIGN_BOTTOM)
 
-        # Create spin control for defining block execution order
-        self.ExecutionOrder = wx.SpinCtrl(self, min=0, max=10000, style=wx.SP_ARROW_KEYS)
-        self.Bind(wx.EVT_SPINCTRL, self.OnExecutionOrderChanged,
-                  self.ExecutionOrder)
-        top_right_gridsizer.Add(self.ExecutionOrder, flag=wx.GROW)
+        for name, bitmap, help in [
+                ("AddButton", "add_element", _("Add action")),
+                ("DeleteButton", "remove_element", _("Remove action")),
+                ("UpButton", "up", _("Move action up")),
+                ("DownButton", "down", _("Move action down"))]:
+            button = wx.lib.buttons.GenBitmapButton(
+                self, bitmap=GetBitmap(bitmap),
+                size=wx.Size(28, 28), style=wx.NO_BORDER)
+            button.SetToolTip(help)
+            setattr(self, name, button)
+            top_sizer.Add(button)
 
-        # Create label for block execution control
-        execution_control_label = wx.StaticText(self,
-                                                label=_('Execution Control:'))
-        top_right_gridsizer.Add(execution_control_label,
-                                      flag=wx.ALIGN_CENTER_VERTICAL)
+        self.ActionsGrid = CustomGrid(self, size=wx.Size(-1, 250), style=wx.VSCROLL)
+        self.ActionsGrid.DisableDragGridSize()
+        self.ActionsGrid.EnableScrolling(False, True)
+        self.ActionsGrid.Bind(wx.grid.EVT_GRID_CELL_CHANGING,
+                              self.OnActionsGridCellChange)
+        main_sizer.Add(self.ActionsGrid, border=20,
+                            flag=wx.GROW | wx.LEFT | wx.RIGHT)
 
-        # Create check box to enable block execution control
-        self.ExecutionControl = wx.CheckBox(self)
-        self.Bind(wx.EVT_CHECKBOX, self.OnExecutionOrderChanged,
-                  self.ExecutionControl)
-        top_right_gridsizer.Add(self.ExecutionControl, flag=wx.GROW)
+        button_sizer = self.CreateButtonSizer(wx.OK | wx.CANCEL | wx.CENTRE)
+        self.Bind(wx.EVT_BUTTON, self.OnOK, id=self.GetAffirmativeId())
+        main_sizer.Add(button_sizer, border=20,
+                            flag=wx.ALIGN_RIGHT | wx.BOTTOM | wx.LEFT | wx.RIGHT)
 
-        # Add preview panel and associated label to sizers
-        self.RightGridSizer.Add(self.PreviewLabel, flag=wx.GROW)
-        self.RightGridSizer.Add(self.Preview, flag=wx.GROW)
+        self.SetSizer(main_sizer)
 
-        # Add buttons sizer to sizers
-        self.MainSizer.Add(self.ButtonSizer, border=20,
-                                flag=wx.ALIGN_RIGHT | wx.BOTTOM | wx.LEFT | wx.RIGHT)
+        self.Table = ActionTable(self, [], GetActionTableColnames())
+        typelist = GetTypeList()
+        self.TypeList = list(map(_, typelist))
+        self.TranslateType = dict([(_(value), value) for value in typelist])
+        self.ColSizes = [60, 90, 130, 200, 50]
+        self.ColAlignements = [wx.ALIGN_LEFT, wx.ALIGN_LEFT, wx.ALIGN_LEFT, wx.ALIGN_LEFT, wx.ALIGN_LEFT]
 
-        # Dictionary containing correspondence between parameter exchanged and
-        # control to fill with parameter value
-        self.ParamsControl = {
-            "extension": self.Inputs,
-            "executionOrder": self.ExecutionOrder,
-            "executionControl": self.ExecutionControl
-        }
+        self.ActionsGrid.SetTable(self.Table)
+        self.ActionsGrid.SetDefaultValue(_ActionInfos("N", "Action", "", "", ""))
+        self.ActionsGrid.SetButtons({"Add": self.AddButton,
+                                     "Delete": self.DeleteButton,
+                                     "Up": self.UpButton,
+                                     "Down": self.DownButton})
+        self.ActionsGrid.SetRowLabelSize(0)
 
-        # Init controls value and sensibility
-        self.BlockName.SetValue("")
-        self.BlockName.Enable(False)
-        self.Inputs.Enable(False)
+        for col in range(self.Table.GetNumberCols()):
+            attr = wx.grid.GridCellAttr()
+            attr.SetAlignment(self.ColAlignements[col], wx.ALIGN_CENTRE)
+            self.ActionsGrid.SetColAttr(col, attr)
+            self.ActionsGrid.SetColMinimalWidth(col, self.ColSizes[col])
+            self.ActionsGrid.AutoSizeColumn(col, False)
 
-        # Variable containing last name typed
-        self.CurrentBlockName = None
-
-        # Refresh Library panel values
-        self.LibraryPanel.SetBlockList(controller.GetBlockTypes(tagname))
+        self.Table.ResetView(self.ActionsGrid)
+        self.ActionsGrid.SetFocus()
+        self.ActionsGrid.RefreshButtons()
         self.Fit()
-        self.LibraryPanel.SetFocus()
-
-    def SetValues(self, values):
-        """
-        Set default block parameters
-        @param values: Block parameters values
-        """
-        # Extract block type defined in parameters
-        blocktype = values.get("type", None)
-
-        # Select block type in library panel
-        if blocktype is not None:
-            self.LibraryPanel.SelectTreeItem(blocktype,
-                                             values.get("inputs", None))
-
-        # Define regular expression for determine if block name is block
-        # default name
-        default_name_model = GetBlockTypeDefaultNameModel(blocktype)
-
-        # For each parameters defined, set corresponding control value
-        for name, value in list(values.items()):
-
-            # Parameter is block name
-            if name == "name":
-                if value != "":
-                    # Set default graphic element name for testing
-                    self.DefaultElementName = value
-
-                    # Test if block name is type default block name and save
-                    # block name if not (name have been typed by user)
-                    if default_name_model.match(value) is None:
-                        self.CurrentBlockName = value
-
-                self.BlockName.ChangeValue(value)
-
-            # Set value of other controls
-            else:
-                control = self.ParamsControl.get(name, None)
-                if control is not None:
-                    control.SetValue(value)
-
-        # Refresh preview panel
-        self.RefreshPreview()
-
-    def GetValues(self):
-        """
-        Return block parameters defined in dialog
-        @return: {parameter_name: parameter_value,...}
-        """
-        values = self.LibraryPanel.GetSelectedBlock()
-        if self.BlockName.IsEnabled() and self.BlockName.GetValue() != "":
-            values["name"] = self.BlockName.GetValue()
-        values["width"], values["height"] = self.Element.GetSize()
-        values.update({
-            name: control.GetValue()
-            for name, control in self.ParamsControl.items()})
-        return values
 
     def OnOK(self, event):
-        """
-        Called when dialog OK button is pressed
-        Test if parameters defined are valid
-        @param event: wx.Event from OK button
-        """
-        message = None
+        self.ActionsGrid.CloseEditControl()
+        self.EndModal(wx.ID_OK)
 
-        # Get block type selected
-        selected = self.LibraryPanel.GetSelectedBlock()
+    def OnActionsGridCellChange(self, event):
+        wx.CallAfter(self.Table.ResetView, self.ActionsGrid)
+        event.Skip()
 
-        # Get block type name and if block is a function block
-        block_name = self.BlockName.GetValue()
-        name_enabled = self.BlockName.IsEnabled()
+    def SetQualifierList(self, odict):
+        self.QualifierList = [qname for qname in odict]
+        self.DurationList = odict
 
-        # Test that a type has been selected for block
-        if selected is None:
-            message = _("Form isn't complete. Valid block type must be selected!")
+    def SetVariableList(self, lst):
+        self.VariableList = [variable.Name for variable in lst]
 
-        # Test, if block is a function block, that a name have been defined
-        elif name_enabled and block_name == "":
-            message = _("Form isn't complete. Name must be filled!")
+    def SetActionList(self, lst):
+        self.ActionList = lst
 
-        # Show error message if an error is detected
-        if message is not None:
-            self.ShowErrorMessage(message)
-
-        # Test block name validity if necessary
-        elif not name_enabled or self.TestElementName(block_name):
-            # Call BlockPreviewDialog function
-            BlockPreviewDialog.OnOK(self, event)
-
-    def OnLibraryTreeItemSelected(self, event):
-        """
-        Called when block type selected in library panel
-        @param event: wx.TreeEvent
-        """
-        # Get type selected in library panel
-        values = self.LibraryPanel.GetSelectedBlock()
-
-        # Get block type informations
-        blocktype = (self.Controller.GetBlockType(values["type"],
-                                                  values["inputs"])
-                     if values is not None else None)
-
-        # Set input number spin control according to block type informations
-        if blocktype is not None:
-            self.Inputs.SetValue(len(blocktype["inputs"]))
-            self.Inputs.Enable(blocktype["extensible"])
-        else:
-            self.Inputs.SetValue(2)
-            self.Inputs.Enable(False)
-
-        # Update block name with default value if block type is a function and
-        # current block name wasn't typed by user
-        if blocktype is not None and blocktype["type"] != "function":
-            self.BlockName.Enable(True)
-
-            if self.CurrentBlockName is None:
-                # Generate new block name according to block type, taking
-                # default element name if it was already a default name for this
-                # block type
-                default_name_model = GetBlockTypeDefaultNameModel(values["type"])
-                block_name = (
-                    self.DefaultElementName
-                    if (self.DefaultElementName is not None and
-                        default_name_model.match(self.DefaultElementName))
-                    else self.Controller.GenerateNewName(
-                        self.TagName, None, values["type"]+"%d", 0))
+    def SetValues(self, actions):
+        for action in actions:
+            row = action.copy()
+            if row.type == "reference" and row.value in self.ActionList:
+                row.type = "Action"
+            elif row.type == "reference" and row.value in self.VariableList:
+                row.type = "Variable"
             else:
-                block_name = self.CurrentBlockName
+                row.type = "Inline"
+            self.Table.AppendRow(row)
+        self.Table.ResetView(self.ActionsGrid)
+        if len(actions) > 0:
+            self.ActionsGrid.SetGridCursor(0, 0)
+        self.ActionsGrid.RefreshButtons()
 
-            self.BlockName.ChangeValue(block_name)
-        else:
-            self.BlockName.Enable(False)
-            self.BlockName.ChangeValue("")
-
-        # Refresh preview panel
-        self.RefreshPreview()
-
-    def OnNameChanged(self, event):
-        """
-        Called when block name value changed
-        @param event: wx.TextEvent
-        """
-        if self.BlockName.IsEnabled():
-            # Save block name typed by user
-            self.CurrentBlockName = self.BlockName.GetValue()
-            self.RefreshPreview()
-        event.Skip()
-
-    def OnInputsChanged(self, event):
-        """
-        Called when block inputs number changed
-        @param event: wx.SpinEvent
-        """
-        if self.Inputs.IsEnabled():
-            self.RefreshPreview()
-        event.Skip()
-
-    def OnExecutionOrderChanged(self, event):
-        """
-        Called when block execution order value changed
-        @param event: wx.SpinEvent
-        """
-        self.RefreshPreview()
-        event.Skip()
-
-    def OnExecutionControlChanged(self, event):
-        """
-        Called when block execution control value changed
-        @param event: wx.SpinEvent
-        """
-        self.RefreshPreview()
-        event.Skip()
-
-    def DrawPreview(self):
-        """
-        Refresh preview panel of graphic element
-        Override BlockPreviewDialog function
-        """
-        # Get type selected in library panel
-        values = self.LibraryPanel.GetSelectedBlock()
-
-        # If a block type is selected in library panel
-        if values is not None:
-            # Set graphic element displayed, creating a FBD block element
-            self.Element = FBD_Block(
-                self.Preview, values["type"],
-                (self.BlockName.GetValue() if self.BlockName.IsEnabled() else ""),
-                extension=self.Inputs.GetValue(),
-                inputs=values["inputs"],
-                executionControl=self.ExecutionControl.GetValue(),
-                executionOrder=self.ExecutionOrder.GetValue())
-
-        # Reset graphic element displayed
-        else:
-            self.Element = None
-
-        # Call BlockPreviewDialog function
-        BlockPreviewDialog.DrawPreview(self)
+    def GetValues(self):
+        actions = self.Table.GetData()
+        for action in actions:
+            if action.type in ["Action", "Variable"]:
+                action.type = "reference"
+            else:
+                action.type = "inline"
+        return actions
