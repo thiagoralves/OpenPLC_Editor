@@ -113,7 +113,7 @@ class FBDBlockDialog(BlockPreviewDialog):
                                       flag=wx.ALIGN_CENTER_VERTICAL)
 
         # Create spin control for defining block execution order
-        self.ExecutionOrder = wx.SpinCtrl(self, min=0, style=wx.SP_ARROW_KEYS)
+        self.ExecutionOrder = wx.SpinCtrl(self, min=0, max=10000, style=wx.SP_ARROW_KEYS)
         self.Bind(wx.EVT_SPINCTRL, self.OnExecutionOrderChanged,
                   self.ExecutionOrder)
         top_right_gridsizer.Add(self.ExecutionOrder, flag=wx.GROW)
