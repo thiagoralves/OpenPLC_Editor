@@ -241,6 +241,14 @@ extern unsigned long long common_ticktime__;
 #define MAX_DIGITAL_OUTPUT         32
 #define MAX_ANALOG_INPUT           6
 #define MAX_ANALOG_OUTPUT          32
+#define MAX_MEMORY_WORD            0
+#define MAX_MEMORY_DWORD           0
+#define MAX_MEMORY_LWORD           0
+
+IEC_BOOL *bool_input[MAX_DIGITAL_INPUT/8][8];
+IEC_BOOL *bool_output[MAX_DIGITAL_OUTPUT/8][8];
+IEC_UINT *int_input[MAX_ANALOG_INPUT];
+IEC_UINT *int_output[MAX_ANALOG_OUTPUT];
 
 #else
 
@@ -248,13 +256,20 @@ extern unsigned long long common_ticktime__;
 #define MAX_DIGITAL_OUTPUT         56
 #define MAX_ANALOG_INPUT           32
 #define MAX_ANALOG_OUTPUT          32
-
-#endif
+#define MAX_MEMORY_WORD            20
+#define MAX_MEMORY_DWORD           20
+#define MAX_MEMORY_LWORD           20
 
 IEC_BOOL *bool_input[MAX_DIGITAL_INPUT/8][8];
 IEC_BOOL *bool_output[MAX_DIGITAL_OUTPUT/8][8];
 IEC_UINT *int_input[MAX_ANALOG_INPUT];
 IEC_UINT *int_output[MAX_ANALOG_OUTPUT];
+IEC_UINT *int_memory[MAX_MEMORY_WORD];
+IEC_UDINT *dint_memory[MAX_MEMORY_DWORD];
+IEC_ULINT *lint_memory[MAX_MEMORY_LWORD];
+
+#endif
+
 
 void glueVars()
 {
@@ -308,6 +323,30 @@ void glueVars()
                         wx.CallAfter(scrollToEnd, txtCtrl)
                         return
                     glueVars += '    int_input[' + \
+                        var_address + '] = ' + var_name + ';\n'
+                elif ('MW' in var_name):
+                    if (int(var_address) > 20):
+                        compiler_logs += 'Error: wrong location for var ' + var_name + '\n'
+                        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
+                        wx.CallAfter(scrollToEnd, txtCtrl)
+                        return
+                    glueVars += '    int_memory[' + \
+                        var_address + '] = ' + var_name + ';\n'
+                elif ('MD' in var_name):
+                    if (int(var_address) > 20):
+                        compiler_logs += 'Error: wrong location for var ' + var_name + '\n'
+                        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
+                        wx.CallAfter(scrollToEnd, txtCtrl)
+                        return
+                    glueVars += '    dint_memory[' + \
+                        var_address + '] = ' + var_name + ';\n'
+                elif ('ML' in var_name):
+                    if (int(var_address) > 20):
+                        compiler_logs += 'Error: wrong location for var ' + var_name + '\n'
+                        wx.CallAfter(txtCtrl.SetValue, compiler_logs)
+                        wx.CallAfter(scrollToEnd, txtCtrl)
+                        return
+                    glueVars += '    lint_memory[' + \
                         var_address + '] = ' + var_name + ';\n'
                 else:
                     compiler_logs += 'Could not process location "' + \
