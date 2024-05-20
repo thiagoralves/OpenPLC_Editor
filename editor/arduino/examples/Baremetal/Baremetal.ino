@@ -119,7 +119,7 @@ void setup()
         #endif
         
         //Add all modbus registers
-        init_mbregs(MAX_ANALOG_OUTPUT, MAX_DIGITAL_OUTPUT, MAX_ANALOG_INPUT, MAX_DIGITAL_INPUT);
+        init_mbregs(MAX_ANALOG_OUTPUT + MAX_MEMORY_WORD, MAX_MEMORY_DWORD, MAX_MEMORY_LWORD, MAX_DIGITAL_OUTPUT, MAX_ANALOG_INPUT, MAX_DIGITAL_INPUT);
         mapEmptyBuffers();
 	#endif
 
@@ -133,7 +133,7 @@ void setup()
 #ifdef MODBUS_ENABLED
 void mapEmptyBuffers()
 {
-    //Map all empty I/O buffers to Modbus registers
+    //Map all NULL I/O buffers to Modbus registers
     for (int i = 0; i < MAX_DIGITAL_OUTPUT; i++)
     {
         if (bool_output[i/8][i%8] == NULL)
@@ -162,6 +162,27 @@ void mapEmptyBuffers()
         if (int_input[i] == NULL)
         {
 			int_input[i] = (IEC_UINT *)(modbus.input_regs + i);
+        }
+    }
+    for (int i = 0; i < MAX_MEMORY_WORD; i++)
+    {
+        if (int_memory[i] == NULL)
+        {
+            int_memory[i] = (IEC_UINT *)(modbus.holding + MAX_ANALOG_OUTPUT + i);
+        }
+    }
+    for (int i = 0; i < MAX_MEMORY_DWORD; i++)
+    {
+        if (dint_memory[i] == NULL)
+        {
+            dint_memory[i] = (IEC_UDINT *)(modbus.dint_memory + i);
+        }
+    }
+    for (int i = 0; i < MAX_MEMORY_LWORD; i++)
+    {
+        if (lint_memory[i] == NULL)
+        {
+            lint_memory[i] = (IEC_ULINT *)(modbus.lint_memory + i);
         }
     }
 }
@@ -197,6 +218,27 @@ void modbusTask()
             modbus.input_regs[i] = *int_input[i];
         }
     }
+    for (int i = 0; i < MAX_MEMORY_WORD; i++)
+    {
+        if (int_memory[i] != NULL)
+        {
+            modbus.holding[i + MAX_ANALOG_OUTPUT] = *int_memory[i];
+        }
+    }
+    for (int i = 0; i < MAX_MEMORY_DWORD; i++)
+    {
+        if (dint_memory[i] != NULL)
+        {
+            modbus.dint_memory[i] = *dint_memory[i];
+        }
+    }
+    for (int i = 0; i < MAX_MEMORY_LWORD; i++)
+    {
+        if (lint_memory[i] != NULL)
+        {
+            modbus.lint_memory[i] = *lint_memory[i];
+        }
+    }
     
     //Read changes from clients
     mbtask();
@@ -214,6 +256,27 @@ void modbusTask()
         if (int_output[i] != NULL)
         {
             *int_output[i] = modbus.holding[i];
+        }
+    }
+    for (int i = 0; i < MAX_MEMORY_WORD; i++)
+    {
+        if (int_memory[i] != NULL)
+        {
+            *int_memory[i] = modbus.holding[i + MAX_ANALOG_OUTPUT];
+        }
+    }
+    for (int i = 0; i < MAX_MEMORY_DWORD; i++)
+    {
+        if (dint_memory[i] != NULL)
+        {
+            *dint_memory[i] = modbus.dint_memory[i];
+        }
+    }
+    for (int i = 0; i < MAX_MEMORY_LWORD; i++)
+    {
+        if (lint_memory[i] != NULL)
+        {
+            *lint_memory[i] = modbus.lint_memory[i];
         }
     }
 }

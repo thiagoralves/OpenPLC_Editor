@@ -67,6 +67,10 @@ struct MBinfo {
     uint8_t slaveid;
     uint16_t *holding;
     uint8_t holding_size;
+    uint32_t *dint_memory;
+    uint8_t dint_memory_size;
+    uint64_t *lint_memory;
+    uint8_t lint_memory_size;
     uint8_t *coils;
     uint8_t coils_size;
     uint16_t *input_regs;
@@ -124,7 +128,7 @@ extern uint16_t mb_t35; // frame delay
 #endif
 #endif
 
-bool init_mbregs(uint8_t size_holding, uint8_t size_coils, uint8_t input_regs, uint8_t input_status);
+bool init_mbregs(uint8_t size_holding, uint8_t size_dint_memory, uint8_t size_lint_memory, uint8_t size_coils, uint8_t size_inputregs, uint8_t size_inputstatus);
 bool get_discrete(uint16_t addr, bool regtype);
 void write_discrete(uint16_t addr, bool regtype, bool value);
 void mbconfig_serial_iface(Stream* port, long baud, int txPin);
