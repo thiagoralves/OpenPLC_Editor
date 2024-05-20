@@ -108,7 +108,7 @@
       "user_aout": "9, 14"
     },
     "ESP32": {
-      "platform": "esp32:esp32:esp32",
+      "platform": "esp32:esp32:esp32:UploadSpeed=230400",
       "define": "BOARD_ESP32",
       "source": "esp32.cpp",
       "version": "0",
@@ -120,7 +120,7 @@
       "default_aout": "25, 26",
       "user_din": "17, 18, 19, 21, 22, 23, 27, 32, 33",
       "user_ain": "34, 35, 36, 39",
-      "user_dout": "01, 02, 03, 04, 05, 12, 13, 14, 15, 16",
+      "user_dout": "02, 04, 05, 12, 13, 14, 15, 16",
       "user_aout": "25, 26"
     },
     "STM32-F103CB (Bluepill)": {
@@ -483,11 +483,11 @@
       "core": "esp32:esp32",
       "default_din": "17, 18, 19, 21, 22, 23, 27, 32, 33",
       "default_ain": "34, 35, 36, 39",
-      "default_dout": "01, 02, 03, 04, 05, 12, 13, 14, 15, 16",
+      "default_dout": "02, 04, 05, 12, 13, 14, 15, 16",
       "default_aout": "25, 26",
       "user_din": "17, 18, 19, 21, 22, 23, 27, 32, 33",
       "user_ain": "34, 35, 36, 39",
-      "user_dout": "01, 02, 03, 04, 05, 12, 13, 14, 15, 16",
+      "user_dout": "02, 04, 05, 12, 13, 14, 15, 16",
       "user_aout": "25, 26"
     },
     "Arduino Nano": {
