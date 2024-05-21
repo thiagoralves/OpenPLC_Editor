@@ -164,27 +164,29 @@ void mapEmptyBuffers()
 			int_input[i] = (IEC_UINT *)(modbus.input_regs + i);
         }
     }
-    for (int i = 0; i < MAX_MEMORY_WORD; i++)
-    {
-        if (int_memory[i] == NULL)
+    #if !defined(__AVR_ATmega328P__) && !defined(__AVR_ATmega168__) && !defined(__AVR_ATmega32U4__) && !defined(__AVR_ATmega16U4__)
+        for (int i = 0; i < MAX_MEMORY_WORD; i++)
         {
-            int_memory[i] = (IEC_UINT *)(modbus.holding + MAX_ANALOG_OUTPUT + i);
+            if (int_memory[i] == NULL)
+            {
+                int_memory[i] = (IEC_UINT *)(modbus.holding + MAX_ANALOG_OUTPUT + i);
+            }
         }
-    }
-    for (int i = 0; i < MAX_MEMORY_DWORD; i++)
-    {
-        if (dint_memory[i] == NULL)
+        for (int i = 0; i < MAX_MEMORY_DWORD; i++)
         {
-            dint_memory[i] = (IEC_UDINT *)(modbus.dint_memory + i);
+            if (dint_memory[i] == NULL)
+            {
+                dint_memory[i] = (IEC_UDINT *)(modbus.dint_memory + i);
+            }
         }
-    }
-    for (int i = 0; i < MAX_MEMORY_LWORD; i++)
-    {
-        if (lint_memory[i] == NULL)
+        for (int i = 0; i < MAX_MEMORY_LWORD; i++)
         {
-            lint_memory[i] = (IEC_ULINT *)(modbus.lint_memory + i);
+            if (lint_memory[i] == NULL)
+            {
+                lint_memory[i] = (IEC_ULINT *)(modbus.lint_memory + i);
+            }
         }
-    }
+    #endif
 }
 
 void modbusTask()
@@ -218,27 +220,29 @@ void modbusTask()
             modbus.input_regs[i] = *int_input[i];
         }
     }
-    for (int i = 0; i < MAX_MEMORY_WORD; i++)
-    {
-        if (int_memory[i] != NULL)
+    #if !defined(__AVR_ATmega328P__) && !defined(__AVR_ATmega168__) && !defined(__AVR_ATmega32U4__) && !defined(__AVR_ATmega16U4__)
+        for (int i = 0; i < MAX_MEMORY_WORD; i++)
         {
-            modbus.holding[i + MAX_ANALOG_OUTPUT] = *int_memory[i];
+            if (int_memory[i] != NULL)
+            {
+                modbus.holding[i + MAX_ANALOG_OUTPUT] = *int_memory[i];
+            }
         }
-    }
-    for (int i = 0; i < MAX_MEMORY_DWORD; i++)
-    {
-        if (dint_memory[i] != NULL)
+        for (int i = 0; i < MAX_MEMORY_DWORD; i++)
         {
-            modbus.dint_memory[i] = *dint_memory[i];
+            if (dint_memory[i] != NULL)
+            {
+                modbus.dint_memory[i] = *dint_memory[i];
+            }
         }
-    }
-    for (int i = 0; i < MAX_MEMORY_LWORD; i++)
-    {
-        if (lint_memory[i] != NULL)
+        for (int i = 0; i < MAX_MEMORY_LWORD; i++)
         {
-            modbus.lint_memory[i] = *lint_memory[i];
+            if (lint_memory[i] != NULL)
+            {
+                modbus.lint_memory[i] = *lint_memory[i];
+            }
         }
-    }
+    #endif
     
     //Read changes from clients
     mbtask();
@@ -258,27 +262,29 @@ void modbusTask()
             *int_output[i] = modbus.holding[i];
         }
     }
-    for (int i = 0; i < MAX_MEMORY_WORD; i++)
-    {
-        if (int_memory[i] != NULL)
+    #if !defined(__AVR_ATmega328P__) && !defined(__AVR_ATmega168__) && !defined(__AVR_ATmega32U4__) && !defined(__AVR_ATmega16U4__)
+        for (int i = 0; i < MAX_MEMORY_WORD; i++)
         {
-            *int_memory[i] = modbus.holding[i + MAX_ANALOG_OUTPUT];
+            if (int_memory[i] != NULL)
+            {
+                *int_memory[i] = modbus.holding[i + MAX_ANALOG_OUTPUT];
+            }
         }
-    }
-    for (int i = 0; i < MAX_MEMORY_DWORD; i++)
-    {
-        if (dint_memory[i] != NULL)
+        for (int i = 0; i < MAX_MEMORY_DWORD; i++)
         {
-            *dint_memory[i] = modbus.dint_memory[i];
+            if (dint_memory[i] != NULL)
+            {
+                *dint_memory[i] = modbus.dint_memory[i];
+            }
         }
-    }
-    for (int i = 0; i < MAX_MEMORY_LWORD; i++)
-    {
-        if (lint_memory[i] != NULL)
+        for (int i = 0; i < MAX_MEMORY_LWORD; i++)
         {
-            *lint_memory[i] = modbus.lint_memory[i];
+            if (lint_memory[i] != NULL)
+            {
+                *lint_memory[i] = modbus.lint_memory[i];
+            }
         }
-    }
+    #endif
 }
 #endif
 
