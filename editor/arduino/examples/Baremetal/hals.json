@@ -33,6 +33,7 @@
     "Raspberry Pico W": {
       "platform": "rp2040:rp2040:rpipicow",
       "source": "rp2040pico.cpp",
+      "define": "BOARD_PICOW",
       "version": "0",
       "last_update": 0,
       "core": "rp2040:rp2040",
