@@ -113,7 +113,7 @@ def build(st_file, platform, source_file, port, txtCtrl, hals, update_subsystem)
         compiler_logs += runCommand(
             cli_command + ' config remove board_manager.additional_urls \
 https://arduino.esp8266.com/stable/package_esp8266com_index.json \
-https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json \
+https://espressif.github.io/arduino-esp32/package_esp32_index.json \
 https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectronics_index.json \
 https://raw.githubusercontent.com/CONTROLLINO-PLC/CONTROLLINO_Library/master/Boards/package_ControllinoHardware_index.json \
 https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json \
@@ -128,7 +128,7 @@ https://raw.githubusercontent.com/facts-engineering/facts-engineering.github.io/
         compiler_logs += runCommand(
             cli_command + ' config add board_manager.additional_urls \
 https://arduino.esp8266.com/stable/package_esp8266com_index.json \
-https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json \
+https://espressif.github.io/arduino-esp32/package_esp32_index.json \
 https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectronics_index.json \
 https://raw.githubusercontent.com/CONTROLLINO-PLC/CONTROLLINO_Library/master/Boards/package_ControllinoHardware_index.json \
 https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json \
@@ -167,7 +167,6 @@ arduinomqttclient \
 RP2040_PWM \
 AVR_PWM \
 megaAVR_PWM \
-ESP32_FastPWM \
 SAMD_PWM \
 SAMDUE_PWM \
 Portenta_H7_PWM \
@@ -462,15 +461,19 @@ void updateTime()
     compiler_logs += platform
     compiler_logs += '\n'
 
+    extraflags = ''
+    if core == 'esp32:esp32':
+        extraflags = ' -MMD -c'
+
     if os_platform.system() == 'Windows':
-        compilation = subprocess.Popen(['editor\\arduino\\bin\\arduino-cli-w64', 'compile', '-v', '--libraries=editor\\arduino', '--build-property', 'compiler.c.extra_flags="-Ieditor\\arduino\\src\\lib"', '--build-property',
-                                       'compiler.cpp.extra_flags="-Ieditor\\arduino\\src\\lib"', '--export-binaries', '-b', platform, 'editor\\arduino\\examples\\Baremetal\\Baremetal.ino'], creationflags=0x08000000, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        compilation = subprocess.Popen(['editor\\arduino\\bin\\arduino-cli-w64', 'compile', '-v', '--libraries=editor\\arduino', '--build-property', 'compiler.c.extra_flags=-Ieditor\\arduino\\src\\lib' + extraflags, '--build-property',
+                                       'compiler.cpp.extra_flags=-Ieditor\\arduino\\src\\lib' + extraflags, '--export-binaries', '-b', platform, 'editor\\arduino\\examples\\Baremetal\\Baremetal.ino'], creationflags=0x08000000, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     elif os_platform.system() == 'Darwin':
-        compilation = subprocess.Popen(['editor/arduino/bin/arduino-cli-mac', 'compile', '-v', '--libraries=editor/arduino', '--build-property', 'compiler.c.extra_flags="-Ieditor/arduino/src/lib"', '--build-property',
-                                       'compiler.cpp.extra_flags="-Ieditor/arduino/src/lib"', '--export-binaries', '-b', platform, 'editor/arduino/examples/Baremetal/Baremetal.ino'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        compilation = subprocess.Popen(['editor/arduino/bin/arduino-cli-mac', 'compile', '-v', '--libraries=editor/arduino', '--build-property', 'compiler.c.extra_flags=-Ieditor/arduino/src/lib' + extraflags, '--build-property',
+                                       'compiler.cpp.extra_flags=-Ieditor/arduino/src/lib' + extraflags, '--export-binaries', '-b', platform, 'editor/arduino/examples/Baremetal/Baremetal.ino'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     else:
-        compilation = subprocess.Popen(['editor/arduino/bin/arduino-cli-l64', 'compile', '-v', '--libraries=editor/arduino', '--build-property', 'compiler.c.extra_flags="-Ieditor/arduino/src/lib"', '--build-property',
-                                       'compiler.cpp.extra_flags="-Ieditor/arduino/src/lib"', '--export-binaries', '-b', platform, 'editor/arduino/examples/Baremetal/Baremetal.ino'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        compilation = subprocess.Popen(['editor/arduino/bin/arduino-cli-l64', 'compile', '-v', '--libraries=editor/arduino', '--build-property', 'compiler.c.extra_flags=-Ieditor/arduino/src/lib' + extraflags, '--build-property',
+                                       'compiler.cpp.extra_flags=-Ieditor/arduino/src/lib' + extraflags, '--export-binaries', '-b', platform, 'editor/arduino/examples/Baremetal/Baremetal.ino'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = compilation.communicate()
     compiler_logs += stdout.decode('UTF-8', errors='backslashreplace')
     compiler_logs += stderr.decode('UTF-8', errors='backslashreplace')
