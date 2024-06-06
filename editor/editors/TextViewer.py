@@ -877,12 +877,14 @@ class TextViewer(EditorPanel):
             lineText = self.Editor.GetTextRange(start_pos, end_pos).replace("\t", " ")
 
             # Code completion
-            if key == wx.WXK_SPACE and event.ControlDown():
+            if key == wx.WXK_SPACE and event.RawControlDown():
 
                 words = lineText.split(" ")
                 words = [word for i, word in enumerate(words) if word != '' or i == len(words) - 1]
 
                 kw = []
+
+                self.RefreshVariableTree()
 
                 if self.TextSyntax == "IL":
                     if len(words) == 1:
@@ -896,9 +898,9 @@ class TextViewer(EditorPanel):
                             kw = list(self.Variables.keys())
                 else:
                     kw = self.Keywords + list(self.Variables.keys()) + list(self.Functions.keys())
+                if len(words[-1]) > 0:
+                    kw = [keyword for keyword in kw if keyword.startswith(words[-1].upper())]
                 if len(kw) > 0:
-                    if len(words[-1]) > 0:
-                        kw = [keyword for keyword in kw if keyword.startswith(words[-1])]
                     kw.sort()
                     self.Editor.AutoCompSetIgnoreCase(True)
                     self.Editor.AutoCompShow(len(words[-1]), " ".join(kw))
