@@ -57,7 +57,7 @@
 	__INIT_RETAIN(name, retained)
 #define __INIT_GLOBAL(type, name, initial, retained)\
     {\
-	    static const type temp = initial;\
+	    type temp = initial;\
 	    __INIT_GLOBAL_##name(temp);\
 	    __INIT_RETAIN((*GLOBAL__##name), retained)\
     }
