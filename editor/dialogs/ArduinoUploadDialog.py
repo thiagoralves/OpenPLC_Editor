@@ -396,6 +396,7 @@ class ArduinoUploadDialog(wx.Dialog):
 
         self.m_button5 = wx.Button( self.m_panel7, wx.ID_ANY, u"Save Changes", wx.DefaultPosition, wx.DefaultSize, 0 )
         self.m_button5.SetMinSize( wx.Size( 150,30 ) )
+        self.m_button5.Bind(wx.EVT_BUTTON, self.onSaveChange)
 
         gSizer2.Add( self.m_button5, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
 
@@ -495,6 +496,7 @@ class ArduinoUploadDialog(wx.Dialog):
         self.hals[board_type]['user_aout'] = self.hals[board_type]['default_aout']
         self.saveHals()
         self.onUIChange(None)
+        self.showSuccessMessage("Settings restored successfully")
 
     def saveIO(self, event):
         board_type = self.board_type_combo.GetValue().split(" [")[0] #remove the trailing [version] on board name
@@ -503,6 +505,41 @@ class ArduinoUploadDialog(wx.Dialog):
         self.hals[board_type]['user_dout'] = str(self.dout_txt.GetValue())
         self.hals[board_type]['user_aout'] = str(self.aout_txt.GetValue())
         self.saveHals()
+        self.showSuccessMessage("Settings saved successfully")
+
+    def showSuccessMessage(self, message):
+        """
+        Show sucess dialog information
+        """
+        # Show a success message dialog
+        dlg = wx.MessageDialog(self, message , "Success", wx.OK | wx.ICON_INFORMATION)
+        dlg.ShowModal()
+        dlg.Destroy()
+    
+    def showErrorMessage(self, message):
+        """
+        Show error dialog information
+        """
+        # Show an error message dialog
+        dlg = wx.MessageDialog(self, message, "Error", wx.OK | wx.ICON_ERROR)
+        dlg.ShowModal()
+        dlg.Destroy()
+
+    def onSaveChange(self, event):
+        """
+        Create new thread to save communication, disale button for multi click
+        """
+        self.m_button5.Enable(False)       
+       
+        builder_thread = threading.Thread(target=self.saveAllSettings)
+        builder_thread.start()
+
+    def saveAllSettings(self):
+        self.saveSettings()
+        time.sleep(1)
+        # Re-enable the button after the task is complete
+        wx.CallAfter(self.m_button5.Enable, True)
+        wx.CallAfter(self.showSuccessMessage, "Settings saved successfully")
 
     def startBuilder(self):
 
