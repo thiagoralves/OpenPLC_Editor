@@ -2204,6 +2204,34 @@ class ProjectController(ConfigTreeNode, PLCControler):
             c_debug = f.read()
             f.close()
 
+            # Get MD5 of the plc_debugger.c file and store that on target
+            debuggerLocation = None
+            CTRoot = self.GetCTRoot()
+            for location, cfiles, calls in CTRoot.LocationCFilesAndCFLAGS:
+                if cfiles:
+                    for file, flag in cfiles:
+                        if "plc_debugger.c" in file:
+                            debuggerLocation = file
+                            break
+            
+            if debuggerLocation is None:
+                self.logger.write_error("Error building project: Debugger file is null\n")
+                return
+            MD5 = hashlib.md5(open(debuggerLocation, "rb").read()).hexdigest()
+            if MD5 is None:
+                self.logger.write_error("Error building project: md5 object is null\n")
+                return
+            self.logger.write("Build MD5: ")
+            self.logger.write(MD5)
+
+            # Add MD5 value to debug.c file
+            c_debug = 'char md5[] = "' + MD5 + '";\n' + c_debug
+
+            # Read ST program
+            f = open(self._getIECgeneratedcodepath(), 'r')
+            program = f.read()
+            f.close()
+
             # Wrap debugger code around (* comments *)
             c_debug_lines = c_debug.split('\n')
             c_debug = [f'(*DBG:{line}*)' for line in c_debug_lines]
