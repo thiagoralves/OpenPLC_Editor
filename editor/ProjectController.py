@@ -2197,6 +2197,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
             f.close()
 
             # Generate debug info from arduino debugger
+            self.generate_embed_plc_debugger()
             base_folder = paths.AbsDir(__file__)
             c_file = os.path.join(base_folder, 'arduino', 'src', 'debug.c')
             f = open(c_file, "r")
@@ -2205,7 +2206,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
 
             # Wrap debugger code around (* comments *)
             c_debug_lines = c_debug.split('\n')
-            c_debug = [f'(*{line}*)' for line in c_debug_lines]
+            c_debug = [f'(*DBG:{line}*)' for line in c_debug_lines]
             c_debug = '\n'.join(c_debug)
 
             # Concatenate debugger code with st program
