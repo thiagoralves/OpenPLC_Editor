@@ -2192,10 +2192,6 @@ class ProjectController(ConfigTreeNode, PLCControler):
     def _generateOpenPLC(self):
         self._Clean()
         if (self._Build() is True):
-            f = open(self._getIECgeneratedcodepath(), "r")
-            program = f.read()
-            f.close()
-
             # Generate debug info from arduino debugger
             self.generate_embed_plc_debugger()
             base_folder = paths.AbsDir(__file__)
@@ -2224,7 +2220,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
             self.logger.write("Build MD5: ")
             self.logger.write(MD5)
 
-            # Add MD5 value to debug.c file
+            # Add MD5 value to debug.cpp file
             c_debug = 'char md5[] = "' + MD5 + '";\n' + c_debug
 
             # Read ST program
