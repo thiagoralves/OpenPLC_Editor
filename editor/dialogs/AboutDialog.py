@@ -43,7 +43,10 @@ class AboutDialog(wx.Dialog):
     """
     def __init__(self, parent, info):
         title = _("About") + " " + info.Name
-        wx.Dialog.__init__(self, parent, title=title)
+        wx.Dialog.__init__(self, parent, title=title, style=wx.DEFAULT_DIALOG_STYLE | wx.RESIZE_BORDER)
+        self.SetSize((480, 500))
+        self.SetMinSize((480, 500))
+        self.SetMaxSize((480, 640))
         self.info = info
 
         if parent and parent.GetIcon():
@@ -81,7 +84,7 @@ class AboutDialog(wx.Dialog):
         if image:
             sizer.Add(image, flag=wx.CENTER | wx.TOP | wx.BOTTOM, border=5)
         sizer.Add(name, flag=wx.CENTER | wx.BOTTOM, border=10)
-        sizer.Add(description, flag=wx.CENTER | wx.BOTTOM, border=10)
+        sizer.Add(description, flag=wx.CENTER | wx.BOTTOM | wx.EXPAND, border=10)
         sizer.Add(copyright, flag=wx.CENTER | wx.BOTTOM, border=10)
         sizer.Add(url, flag=wx.CENTER | wx.BOTTOM, border=15)
         sizer.Add(btnSizer, flag=wx.CENTER | wx.BOTTOM, border=5)
