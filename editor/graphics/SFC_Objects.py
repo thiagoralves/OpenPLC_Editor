@@ -235,8 +235,8 @@ class SFC_Step(Graphic_Element, DebugDataConsumer):
         horizontal_pos = self.Size[0] // 2
         vertical_pos = self.Size[1] // 2
         if scaling is not None:
-            horizontal_pos = round((self.Pos.x + horizontal_pos) / scaling[0]) * scaling[0] - self.Pos.x
-            vertical_pos = round((self.Pos.y + vertical_pos) / scaling[1]) * scaling[1] - self.Pos.y
+            horizontal_pos = int(round((self.Pos.x + horizontal_pos) / scaling[0]) * scaling[0] - self.Pos.x)
+            vertical_pos = int(round((self.Pos.y + vertical_pos) / scaling[1]) * scaling[1] - self.Pos.y)
         # Update input position if it exists
         if self.Input:
             self.Input.SetPosition(wx.Point(horizontal_pos, 0))
@@ -759,8 +759,8 @@ class SFC_Transition(Graphic_Element, DebugDataConsumer):
         horizontal_pos = self.Size[0] // 2
         vertical_pos = self.Size[1] // 2
         if scaling is not None:
-            horizontal_pos = round((self.Pos.x + horizontal_pos) / scaling[0]) * scaling[0] - self.Pos.x
-            vertical_pos = round((self.Pos.y + vertical_pos) / scaling[1]) * scaling[1] - self.Pos.y
+            horizontal_pos = int(round((self.Pos.x + horizontal_pos) / scaling[0]) * scaling[0] - self.Pos.x)
+            vertical_pos = int(round((self.Pos.y + vertical_pos) / scaling[1]) * scaling[1] - self.Pos.y)
         # Update input position
         self.Input.SetPosition(wx.Point(horizontal_pos, 0))
         # Update output position
@@ -1611,7 +1611,7 @@ class SFC_Jump(Graphic_Element):
         scaling = self.Parent.GetScaling()
         horizontal_pos = self.Size[0] // 2
         if scaling is not None:
-            horizontal_pos = round((self.Pos.x + horizontal_pos) / scaling[0]) * scaling[0] - self.Pos.x
+            horizontal_pos = int(round((self.Pos.x + horizontal_pos) / scaling[0]) * scaling[0] - self.Pos.x)
         self.Input.SetPosition(wx.Point(horizontal_pos, 0))
         self.RefreshConnected()
 
@@ -1891,7 +1891,7 @@ class SFC_ActionBlock(Graphic_Element):
         scaling = self.Parent.GetScaling()
         vertical_pos = SFC_ACTION_MIN_SIZE[1] // 2
         if scaling is not None:
-            vertical_pos = round((self.Pos.y + vertical_pos) / scaling[1]) * scaling[1] - self.Pos.y
+            vertical_pos = int(round((self.Pos.y + vertical_pos) / scaling[1]) * scaling[1] - self.Pos.y)
         self.Input.SetPosition(wx.Point(0, vertical_pos))
         self.RefreshConnected()
 

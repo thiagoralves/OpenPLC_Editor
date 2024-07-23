@@ -1989,10 +1989,10 @@ class Wire(Graphic_Element, DebugDataConsumer):
             self.StartPoint = [None, ivector(self.Points[0], self.Points[1])]
             self.EndPoint = [None, ivector(self.Points[-1], self.Points[-2])]
             # Calculate the start and end points
-            self.StartPoint[0] = wx.Point(self.Points[0].x + round(CONNECTOR_SIZE * self.StartPoint[1][0]),
-                                          self.Points[0].y + round(CONNECTOR_SIZE * self.StartPoint[1][1]))
-            self.EndPoint[0] = wx.Point(self.Points[-1].x + round(CONNECTOR_SIZE * self.EndPoint[1][0]),
-                                        self.Points[-1].y + round(CONNECTOR_SIZE * self.EndPoint[1][1]))
+            self.StartPoint[0] = wx.Point(self.Points[0].x + int(round(CONNECTOR_SIZE * self.StartPoint[1][0])),
+                                          self.Points[0].y + int(round(CONNECTOR_SIZE * self.StartPoint[1][1])))
+            self.EndPoint[0] = wx.Point(self.Points[-1].x + int(round(CONNECTOR_SIZE * self.EndPoint[1][0])),
+                                        self.Points[-1].y + int(round(CONNECTOR_SIZE * self.EndPoint[1][1])))
             self.Points[0] = self.StartPoint[0]
             self.Points[-1] = self.EndPoint[0]
             # Calculate the segments directions
@@ -2037,10 +2037,10 @@ class Wire(Graphic_Element, DebugDataConsumer):
     # Returns a list of the position of all wire points
     def GetPoints(self, invert=False):
         points = self.VerifyPoints()
-        points[0] = wx.Point(points[0].x - round(CONNECTOR_SIZE * self.StartPoint[1][0]),
-                             points[0].y - round(CONNECTOR_SIZE * self.StartPoint[1][1]))
-        points[-1] = wx.Point(points[-1].x - round(CONNECTOR_SIZE * self.EndPoint[1][0]),
-                              points[-1].y - round(CONNECTOR_SIZE * self.EndPoint[1][1]))
+        points[0] = wx.Point(points[0].x - int(round(CONNECTOR_SIZE * self.StartPoint[1][0])),
+                             points[0].y - int(round(CONNECTOR_SIZE * self.StartPoint[1][1])))
+        points[-1] = wx.Point(points[-1].x - int(round(CONNECTOR_SIZE * self.EndPoint[1][0])),
+                              points[-1].y - int(round(CONNECTOR_SIZE * self.EndPoint[1][1])))
         # An inversion of the list is asked
         if invert:
             points.reverse()
@@ -2079,10 +2079,10 @@ class Wire(Graphic_Element, DebugDataConsumer):
     def GeneratePoints(self, realpoints=True):
         i = 0
         # Calculate the start enad end points with the minimum segment size in the right direction
-        end = wx.Point(self.EndPoint[0].x + round(self.EndPoint[1][0] * MIN_SEGMENT_SIZE),
-                       self.EndPoint[0].y + round(self.EndPoint[1][1] * MIN_SEGMENT_SIZE))
-        start = wx.Point(self.StartPoint[0].x + round(self.StartPoint[1][0] * MIN_SEGMENT_SIZE),
-                         self.StartPoint[0].y + round(self.StartPoint[1][1] * MIN_SEGMENT_SIZE))
+        end = wx.Point(self.EndPoint[0].x + int(round(self.EndPoint[1][0] * MIN_SEGMENT_SIZE)),
+                       self.EndPoint[0].y + int(round(self.EndPoint[1][1] * MIN_SEGMENT_SIZE)))
+        start = wx.Point(self.StartPoint[0].x + int(round(self.StartPoint[1][0] * MIN_SEGMENT_SIZE)),
+                         self.StartPoint[0].y + int(round(self.StartPoint[1][1] * MIN_SEGMENT_SIZE)))
         # Evaluate the point till it's the last
         while i < len(self.Points) - 1:
             # The next point is the last
@@ -2687,11 +2687,11 @@ class Wire(Graphic_Element, DebugDataConsumer):
             dc.DrawCircle(round(self.Points[-1].x * scalex), round(self.Points[-1].y * scaley), round((POINT_RADIUS + 1) * scalex + 2))
         # Draw the wire lines and the last point (it seems that DrawLines stop before the last point)
         if len(self.Points) > 1:
-            points = [wx.Point(round((self.Points[0].x - self.Segments[0][0]) * scalex),
-                               round((self.Points[0].y - self.Segments[0][1]) * scaley))]
-            points.extend([wx.Point(round(point.x * scalex), round(point.y * scaley)) for point in self.Points[1:-1]])
-            points.append(wx.Point(round((self.Points[-1].x + self.Segments[-1][0]) * scalex),
-                                   round((self.Points[-1].y + self.Segments[-1][1]) * scaley)))
+            points = [wx.Point(int(round((self.Points[0].x - self.Segments[0][0]) * scalex)),
+                               int(round((self.Points[0].y - self.Segments[0][1]) * scaley)))]
+            points.extend([wx.Point(int(round(point.x * scalex)), int(round(point.y * scaley))) for point in self.Points[1:-1]])
+            points.append(wx.Point(int(round((self.Points[-1].x + self.Segments[-1][0]) * scalex)),
+                                   int(round((self.Points[-1].y + self.Segments[-1][1]) * scaley))))
         else:
             points = []
         dc.DrawLines(points)
@@ -2933,12 +2933,12 @@ class Comment(Graphic_Element):
         dc.SetBrush(wx.Brush(HIGHLIGHTCOLOR))
         #dc.SetLogicalFunction(wx.AND)
 
-        left = round((self.Pos.x - 1) * scalex - 2)
-        right = round((self.Pos.x + self.Size[0] + 1) * scalex + 2)
-        top = round((self.Pos.y - 1) * scaley - 2)
-        bottom = round((self.Pos.y + self.Size[1] + 1) * scaley + 2)
-        angle_top = round((self.Pos.x + self.Size[0] - 9) * scalex + 2)
-        angle_right = round((self.Pos.y + 9) * scaley - 2)
+        left = int(round((self.Pos.x - 1) * scalex - 2))
+        right = int(round((self.Pos.x + self.Size[0] + 1) * scalex + 2))
+        top = int(round((self.Pos.y - 1) * scaley - 2))
+        bottom = int(round((self.Pos.y + self.Size[1] + 1) * scaley + 2))
+        angle_top = int(round((self.Pos.x + self.Size[0] - 9) * scalex + 2))
+        angle_right = int(round((self.Pos.y + 9) * scaley - 2))
 
         polygon = [wx.Point(left, top), wx.Point(angle_top, top),
                    wx.Point(right, angle_right), wx.Point(right, bottom),
