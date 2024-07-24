@@ -191,7 +191,7 @@ class LD_PowerRail(Graphic_Element):
             else:
                 position = self.Extensions[0] + int(round(i * interval))
             if scaling is not None:
-                position = round((self.Pos.y + position) / scaling[1]) * scaling[1] - self.Pos.y
+                position = int(round((self.Pos.y + position) / scaling[1]) * scaling[1] - self.Pos.y)
             if self.Type == LEFTRAIL:
                 connector.SetPosition(wx.Point(self.Size[0], position))
             elif self.Type == RIGHTRAIL:
@@ -312,7 +312,7 @@ class LD_PowerRail(Graphic_Element):
             movey = max(-self.BoundingBox.y, movey)
             if scaling is not None:
                 position = handle.GetRelPosition()
-                movey = round((self.Pos.y + position.y + movey) / scaling[1]) * scaling[1] - self.Pos.y - position.y
+                movey = int(round((self.Pos.y + position.y + movey) / scaling[1]) * scaling[1] - self.Pos.y - position.y)
             self.MoveConnector(handle, movey)
             return 0, movey
         elif self.Parent.GetDrawingMode() == FREEDRAWING_MODE:
@@ -545,7 +545,7 @@ class LD_Contact(Graphic_Element, DebugDataConsumer):
         scaling = self.Parent.GetScaling()
         position = self.Size[1] // 2 + 1
         if scaling is not None:
-            position = round((self.Pos.y + position) / scaling[1]) * scaling[1] - self.Pos.y
+            position = int(round((self.Pos.y + position) / scaling[1]) * scaling[1] - self.Pos.y)
         self.Input.SetPosition(wx.Point(0, position))
         self.Output.SetPosition(wx.Point(self.Size[0], position))
         self.RefreshConnected()
@@ -865,7 +865,7 @@ class LD_Coil(Graphic_Element):
         scaling = self.Parent.GetScaling()
         position = self.Size[1] // 2 + 1
         if scaling is not None:
-            position = round((self.Pos.y + position) / scaling[1]) * scaling[1] - self.Pos.y
+            position = int(round((self.Pos.y + position) / scaling[1]) * scaling[1] - self.Pos.y)
         self.Input.SetPosition(wx.Point(0, position))
         self.Output.SetPosition(wx.Point(self.Size[0], position))
         self.RefreshConnected()
@@ -913,15 +913,15 @@ class LD_Coil(Graphic_Element):
         dc.SetBrush(wx.TRANSPARENT_BRUSH)
         #dc.SetLogicalFunction(wx.AND)
         # Draw a two circle arcs for representing the coil
-        dc.DrawEllipticArc(round(self.Pos.x * scalex),
-                           round((self.Pos.y - int(self.Size[1] * (sqrt(2) - 1.) / 2.) + 1) * scaley),
-                           round(self.Size[0] * scalex),
-                           round((int(self.Size[1] * sqrt(2)) - 1) * scaley),
+        dc.DrawEllipticArc(int(round(self.Pos.x * scalex)),
+                           int(round((self.Pos.y - int(self.Size[1] * (sqrt(2) - 1.) / 2.) + 1) * scaley)),
+                           int(round(self.Size[0] * scalex)),
+                           int(round((int(self.Size[1] * sqrt(2)) - 1) * scaley)),
                            135, 225)
-        dc.DrawEllipticArc(round(self.Pos.x * scalex),
-                           round((self.Pos.y - int(self.Size[1] * (sqrt(2) - 1.) / 2.) + 1) * scaley),
-                           round(self.Size[0] * scalex),
-                           round((int(self.Size[1] * sqrt(2)) - 1) * scaley),
+        dc.DrawEllipticArc(int(round(self.Pos.x * scalex)),
+                           int(round((self.Pos.y - int(self.Size[1] * (sqrt(2) - 1.) / 2.) + 1) * scaley)),
+                           int(round(self.Size[0] * scalex)),
+                           int(round((int(self.Size[1] * sqrt(2)) - 1) * scaley)),
                            -45, 45)
         #dc.SetLogicalFunction(wx.COPY)
         dc.SetUserScale(scalex, scaley)
