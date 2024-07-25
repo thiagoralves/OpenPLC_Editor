@@ -72,7 +72,7 @@ fi
 
 echo "[INSTALLING PYTHON DEPENDENCIES]"
 # List of Python packages to be installed in VENV
-venv_packages=("zeroconf" "attrdict3")
+venv_packages=("zeroconf" "attrdict3" "pypubsub")
 
 # Function to check if a Python package is installed
 is_python_package_installed() {
