@@ -684,13 +684,13 @@ class Graphic_Element(ToolTipProducer):
                 dc.SetPen(MiterPen(wx.BLACK))
                 dc.SetBrush(wx.BLACK_BRUSH)
 
-                left = round((self.BoundingBox.x - 2) * scalex - HANDLE_SIZE)
-                center = round((self.BoundingBox.x + self.BoundingBox.width // 2) * scalex - HANDLE_SIZE // 2)
-                right = round((self.BoundingBox.x + self.BoundingBox.width + 2) * scalex)
+                left = int(round((self.BoundingBox.x - 2) * scalex - HANDLE_SIZE))
+                center = int(round((self.BoundingBox.x + self.BoundingBox.width // 2) * scalex - HANDLE_SIZE // 2))
+                right = int(round((self.BoundingBox.x + self.BoundingBox.width + 2) * scalex))
 
-                top = round((self.BoundingBox.y - 2) * scaley - HANDLE_SIZE)
-                middle = round((self.BoundingBox.y + self.BoundingBox.height // 2) * scaley - HANDLE_SIZE // 2)
-                bottom = round((self.BoundingBox.y + self.BoundingBox.height + 2) * scaley)
+                top = int(round((self.BoundingBox.y - 2) * scaley - HANDLE_SIZE))
+                middle = int(round((self.BoundingBox.y + self.BoundingBox.height // 2) * scaley - HANDLE_SIZE // 2))
+                bottom = int(round((self.BoundingBox.y + self.BoundingBox.height + 2) * scaley))
 
                 for x, y in [(left, top), (center, top), (right, top),
                              (left, middle), (right, middle),
