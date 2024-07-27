@@ -1596,9 +1596,9 @@ static void DERIVATIVE_body__(DERIVATIVE *data__) {
   // Initialise TEMP variables
 
   if (__GET_VAR(data__->RUN,)) {
-    __SET_VAR(data__->,XOUT,,((((3.0 * (__GET_VAR(data__->XIN,) - __GET_VAR(data__->X3,))) + __GET_VAR(data__->X1,)) - __GET_VAR(data__->X2,)) / (10.0 * TIME_TO_REAL((BOOL)__BOOL_LITERAL(TRUE),
+    __SET_VAR(data__->,XOUT,,(((((float)3.0 * (__GET_VAR(data__->XIN,) - __GET_VAR(data__->X3,))) + __GET_VAR(data__->X1,)) - __GET_VAR(data__->X2,)) / ((float)10.0 * TIME_TO_REAL((BOOL)__BOOL_LITERAL(TRUE),
       NULL,
-      (TIME)__GET_VAR(data__->CYCLE,)))));
+      __GET_VAR(data__->CYCLE,)))));
     __SET_VAR(data__->,X3,,__GET_VAR(data__->X2,));
     __SET_VAR(data__->,X2,,__GET_VAR(data__->X1,));
     __SET_VAR(data__->,X1,,__GET_VAR(data__->XIN,));
@@ -1688,7 +1688,7 @@ static void INTEGRAL_body__(INTEGRAL *data__) {
   } else if (__GET_VAR(data__->RUN,)) {
     __SET_VAR(data__->,XOUT,,(__GET_VAR(data__->XOUT,) + (__GET_VAR(data__->XIN,) * TIME_TO_REAL((BOOL)__BOOL_LITERAL(TRUE),
       NULL,
-      (TIME)__GET_VAR(data__->CYCLE,)))));
+      __GET_VAR(data__->CYCLE,)))));
   };
 
   goto __end;
@@ -1787,9 +1787,9 @@ static void RAMP_body__(RAMP *data__) {
     } else {
       __SET_VAR(data__->,XOUT,,(__GET_VAR(data__->XI,) + (((__GET_VAR(data__->X1,) - __GET_VAR(data__->XI,)) * TIME_TO_REAL((BOOL)__BOOL_LITERAL(TRUE),
         NULL,
-        (TIME)__GET_VAR(data__->T,))) / TIME_TO_REAL((BOOL)__BOOL_LITERAL(TRUE),
+        __GET_VAR(data__->T,))) / TIME_TO_REAL((BOOL)__BOOL_LITERAL(TRUE),
         NULL,
-        (TIME)__GET_VAR(data__->TR,)))));
+        __GET_VAR(data__->TR,)))));
       __SET_VAR(data__->,T,,__time_add(__GET_VAR(data__->T,), __GET_VAR(data__->CYCLE,)));
     };
   } else {
@@ -1797,7 +1797,6 @@ static void RAMP_body__(RAMP *data__) {
     __SET_VAR(data__->,XI,,__GET_VAR(data__->X0,));
     __SET_VAR(data__->,T,,__time_to_timespec(1, 0, 0, 0, 0, 0));
   };
-
   goto __end;
 
 __end:
@@ -1897,4 +1896,5 @@ __end:
 #include "sm_cards.h"
 #include "jaguar.h"
 #include "SL-RP4.h"
+
 #endif //_IEC_STD_FB_H
