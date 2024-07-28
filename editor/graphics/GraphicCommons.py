@@ -349,10 +349,10 @@ class Graphic_Element(ToolTipProducer):
         posx, posy = self.GetPosition()
         min_width, min_height = self.GetMinSize()
         if width < min_width:
-            self.Pos.x = max(0, self.Pos.x - (width - min_width) * x_factor)
+            self.Pos.x = int(round(max(0, self.Pos.x - (width - min_width) * x_factor)))
             width = min_width
         if height < min_height:
-            self.Pos.y = max(0, self.Pos.y - (height - min_height) * y_factor)
+            self.Pos.y = int(round(max(0, self.Pos.y - (height - min_height) * y_factor)))
             height = min_height
         if scaling is not None:
             self.Pos.x = round_scaling(self.Pos.x, scaling[0])
