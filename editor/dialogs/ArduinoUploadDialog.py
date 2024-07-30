@@ -35,6 +35,7 @@ class ArduinoUploadDialog(wx.Dialog):
         self.last_update = 0
         self.update_subsystem = True
         current_dir = paths.AbsDir(__file__)
+        self.com_port_combo_choices = {}
 #
         if platform.system() == 'Windows':
             wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Transfer Program to PLC", pos = wx.DefaultPosition, size = wx.Size( 693,453 ), style = wx.DEFAULT_DIALOG_STYLE )
@@ -70,11 +71,9 @@ class ArduinoUploadDialog(wx.Dialog):
         self.m_panel5 = wx.Panel( self.m_listbook2, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
         bSizer21 = wx.BoxSizer( wx.VERTICAL )
 
-        fgSizer1 = wx.FlexGridSizer( 0, 2, 0, 0 )
+        fgSizer1 = wx.FlexGridSizer( 0, 3, 0, 0 )
         fgSizer1.SetFlexibleDirection( wx.BOTH )
         fgSizer1.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
-
-
 
 
         self.m_staticText1 = wx.StaticText( self.m_panel5, wx.ID_ANY, u"Board Type", wx.DefaultPosition, wx.Size( 80,-1 ), 0 )
@@ -85,15 +84,22 @@ class ArduinoUploadDialog(wx.Dialog):
         fgSizer1.Add( self.board_type_combo, 0, wx.ALIGN_CENTER|wx.BOTTOM|wx.TOP, 15 )
         self.board_type_combo.Bind(wx.EVT_COMBOBOX, self.onUIChange)
 
+        # fgSizer1.Add( wx.StaticText( self.m_panel5, wx.ID_ANY, u"", wx.DefaultPosition, wx.DefaultSize, 0 ), 0, wx.ALIGN_CENTER, 5 )
+        fgSizer1.Add((0, 0), 0, wx.EXPAND, 5)
+
         self.m_staticText2 = wx.StaticText( self.m_panel5, wx.ID_ANY, u"COM Port", wx.DefaultPosition, wx.Size( 80,-1 ), 0 )
         self.m_staticText2.Wrap( -1 )
         fgSizer1.Add( self.m_staticText2, 0, wx.ALIGN_CENTER|wx.ALIGN_TOP|wx.BOTTOM|wx.LEFT, 15 )
 
         self.com_port_combo = wx.ComboBox( self.m_panel5, wx.ID_ANY, u"COM1", wx.DefaultPosition, wx.Size( 410,-1 ), [""], 0 )
-        self.reloadComboChoices(None) # Initialize the com port combo box
         fgSizer1.Add( self.com_port_combo, 0, wx.ALIGN_CENTER|wx.BOTTOM, 15 )
         self.com_port_combo.Bind(wx.EVT_COMBOBOX_DROPDOWN, self.reloadComboChoices)
-
+        
+        button_size = self.com_port_combo.GetSize().GetHeight()
+        self.reload_button = wx.Button(self.m_panel5, wx.ID_ANY, u"\u21BB", wx.DefaultPosition, size=(button_size, button_size), style=wx.BU_EXACTFIT)
+        self.reload_button.SetToolTip("Reload COM port list")
+        self.reload_button.Bind(wx.EVT_BUTTON, self.reloadComboChoices)
+        fgSizer1.Add(self.reload_button, 0, wx.ALIGN_CENTER|wx.LEFT|wx.BOTTOM, 15)
 
         bSizer21.Add( fgSizer1, 1, wx.EXPAND, 5 )
 
@@ -421,6 +427,8 @@ class ArduinoUploadDialog(wx.Dialog):
         self.Layout()
 
         self.Centre( wx.BOTH )
+        
+        self.reloadComboChoices(None) # Initialize the com port combo box content, accesses indirectly several elements, which need to be created completely
 
         self.loadSettings()
 
@@ -428,9 +436,31 @@ class ArduinoUploadDialog(wx.Dialog):
         pass
 
     def reloadComboChoices(self, event):
-         self.com_port_combo.Clear()
-         self.com_port_combo_choices = {comport.description:comport.device for comport in serial.tools.list_ports.comports()}
-         self.com_port_combo.SetItems(list(self.com_port_combo_choices.keys()))
+        self.setUIState(False)
+        current_display = self.com_port_combo.GetValue()
+        current_port = next((port for display_text, port in self.com_port_combo_choices.items() 
+                             if display_text == current_display), current_display)
+        
+        self.com_port_combo.Clear()
+        self.com_port_combo_choices = {}
+        new_display = current_display
+        
+        for comport in serial.tools.list_ports.comports():
+            display_text = f"{comport.description} ({comport.device})"
+            self.com_port_combo_choices[display_text] = comport.device
+            if comport.device == current_port:
+                new_display = display_text
+        
+        self.com_port_combo.SetItems(list(self.com_port_combo_choices.keys()))
+        
+        for display_text, port in self.com_port_combo_choices.items():
+            if port == current_port:
+                new_display = display_text
+                break
+        
+        wx.CallAfter(self.com_port_combo.SetValue, new_display)
+        
+        self.setUIState(True)
 
     def onUIChange(self, e):
         # Update Comms
@@ -447,9 +477,11 @@ class ArduinoUploadDialog(wx.Dialog):
 
         if (self.check_compile.GetValue() == False):
             self.com_port_combo.Enable(True)
+            self.reload_button.Enable(True)
             self.upload_button.SetLabel("Transfer to PLC")
         elif (self.check_compile.GetValue() == True):
             self.com_port_combo.Enable(False)
+            self.reload_button.Enable(False)
             self.upload_button.SetLabel("Compile")
         
         if (self.check_modbus_tcp.GetValue() == False):
@@ -516,13 +548,22 @@ class ArduinoUploadDialog(wx.Dialog):
         port = "None" #invalid port
         if (self.check_compile.GetValue() == True):
             port = None
-        elif self.com_port_combo.GetValue() in self.com_port_combo_choices:
-            port = self.com_port_combo_choices[self.com_port_combo.GetValue()]
+        else:
+            selected_port = self.com_port_combo.GetValue()
+            # Check and select the port
+            port_found = False
+            for display_text, port_value in self.com_port_combo_choices.items():
+                if selected_port == display_text:
+                    port = port_value
+                    port_found = True
+                    break
+            if not port_found:
+                port = selected_port  # Use the user entered value directly
         
         compiler_thread = threading.Thread(target=builder.build, args=(self.plc_program, platform, source, port, self.output_text, self.hals, self.update_subsystem))
         compiler_thread.start()
         compiler_thread.join()
-        wx.CallAfter(self.upload_button.Enable, True)
+        wx.CallAfter(self.setUIState, True)
         if (self.update_subsystem):
             self.update_subsystem = False
             self.last_update = time.time()
@@ -530,9 +571,15 @@ class ArduinoUploadDialog(wx.Dialog):
         self.updateInstalledBoards()
         self.loadSettings() # Get the correct board name if an update or install occurred
 
-
+    def setUIState(self, enabled):
+        self.board_type_combo.Enable(enabled)
+        self.com_port_combo.Enable(enabled)
+        self.reload_button.Enable(enabled)
+        self.upload_button.Enable(enabled)
+        self.check_compile.Enable(enabled)
+    
     def OnUpload(self, event):
-        self.upload_button.Enable(False)
+        self.setUIState(False)
         builder_thread = threading.Thread(target=self.startBuilder)
         builder_thread.start()
     
@@ -635,7 +682,11 @@ class ArduinoUploadDialog(wx.Dialog):
     def saveSettings(self):
         settings = {}
         settings['board_type'] = self.board_type_combo.GetValue()
-        settings['com_port'] = self.com_port_combo.GetValue()
+        
+        com_port_value = self.com_port_combo.GetValue()
+        settings['com_port'] = next((port for display_text, port in self.com_port_combo_choices.items() 
+                                     if display_text == com_port_value), com_port_value)
+        
         settings['mb_serial'] = self.check_modbus_serial.GetValue()
         settings['serial_iface'] = self.serial_iface_combo.GetValue()
         settings['baud'] = self.baud_rate_combo.GetValue()
@@ -699,7 +750,14 @@ class ArduinoUploadDialog(wx.Dialog):
                     board_name = board + ' [' + self.hals[board]['version'] + ']'
 
             wx.CallAfter(self.board_type_combo.SetValue, board_name)
-            wx.CallAfter(self.com_port_combo.SetValue, settings['com_port'])
+            
+            com_port_value = settings['com_port']
+            for display_text, port in self.com_port_combo_choices.items():
+                if port == com_port_value:
+                    com_port_value = display_text
+                    break
+            wx.CallAfter(self.com_port_combo.SetValue, com_port_value)
+            
             wx.CallAfter(self.check_modbus_serial.SetValue, settings['mb_serial'])
             wx.CallAfter(self.serial_iface_combo.SetValue, settings['serial_iface'])
             wx.CallAfter(self.baud_rate_combo.SetValue, settings['baud'])
