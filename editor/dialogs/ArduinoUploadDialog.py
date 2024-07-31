@@ -391,6 +391,7 @@ class ArduinoUploadDialog(wx.Dialog):
 
         self.m_button4 = wx.Button( self.m_panel7, wx.ID_ANY, u"Restore Defaults", wx.DefaultPosition, wx.DefaultSize, 0 )
         self.m_button4.SetMinSize( wx.Size( 150,30 ) )
+        self.m_button4.Bind(wx.EVT_BUTTON, self.restoreCommDefaults)
 
         gSizer2.Add( self.m_button4, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
 
@@ -699,13 +700,12 @@ class ArduinoUploadDialog(wx.Dialog):
         settings['last_update'] = self.last_update
 
         #write settings to disk
-        jsonStr = json.dumps(settings)
         if platform.system() == 'Windows':
             base_path = 'editor\\arduino\\examples\\Baremetal\\'
         else:
             base_path = 'editor/arduino/examples/Baremetal/'
         f = open(base_path+'settings.json', 'w')
-        f.write(jsonStr)
+        json.dump(settings, f, indent=2, sort_keys=True)
         f.flush()
         f.close()
 
@@ -770,6 +770,59 @@ class ArduinoUploadDialog(wx.Dialog):
 
             wx.CallAfter(self.onUIChange, None)
     
+    def restoreCommDefaults(self, event):
+        # Read default settings from settingsDefaults.json
+        if platform.system() == 'Windows':
+            base_path = 'editor\\arduino\\examples\\Baremetal\\'
+        else:
+            base_path = 'editor/arduino/examples/Baremetal/'
+        
+        default_settings_file = os.path.join(base_path, 'settingsDefaults.json')
+        settings_file = os.path.join(base_path, 'settings.json')
+        
+        if os.path.exists(default_settings_file):
+            with open(default_settings_file, 'r') as f:
+                default_settings = json.load(f)
+            
+            # Update only the communication-related settings
+            current_settings = {}
+            if os.path.exists(settings_file):
+                with open(settings_file, 'r') as f:
+                    current_settings = json.load(f)
+            
+            # Preserve non-communication settings
+            for key in current_settings:
+                if key not in ['mb_serial', 'serial_iface', 'baud', 'slaveid', 'txpin', 
+                               'mb_tcp', 'tcp_iface', 'mac', 'ip', 'dns', 'gateway', 
+                               'subnet', 'ssid', 'pwd']:
+                    default_settings[key] = current_settings[key]
+            
+            # Write the updated settings back to the settings.json file
+            with open(settings_file, 'w') as f:
+                json.dump(default_settings, f, indent=2, sort_keys=True)
+            
+            # Use loadSettings to update the GUI
+            self.loadSettings()
+            
+            # Enable all communication-related fields
+            self.serial_iface_combo.Enable(True)
+            self.baud_rate_combo.Enable(True)
+            self.slaveid_txt.Enable(True)
+            self.txpin_txt.Enable(True)
+            self.tcp_iface_combo.Enable(True)
+            self.mac_txt.Enable(True)
+            self.ip_txt.Enable(True)
+            self.dns_txt.Enable(True)
+            self.gateway_txt.Enable(True)
+            self.subnet_txt.Enable(True)
+            self.wifi_ssid_txt.Enable(True)
+            self.wifi_pwd_txt.Enable(True)
+            
+            # Call onUIChange to update the state of the fields based on checkbox values
+            self.onUIChange(None)
+        else:
+            print("Default settings file not found:", default_settings_file)
+    
     def loadHals(self):
         # load hals list from json file, or construct it
         if platform.system() == 'Windows':
@@ -783,13 +836,12 @@ class ArduinoUploadDialog(wx.Dialog):
         self.hals = json.loads(jsonStr)
 
     def saveHals(self):
-        jsonStr = json.dumps(self.hals)
         if platform.system() == 'Windows':
             jfile = 'editor\\arduino\\examples\\Baremetal\\hals.json'
         else:
             jfile = 'editor/arduino/examples/Baremetal/hals.json'
         f = open(jfile, 'w')
-        f.write(jsonStr)
+        json.dump(self.hals, f, indent=2, sort_keys=True)
         f.flush()
         f.close()
 
