@@ -1,0 +1,10 @@
+# HAL configuration
+# OpenPLC HAL for FX3U-14 Clone / WS3U-14Mx
+# should be a ST32F103VET6
+# 2024 by Dieter Lambrecht
+
+
+# Format :
+# Board type, FQBN, BOARD definition (optional)
+
+Generic F103VETx, STM32:stm32:GenF1:pnum=GENERIC_F103VETX

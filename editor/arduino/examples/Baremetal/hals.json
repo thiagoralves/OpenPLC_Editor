@@ -632,6 +632,21 @@
       "user_dout": "41, 40, 8, 0, 19, 60",
       "user_aout": "-1"
     },
+    "FX3U-14M / WS3U-14Mx": {
+        "platform": "STMicroelectronics:stm32:GenF1:pnum=GENERIC_F103VETX,upload_method=serialMethod",
+        "source": "fx3u-14-WS3U.cpp",
+        "version": "2.8.0",
+        "last_update": 0,
+        "core": "STMicroelectronics:stm32",
+        "default_din": "PB13, PB14, PB11, PB12, PE15, PB10, PE13, PE14",
+        "default_ain": "PA1, PA3, PC4, PC5, PC0, PC1",
+        "default_dout": "PC9, PC8, PA8, PA0, PB3, PD12",
+        "default_aout": "PA4, PA5",
+        "user_din": "PB13, PB14, PB11, PB12, PE15, PB10, PE13, PE14",
+        "user_ain": "PA1, PA3, PC4, PC5, PC0, PC1",
+        "user_dout": "PC9, PC8, PA8, PA0, PB3, PD12",
+        "user_aout": "PA4, PA5"
+    },
     "SEQUENT-ESP32-PI": {
       "platform": "esp32:esp32:esp32doit-devkit-v1",
       "define": "BOARD_ESP32",
