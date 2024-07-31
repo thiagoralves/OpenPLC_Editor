@@ -53,83 +53,96 @@ class ArduinoUploadDialog(wx.Dialog):
             board_type_comboChoices.append(board_name)
         board_type_comboChoices.sort()
 
-        self.SetSizeHintsSz( wx.Size( -1,-1 ), wx.DefaultSize )
+        self.SetSizeHintsSz(wx.Size(-1,-1), wx.DefaultSize)
 
-        bSizer2 = wx.BoxSizer( wx.VERTICAL )
+        main_sizer = wx.BoxSizer(wx.VERTICAL)
 
-        self.m_listbook2 = wx.Listbook( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LB_LEFT )
-        m_listbook2ImageSize = wx.Size( 100,100 )
-        m_listbook2Index = 0
-        m_listbook2Images = wx.ImageList( m_listbook2ImageSize.GetWidth(), m_listbook2ImageSize.GetHeight() )
-
-        self.m_listbook2.AssignImageList( m_listbook2Images )
-        self.m_panel5 = wx.Panel( self.m_listbook2, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
-        bSizer21 = wx.BoxSizer( wx.VERTICAL )
-
-        fgSizer1 = wx.FlexGridSizer( 0, 3, 0, 0 )
-        fgSizer1.SetFlexibleDirection( wx.BOTH )
-        fgSizer1.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
-
-
-        self.m_staticText1 = wx.StaticText( self.m_panel5, wx.ID_ANY, u"Board Type", wx.DefaultPosition, wx.Size( 80,-1 ), 0 )
-        self.m_staticText1.Wrap( -1 )
-        fgSizer1.Add( self.m_staticText1, 0, wx.ALIGN_CENTER|wx.BOTTOM|wx.LEFT|wx.TOP, 15 )
-
-        self.board_type_combo = wx.ComboBox( self.m_panel5, wx.ID_ANY, u"Arduino Uno", wx.DefaultPosition, wx.Size( 410,-1 ), board_type_comboChoices, 0 )
-        fgSizer1.Add( self.board_type_combo, 0, wx.ALIGN_CENTER|wx.BOTTOM|wx.TOP, 15 )
-        self.board_type_combo.Bind(wx.EVT_COMBOBOX, self.onUIChange)
-
-        fgSizer1.Add((0, 0), 0, wx.EXPAND, 5)
-
-        self.m_staticText2 = wx.StaticText( self.m_panel5, wx.ID_ANY, u"COM Port", wx.DefaultPosition, wx.Size( 80,-1 ), 0 )
-        self.m_staticText2.Wrap( -1 )
-        fgSizer1.Add( self.m_staticText2, 0, wx.ALIGN_CENTER|wx.ALIGN_TOP|wx.BOTTOM|wx.LEFT, 15 )
-
-        self.com_port_combo = wx.ComboBox( self.m_panel5, wx.ID_ANY, u"COM1", wx.DefaultPosition, wx.Size( 410,-1 ), [""], 0 )
-        fgSizer1.Add( self.com_port_combo, 0, wx.ALIGN_CENTER|wx.BOTTOM, 15 )
-        self.com_port_combo.Bind(wx.EVT_COMBOBOX_DROPDOWN, self.reloadComboChoices)
+        # Create a panel for Board Type and COM Port
+        top_panel = wx.Panel(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL)
+        top_sizer = wx.FlexGridSizer(rows=2, cols=3, vgap=5, hgap=5)
+        top_sizer.AddGrowableCol(1, 1)  # Make the middle column (index 1) growable
         
+        # Set a minimum width for labels, matching the Listbook graphics width
+        label_width = 100  # Adjust this value to match your Listbook graphics width
+        
+        # Board Type
+        self.m_staticText1 = wx.StaticText(top_panel, wx.ID_ANY, "Board Type", wx.DefaultPosition, wx.Size(label_width, -1), 0)
+        self.m_staticText1.Wrap(-1)
+        top_sizer.Add(self.m_staticText1, 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT, 5)
+
+        self.board_type_combo = wx.ComboBox(top_panel, wx.ID_ANY, "Arduino Uno", wx.DefaultPosition, wx.Size(200,-1), board_type_comboChoices, 0)
+        top_sizer.Add(self.board_type_combo, 0, wx.ALL | wx.EXPAND, 5)
+
+        # Placeholder for the first row, third column
+        top_sizer.Add((0, 0), 0, wx.EXPAND, 5)
+        
+        # COM Port
+        self.m_staticText2 = wx.StaticText(top_panel, wx.ID_ANY, "COM Port", wx.DefaultPosition, wx.Size(label_width, -1), 0)
+        self.m_staticText2.Wrap(-1)
+        top_sizer.Add(self.m_staticText2, 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT, 5)
+
+        self.com_port_combo = wx.ComboBox(top_panel, wx.ID_ANY, "COM1", wx.DefaultPosition, wx.Size(200,-1), [""], 0)
+        top_sizer.Add(self.com_port_combo, 0, wx.ALL | wx.EXPAND, 5)
+
         button_size = self.com_port_combo.GetSize().GetHeight()
-        self.reload_button = wx.Button(self.m_panel5, wx.ID_ANY, u"\u21BB", wx.DefaultPosition, size=(button_size, button_size), style=wx.BU_EXACTFIT)
+        self.reload_button = wx.Button(top_panel, wx.ID_ANY, "\u21BB", wx.DefaultPosition, size=(button_size, button_size), style=wx.BU_EXACTFIT)
         self.reload_button.SetToolTip("Reload COM port list")
+        top_sizer.Add(self.reload_button, 0, wx.ALL, 5)
+        
+        #self.m_staticline1 = wx.StaticLine(top_panel, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL)
+        #top_sizer.Add(self.m_staticline1, 0, wx.ALL, 5, wx.GBSpan(1,3))
+        
+        top_panel.SetSizer(top_sizer)
+        top_sizer.Fit(top_panel)
+        main_sizer.Add(top_panel, 0, wx.EXPAND | wx.ALL, 5)
+        
+        # Bind events for Comboboxes and Button
+        self.board_type_combo.Bind(wx.EVT_COMBOBOX, self.onUIChange)
+        self.com_port_combo.Bind(wx.EVT_COMBOBOX_DROPDOWN, self.reloadComboChoices)
         self.reload_button.Bind(wx.EVT_BUTTON, self.reloadComboChoices)
-        fgSizer1.Add(self.reload_button, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 15)
+        
+        self.m_listbook2 = wx.Listbook(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LB_LEFT)
+        m_listbook2ImageSize = wx.Size(100,100)
+        m_listbook2Index = 0
+        m_listbook2Images = wx.ImageList(m_listbook2ImageSize.GetWidth(), m_listbook2ImageSize.GetHeight())
 
-        bSizer21.Add( fgSizer1, 1, wx.EXPAND, 5 )
+        self.m_listbook2.AssignImageList(m_listbook2Images)
+        self.m_panel5 = wx.Panel(self.m_listbook2, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL)
+        bSizer21 = wx.BoxSizer(wx.VERTICAL)
 
-        self.check_compile = wx.CheckBox( self.m_panel5, wx.ID_ANY, u"Compile Only", wx.DefaultPosition, wx.DefaultSize, 0 )
-        bSizer21.Add( self.check_compile, 0, wx.LEFT, 15 )
+        self.check_compile = wx.CheckBox(self.m_panel5, wx.ID_ANY, u"Compile Only", wx.DefaultPosition, wx.DefaultSize, 0)
+        bSizer21.Add(self.check_compile, 0, wx.LEFT, 15)
         self.check_compile.Bind(wx.EVT_CHECKBOX, self.onUIChange)
 
-        self.m_staticline2 = wx.StaticLine( self.m_panel5, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
-        bSizer21.Add( self.m_staticline2, 0, wx.EXPAND |wx.ALL, 5 )
+        self.m_staticline2 = wx.StaticLine(self.m_panel5, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL)
+        bSizer21.Add(self.m_staticline2, 0, wx.EXPAND |wx.ALL, 5)
 
-        self.m_staticText3 = wx.StaticText( self.m_panel5, wx.ID_ANY, u"Compilation output", wx.DefaultPosition, wx.DefaultSize, 0 )
-        self.m_staticText3.Wrap( -1 )
-        bSizer21.Add( self.m_staticText3, 0, wx.ALL, 5 )
+        self.m_staticText3 = wx.StaticText(self.m_panel5, wx.ID_ANY, u"Compilation output", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.m_staticText3.Wrap(-1)
+        bSizer21.Add(self.m_staticText3, 0, wx.ALL, 5)
 
-        self.output_text = wx.TextCtrl( self.m_panel5, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( -1,230 ), wx.TE_MULTILINE|wx.TE_READONLY|wx.TE_WORDWRAP|wx.VSCROLL )
-        self.output_text.SetFont( wx.Font( 10, 75, 90, 90, False, "Consolas" ) )
-        self.output_text.SetBackgroundColour( wx.BLACK )
-        self.output_text.SetForegroundColour( wx.WHITE )
+        self.output_text = wx.TextCtrl(self.m_panel5, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size(-1,400), wx.TE_MULTILINE|wx.TE_READONLY|wx.TE_WORDWRAP|wx.VSCROLL)
+        self.output_text.SetFont(wx.Font(10, 75, 90, 90, False, "Consolas"))
+        self.output_text.SetBackgroundColour(wx.BLACK)
+        self.output_text.SetForegroundColour(wx.WHITE)
         self.output_text.SetDefaultStyle(wx.TextAttr(wx.WHITE))
 
-        bSizer21.Add( self.output_text, 0, wx.ALL|wx.EXPAND, 5 )
+        bSizer21.Add(self.output_text, 0, wx.ALL|wx.EXPAND, 5)
 
-        self.upload_button = wx.Button( self.m_panel5, wx.ID_ANY, u"Transfer to PLC", wx.DefaultPosition, wx.DefaultSize, 0 )
-        self.upload_button.SetMinSize( wx.Size( 150,30 ) )
+        self.upload_button = wx.Button(self.m_panel5, wx.ID_ANY, u"Transfer to PLC", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.upload_button.SetMinSize(wx.Size(150,30))
         self.upload_button.Bind(wx.EVT_BUTTON, self.OnUpload)
 
-        bSizer21.Add( self.upload_button, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
+        bSizer21.Add(self.upload_button, 0, wx.ALIGN_CENTER|wx.ALL, 5)
 
-        self.m_panel5.SetSizer( bSizer21 )
+        self.m_panel5.SetSizer(bSizer21)
         self.m_panel5.Layout()
-        bSizer21.Fit( self.m_panel5 )
-        self.m_listbook2.AddPage( self.m_panel5, u"Transfer", True )
-        m_listbook2Bitmap = wx.Bitmap(os.path.join(current_dir, "..", "images", "transfer_plc.png"), wx.BITMAP_TYPE_ANY )
-        if ( m_listbook2Bitmap.IsOk() ):
-            m_listbook2Images.Add( m_listbook2Bitmap )
-            self.m_listbook2.SetPageImage( m_listbook2Index, m_listbook2Index )
+        bSizer21.Fit(self.m_panel5)
+        self.m_listbook2.AddPage(self.m_panel5, u"Transfer", True)
+        m_listbook2Bitmap = wx.Bitmap(os.path.join(current_dir, "..", "images", "transfer_plc.png"), wx.BITMAP_TYPE_ANY)
+        if (m_listbook2Bitmap.IsOk()):
+            m_listbook2Images.Add(m_listbook2Bitmap)
+            self.m_listbook2.SetPageImage(m_listbook2Index, m_listbook2Index)
             m_listbook2Index += 1
 
         self.m_panel6 = wx.Panel( self.m_listbook2, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
@@ -397,6 +410,7 @@ class ArduinoUploadDialog(wx.Dialog):
 
         self.m_button5 = wx.Button( self.m_panel7, wx.ID_ANY, u"Save Changes", wx.DefaultPosition, wx.DefaultSize, 0 )
         self.m_button5.SetMinSize( wx.Size( 150,30 ) )
+        self.m_button5.Bind(wx.EVT_BUTTON, self.saveSettings)
 
         gSizer2.Add( self.m_button5, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
 
@@ -415,11 +429,11 @@ class ArduinoUploadDialog(wx.Dialog):
             m_listbook2Index += 1
 
 
-        bSizer2.Add( self.m_listbook2, 1, wx.EXPAND |wx.ALL, 0 )
+        main_sizer.Add( self.m_listbook2, 1, wx.EXPAND |wx.ALL, 0 )
 
 
-        self.SetSizer( bSizer2 )
-        bSizer2.Fit(self)
+        self.SetSizer(main_sizer)
+        main_sizer.Fit(self)
         self.Layout()
 
         self.Centre( wx.BOTH )
@@ -675,7 +689,7 @@ class ArduinoUploadDialog(wx.Dialog):
         f.flush()
         f.close()
 
-    def saveSettings(self):
+    def saveSettings(self, event=None):
         settings = {}
         settings['board_type'] = self.board_type_combo.GetValue()
         
