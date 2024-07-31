@@ -36,13 +36,8 @@ class ArduinoUploadDialog(wx.Dialog):
         self.update_subsystem = True
         current_dir = paths.AbsDir(__file__)
         self.com_port_combo_choices = {}
-#
-        if platform.system() == 'Windows':
-            wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Transfer Program to PLC", pos = wx.DefaultPosition, size = wx.Size( 693,453 ), style = wx.DEFAULT_DIALOG_STYLE )
-        elif platform.system() == 'Linux':
-            wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Transfer Program to PLC", pos = wx.DefaultPosition, size = wx.Size( 720,590 ), style = wx.DEFAULT_DIALOG_STYLE )
-        elif platform.system() == 'Darwin':
-            wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Transfer Program to PLC", pos = wx.DefaultPosition, size = wx.Size( 700,453 ), style = wx.DEFAULT_DIALOG_STYLE )
+
+        wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Transfer Program to PLC", pos = wx.DefaultPosition, style = wx.DEFAULT_DIALOG_STYLE )
         
         # load Hals automatically and initialize the board_type_comboChoices
         self.loadHals()
@@ -84,7 +79,6 @@ class ArduinoUploadDialog(wx.Dialog):
         fgSizer1.Add( self.board_type_combo, 0, wx.ALIGN_CENTER|wx.BOTTOM|wx.TOP, 15 )
         self.board_type_combo.Bind(wx.EVT_COMBOBOX, self.onUIChange)
 
-        # fgSizer1.Add( wx.StaticText( self.m_panel5, wx.ID_ANY, u"", wx.DefaultPosition, wx.DefaultSize, 0 ), 0, wx.ALIGN_CENTER, 5 )
         fgSizer1.Add((0, 0), 0, wx.EXPAND, 5)
 
         self.m_staticText2 = wx.StaticText( self.m_panel5, wx.ID_ANY, u"COM Port", wx.DefaultPosition, wx.Size( 80,-1 ), 0 )
@@ -99,7 +93,7 @@ class ArduinoUploadDialog(wx.Dialog):
         self.reload_button = wx.Button(self.m_panel5, wx.ID_ANY, u"\u21BB", wx.DefaultPosition, size=(button_size, button_size), style=wx.BU_EXACTFIT)
         self.reload_button.SetToolTip("Reload COM port list")
         self.reload_button.Bind(wx.EVT_BUTTON, self.reloadComboChoices)
-        fgSizer1.Add(self.reload_button, 0, wx.ALIGN_CENTER|wx.LEFT|wx.BOTTOM, 15)
+        fgSizer1.Add(self.reload_button, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 15)
 
         bSizer21.Add( fgSizer1, 1, wx.EXPAND, 5 )
 
@@ -424,6 +418,7 @@ class ArduinoUploadDialog(wx.Dialog):
 
 
         self.SetSizer( bSizer2 )
+        bSizer2.Fit(self)
         self.Layout()
 
         self.Centre( wx.BOTH )
