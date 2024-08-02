@@ -38,7 +38,7 @@ def runCommand(command):
 def build(st_file, platform, source_file, port, txtCtrl, hals, update_subsystem):
     global compiler_logs
     compiler_logs = ''
-    
+
     #Check if board is installed
     board_installed = False
     core = ''
@@ -47,7 +47,7 @@ def build(st_file, platform, source_file, port, txtCtrl, hals, update_subsystem)
             core = hals[board]['core']
             if hals[board]['version'] != "0":
                 board_installed = True
-    
+
     #Check MatIEC compiler
     if (os.path.exists("editor/arduino/bin/iec2c") or os.path.exists("editor/arduino/bin/iec2c.exe") or os.path.exists("editor/arduino/bin/iec2c_mac")):
         # remove old files first
@@ -82,21 +82,21 @@ def build(st_file, platform, source_file, port, txtCtrl, hals, update_subsystem)
 
         cli_command = ''
         if os_platform.system() == 'Windows':
-            cli_command = 'editor\\arduino\\bin\\arduino-cli-w64'
+            cli_command = 'editor\\arduino\\bin\\arduino-cli-w64 --no-color'
         elif os_platform.system() == 'Darwin':
-            cli_command = 'editor/arduino/bin/arduino-cli-mac'
+            cli_command = 'editor/arduino/bin/arduino-cli-mac --no-color'
         else:
-            cli_command = 'editor/arduino/bin/arduino-cli-l64'
+            cli_command = 'editor/arduino/bin/arduino-cli-l64 --no-color'
 
         """
         ### ARDUINO-CLI CHEAT SHEET ###
 
         1. List installed boards:
           => arduino-cli board listall
-        
+
         2. Search for a core (even if not installed yet):
           => arduino-cli core search [search text]
-        
+
         3. Dump current configuration:
           => arduino-cli config dump
 
@@ -150,7 +150,7 @@ https://raw.githubusercontent.com/VEA-SRL/IRUINO_Library/main/package_vea_index.
         compiler_logs += runCommand(cli_command + ' core install ' + core)
         wx.CallAfter(txtCtrl.SetValue, compiler_logs)
         wx.CallAfter(scrollToEnd, txtCtrl)
-        
+
         # Install all libs - required after core install/update
         compiler_logs += runCommand(cli_command + ' lib install \
 WiFiNINA \
@@ -466,13 +466,13 @@ void updateTime()
         extraflags = ' -MMD -c'
 
     if os_platform.system() == 'Windows':
-        compilation = subprocess.Popen(['editor\\arduino\\bin\\arduino-cli-w64', 'compile', '-v', '--libraries=editor\\arduino', '--build-property', 'compiler.c.extra_flags=-Ieditor\\arduino\\src\\lib' + extraflags, '--build-property',
+        compilation = subprocess.Popen(['editor\\arduino\\bin\\arduino-cli-w64', '--no-color', 'compile', '-v', '--libraries=editor\\arduino', '--build-property', 'compiler.c.extra_flags=-Ieditor\\arduino\\src\\lib' + extraflags, '--build-property',
                                        'compiler.cpp.extra_flags=-Ieditor\\arduino\\src\\lib' + extraflags, '--export-binaries', '-b', platform, 'editor\\arduino\\examples\\Baremetal\\Baremetal.ino'], creationflags=0x08000000, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     elif os_platform.system() == 'Darwin':
-        compilation = subprocess.Popen(['editor/arduino/bin/arduino-cli-mac', 'compile', '-v', '--libraries=editor/arduino', '--build-property', 'compiler.c.extra_flags=-Ieditor/arduino/src/lib' + extraflags, '--build-property',
+        compilation = subprocess.Popen(['editor/arduino/bin/arduino-cli-mac', '--no-color', 'compile', '-v', '--libraries=editor/arduino', '--build-property', 'compiler.c.extra_flags=-Ieditor/arduino/src/lib' + extraflags, '--build-property',
                                        'compiler.cpp.extra_flags=-Ieditor/arduino/src/lib' + extraflags, '--export-binaries', '-b', platform, 'editor/arduino/examples/Baremetal/Baremetal.ino'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     else:
-        compilation = subprocess.Popen(['editor/arduino/bin/arduino-cli-l64', 'compile', '-v', '--libraries=editor/arduino', '--build-property', 'compiler.c.extra_flags=-Ieditor/arduino/src/lib' + extraflags, '--build-property',
+        compilation = subprocess.Popen(['editor/arduino/bin/arduino-cli-l64', '--no-color', 'compile', '-v', '--libraries=editor/arduino', '--build-property', 'compiler.c.extra_flags=-Ieditor/arduino/src/lib' + extraflags, '--build-property',
                                        'compiler.cpp.extra_flags=-Ieditor/arduino/src/lib' + extraflags, '--export-binaries', '-b', platform, 'editor/arduino/examples/Baremetal/Baremetal.ino'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = compilation.communicate()
     compiler_logs += stdout.decode('UTF-8', errors='backslashreplace')
@@ -488,13 +488,13 @@ void updateTime()
             wx.CallAfter(txtCtrl.SetValue, compiler_logs)
             wx.CallAfter(scrollToEnd, txtCtrl)
             if os_platform.system() == 'Windows':
-                compiler_logs += runCommand('editor\\arduino\\bin\\arduino-cli-w64 upload --port ' +
+                compiler_logs += runCommand('editor\\arduino\\bin\\arduino-cli-w64 --no-color upload --port ' +
                                             port + ' --fqbn ' + platform + ' editor\\arduino\\examples\\Baremetal/')
             elif os_platform.system() == 'Darwin':
-                compiler_logs += runCommand('editor/arduino/bin/arduino-cli-mac upload --port ' +
+                compiler_logs += runCommand('editor/arduino/bin/arduino-cli-mac --no-color upload --port ' +
                                             port + ' --fqbn ' + platform + ' editor/arduino/examples/Baremetal/ 2>&1')
             else:
-                compiler_logs += runCommand('editor/arduino/bin/arduino-cli-l64 upload --port ' +
+                compiler_logs += runCommand('editor/arduino/bin/arduino-cli-l64 --no-color upload --port ' +
                                             port + ' --fqbn ' + platform + ' editor/arduino/examples/Baremetal/')
             compiler_logs += '\nDone!\n'
             wx.CallAfter(txtCtrl.SetValue, compiler_logs)

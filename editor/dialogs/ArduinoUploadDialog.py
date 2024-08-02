@@ -70,18 +70,18 @@ class ArduinoUploadDialog(wx.Dialog):
         self.m_staticText1.Wrap(-1)
         top_sizer.Add(self.m_staticText1, 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT, 5)
 
-        self.board_type_combo = wx.ComboBox(top_panel, wx.ID_ANY, "Arduino Uno", wx.DefaultPosition, wx.Size(200,-1), board_type_comboChoices, 0)
+        self.board_type_combo = wx.ComboBox(top_panel, wx.ID_ANY, "Arduino Uno", wx.DefaultPosition, wx.Size(-1,-1), board_type_comboChoices, 0)
         top_sizer.Add(self.board_type_combo, 0, wx.ALL | wx.EXPAND, 5)
 
         # Placeholder for the first row, third column
         top_sizer.Add((0, 0), 0, wx.EXPAND, 5)
-        
+
         # COM Port
         self.m_staticText2 = wx.StaticText(top_panel, wx.ID_ANY, "COM Port", wx.DefaultPosition, wx.Size(label_width, -1), 0)
         self.m_staticText2.Wrap(-1)
         top_sizer.Add(self.m_staticText2, 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT, 5)
 
-        self.com_port_combo = wx.ComboBox(top_panel, wx.ID_ANY, "COM1", wx.DefaultPosition, wx.Size(200,-1), [""], 0)
+        self.com_port_combo = wx.ComboBox(top_panel, wx.ID_ANY, "COM1", wx.DefaultPosition, wx.Size(-1,-1), [""], 0)
         top_sizer.Add(self.com_port_combo, 0, wx.ALL | wx.EXPAND, 5)
 
         button_size = self.com_port_combo.GetSize().GetHeight()
@@ -121,7 +121,7 @@ class ArduinoUploadDialog(wx.Dialog):
         self.m_staticText3.Wrap(-1)
         bSizer21.Add(self.m_staticText3, 0, wx.ALL, 5)
 
-        self.output_text = wx.TextCtrl(self.m_panel5, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size(-1,400), wx.TE_MULTILINE|wx.TE_READONLY|wx.TE_WORDWRAP|wx.VSCROLL)
+        self.output_text = wx.TextCtrl(self.m_panel5, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size(800,400), wx.TE_MULTILINE|wx.TE_READONLY|wx.TE_WORDWRAP|wx.VSCROLL)
         self.output_text.SetFont(wx.Font(10, 75, 90, 90, False, "Consolas"))
         self.output_text.SetBackgroundColour(wx.BLACK)
         self.output_text.SetForegroundColour(wx.WHITE)
