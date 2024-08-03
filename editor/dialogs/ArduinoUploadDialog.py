@@ -121,7 +121,7 @@ class ArduinoUploadDialog(wx.Dialog):
         self.m_staticText3.Wrap(-1)
         bSizer21.Add(self.m_staticText3, 0, wx.ALL, 5)
 
-        self.output_text = wx.TextCtrl(self.m_panel5, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size(800,400), wx.TE_MULTILINE|wx.TE_READONLY|wx.TE_WORDWRAP|wx.VSCROLL)
+        self.output_text = wx.TextCtrl(self.m_panel5, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size(800,400), wx.TE_MULTILINE|wx.TE_READONLY|wx.TE_CHARWRAP|wx.VSCROLL)
         self.output_text.SetFont(wx.Font(10, 75, 90, 90, False, "Consolas"))
         self.output_text.SetBackgroundColour(wx.BLACK)
         self.output_text.SetForegroundColour(wx.WHITE)
