@@ -406,10 +406,10 @@ class Graphic_Element(ToolTipProducer):
     def GetRedrawRect(self, movex=0, movey=0):
         scalex, scaley = self.Parent.GetViewScale()
         rect = wx.Rect()
-        rect.x = self.BoundingBox.x - int(HANDLE_SIZE / scalex) - 3 - abs(movex)
-        rect.y = self.BoundingBox.y - int(HANDLE_SIZE / scaley) - 3 - abs(movey)
-        rect.width = self.BoundingBox.width + 2 * (int(HANDLE_SIZE / scalex) + abs(movex) + 1) + 4
-        rect.height = self.BoundingBox.height + 2 * (int(HANDLE_SIZE / scaley) + abs(movey) + 1) + 4
+        rect.x = int(round(self.BoundingBox.x - int(HANDLE_SIZE / scalex) - 3 - abs(movex)))
+        rect.y = int(round(self.BoundingBox.y - int(HANDLE_SIZE / scaley) - 3 - abs(movey)))
+        rect.width = int(round(self.BoundingBox.width + 2 * (int(HANDLE_SIZE / scalex) + abs(movex) + 1) + 4))
+        rect.height = int(round(self.BoundingBox.height + 2 * (int(HANDLE_SIZE / scaley) + abs(movey) + 1) + 4))
         return rect
 
     def Refresh(self, rect=None):
@@ -537,8 +537,8 @@ class Graphic_Element(ToolTipProducer):
                     self.oldPos.x = self.StartPos.x + self.CurrentDrag.x
                     self.oldPos.y = self.StartPos.y + self.CurrentDrag.y
                 else:
-                    self.oldPos.x += dragx
-                    self.oldPos.y += dragy
+                    self.oldPos.x += int(round(dragx))
+                    self.oldPos.y += int(round(dragy))
                 return dragx, dragy
             return movex, movey
         # If cursor just pass over the element, changes the cursor if it is on a handle
@@ -553,8 +553,8 @@ class Graphic_Element(ToolTipProducer):
 
     # Moves the element
     def Move(self, dx, dy, exclude=None):
-        self.Pos.x += max(-self.BoundingBox.x, dx)
-        self.Pos.y += max(-self.BoundingBox.y, dy)
+        self.Pos.x += int(round(max(-self.BoundingBox.x, dx)))
+        self.Pos.y += int(round(max(-self.BoundingBox.y, dy)))
         self.RefreshConnected(exclude)
         self.RefreshBoundingBox()
 
@@ -1082,7 +1082,7 @@ class Connector(DebugDataConsumer, ToolTipProducer):
             if self.Edge == "rising" and self.Direction[1] == 1:
                 y -= 5
                 height += 5
-        rect = wx.Rect(x - abs(movex), y - abs(movey), width + 2 * abs(movex), height + 2 * abs(movey))
+        rect = wx.Rect(int(round(x - abs(movex))), int(round(y - abs(movey))), int(round(width + 2 * abs(movex))), int(round(height + 2 * abs(movey))))
         if self.ValueSize is None and isinstance(self.ComputedValue, str):
             self.ValueSize = self.ParentBlock.Parent.GetMiniTextExtent(self.ComputedValue)
         if self.ValueSize is not None:
@@ -2234,7 +2234,7 @@ class Wire(Graphic_Element, DebugDataConsumer):
         segments = [segment for segment in self.Segments]
         i = 1
         while i < len(points) - 1:
-            if points[i] == points[i + 1] and segments[i - 1] == segments[i + 1]:
+            if points[i] == points[i + 1]: #and segments[i - 1] == segments[i + 1] <- this condition ends up with "IndexError: list index out of range" while creating a connection
                 for dummy in range(2):
                     points.pop(i)
                     segments.pop(i)
