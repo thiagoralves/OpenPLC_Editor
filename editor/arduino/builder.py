@@ -25,6 +25,19 @@ def append_compiler_log(txtCtrl, output):
 
     wx.CallAfter(update)
 
+def runCommand(command):
+    cmd_response = None
+
+    try:
+        cmd_response = subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT)
+    except subprocess.CalledProcessError as exc:
+        cmd_response = exc.output
+
+    if cmd_response == None:
+        return ''
+
+    return cmd_response.decode('utf-8', errors='backslashreplace')
+
 def read_output(process, txtCtrl):
     for line in process.stdout:
         append_compiler_log(txtCtrl, line.decode('UTF-8', errors='backslashreplace'))
@@ -34,20 +47,24 @@ def read_output(process, txtCtrl):
 
     return process.poll()
 
-def runCommand(command):
-    cmd_response = None
-
+def runCommandToWin(txtCtrl, command, cwd=None):
+    return_code = -1
+    append_compiler_log(txtCtrl, '$ ' + ' '.join(map(str, command)) + '\n')
     try:
-        cmd_response = subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT)
-        #cmd_response = subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True)
+        if os_platform.system() == 'Windows':
+            compilation = subprocess.Popen(command, cwd=cwd, creationflags=0x08000000, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        elif os_platform.system() == 'Darwin':
+            compilation = subprocess.Popen(command, cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        else:
+            compilation = subprocess.Popen(command, cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+
+        return_code = read_output(compilation, txtCtrl)
+        append_compiler_log(txtCtrl, '$? = ' + str(return_code) + '\n')
+
     except subprocess.CalledProcessError as exc:
-        cmd_response = exc.output
+        append_compiler_log(txtCtrl, exc.output)
 
-    if cmd_response == None:
-        return ''
-
-    return cmd_response.decode('utf-8', errors='backslashreplace')
-
+    return return_code
 
 def build(st_file, platform, source_file, port, txtCtrl, hals, update_subsystem):
     global compiler_logs
@@ -92,11 +109,11 @@ def build(st_file, platform, source_file, port, txtCtrl, hals, update_subsystem)
 
         cli_command = ''
         if os_platform.system() == 'Windows':
-            cli_command = 'editor\\arduino\\bin\\arduino-cli-w64 --no-color'
+            cli_command = ['editor\\arduino\\bin\\arduino-cli-w64', '--no-color']
         elif os_platform.system() == 'Darwin':
-            cli_command = 'editor/arduino/bin/arduino-cli-mac --no-color'
+            cli_command = ['editor/arduino/bin/arduino-cli-mac', '--no-color']
         else:
-            cli_command = 'editor/arduino/bin/arduino-cli-l64 --no-color'
+            cli_command = ['editor/arduino/bin/arduino-cli-l64', '--no-color']
 
         """
         ### ARDUINO-CLI CHEAT SHEET ###
@@ -115,62 +132,59 @@ def build(st_file, platform, source_file, port, txtCtrl, hals, update_subsystem)
         """
 
         # Initialize arduino-cli config - if it hasn't been initialized yet
-        append_compiler_log(txtCtrl, runCommand(cli_command + ' config init'))
+        runCommandToWin(txtCtrl, cli_command + ['config', 'init'])
 
         # Setup boards - remove 3rd party boards to re-add them later since we don't know if they're there or not
-        append_compiler_log(txtCtrl, runCommand(
-            cli_command + ' config remove board_manager.additional_urls \
-https://arduino.esp8266.com/stable/package_esp8266com_index.json \
-https://espressif.github.io/arduino-esp32/package_esp32_index.json \
-https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectronics_index.json \
-https://raw.githubusercontent.com/CONTROLLINO-PLC/CONTROLLINO_Library/master/Boards/package_ControllinoHardware_index.json \
-https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json \
-https://facts-engineering.gitlab.io/facts-open-source/p1am/beta_file_hosting/package_productivity-P1AM_200-boardmanagermodule_index.json \
-https://raw.githubusercontent.com/VEA-SRL/IRUINO_Library/main/package_vea_index.json \
-https://raw.githubusercontent.com/facts-engineering/facts-engineering.github.io/master/package_productivity-P1AM-boardmanagermodule_index.json \
-"2>&1"'))
+        runCommandToWin(txtCtrl, cli_command + ['config', 'remove', 'board_manager.additional_urls',
+            'https://arduino.esp8266.com/stable/package_esp8266com_index.json',
+            'https://espressif.github.io/arduino-esp32/package_esp32_index.json',
+            'https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectronics_index.json',
+            'https://raw.githubusercontent.com/CONTROLLINO-PLC/CONTROLLINO_Library/master/Boards/package_ControllinoHardware_index.json',
+            'https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json',
+            'https://facts-engineering.gitlab.io/facts-open-source/p1am/beta_file_hosting/package_productivity-P1AM_200-boardmanagermodule_index.json',
+            'https://raw.githubusercontent.com/VEA-SRL/IRUINO_Library/main/package_vea_index.json',
+            'https://raw.githubusercontent.com/facts-engineering/facts-engineering.github.io/master/package_productivity-P1AM-boardmanagermodule_index.json'])
 
         # Setup boards - add 3rd party boards
-        append_compiler_log(txtCtrl, runCommand(
-            cli_command + ' config add board_manager.additional_urls \
-https://arduino.esp8266.com/stable/package_esp8266com_index.json \
-https://espressif.github.io/arduino-esp32/package_esp32_index.json \
-https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectronics_index.json \
-https://raw.githubusercontent.com/CONTROLLINO-PLC/CONTROLLINO_Library/master/Boards/package_ControllinoHardware_index.json \
-https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json \
-https://facts-engineering.gitlab.io/facts-open-source/p1am/beta_file_hosting/package_productivity-P1AM_200-boardmanagermodule_index.json \
-https://raw.githubusercontent.com/facts-engineering/facts-engineering.github.io/master/package_productivity-P1AM-boardmanagermodule_index.json \
-https://raw.githubusercontent.com/VEA-SRL/IRUINO_Library/main/package_vea_index.json'))
+        runCommandToWin(txtCtrl, cli_command + ['config', 'add', 'board_manager.additional_urls',
+            'https://arduino.esp8266.com/stable/package_esp8266com_index.json',
+            'https://espressif.github.io/arduino-esp32/package_esp32_index.json',
+            'https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectronics_index.json',
+            'https://raw.githubusercontent.com/CONTROLLINO-PLC/CONTROLLINO_Library/master/Boards/package_ControllinoHardware_index.json',
+            'https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json',
+            'https://facts-engineering.gitlab.io/facts-open-source/p1am/beta_file_hosting/package_productivity-P1AM_200-boardmanagermodule_index.json',
+            'https://raw.githubusercontent.com/facts-engineering/facts-engineering.github.io/master/package_productivity-P1AM-boardmanagermodule_index.json',
+            'https://raw.githubusercontent.com/VEA-SRL/IRUINO_Library/main/package_vea_index.json'])
 
         # Update
-        append_compiler_log(txtCtrl, runCommand(cli_command + ' core update-index'))
-        append_compiler_log(txtCtrl, runCommand(cli_command + ' update'))
+        runCommandToWin(txtCtrl, cli_command + ['core', 'update-index'])
+        runCommandToWin(txtCtrl, cli_command + ['update'])
 
         # Install board
-        append_compiler_log(txtCtrl, runCommand(cli_command + ' core install ' + core))
+        runCommandToWin(txtCtrl, cli_command + ['core', 'install', core])
 
         # Install all libs - required after core install/update
-        append_compiler_log(txtCtrl, runCommand(cli_command + ' lib install \
-WiFiNINA \
-Ethernet \
-Arduino_MachineControl \
-Arduino_EdgeControl \
-OneWire \
-DallasTemperature \
-P1AM \
-CONTROLLINO \
-PubSubClient \
-ArduinoJson \
-arduinomqttclient \
-RP2040_PWM \
-AVR_PWM \
-megaAVR_PWM \
-SAMD_PWM \
-SAMDUE_PWM \
-Portenta_H7_PWM \
-CAN \
-STM32_CAN \
-STM32_PWM'))
+        runCommandToWin(txtCtrl, cli_command + ['lib', 'install',
+                    'WiFiNINA',
+                    'Ethernet',
+                    'Arduino_MachineControl',
+                    'Arduino_EdgeControl',
+                    'OneWire',
+                    'DallasTemperature',
+                    'P1AM',
+                    'CONTROLLINO',
+                    'PubSubClient',
+                    'ArduinoJson',
+                    'arduinomqttclient',
+                    'RP2040_PWM',
+                    'AVR_PWM',
+                    'megaAVR_PWM',
+                    'SAMD_PWM',
+                    'SAMDUE_PWM',
+                    'Portenta_H7_PWM',
+                    'CAN',
+                    'STM32_CAN',
+                    'STM32_PWM'])
 
     # Generate C files
     append_compiler_log(txtCtrl, "Compiling .st file...\n")
@@ -186,16 +200,11 @@ STM32_PWM'))
     time.sleep(0.2)  # make sure plc_prog.st was written to disk
 
     if os_platform.system() == 'Windows':
-        compilation = subprocess.Popen(['editor\\arduino\\bin\\iec2c.exe', '-f', '-l', '-p', 'plc_prog.st'], cwd='editor\\arduino\\src',
-                                       creationflags=0x08000000, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        return_code = runCommandToWin(txtCtrl, ['editor\\arduino\\bin\\iec2c.exe', '-f', '-l', '-p', 'plc_prog.st'], cwd='editor\\arduino\\src')
     elif os_platform.system() == 'Darwin':
-        compilation = subprocess.Popen(['../bin/iec2c_mac', '-f', '-l', '-p', 'plc_prog.st'],
-                                       cwd='./editor/arduino/src', stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        return_code = runCommandToWin(txtCtrl, ['../bin/iec2c_mac', '-f', '-l', '-p', 'plc_prog.st'], cwd='./editor/arduino/src')
     else:
-        compilation = subprocess.Popen(
-            ['../bin/iec2c', '-f', '-l', '-p', 'plc_prog.st'], cwd='./editor/arduino/src', stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-
-    return_code = read_output(compilation, txtCtrl)
+        return_code = runCommandToWin(txtCtrl, ['../bin/iec2c', '-f', '-l', '-p', 'plc_prog.st'], cwd='./editor/arduino/src')
 
     # Remove temporary plc program
     # if os.path.exists(base_path+'plc_prog.st'):
@@ -433,15 +442,15 @@ void updateTime()
         extraflags = ' -MMD -c'
 
     if os_platform.system() == 'Windows':
-        compilation = subprocess.Popen(['editor\\arduino\\bin\\arduino-cli-w64', '--no-color', 'compile', '-v', '--libraries=editor\\arduino', '--build-property', 'compiler.c.extra_flags=-Ieditor\\arduino\\src\\lib' + extraflags, '--build-property',
-                                       'compiler.cpp.extra_flags=-Ieditor\\arduino\\src\\lib' + extraflags, '--export-binaries', '-b', platform, 'editor\\arduino\\examples\\Baremetal\\Baremetal.ino'], creationflags=0x08000000, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        return_code = runCommandToWin(txtCtrl, ['editor\\arduino\\bin\\arduino-cli-w64', '--no-color', 'compile', '-v', '--libraries=editor\\arduino', '--build-property', 'compiler.c.extra_flags=-Ieditor\\arduino\\src\\lib' + extraflags, '--build-property',
+                                       'compiler.cpp.extra_flags=-Ieditor\\arduino\\src\\lib' + extraflags, '--export-binaries', '-b', platform, 'editor\\arduino\\examples\\Baremetal\\Baremetal.ino'])
     elif os_platform.system() == 'Darwin':
-        compilation = subprocess.Popen(['editor/arduino/bin/arduino-cli-mac', '--no-color', 'compile', '-v', '--libraries=editor/arduino', '--build-property', 'compiler.c.extra_flags=-Ieditor/arduino/src/lib' + extraflags, '--build-property',
-                                       'compiler.cpp.extra_flags=-Ieditor/arduino/src/lib' + extraflags, '--export-binaries', '-b', platform, 'editor/arduino/examples/Baremetal/Baremetal.ino'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        return_code = runCommandToWin(txtCtrl, ['editor/arduino/bin/arduino-cli-mac', '--no-color', 'compile', '-v', '--libraries=editor/arduino', '--build-property', 'compiler.c.extra_flags=-Ieditor/arduino/src/lib' + extraflags, '--build-property',
+                                       'compiler.cpp.extra_flags=-Ieditor/arduino/src/lib' + extraflags, '--export-binaries', '-b', platform, 'editor/arduino/examples/Baremetal/Baremetal.ino'])
     else:
-        compilation = subprocess.Popen(['editor/arduino/bin/arduino-cli-l64', '--no-color', 'compile', '-v', '--libraries=editor/arduino', '--build-property', 'compiler.c.extra_flags=-Ieditor/arduino/src/lib' + extraflags, '--build-property',
-                                       'compiler.cpp.extra_flags=-Ieditor/arduino/src/lib' + extraflags, '--export-binaries', '-b', platform, 'editor/arduino/examples/Baremetal/Baremetal.ino'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    return_code = read_output(compilation, txtCtrl)
+        return_code = runCommandToWin(txtCtrl, ['editor/arduino/bin/arduino-cli-l64', '--no-color', 'compile', '-v', '--libraries=editor/arduino', '--build-property', 'compiler.c.extra_flags=-Ieditor/arduino/src/lib' + extraflags, '--build-property',
+                                       'compiler.cpp.extra_flags=-Ieditor/arduino/src/lib' + extraflags, '--export-binaries', '-b', platform, 'editor/arduino/examples/Baremetal/Baremetal.ino'])
+
     if (return_code != 0):
         append_compiler_log(txtCtrl, '\nCOMPILATION FAILED!\n')
 
@@ -449,18 +458,15 @@ void updateTime()
         if (port != None):
             append_compiler_log(txtCtrl, '\nUploading program to Arduino board at ' + port + '...\n')
             if os_platform.system() == 'Windows':
-                compilation = subprocess.Popen(['editor\\arduino\\bin\\arduino-cli-w64', '--no-color', 'upload', '--port',
-                                                port, '--fqbn', platform, 'editor\\arduino\\examples\\Baremetal/'],
-                                                creationflags=0x08000000, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+                return_code = runCommandToWin(txtCtrl, ['editor\\arduino\\bin\\arduino-cli-w64', '--no-color', 'upload', '--port',
+                                                port, '--fqbn', platform, 'editor\\arduino\\examples\\Baremetal/'])
             elif os_platform.system() == 'Darwin':
-                compilation = subprocess.Popen(['editor/arduino/bin/arduino-cli-mac', '--no-color', 'upload', '--port',
-                                                port, '--fqbn', platform, 'editor/arduino/examples/Baremetal/'],
-                                                stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+                return_code = runCommandToWin(txtCtrl, ['editor/arduino/bin/arduino-cli-mac', '--no-color', 'upload', '--port',
+                                                port, '--fqbn', platform, 'editor/arduino/examples/Baremetal/'])
             else:
-                compilation = subprocess.Popen(['editor/arduino/bin/arduino-cli-l64', '--no-color', 'upload', '--port',
-                                                port, '--fqbn', platform, 'editor/arduino/examples/Baremetal/'],
-                                                stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-            return_code = read_output(compilation, txtCtrl)
+                return_code = runCommandToWin(txtCtrl, ['editor/arduino/bin/arduino-cli-l64', '--no-color', 'upload', '--port',
+                                                port, '--fqbn', platform, 'editor/arduino/examples/Baremetal/'])
+
             append_compiler_log(txtCtrl, '\nDone!\n')
         else:
             cwd = os.getcwd()

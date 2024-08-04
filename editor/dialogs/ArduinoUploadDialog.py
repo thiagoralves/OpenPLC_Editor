@@ -867,7 +867,7 @@ class ArduinoUploadDialog(wx.Dialog):
         else:
             cli_command = 'editor/arduino/bin/arduino-cli-l64'
 
-        core_list = builder.runCommand(cli_command + ' core list')
+        core_list = builder.runCommand(cli_command + ' --no-color core list')
 
         if core_list == None or core_list == '':
             print("Error reading core list")
