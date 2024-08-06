@@ -593,11 +593,11 @@ class LD_Contact(Graphic_Element, DebugDataConsumer):
         dc.SetBrush(wx.Brush(HIGHLIGHTCOLOR))
         #dc.SetLogicalFunction(wx.AND)
         # Draw two rectangles for representing the contact
-        left_left = (self.Pos.x - 1) * scalex - 2
-        right_left = (self.Pos.x + self.Size[0] - 2) * scalex - 2
-        top = (self.Pos.y - 1) * scaley - 2
-        width = 4 * scalex + 5
-        height = (self.Size[1] + 3) * scaley + 5
+        left_left = int(round((self.Pos.x - 1) * scalex - 2))
+        right_left = int(round((self.Pos.x + self.Size[0] - 2) * scalex - 2))
+        top = int(round((self.Pos.y - 1) * scaley - 2))
+        width = int(round(4 * scalex + 5))
+        height = int(round((self.Size[1] + 3) * scaley + 5))
 
         dc.DrawRectangle(left_left, top, width, height)
         dc.DrawRectangle(right_left, top, width, height)
