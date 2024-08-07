@@ -112,11 +112,18 @@
 /*****************************************/  
 /*****************************************/  
 
-#define __convert_type(from_TYPENAME,to_TYPENAME, oper) \
+#define __convert_type_old(from_TYPENAME,to_TYPENAME, oper) \
 static inline to_TYPENAME from_TYPENAME##_TO_##to_TYPENAME(EN_ENO_PARAMS, from_TYPENAME op){\
   TEST_EN(to_TYPENAME)\
   return (to_TYPENAME)oper(op);\
 }
+
+#define __convert_type(from_TYPENAME,to_TYPENAME, oper) \
+static inline to_TYPENAME from_TYPENAME##_TO_##to_TYPENAME(EN_ENO_PARAMS, from_TYPENAME op){\
+  TEST_EN(to_TYPENAME)\
+  return oper(op);\
+}
+
 
 /******** [ANY_NUM | ANY_NBIT]_TO_BOOL   ************/
 #define __convert_num_to_bool(TYPENAME) \
@@ -463,39 +470,39 @@ __ANY_REAL(__exp)
   /**************/
   /*     SIN    */
   /**************/
-#define __sin(TYPENAME) __numeric(SIN_, TYPENAME, sin)
+#define __sin(TYPENAME) __numeric(SIN_, TYPENAME, sinf)
 __ANY_REAL(__sin)
 
 
   /**************/
   /*     COS    */
   /**************/
-#define __cos(TYPENAME) __numeric(COS_, TYPENAME, cos)
+#define __cos(TYPENAME) __numeric(COS_, TYPENAME, cosf)
 __ANY_REAL(__cos)
 
   /**************/
   /*     TAN    */
   /**************/
-#define __tan(TYPENAME) __numeric(TAN_, TYPENAME, tan)
+#define __tan(TYPENAME) __numeric(TAN_, TYPENAME, tanf)
 __ANY_REAL(__tan)
 
 
   /**************/
   /*    ASIN    */
   /**************/
-#define __asin(TYPENAME) __numeric(ASIN_, TYPENAME, asin)
+#define __asin(TYPENAME) __numeric(ASIN_, TYPENAME, asinf)
 __ANY_REAL(__asin)
 
   /**************/
   /*    ACOS    */
   /**************/
-#define __acos(TYPENAME) __numeric(ACOS_, TYPENAME, acos)
+#define __acos(TYPENAME) __numeric(ACOS_, TYPENAME, acosf)
 __ANY_REAL(__acos)
 
   /**************/
   /*    ATAN    */
   /**************/
-#define __atan(TYPENAME) __numeric(ATAN_, TYPENAME, atan)
+#define __atan(TYPENAME) __numeric(ATAN_, TYPENAME, atanf)
 __ANY_REAL(__atan)
 
 
@@ -1378,10 +1385,12 @@ static inline STRING __insert(STRING IN1, STRING IN2, __strlen_t P){
     return res;
 }
 
+  //return (STRING)__insert(str1,str2,(__strlen_t)P);\
+
 #define __iec_(TYPENAME) \
 static inline STRING INSERT__STRING__STRING__STRING__##TYPENAME(EN_ENO_PARAMS, STRING str1, STRING str2, TYPENAME P){\
   TEST_EN_COND(STRING, P < 0)\
-  return (STRING)__insert(str1,str2,(__strlen_t)P);\
+  return __insert(str1,str2,(__strlen_t)P);\
 }
 __ANY_INT(__iec_)
 #undef __iec_
@@ -1409,10 +1418,12 @@ static inline STRING __delete(STRING IN, __strlen_t L, __strlen_t P){
     return res;
 }
 
+
+//return (STRING)__delete(str,(__strlen_t)L,(__strlen_t)P);
 #define __iec_(TYPENAME) \
 static inline STRING DELETE__STRING__STRING__##TYPENAME##__##TYPENAME(EN_ENO_PARAMS, STRING str, TYPENAME L, TYPENAME P){\
   TEST_EN_COND(STRING, L < 0 || P < 0)\
-  return (STRING)__delete(str,(__strlen_t)L,(__strlen_t)P);\
+  return __delete(str,(__strlen_t)L,(__strlen_t)P);\
 }
 __ANY_INT(__iec_)
 #undef __iec_
@@ -1450,10 +1461,11 @@ static inline STRING __replace(STRING IN1, STRING IN2, __strlen_t L, __strlen_t 
     return res;
 }
 
+//return (STRING)__replace(str1,str2,(__strlen_t)L,(__strlen_t)P);
 #define __iec_(TYPENAME) \
 static inline STRING REPLACE__STRING__STRING__STRING__##TYPENAME##__##TYPENAME(EN_ENO_PARAMS, STRING str1, STRING str2, TYPENAME L, TYPENAME P){\
   TEST_EN_COND(STRING, L < 0 || P < 0)\
-  return (STRING)__replace(str1,str2,(__strlen_t)L,(__strlen_t)P);\
+  return __replace(str1,str2,(__strlen_t)L,(__strlen_t)P);\
 }
 __ANY_INT(__iec_)
 #undef __iec_
