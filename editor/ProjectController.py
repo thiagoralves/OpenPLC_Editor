@@ -28,6 +28,7 @@ Beremiz Project Controller
 """
 
 import sys
+import json
 import os
 import platform as os_platform
 import traceback
@@ -126,7 +127,7 @@ class Iec2CSettings(object):
             cmd = "iec2c.exe"
         elif platform.system() == "Linux":
             cmd = "iec2c"
-        
+
         paths = [
             os.path.join(base_folder, "matiec")
         ]
@@ -293,6 +294,8 @@ class ProjectController(ConfigTreeNode, PLCControler):
         self.IECcodeDigest = None
         self.LastBuiltIECcodeDigest = None
 
+        self.arduinoSettings = {}
+
     def LoadLibraries(self):
         self.Libraries = []
         TypeStack = []
@@ -387,10 +390,10 @@ class ProjectController(ConfigTreeNode, PLCControler):
             return "OSX"
         elif sys.platform.startswith('win32'):
             return "Win32"
-        
+
         # Fall back to Linux as default target
         return "Linux"
-        
+
 
     def GetTarget(self):
         target = self.BeremizRoot.getTargetType()
@@ -499,6 +502,8 @@ class ProjectController(ConfigTreeNode, PLCControler):
         PLCControler.SetProjectProperties(self, properties={"scaling": {'SFC': (10, 10)}})
         # this will create files base XML files
         self.SaveProject()
+        # Save Arduino settings (if any)
+        self.SaveArduinoSettings()
         return None
 
     def LoadProject(self, ProjectPath, BuildPath=None):
@@ -539,6 +544,10 @@ class ProjectController(ConfigTreeNode, PLCControler):
             self.LoadChildren()
         self.RefreshConfNodesBlockLists()
         self.UpdateButtons()
+
+        # Load Arduino settings, handles failure graceful (i.e. file does not exist)
+        self.LoadArduinoSettings()
+
         return None, False
 
     def RecursiveConfNodeInfos(self, confnode):
@@ -608,6 +617,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
                     shutil.copytree(old_projectfiles_path,
                               self._getProjectFilesPath(self.ProjectPath))
             self.SaveXMLFile(os.path.join(self.ProjectPath, 'plc.xml'))
+            self.SaveArduinoSettings()
             result = self.CTNRequestSave(from_project_path)
             if result:
                 self.logger.write_error(result)
@@ -628,6 +638,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
                 if self.CheckNewProjectPath(self.ProjectPath, newprojectpath):
                     self.ProjectPath, old_project_path = newprojectpath, self.ProjectPath
                     self.SaveProject(old_project_path)
+                    self.SaveArduinoSettings()
                     self._setBuildPath(self.BuildPath)
                 return True
         return False
@@ -781,7 +792,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
         if self._Generate_PLC_ST():
             return self._Compile_ST_to_SoftPLC()
         return False
-    
+
     def RemoveLocatedVariables(self, st_program):
         modified_program = ""
         for line in st_program.splitlines(True):
@@ -1110,7 +1121,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
                        "MEM": "_O_ENUM",
                        "OUT": "_O_ENUM",
                        "VAR": "_ENUM"}
-        
+
         #variable_decl_array  = [
         #    f"{{&({v['C_path']}), {v['type']}{type_suffix[v['vartype']]}}}"
         #    for v in self._DbgVariablesList
@@ -1131,7 +1142,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
                  "OUT": ("extern __IEC_", "_p"),
                  "VAR": ("extern __IEC_", "_t"),
                  "FB":  ("extern ", "")}
-        
+
         #extern_variables_declarations = [
         #    f"{types[v['vartype']][0]}{v['type']}{types[v['vartype']][1]} {v['C_path']};"
         #    for v in self._VariablesList if '.' not in v['C_path']
@@ -1141,14 +1152,14 @@ class ProjectController(ConfigTreeNode, PLCControler):
             for v in self._VariablesList if '.' not in v['C_path']
         ]
         return variable_decl_array, extern_variables_declarations, enum_types
-    
+
     def generate_embed_plc_debugger(self):
         dvars, externs, enums = self.Generate_plc_debug_cvars()
         if os_platform.system() == 'Windows':
             template_path = 'editor\\arduino\\src'
         else:
             template_path = 'editor/arduino/src'
-        
+
         base_folder = paths.AbsDir(__file__)
         loader = FileSystemLoader(
             os.path.join(base_folder, 'arduino', 'src'))
@@ -1164,7 +1175,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
                 })
             )
         return cfile, ''
-    
+
     def Generate_plc_debugger(self):
         """
         Generate trace/debug code out of PLC variable list
@@ -1255,7 +1266,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
             plc_main_code += 'IEC_' + iec_var["IEC_TYPE"] + ' var' + str(located_var_counter) + ';\n'
             plc_main_code += 'IEC_' + iec_var["IEC_TYPE"] + ' *' + iec_var["NAME"] + ' = &var' + str(located_var_counter) + ';\n'
             located_var_counter += 1
-        
+
         plc_main_code += targets.GetTargetCode(
             self.GetTarget().getcontent().getLocalTag())
         plc_main_code += targets.GetCode("plc_main_tail.c")
@@ -1551,6 +1562,35 @@ class ProjectController(ConfigTreeNode, PLCControler):
         else:
             return ConfigTreeNode._OpenView(self, self.CTNName(), onlyopened)
 
+    def GetArduinoSettings(self):
+        return self.arduinoSettings
+
+    def LoadArduinoSettings(self):
+        if self.ProjectPath is None:
+            self.arduinoSettings = {}
+            return
+
+        settings_file = os.path.join(self.ProjectPath, "arduino_settings.json")
+        if os.path.exists(settings_file):
+            with open(settings_file, 'r') as f:
+                try:
+                    self.arduinoSettings = json.load(f)
+                except json.JSONDecodeError:
+                    self.logger.write_error(_("Error decoding Arduino settings file. Using default settings.") + "\n")
+                    self.arduinoSettings = {}
+        else:
+            self.arduinoSettings = {}
+
+    def SaveArduinoSettings(self):
+        if self.ProjectPath and self.arduinoSettings:
+            settings_file = os.path.join(self.ProjectPath, "arduino_settings.json")
+            with open(settings_file, 'w') as f:
+                json.dump(self.arduinoSettings, f, indent=2, sort_keys=True)
+
+    def SetArduinoSettingsChanged(self):
+        self.ChangesToSave = True
+        self.arduinoSettings['last_modified'] = time.time()  # Optional: timestamp of last modification
+
     def OnCloseEditor(self, view):
         ConfigTreeNode.OnCloseEditor(self, view)
         if self._IECCodeView == view:
@@ -1587,16 +1627,16 @@ class ProjectController(ConfigTreeNode, PLCControler):
         self.EnableMethod("_Run", False)
         if self.AppFrame is not None and not self.UpdateMethodsFromPLCStatus():
             self.AppFrame.RefreshStatusToolBar()
-    
+
     def BlockButtons(self):
         wx.CallAfter(self._BlockButtons)
-    
+
     def _UnblockButtons(self):
         self.EnableMethod("_Run", True)
         self.EnableMethod("_generateOpenPLC", True)
         if self.AppFrame is not None and not self.UpdateMethodsFromPLCStatus():
             self.AppFrame.RefreshStatusToolBar()
-    
+
     def UnblockButtons(self):
         wx.CallAfter(self._UnblockButtons)
 
@@ -1735,7 +1775,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
 
         return debug_status, ticks, buffers
 
-    RegisterDebugVariableErrorCodes = { 
+    RegisterDebugVariableErrorCodes = {
         # Connector only can return None
         None : _("Debug: connection problem.\n"),
         # TRACE_LIST_OVERFLOW
@@ -2188,7 +2228,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
 
         wx.CallAfter(self.UpdateMethodsFromPLCStatus)
         return success
-    
+
     def _generateOpenPLC(self):
         self._Clean()
         if (self._Build() is True):
@@ -2209,7 +2249,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
                         if "plc_debugger.c" in file:
                             debuggerLocation = file
                             break
-            
+
             if debuggerLocation is None:
                 self.logger.write_error("Error building project: Debugger file is null\n")
                 return
@@ -2249,7 +2289,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
                 except:
                     self.logger.write_error(
                         'It was not possible to save the generated program\n')
-    
+
     def _generateArduino(self):
         self._Clean()
         self._buildType = "remote"
@@ -2263,7 +2303,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
                         if "plc_debugger.c" in file:
                             debuggerLocation = file
                             break
-            
+
             if debuggerLocation is None:
                 self.logger.write_error("Error building project: Debugger file is null\n")
                 return
@@ -2287,7 +2327,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
                 f = open(arduino_ext_path)
                 arduino_ext_contents = f.read()
 
-            dialog = ArduinoUploadDialog.ArduinoUploadDialog(self.AppFrame, program, arduino_ext_contents, MD5)
+            dialog = ArduinoUploadDialog.ArduinoUploadDialog(self.AppFrame, program, arduino_ext_contents, MD5, self)
             dialog.ShowModal()
 
     def _Repair(self):
@@ -2314,7 +2354,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
         if (self._Connect() is False):
             self.UnblockButtons()
             return
-                     
+
         #Set debugger type
         self._connector.SetDebuggerType('remote')
         dialog = DebuggerRemoteConnDialog.DebuggerRemoteConnDialog(self.AppFrame, self._connector)
@@ -2323,7 +2363,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
             self.logger.write_warning('User dismissed connection\n')
             self.logger.write('Stopping debugger...\n')
             self._Stop()
-        
+
         elif ret == -1:
             self.logger.write_warning('Invalid parameters\n')
             self.logger.write('Stopping debugger...\n')
@@ -2345,7 +2385,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
                         if "plc_debugger.c" in file:
                             debuggerLocation = file
                             break
-            
+
             if debuggerLocation is None:
                 self.logger.write_error("Error building project: Debugger file is null\n")
                 self._Stop()
@@ -2354,7 +2394,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
             if MD5 is None:
                 self.logger.write_error("Error building project: md5 object is null\n")
                 return
-            
+
             if self._connector.MatchMD5(MD5) == True:
                 self.logger.write("Program matches PLC MD5\n")
                 #Transfer PLC program
