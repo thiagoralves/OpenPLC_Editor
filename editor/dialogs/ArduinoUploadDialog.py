@@ -33,6 +33,7 @@ class ArduinoUploadDialog(wx.Dialog):
         self.arduino_sketch = arduino_ext
         self.md5 = md5
         self.last_update = 0
+        self.settings = {}
         self.update_subsystem = True
         current_dir = paths.AbsDir(__file__)
         self.com_port_combo_choices = {}
@@ -97,7 +98,7 @@ class ArduinoUploadDialog(wx.Dialog):
         main_sizer.Add(top_panel, 0, wx.EXPAND | wx.ALL, 5)
 
         # Bind events for Comboboxes and Button
-        self.board_type_combo.Bind(wx.EVT_COMBOBOX, self.onUIChange)
+        self.board_type_combo.Bind(wx.EVT_COMBOBOX, self.onBoardChange)
         self.com_port_combo.Bind(wx.EVT_COMBOBOX_DROPDOWN, self.reloadComboChoices)
         self.reload_button.Bind(wx.EVT_BUTTON, self.reloadComboChoices)
 
@@ -198,7 +199,7 @@ class ArduinoUploadDialog(wx.Dialog):
 
         self.m_button3 = wx.Button( self.m_panel6, wx.ID_ANY, _('Save Changes'), wx.DefaultPosition, wx.DefaultSize, 0 )
         self.m_button3.SetMinSize( wx.Size( 150,30 ) )
-        self.m_button3.Bind(wx.EVT_BUTTON, self.saveIO)
+        self.m_button3.Bind(wx.EVT_BUTTON, self.saveSettings)
 
         gSizer1.Add( self.m_button3, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
 
@@ -472,6 +473,13 @@ class ArduinoUploadDialog(wx.Dialog):
 
         self.setUIState(True)
 
+    def onBoardChange(self, e):
+        self.settings.pop('user_din', None);
+        self.settings.pop('user_ain', None);
+        self.settings.pop('user_dout', None);
+        self.settings.pop('user_aout', None);
+        self.onUIChange(e)
+
     def onUIChange(self, e):
         # Update Comms
         if (self.check_modbus_serial.GetValue() == False):
@@ -519,10 +527,10 @@ class ArduinoUploadDialog(wx.Dialog):
 
         #Update IOs
         board_type = self.board_type_combo.GetValue().split(" [")[0] #remove the trailing [version] on board name
-        board_din = self.hals[board_type]['user_din']
-        board_ain = self.hals[board_type]['user_ain']
-        board_dout = self.hals[board_type]['user_dout']
-        board_aout = self.hals[board_type]['user_aout']
+        board_din = self.settings.get('user_din', self.hals[board_type]["default_din"])
+        board_ain = self.settings.get('user_ain', self.hals[board_type]["default_ain"])
+        board_dout = self.settings.get('user_dout', self.hals[board_type]["default_dout"])
+        board_aout = self.settings.get('user_aout', self.hals[board_type]["default_aout"])
 
         self.din_txt.SetValue(str(board_din))
         self.ain_txt.SetValue(str(board_ain))
@@ -531,20 +539,13 @@ class ArduinoUploadDialog(wx.Dialog):
 
     def restoreIODefaults(self, event):
         board_type = self.board_type_combo.GetValue().split(" [")[0] #remove the trailing [version] on board name
-        self.hals[board_type]['user_din'] = self.hals[board_type]['default_din']
-        self.hals[board_type]['user_ain'] = self.hals[board_type]['default_ain']
-        self.hals[board_type]['user_dout'] = self.hals[board_type]['default_dout']
-        self.hals[board_type]['user_aout'] = self.hals[board_type]['default_aout']
-        self.saveHals()
+        #print(f'Restoring IO defaults for "{board_type}"')
+        self.settings['user_din'] = self.hals[board_type]['default_din']
+        self.settings['user_ain'] = self.hals[board_type]['default_ain']
+        self.settings['user_dout'] = self.hals[board_type]['default_dout']
+        self.settings['user_aout'] = self.hals[board_type]['default_aout']
         self.onUIChange(None)
-
-    def saveIO(self, event):
-        board_type = self.board_type_combo.GetValue().split(" [")[0] #remove the trailing [version] on board name
-        self.hals[board_type]['user_din'] = str(self.din_txt.GetValue())
-        self.hals[board_type]['user_ain'] = str(self.ain_txt.GetValue())
-        self.hals[board_type]['user_dout'] = str(self.dout_txt.GetValue())
-        self.hals[board_type]['user_aout'] = str(self.aout_txt.GetValue())
-        self.saveHals()
+        self.saveSettings()
 
     def startBuilder(self):
 
@@ -690,28 +691,32 @@ class ArduinoUploadDialog(wx.Dialog):
         f.close()
 
     def saveSettings(self, event=None):
-        settings = {}
-        settings['board_type'] = self.board_type_combo.GetValue()
+        self.settings = {}
+        self.settings['board_type'] = self.board_type_combo.GetValue()
+        self.settings['user_din'] = str(self.din_txt.GetValue())
+        self.settings['user_ain'] = str(self.ain_txt.GetValue())
+        self.settings['user_dout'] = str(self.dout_txt.GetValue())
+        self.settings['user_aout'] = str(self.aout_txt.GetValue())
 
         com_port_value = self.com_port_combo.GetValue()
-        settings['com_port'] = next((port for display_text, port in self.com_port_combo_choices.items()
+        self.settings['com_port'] = next((port for display_text, port in self.com_port_combo_choices.items()
                                      if display_text == com_port_value), com_port_value)
 
-        settings['mb_serial'] = self.check_modbus_serial.GetValue()
-        settings['serial_iface'] = self.serial_iface_combo.GetValue()
-        settings['baud'] = self.baud_rate_combo.GetValue()
-        settings['slaveid'] = self.slaveid_txt.GetValue()
-        settings['txpin'] = self.txpin_txt.GetValue()
-        settings['mb_tcp'] = self.check_modbus_tcp.GetValue()
-        settings['tcp_iface'] = self.tcp_iface_combo.GetValue()
-        settings['mac'] = self.mac_txt.GetValue()
-        settings['ip'] = self.ip_txt.GetValue()
-        settings['dns'] = self.dns_txt.GetValue()
-        settings['gateway'] = self.gateway_txt.GetValue()
-        settings['subnet'] = self.subnet_txt.GetValue()
-        settings['ssid'] = self.wifi_ssid_txt.GetValue()
-        settings['pwd'] = self.wifi_pwd_txt.GetValue()
-        settings['last_update'] = self.last_update
+        self.settings['mb_serial'] = self.check_modbus_serial.GetValue()
+        self.settings['serial_iface'] = self.serial_iface_combo.GetValue()
+        self.settings['baud'] = self.baud_rate_combo.GetValue()
+        self.settings['slaveid'] = self.slaveid_txt.GetValue()
+        self.settings['txpin'] = self.txpin_txt.GetValue()
+        self.settings['mb_tcp'] = self.check_modbus_tcp.GetValue()
+        self.settings['tcp_iface'] = self.tcp_iface_combo.GetValue()
+        self.settings['mac'] = self.mac_txt.GetValue()
+        self.settings['ip'] = self.ip_txt.GetValue()
+        self.settings['dns'] = self.dns_txt.GetValue()
+        self.settings['gateway'] = self.gateway_txt.GetValue()
+        self.settings['subnet'] = self.subnet_txt.GetValue()
+        self.settings['ssid'] = self.wifi_ssid_txt.GetValue()
+        self.settings['pwd'] = self.wifi_pwd_txt.GetValue()
+        self.settings['last_update'] = self.last_update
 
         #write settings to disk
         if platform.system() == 'Windows':
@@ -719,7 +724,7 @@ class ArduinoUploadDialog(wx.Dialog):
         else:
             base_path = 'editor/arduino/examples/Baremetal/'
         f = open(base_path+'settings.json', 'w')
-        json.dump(settings, f, indent=2, sort_keys=True)
+        json.dump(self.settings, f, indent=2, sort_keys=True)
         f.flush()
         f.close()
 
@@ -735,11 +740,19 @@ class ArduinoUploadDialog(wx.Dialog):
             jsonStr = f.read()
             f.close()
 
-            settings = json.loads(jsonStr)
+            try:
+                self.settings = json.loads(jsonStr)
+            except json.JSONDecodeError:
+                self.restoreIODefaults(None)
+                self.restoreCommDefaults(None)
+            except Exception as e:
+                print(f"Unexpected error while parsing settings.json: {e}")
+                self.restoreIODefaults(None)
+                self.restoreCommDefaults(None)
 
             #Check if should update subsystem
-            if ('last_update' in settings.keys()):
-                self.last_update = settings['last_update']
+            if ('last_update' in self.settings.keys()):
+                self.last_update = self.settings['last_update']
                 if (time.time() - float(self.last_update) > 604800.0): #604800 is the number of seconds in a week (7 days)
                     self.update_subsystem = True
                     self.last_update = time.time()
@@ -750,7 +763,7 @@ class ArduinoUploadDialog(wx.Dialog):
                 self.last_update = time.time()
 
             #Get the correct name for the board_type
-            board = settings['board_type'].split(' [')[0]
+            board = self.settings['board_type'].split(' [')[0]
             board_name = ""
             if board in self.hals:
                 if self.hals[board]['version'] == "0":
@@ -760,27 +773,27 @@ class ArduinoUploadDialog(wx.Dialog):
 
             wx.CallAfter(self.board_type_combo.SetValue, board_name)
 
-            com_port_value = settings['com_port']
+            com_port_value = self.settings['com_port']
             for display_text, port in self.com_port_combo_choices.items():
                 if port == com_port_value:
                     com_port_value = display_text
                     break
             wx.CallAfter(self.com_port_combo.SetValue, com_port_value)
 
-            wx.CallAfter(self.check_modbus_serial.SetValue, settings['mb_serial'])
-            wx.CallAfter(self.serial_iface_combo.SetValue, settings['serial_iface'])
-            wx.CallAfter(self.baud_rate_combo.SetValue, settings['baud'])
-            wx.CallAfter(self.slaveid_txt.SetValue, settings['slaveid'])
-            wx.CallAfter(self.txpin_txt.SetValue, settings['txpin'])
-            wx.CallAfter(self.check_modbus_tcp.SetValue, settings['mb_tcp'])
-            wx.CallAfter(self.tcp_iface_combo.SetValue, settings['tcp_iface'])
-            wx.CallAfter(self.mac_txt.SetValue, settings['mac'])
-            wx.CallAfter(self.ip_txt.SetValue, settings['ip'])
-            wx.CallAfter(self.dns_txt.SetValue, settings['dns'])
-            wx.CallAfter(self.gateway_txt.SetValue, settings['gateway'])
-            wx.CallAfter(self.subnet_txt.SetValue, settings['subnet'])
-            wx.CallAfter(self.wifi_ssid_txt.SetValue, settings['ssid'])
-            wx.CallAfter(self.wifi_pwd_txt.SetValue, settings['pwd'])
+            wx.CallAfter(self.check_modbus_serial.SetValue, self.settings['mb_serial'])
+            wx.CallAfter(self.serial_iface_combo.SetValue, self.settings['serial_iface'])
+            wx.CallAfter(self.baud_rate_combo.SetValue, self.settings['baud'])
+            wx.CallAfter(self.slaveid_txt.SetValue, self.settings['slaveid'])
+            wx.CallAfter(self.txpin_txt.SetValue, self.settings['txpin'])
+            wx.CallAfter(self.check_modbus_tcp.SetValue, self.settings['mb_tcp'])
+            wx.CallAfter(self.tcp_iface_combo.SetValue, self.settings['tcp_iface'])
+            wx.CallAfter(self.mac_txt.SetValue, self.settings['mac'])
+            wx.CallAfter(self.ip_txt.SetValue, self.settings['ip'])
+            wx.CallAfter(self.dns_txt.SetValue, self.settings['dns'])
+            wx.CallAfter(self.gateway_txt.SetValue, self.settings['gateway'])
+            wx.CallAfter(self.subnet_txt.SetValue, self.settings['subnet'])
+            wx.CallAfter(self.wifi_ssid_txt.SetValue, self.settings['ssid'])
+            wx.CallAfter(self.wifi_pwd_txt.SetValue, self.settings['pwd'])
 
             wx.CallAfter(self.onUIChange, None)
 
@@ -845,9 +858,8 @@ class ArduinoUploadDialog(wx.Dialog):
             jfile = 'editor/arduino/examples/Baremetal/hals.json'
 
         f = open(jfile, 'r')
-        jsonStr = f.read()
+        self.hals = json.load(f)
         f.close()
-        self.hals = json.loads(jsonStr)
 
     def saveHals(self):
         if platform.system() == 'Windows':
