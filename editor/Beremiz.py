@@ -27,7 +27,7 @@ import os
 import sys
 import getopt
 
-sys.path.insert(0,'.\editor') #Fix for Windows
+sys.path.insert(0,'.\\editor') #Fix for Windows
 
 import wx
 from wx.lib.agw.advancedsplash import AdvancedSplash, AS_NOTIMEOUT, AS_CENTER_ON_SCREEN

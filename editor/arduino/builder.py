@@ -97,15 +97,15 @@ def build(st_file, platform, source_file, port, txtCtrl, hals, update_subsystem)
         if os.path.exists('editor/arduino/src/Res0.c'):
             os.remove('editor/arduino/src/Res0.c')
     else:
-        append_compiler_log(txtCtrl, "Error: iec2c compiler not found!\n")
+        append_compiler_log(txtCtrl, _("Error: iec2c compiler not found!") + '\n')
         return
 
     #Install/Update board support
     if board_installed == False or update_subsystem == True:
         if board_installed == False:
-            append_compiler_log(txtCtrl, "Support for " + platform + " is not installed on OpenPLC Editor. Please be patient and wait while " + platform + " is being installed...\n")
+            append_compiler_log(txtCtrl, _("Support for {platform} is not installed on OpenPLC Editor. Please be patient and wait while {platform} is being installed...").format(platform=platform) + '\n')
         elif update_subsystem == True:
-            append_compiler_log(txtCtrl, "Updating support for " + platform + ". Please be patient and wait while " + platform + " is being installed...\n")
+            append_compiler_log(txtCtrl, _("Updating support for {platform}. Please be patient and wait while {platform} is being installed...").format(platform=platform) + '\n')
 
         cli_command = ''
         if os_platform.system() == 'Windows':
@@ -187,7 +187,7 @@ def build(st_file, platform, source_file, port, txtCtrl, hals, update_subsystem)
                     'STM32_PWM'])
 
     # Generate C files
-    append_compiler_log(txtCtrl, "Compiling .st file...\n")
+    append_compiler_log(txtCtrl, _("Compiling .st file...") + '\n')
     if (os.name == 'nt'):
         base_path = 'editor\\arduino\\src\\'
     else:
@@ -277,7 +277,7 @@ void glueVars()
             located_var = located_var.split('(')[1].split(')')[0]
             var_data = located_var.split(',')
             if (len(var_data) < 5):
-                append_compiler_log(txtCtrl, 'Error processing located var line: ' + located_var + '\n')
+                append_compiler_log(txtCtrl, _('Error processing located var line: {var_line_text}').format(var_line_text=located_var) + '\n')
             else:
                 var_type = var_data[0]
                 var_name = var_data[1]
@@ -289,49 +289,48 @@ void glueVars()
                 # check variable type and assign to correct buffer pointer
                 if ('QX' in var_name):
                     if (int(var_address) > 6 or int(var_subaddress) > 7):
-                        append_compiler_log(txtCtrl, 'Error: wrong location for var ' + var_name + '\n')
+                        append_compiler_log(txtCtrl, _('Error: wrong location for var {var_name}').format(var_name=var_name) + '\n')
                         return
                     glueVars += '    bool_output[' + var_address + \
                         '][' + var_subaddress + '] = ' + var_name + ';\n'
                 elif ('IX' in var_name):
                     if (int(var_address) > 6 or int(var_subaddress) > 7):
-                        append_compiler_log(txtCtrl, 'Error: wrong location for var ' + var_name + '\n')
+                        append_compiler_log(txtCtrl, _('Error: wrong location for var {var_name}').format(var_name=var_name) + '\n')
                         return
                     glueVars += '    bool_input[' + var_address + \
                         '][' + var_subaddress + '] = ' + var_name + ';\n'
                 elif ('QW' in var_name):
                     if (int(var_address) > 32):
-                        append_compiler_log(txtCtrl, 'Error: wrong location for var ' + var_name + '\n')
+                        append_compiler_log(txtCtrl, _('Error: wrong location for var {var_name}').format(var_name=var_name) + '\n')
                         return
                     glueVars += '    int_output[' + \
                         var_address + '] = ' + var_name + ';\n'
                 elif ('IW' in var_name):
                     if (int(var_address) > 32):
-                        append_compiler_log(txtCtrl, 'Error: wrong location for var ' + var_name + '\n')
+                        append_compiler_log(txtCtrl, _('Error: wrong location for var {var_name}').format(var_name=var_name) + '\n')
                         return
                     glueVars += '    int_input[' + \
                         var_address + '] = ' + var_name + ';\n'
                 elif ('MW' in var_name):
                     if (int(var_address) > 20):
-                        append_compiler_log(txtCtrl, 'Error: wrong location for var ' + var_name + '\n')
+                        append_compiler_log(txtCtrl, _('Error: wrong location for var {var_name}').format(var_name=var_name) + '\n')
                         return
                     glueVars += '    int_memory[' + \
                         var_address + '] = ' + var_name + ';\n'
                 elif ('MD' in var_name):
                     if (int(var_address) > 20):
-                        append_compiler_log(txtCtrl, 'Error: wrong location for var ' + var_name + '\n')
+                        append_compiler_log(txtCtrl, _('Error: wrong location for var {var_name}').format(var_name=var_name) + '\n')
                         return
                     glueVars += '    dint_memory[' + \
                         var_address + '] = ' + var_name + ';\n'
                 elif ('ML' in var_name):
                     if (int(var_address) > 20):
-                        append_compiler_log(txtCtrl, 'Error: wrong location for var ' + var_name + '\n')
+                        append_compiler_log(txtCtrl, _('Error: wrong location for var {var_name}').format(var_name=var_name) + '\n')
                         return
                     glueVars += '    lint_memory[' + \
                         var_address + '] = ' + var_name + ';\n'
                 else:
-                    append_compiler_log(txtCtrl, 'Could not process location "' + \
-                        var_name + '" from line: ' + located_var + '\n')
+                    append_compiler_log(txtCtrl, _('Could not process location "{var_name}" from line: {var_line_text}').format(var_name=var_name, located_var=located_var) + '\n')
                     return
 
     glueVars += """
@@ -424,7 +423,7 @@ void updateTime()
     f.close()
 
     # Generate .elf file
-    append_compiler_log(txtCtrl, "Generating binary file...\n")
+    append_compiler_log(txtCtrl, _('Generating binary file...') + '\n')
 
     # if (os.name == 'nt'):
     #    compilation = subprocess.check_output('editor\\arduino\\bin\\arduino-cli-w64 compile -v --libraries=editor\\arduino --build-property compiler.c.extra_flags="-Ieditor\\arduino\\src\\lib" --build-property compiler.cpp.extra_flags="-Ieditor\\arduino\\src\\lib" --export-binaries -b ' + platform + ' editor\\arduino\\examples\\Baremetal\\Baremetal.ino 2>&1')
@@ -435,7 +434,7 @@ void updateTime()
     #wx.CallAfter(txtCtrl.SetValue, compiler_logs)
     #wx.CallAfter(scrollToEnd, txtCtrl)
 
-    append_compiler_log(txtCtrl, '\nCOMPILATION START: ' + platform + '\n')
+    append_compiler_log(txtCtrl, '\n' + _('COMPILATION START: {platform}').format(platform=platform) + '\n')
 
     extraflags = ''
     if core == 'esp32:esp32':
@@ -452,11 +451,11 @@ void updateTime()
                                        'compiler.cpp.extra_flags=-Ieditor/arduino/src/lib' + extraflags, '--export-binaries', '-b', platform, 'editor/arduino/examples/Baremetal/Baremetal.ino'])
 
     if (return_code != 0):
-        append_compiler_log(txtCtrl, '\nCOMPILATION FAILED!\n')
+        append_compiler_log(txtCtrl, '\n' + _('COMPILATION FAILED!') + '\n')
 
     if (return_code == 0):
         if (port != None):
-            append_compiler_log(txtCtrl, '\nUploading program to Arduino board at ' + port + '...\n')
+            append_compiler_log(txtCtrl, '\n' + _('Uploading program to Arduino board at {port}...').format(port=port) + '\n')
             if os_platform.system() == 'Windows':
                 return_code = runCommandToWin(txtCtrl, ['editor\\arduino\\bin\\arduino-cli-w64', '--no-color', 'upload', '--port',
                                                 port, '--fqbn', platform, 'editor\\arduino\\examples\\Baremetal/'])
@@ -467,15 +466,15 @@ void updateTime()
                 return_code = runCommandToWin(txtCtrl, ['editor/arduino/bin/arduino-cli-l64', '--no-color', 'upload', '--port',
                                                 port, '--fqbn', platform, 'editor/arduino/examples/Baremetal/'])
 
-            append_compiler_log(txtCtrl, '\nDone!\n')
+            append_compiler_log(txtCtrl, '\n' + _('Done!') + '\n')
         else:
             cwd = os.getcwd()
-            append_compiler_log(txtCtrl, '\nOUTPUT DIRECTORY:\n')
+            append_compiler_log(txtCtrl, '\n' + _('OUTPUT DIRECTORY:') + '\n')
             if os_platform.system() == 'Windows':
                 append_compiler_log(txtCtrl, cwd + '\\editor\\arduino\\examples\\Baremetal\\build\n')
             else:
                 append_compiler_log(txtCtrl, cwd + '/editor/arduino/examples/Baremetal/build\n')
-            append_compiler_log(txtCtrl, '\nCOMPILATION DONE!')
+            append_compiler_log(txtCtrl, '\n' + _('COMPILATION DONE!'))
     time.sleep(1)  # make sure files are not in use anymore
 
     # no clean up
