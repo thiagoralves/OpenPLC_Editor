@@ -33,16 +33,13 @@ class ArduinoUploadDialog(wx.Dialog):
         self.arduino_sketch = arduino_ext
         self.md5 = md5
         self.last_update = 0
+        self.settings = {}
         self.update_subsystem = True
         current_dir = paths.AbsDir(__file__)
-#
-        if platform.system() == 'Windows':
-            wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Transfer Program to PLC", pos = wx.DefaultPosition, size = wx.Size( 693,453 ), style = wx.DEFAULT_DIALOG_STYLE )
-        elif platform.system() == 'Linux':
-            wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Transfer Program to PLC", pos = wx.DefaultPosition, size = wx.Size( 720,590 ), style = wx.DEFAULT_DIALOG_STYLE )
-        elif platform.system() == 'Darwin':
-            wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Transfer Program to PLC", pos = wx.DefaultPosition, size = wx.Size( 700,453 ), style = wx.DEFAULT_DIALOG_STYLE )
-        
+        self.com_port_combo_choices = {}
+
+        wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _('Transfer Program to PLC'), pos = wx.DefaultPosition, style = wx.DEFAULT_DIALOG_STYLE )
+
         # load Hals automatically and initialize the board_type_comboChoices
         self.loadHals()
         self.updateInstalledBoards()
@@ -50,119 +47,136 @@ class ArduinoUploadDialog(wx.Dialog):
         for board in self.hals:
             board_name = ""
             if self.hals[board]['version'] == "0":
-                board_name = board + ' [NOT INSTALLED]'
+                board_name = board + ' [' + _('NOT INSTALLED') + ']'
             else:
                 board_name = board + ' [' + self.hals[board]['version'] + ']'
 
             board_type_comboChoices.append(board_name)
         board_type_comboChoices.sort()
 
-        self.SetSizeHintsSz( wx.Size( -1,-1 ), wx.DefaultSize )
+        self.SetSizeHints(wx.Size(-1,-1), wx.DefaultSize)
 
-        bSizer2 = wx.BoxSizer( wx.VERTICAL )
+        main_sizer = wx.BoxSizer(wx.VERTICAL)
 
-        self.m_listbook2 = wx.Listbook( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LB_LEFT )
-        m_listbook2ImageSize = wx.Size( 100,100 )
-        m_listbook2Index = 0
-        m_listbook2Images = wx.ImageList( m_listbook2ImageSize.GetWidth(), m_listbook2ImageSize.GetHeight() )
+        # Create a panel for Board Type and COM Port
+        top_panel = wx.Panel(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL)
+        top_sizer = wx.GridBagSizer(vgap=5, hgap=5)
 
-        self.m_listbook2.AssignImageList( m_listbook2Images )
-        self.m_panel5 = wx.Panel( self.m_listbook2, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
-        bSizer21 = wx.BoxSizer( wx.VERTICAL )
+        # Set a minimum width for labels, matching the Listbook graphics width
+        label_width = 100  # Adjust this value to match your Listbook graphics width
 
-        fgSizer1 = wx.FlexGridSizer( 0, 2, 0, 0 )
-        fgSizer1.SetFlexibleDirection( wx.BOTH )
-        fgSizer1.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
+        # Board Type
+        self.m_staticText1 = wx.StaticText(top_panel, wx.ID_ANY, _('Board Type'), wx.DefaultPosition, wx.Size(label_width, -1), 0)
+        self.m_staticText1.Wrap(-1)
+        top_sizer.Add(self.m_staticText1, pos=(0,0), flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT, border=5)
 
+        self.board_type_combo = wx.ComboBox(top_panel, wx.ID_ANY, "Arduino Uno", wx.DefaultPosition, wx.Size(-1,-1), board_type_comboChoices, 0)
+        top_sizer.Add(self.board_type_combo, pos=(0,1), flag=wx.ALL | wx.EXPAND, border=5)
 
+        # Placeholder for the first row, third column
+        top_sizer.Add((0, 0), pos=(0,2), flag=wx.EXPAND, border=5)
 
+        # COM Port
+        self.m_staticText2 = wx.StaticText(top_panel, wx.ID_ANY, _('COM Port'), wx.DefaultPosition, wx.Size(label_width, -1), 0)
+        self.m_staticText2.Wrap(-1)
+        top_sizer.Add(self.m_staticText2, pos=(1,0), flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT, border=5)
 
-        self.m_staticText1 = wx.StaticText( self.m_panel5, wx.ID_ANY, u"Board Type", wx.DefaultPosition, wx.Size( 80,-1 ), 0 )
-        self.m_staticText1.Wrap( -1 )
-        fgSizer1.Add( self.m_staticText1, 0, wx.ALIGN_CENTER|wx.BOTTOM|wx.LEFT|wx.TOP, 15 )
+        self.com_port_combo = wx.ComboBox(top_panel, wx.ID_ANY, "COM1", wx.DefaultPosition, wx.Size(-1,-1), [""], 0)
+        top_sizer.Add(self.com_port_combo, pos=(1,1), flag=wx.ALL | wx.EXPAND, border=5)
 
-        self.board_type_combo = wx.ComboBox( self.m_panel5, wx.ID_ANY, u"Arduino Uno", wx.DefaultPosition, wx.Size( 410,-1 ), board_type_comboChoices, 0 )
-        fgSizer1.Add( self.board_type_combo, 0, wx.ALIGN_CENTER|wx.BOTTOM|wx.TOP, 15 )
-        self.board_type_combo.Bind(wx.EVT_COMBOBOX, self.onUIChange)
+        button_size = self.com_port_combo.GetSize().GetHeight()
+        self.reload_button = wx.Button(top_panel, wx.ID_ANY, "\u21BB", wx.DefaultPosition, size=(button_size, button_size), style=wx.BU_EXACTFIT)
+        self.reload_button.SetToolTip(_('Reload COM port list'))
+        top_sizer.Add(self.reload_button, pos=(1,2), flag=wx.ALL, border=5)
 
-        self.m_staticText2 = wx.StaticText( self.m_panel5, wx.ID_ANY, u"COM Port", wx.DefaultPosition, wx.Size( 80,-1 ), 0 )
-        self.m_staticText2.Wrap( -1 )
-        fgSizer1.Add( self.m_staticText2, 0, wx.ALIGN_CENTER|wx.ALIGN_TOP|wx.BOTTOM|wx.LEFT, 15 )
+        self.m_staticline1 = wx.StaticLine(top_panel, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL)
+        top_sizer.Add(self.m_staticline1, pos=(2,0), span=(1,3), flag=wx.EXPAND, border=5)
 
-        self.com_port_combo = wx.ComboBox( self.m_panel5, wx.ID_ANY, u"COM1", wx.DefaultPosition, wx.Size( 410,-1 ), [""], 0 )
-        self.reloadComboChoices(None) # Initialize the com port combo box
-        fgSizer1.Add( self.com_port_combo, 0, wx.ALIGN_CENTER|wx.BOTTOM, 15 )
+        top_sizer.AddGrowableCol(1, 1)  # Make the middle column (index 1) growable
+        top_panel.SetSizer(top_sizer)
+        top_sizer.Fit(top_panel)
+        main_sizer.Add(top_panel, 0, wx.EXPAND | wx.ALL, 5)
+
+        # Bind events for Comboboxes and Button
+        self.board_type_combo.Bind(wx.EVT_COMBOBOX, self.onBoardChange)
         self.com_port_combo.Bind(wx.EVT_COMBOBOX_DROPDOWN, self.reloadComboChoices)
+        self.reload_button.Bind(wx.EVT_BUTTON, self.reloadComboChoices)
 
+        self.m_listbook2 = wx.Listbook(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LB_LEFT)
+        m_listbook2ImageSize = wx.Size(100,100)
+        m_listbook2Index = 0
+        m_listbook2Images = wx.ImageList(m_listbook2ImageSize.GetWidth(), m_listbook2ImageSize.GetHeight())
 
-        bSizer21.Add( fgSizer1, 1, wx.EXPAND, 5 )
+        self.m_listbook2.AssignImageList(m_listbook2Images)
+        self.m_panel5 = wx.Panel(self.m_listbook2, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL)
+        bSizer21 = wx.BoxSizer(wx.VERTICAL)
 
-        self.check_compile = wx.CheckBox( self.m_panel5, wx.ID_ANY, u"Compile Only", wx.DefaultPosition, wx.DefaultSize, 0 )
-        bSizer21.Add( self.check_compile, 0, wx.LEFT, 15 )
+        self.check_compile = wx.CheckBox(self.m_panel5, wx.ID_ANY, _('Compile Only'), wx.DefaultPosition, wx.DefaultSize, 0)
+        bSizer21.Add(self.check_compile, 0, wx.LEFT, 15)
         self.check_compile.Bind(wx.EVT_CHECKBOX, self.onUIChange)
 
-        self.m_staticline2 = wx.StaticLine( self.m_panel5, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
-        bSizer21.Add( self.m_staticline2, 0, wx.EXPAND |wx.ALL, 5 )
+        self.m_staticline2 = wx.StaticLine(self.m_panel5, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL)
+        bSizer21.Add(self.m_staticline2, 0, wx.EXPAND |wx.ALL, 5)
 
-        self.m_staticText3 = wx.StaticText( self.m_panel5, wx.ID_ANY, u"Compilation output", wx.DefaultPosition, wx.DefaultSize, 0 )
-        self.m_staticText3.Wrap( -1 )
-        bSizer21.Add( self.m_staticText3, 0, wx.ALL, 5 )
+        self.m_staticText3 = wx.StaticText(self.m_panel5, wx.ID_ANY, _('Compilation output'), wx.DefaultPosition, wx.DefaultSize, 0)
+        self.m_staticText3.Wrap(-1)
+        bSizer21.Add(self.m_staticText3, 0, wx.ALL, 5)
 
-        self.output_text = wx.TextCtrl( self.m_panel5, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( -1,230 ), wx.TE_MULTILINE|wx.TE_READONLY|wx.TE_WORDWRAP|wx.VSCROLL )
-        self.output_text.SetFont( wx.Font( 10, 75, 90, 90, False, "Consolas" ) )
-        self.output_text.SetBackgroundColour( wx.BLACK )
-        self.output_text.SetForegroundColour( wx.WHITE )
+        self.output_text = wx.TextCtrl(self.m_panel5, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size(800,400), wx.TE_MULTILINE|wx.TE_READONLY|wx.TE_CHARWRAP|wx.VSCROLL)
+        self.output_text.SetFont(wx.Font(10, 75, 90, 90, False, "Consolas"))
+        self.output_text.SetBackgroundColour(wx.BLACK)
+        self.output_text.SetForegroundColour(wx.WHITE)
         self.output_text.SetDefaultStyle(wx.TextAttr(wx.WHITE))
 
-        bSizer21.Add( self.output_text, 0, wx.ALL|wx.EXPAND, 5 )
+        bSizer21.Add(self.output_text, 0, wx.ALL|wx.EXPAND, 5)
 
-        self.upload_button = wx.Button( self.m_panel5, wx.ID_ANY, u"Transfer to PLC", wx.DefaultPosition, wx.DefaultSize, 0 )
-        self.upload_button.SetMinSize( wx.Size( 150,30 ) )
+        self.upload_button = wx.Button(self.m_panel5, wx.ID_ANY, _('Transfer to PLC'), wx.DefaultPosition, wx.DefaultSize, 0)
+        self.upload_button.SetMinSize(wx.Size(150,30))
         self.upload_button.Bind(wx.EVT_BUTTON, self.OnUpload)
 
-        bSizer21.Add( self.upload_button, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
+        bSizer21.Add(self.upload_button, 0, wx.ALIGN_CENTER|wx.ALL, 5)
 
-        self.m_panel5.SetSizer( bSizer21 )
+        self.m_panel5.SetSizer(bSizer21)
         self.m_panel5.Layout()
-        bSizer21.Fit( self.m_panel5 )
-        self.m_listbook2.AddPage( self.m_panel5, u"Transfer", True )
-        m_listbook2Bitmap = wx.Bitmap(os.path.join(current_dir, "..", "images", "transfer_plc.png"), wx.BITMAP_TYPE_ANY )
-        if ( m_listbook2Bitmap.IsOk() ):
-            m_listbook2Images.Add( m_listbook2Bitmap )
-            self.m_listbook2.SetPageImage( m_listbook2Index, m_listbook2Index )
+        bSizer21.Fit(self.m_panel5)
+        self.m_listbook2.AddPage(self.m_panel5, _('Transfer'), True)
+        m_listbook2Bitmap = wx.Bitmap(os.path.join(current_dir, "..", "images", "transfer_plc.png"), wx.BITMAP_TYPE_ANY)
+        if (m_listbook2Bitmap.IsOk()):
+            m_listbook2Images.Add(m_listbook2Bitmap)
+            self.m_listbook2.SetPageImage(m_listbook2Index, m_listbook2Index)
             m_listbook2Index += 1
 
         self.m_panel6 = wx.Panel( self.m_listbook2, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
         bSizer3 = wx.BoxSizer( wx.VERTICAL )
 
-        self.m_staticText4 = wx.StaticText( self.m_panel6, wx.ID_ANY, u"This setting will allow you to change the default pin mapping for your board. Please be cautious while edditing, as mistakes can lead to compilation errors. Pin numbers should obey the Arduino notation for your board and must be comma-separated.", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.m_staticText4 = wx.StaticText( self.m_panel6, wx.ID_ANY, _('This setting will allow you to change the default pin mapping for your board. Please be cautious while edditing, as mistakes can lead to compilation errors. Pin numbers should obey the Arduino notation for your board and must be comma-separated.'), wx.DefaultPosition, wx.DefaultSize, 0 )
         self.m_staticText4.Wrap( 530 )
         self.m_staticText4.SetMinSize( wx.Size( -1,60 ) )
 
         bSizer3.Add( self.m_staticText4, 0, wx.ALL, 5 )
 
-        self.m_staticText5 = wx.StaticText( self.m_panel6, wx.ID_ANY, u"Digital Inputs", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.m_staticText5 = wx.StaticText( self.m_panel6, wx.ID_ANY, _('Digital Inputs'), wx.DefaultPosition, wx.DefaultSize, 0 )
         self.m_staticText5.Wrap( -1 )
         bSizer3.Add( self.m_staticText5, 0, wx.ALL, 5 )
 
         self.din_txt = wx.TextCtrl( self.m_panel6, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
         bSizer3.Add( self.din_txt, 0, wx.ALL|wx.EXPAND, 5 )
 
-        self.m_staticText6 = wx.StaticText( self.m_panel6, wx.ID_ANY, u"Digital Outputs", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.m_staticText6 = wx.StaticText( self.m_panel6, wx.ID_ANY, _('Digital Outputs'), wx.DefaultPosition, wx.DefaultSize, 0 )
         self.m_staticText6.Wrap( -1 )
         bSizer3.Add( self.m_staticText6, 0, wx.ALL, 5 )
 
         self.dout_txt = wx.TextCtrl( self.m_panel6, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
         bSizer3.Add( self.dout_txt, 0, wx.ALL|wx.EXPAND, 5 )
 
-        self.m_staticText7 = wx.StaticText( self.m_panel6, wx.ID_ANY, u"Analog Inputs", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.m_staticText7 = wx.StaticText( self.m_panel6, wx.ID_ANY, _('Analog Inputs'), wx.DefaultPosition, wx.DefaultSize, 0 )
         self.m_staticText7.Wrap( -1 )
         bSizer3.Add( self.m_staticText7, 0, wx.ALL, 5 )
 
         self.ain_txt = wx.TextCtrl( self.m_panel6, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
         bSizer3.Add( self.ain_txt, 0, wx.ALL|wx.EXPAND, 5 )
 
-        self.m_staticText8 = wx.StaticText( self.m_panel6, wx.ID_ANY, u"Analog Outputs", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.m_staticText8 = wx.StaticText( self.m_panel6, wx.ID_ANY, _('Analog Outputs'), wx.DefaultPosition, wx.DefaultSize, 0 )
         self.m_staticText8.Wrap( -1 )
         bSizer3.Add( self.m_staticText8, 0, wx.ALL, 5 )
 
@@ -177,15 +191,15 @@ class ArduinoUploadDialog(wx.Dialog):
 
         gSizer1 = wx.GridSizer( 0, 2, 0, 0 )
 
-        self.m_button2 = wx.Button( self.m_panel6, wx.ID_ANY, u"Restore Defaults", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.m_button2 = wx.Button( self.m_panel6, wx.ID_ANY, _('Restore Defaults'), wx.DefaultPosition, wx.DefaultSize, 0 )
         self.m_button2.SetMinSize( wx.Size( 150,30 ) )
         self.m_button2.Bind(wx.EVT_BUTTON, self.restoreIODefaults)
 
         gSizer1.Add( self.m_button2, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
 
-        self.m_button3 = wx.Button( self.m_panel6, wx.ID_ANY, u"Save Changes", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.m_button3 = wx.Button( self.m_panel6, wx.ID_ANY, _('Save Changes'), wx.DefaultPosition, wx.DefaultSize, 0 )
         self.m_button3.SetMinSize( wx.Size( 150,30 ) )
-        self.m_button3.Bind(wx.EVT_BUTTON, self.saveIO)
+        self.m_button3.Bind(wx.EVT_BUTTON, self.saveSettings)
 
         gSizer1.Add( self.m_button3, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
 
@@ -196,7 +210,7 @@ class ArduinoUploadDialog(wx.Dialog):
         self.m_panel6.SetSizer( bSizer3 )
         self.m_panel6.Layout()
         bSizer3.Fit( self.m_panel6 )
-        self.m_listbook2.AddPage( self.m_panel6, u"I/O Config", False )
+        self.m_listbook2.AddPage( self.m_panel6, _('I/O Config'), False )
         m_listbook2Bitmap = wx.Bitmap(os.path.join(current_dir, "..", "images", "io.png"), wx.BITMAP_TYPE_ANY )
         if ( m_listbook2Bitmap.IsOk() ):
             m_listbook2Images.Add( m_listbook2Bitmap )
@@ -206,7 +220,7 @@ class ArduinoUploadDialog(wx.Dialog):
         self.m_panel7 = wx.Panel( self.m_listbook2, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
         bSizer4 = wx.BoxSizer( wx.VERTICAL )
 
-        self.check_modbus_serial = wx.CheckBox( self.m_panel7, wx.ID_ANY, u"Enable Modbus RTU (Serial)", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.check_modbus_serial = wx.CheckBox( self.m_panel7, wx.ID_ANY, _('Enable Modbus RTU (Serial)'), wx.DefaultPosition, wx.DefaultSize, 0 )
         bSizer4.Add( self.check_modbus_serial, 0, wx.ALL, 10 )
         self.check_modbus_serial.Bind(wx.EVT_CHECKBOX, self.onUIChange)
 
@@ -214,9 +228,9 @@ class ArduinoUploadDialog(wx.Dialog):
         fgSizer2.SetFlexibleDirection( wx.BOTH )
         fgSizer2.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 
-        self.m_staticText10 = wx.StaticText( self.m_panel7, wx.ID_ANY, u"Interface:", wx.DefaultPosition, wx.Size( -1,-1 ), 0 )
+        self.m_staticText10 = wx.StaticText( self.m_panel7, wx.ID_ANY, _('Interface:'), wx.DefaultPosition, wx.Size( -1,-1 ), 0 )
         self.m_staticText10.Wrap( -1 )
-        self.m_staticText10.SetMinSize( wx.Size( 60,-1 ) )
+        self.m_staticText10.SetMinSize( wx.Size( 180,-1 ) )
 
         fgSizer2.Add( self.m_staticText10, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 
@@ -227,9 +241,9 @@ class ArduinoUploadDialog(wx.Dialog):
 
         fgSizer2.Add( self.serial_iface_combo, 0, wx.ALL, 5 )
 
-        self.m_staticText11 = wx.StaticText( self.m_panel7, wx.ID_ANY, u"Baud:", wx.DefaultPosition, wx.Size( -1,-1 ), 0 )
+        self.m_staticText11 = wx.StaticText( self.m_panel7, wx.ID_ANY, _('Baudrate:'), wx.DefaultPosition, wx.Size( -1,-1 ), 0 )
         self.m_staticText11.Wrap( -1 )
-        self.m_staticText11.SetMinSize( wx.Size( 60,-1 ) )
+        self.m_staticText11.SetMinSize( wx.Size( 180,-1 ) )
 
         fgSizer2.Add( self.m_staticText11, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 
@@ -240,9 +254,9 @@ class ArduinoUploadDialog(wx.Dialog):
 
         fgSizer2.Add( self.baud_rate_combo, 0, wx.ALL, 5 )
 
-        self.m_staticText12 = wx.StaticText( self.m_panel7, wx.ID_ANY, u"Slave ID:", wx.DefaultPosition, wx.Size( -1,-1 ), 0 )
+        self.m_staticText12 = wx.StaticText( self.m_panel7, wx.ID_ANY, _('Slave ID:'), wx.DefaultPosition, wx.Size( -1,-1 ), 0 )
         self.m_staticText12.Wrap( -1 )
-        self.m_staticText12.SetMinSize( wx.Size( 60,-1 ) )
+        self.m_staticText12.SetMinSize( wx.Size( 180,-1 ) )
 
         fgSizer2.Add( self.m_staticText12, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 
@@ -251,9 +265,9 @@ class ArduinoUploadDialog(wx.Dialog):
 
         fgSizer2.Add( self.slaveid_txt, 0, wx.ALL, 5 )
 
-        self.m_staticText13 = wx.StaticText( self.m_panel7, wx.ID_ANY, u"Tx Pin:", wx.DefaultPosition, wx.Size( -1,-1 ), 0 )
+        self.m_staticText13 = wx.StaticText( self.m_panel7, wx.ID_ANY, _('RS485 TX Pin:'), wx.DefaultPosition, wx.Size( -1,-1 ), 0 )
         self.m_staticText13.Wrap( -1 )
-        self.m_staticText13.SetMinSize( wx.Size( 60,-1 ) )
+        self.m_staticText13.SetMinSize( wx.Size( 180,-1 ) )
 
         fgSizer2.Add( self.m_staticText13, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 
@@ -274,36 +288,36 @@ class ArduinoUploadDialog(wx.Dialog):
         self.m_staticline21 = wx.StaticLine( self.m_panel7, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
         bSizer4.Add( self.m_staticline21, 0, wx.ALL|wx.BOTTOM|wx.EXPAND|wx.TOP, 5 )
 
-        self.check_modbus_tcp = wx.CheckBox( self.m_panel7, wx.ID_ANY, u"Enable Modbus TCP", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.check_modbus_tcp = wx.CheckBox( self.m_panel7, wx.ID_ANY, _('Enable Modbus TCP'), wx.DefaultPosition, wx.DefaultSize, 0 )
         bSizer4.Add( self.check_modbus_tcp, 0, wx.ALL, 10 )
         self.check_modbus_tcp.Bind(wx.EVT_CHECKBOX, self.onUIChange)
-        
+
         fgSizer3 = wx.FlexGridSizer( 0, 2, 0, 0 )
         fgSizer3.SetFlexibleDirection( wx.BOTH )
         fgSizer3.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 
-        self.m_staticText14 = wx.StaticText( self.m_panel7, wx.ID_ANY, u"Interface:", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.m_staticText14 = wx.StaticText( self.m_panel7, wx.ID_ANY, _('Interface:'), wx.DefaultPosition, wx.DefaultSize, 0 )
         self.m_staticText14.Wrap( -1 )
-        self.m_staticText14.SetMinSize( wx.Size( 60,-1 ) )
+        self.m_staticText14.SetMinSize( wx.Size( 180,-1 ) )
 
         fgSizer3.Add( self.m_staticText14, 0, wx.ALL, 5 )
 
         tcp_iface_comboChoices = [ u"Ethernet", u"WiFi" ]
         self.tcp_iface_combo = wx.ComboBox( self.m_panel7, wx.ID_ANY, u"Ethernet", wx.DefaultPosition, wx.DefaultSize, tcp_iface_comboChoices, wx.CB_READONLY )
         self.tcp_iface_combo.SetSelection( 0 )
-        self.tcp_iface_combo.SetMinSize( wx.Size( 440,-1 ) )
+        self.tcp_iface_combo.SetMinSize( wx.Size( 560,-1 ) )
         self.tcp_iface_combo.Bind(wx.EVT_COMBOBOX, self.onUIChange)
 
         fgSizer3.Add( self.tcp_iface_combo, 0, wx.ALL|wx.EXPAND, 5 )
 
         self.m_staticText15 = wx.StaticText( self.m_panel7, wx.ID_ANY, u"MAC:", wx.DefaultPosition, wx.DefaultSize, 0 )
         self.m_staticText15.Wrap( -1 )
-        self.m_staticText15.SetMinSize( wx.Size( 60,-1 ) )
+        self.m_staticText15.SetMinSize( wx.Size( 180,-1 ) )
 
         fgSizer3.Add( self.m_staticText15, 0, wx.ALL, 5 )
 
         self.mac_txt = wx.TextCtrl( self.m_panel7, wx.ID_ANY, u"0xDE, 0xAD, 0xBE, 0xEF, 0xDE, 0xAD", wx.DefaultPosition, wx.DefaultSize, 0 )
-        self.mac_txt.SetMinSize( wx.Size( 440,-1 ) )
+        self.mac_txt.SetMinSize( wx.Size( 560,-1 ) )
 
         fgSizer3.Add( self.mac_txt, 0, wx.ALL|wx.EXPAND, 5 )
 
@@ -316,7 +330,7 @@ class ArduinoUploadDialog(wx.Dialog):
 
         self.m_staticText17 = wx.StaticText( self.m_panel7, wx.ID_ANY, u"IP:", wx.DefaultPosition, wx.DefaultSize, 0 )
         self.m_staticText17.Wrap( -1 )
-        self.m_staticText17.SetMinSize( wx.Size( 60,-1 ) )
+        self.m_staticText17.SetMinSize( wx.Size( 180,-1 ) )
 
         fgSizer4.Add( self.m_staticText17, 0, wx.ALL, 5 )
 
@@ -327,7 +341,7 @@ class ArduinoUploadDialog(wx.Dialog):
 
         self.m_staticText18 = wx.StaticText( self.m_panel7, wx.ID_ANY, u"DNS:", wx.DefaultPosition, wx.DefaultSize, 0 )
         self.m_staticText18.Wrap( -1 )
-        self.m_staticText18.SetMinSize( wx.Size( 60,-1 ) )
+        self.m_staticText18.SetMinSize( wx.Size( 180,-1 ) )
 
         fgSizer4.Add( self.m_staticText18, 0, wx.ALL, 5 )
 
@@ -336,9 +350,9 @@ class ArduinoUploadDialog(wx.Dialog):
 
         fgSizer4.Add( self.dns_txt, 0, wx.ALL, 5 )
 
-        self.m_staticText19 = wx.StaticText( self.m_panel7, wx.ID_ANY, u"Gateway:", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.m_staticText19 = wx.StaticText( self.m_panel7, wx.ID_ANY, _('Gateway:'), wx.DefaultPosition, wx.DefaultSize, 0 )
         self.m_staticText19.Wrap( -1 )
-        self.m_staticText19.SetMinSize( wx.Size( 60,-1 ) )
+        self.m_staticText19.SetMinSize( wx.Size( 180,-1 ) )
 
         fgSizer4.Add( self.m_staticText19, 0, wx.ALL, 5 )
 
@@ -347,9 +361,9 @@ class ArduinoUploadDialog(wx.Dialog):
 
         fgSizer4.Add( self.gateway_txt, 0, wx.ALL, 5 )
 
-        self.m_staticText20 = wx.StaticText( self.m_panel7, wx.ID_ANY, u"Subnet:", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.m_staticText20 = wx.StaticText( self.m_panel7, wx.ID_ANY, _('Subnet:'), wx.DefaultPosition, wx.DefaultSize, 0 )
         self.m_staticText20.Wrap( -1 )
-        self.m_staticText20.SetMinSize( wx.Size( 60,-1 ) )
+        self.m_staticText20.SetMinSize( wx.Size( 180,-1 ) )
 
         fgSizer4.Add( self.m_staticText20, 0, wx.ALL, 5 )
 
@@ -358,9 +372,9 @@ class ArduinoUploadDialog(wx.Dialog):
 
         fgSizer4.Add( self.subnet_txt, 0, wx.ALL, 5 )
 
-        self.m_staticText21 = wx.StaticText( self.m_panel7, wx.ID_ANY, u"Wi-Fi SSID:", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.m_staticText21 = wx.StaticText( self.m_panel7, wx.ID_ANY, u"WiFi SSID:", wx.DefaultPosition, wx.DefaultSize, 0 )
         self.m_staticText21.Wrap( -1 )
-        self.m_staticText21.SetMinSize( wx.Size( 60,-1 ) )
+        self.m_staticText21.SetMinSize( wx.Size( 180,-1 ) )
 
         fgSizer4.Add( self.m_staticText21, 0, wx.ALL, 5 )
 
@@ -369,9 +383,9 @@ class ArduinoUploadDialog(wx.Dialog):
 
         fgSizer4.Add( self.wifi_ssid_txt, 0, wx.ALL, 5 )
 
-        self.m_staticText22 = wx.StaticText( self.m_panel7, wx.ID_ANY, u"Password:", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.m_staticText22 = wx.StaticText( self.m_panel7, wx.ID_ANY, _('WiFi PSK (Password):'), wx.DefaultPosition, wx.DefaultSize, 0 )
         self.m_staticText22.Wrap( -1 )
-        self.m_staticText22.SetMinSize( wx.Size( 60,-1 ) )
+        self.m_staticText22.SetMinSize( wx.Size( 180,-1 ) )
 
         fgSizer4.Add( self.m_staticText22, 0, wx.ALL, 5 )
 
@@ -389,13 +403,15 @@ class ArduinoUploadDialog(wx.Dialog):
 
         gSizer2 = wx.GridSizer( 0, 2, 0, 0 )
 
-        self.m_button4 = wx.Button( self.m_panel7, wx.ID_ANY, u"Restore Defaults", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.m_button4 = wx.Button( self.m_panel7, wx.ID_ANY, _('Restore Defaults'), wx.DefaultPosition, wx.DefaultSize, 0 )
         self.m_button4.SetMinSize( wx.Size( 150,30 ) )
+        self.m_button4.Bind(wx.EVT_BUTTON, self.restoreCommDefaults)
 
         gSizer2.Add( self.m_button4, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
 
-        self.m_button5 = wx.Button( self.m_panel7, wx.ID_ANY, u"Save Changes", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.m_button5 = wx.Button( self.m_panel7, wx.ID_ANY, _('Save Changes'), wx.DefaultPosition, wx.DefaultSize, 0 )
         self.m_button5.SetMinSize( wx.Size( 150,30 ) )
+        self.m_button5.Bind(wx.EVT_BUTTON, self.saveSettings)
 
         gSizer2.Add( self.m_button5, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
 
@@ -406,7 +422,7 @@ class ArduinoUploadDialog(wx.Dialog):
         self.m_panel7.SetSizer( bSizer4 )
         self.m_panel7.Layout()
         bSizer4.Fit( self.m_panel7 )
-        self.m_listbook2.AddPage( self.m_panel7, u"Communications", False )
+        self.m_listbook2.AddPage( self.m_panel7, _('Communications'), False )
         m_listbook2Bitmap = wx.Bitmap( os.path.join(current_dir, "..", "images", "comm.png"), wx.BITMAP_TYPE_ANY )
         if ( m_listbook2Bitmap.IsOk() ):
             m_listbook2Images.Add( m_listbook2Bitmap )
@@ -414,13 +430,16 @@ class ArduinoUploadDialog(wx.Dialog):
             m_listbook2Index += 1
 
 
-        bSizer2.Add( self.m_listbook2, 1, wx.EXPAND |wx.ALL, 0 )
+        main_sizer.Add( self.m_listbook2, 1, wx.EXPAND |wx.ALL, 0 )
 
 
-        self.SetSizer( bSizer2 )
+        self.SetSizer(main_sizer)
+        main_sizer.Fit(self)
         self.Layout()
 
         self.Centre( wx.BOTH )
+
+        self.reloadComboChoices(None) # Initialize the com port combo box content, accesses indirectly several elements, which need to be created completely
 
         self.loadSettings()
 
@@ -428,9 +447,38 @@ class ArduinoUploadDialog(wx.Dialog):
         pass
 
     def reloadComboChoices(self, event):
-         self.com_port_combo.Clear()
-         self.com_port_combo_choices = {comport.description:comport.device for comport in serial.tools.list_ports.comports()}
-         self.com_port_combo.SetItems(list(self.com_port_combo_choices.keys()))
+        self.setUIState(False)
+        current_display = self.com_port_combo.GetValue()
+        current_port = next((port for display_text, port in self.com_port_combo_choices.items()
+                             if display_text == current_display), current_display)
+
+        self.com_port_combo.Clear()
+        self.com_port_combo_choices = {}
+        new_display = current_display
+
+        for comport in serial.tools.list_ports.comports():
+            display_text = f"{comport.description} ({comport.device})"
+            self.com_port_combo_choices[display_text] = comport.device
+            if comport.device == current_port:
+                new_display = display_text
+
+        self.com_port_combo.SetItems(list(self.com_port_combo_choices.keys()))
+
+        for display_text, port in self.com_port_combo_choices.items():
+            if port == current_port:
+                new_display = display_text
+                break
+
+        wx.CallAfter(self.com_port_combo.SetValue, new_display)
+
+        self.setUIState(True)
+
+    def onBoardChange(self, e):
+        self.settings.pop('user_din', None);
+        self.settings.pop('user_ain', None);
+        self.settings.pop('user_dout', None);
+        self.settings.pop('user_aout', None);
+        self.onUIChange(e)
 
     def onUIChange(self, e):
         # Update Comms
@@ -447,11 +495,13 @@ class ArduinoUploadDialog(wx.Dialog):
 
         if (self.check_compile.GetValue() == False):
             self.com_port_combo.Enable(True)
-            self.upload_button.SetLabel("Transfer to PLC")
+            self.reload_button.Enable(True)
+            self.upload_button.SetLabel(_('Transfer to PLC'))
         elif (self.check_compile.GetValue() == True):
             self.com_port_combo.Enable(False)
-            self.upload_button.SetLabel("Compile")
-        
+            self.reload_button.Enable(False)
+            self.upload_button.SetLabel(_('Compile'))
+
         if (self.check_modbus_tcp.GetValue() == False):
             self.tcp_iface_combo.Enable(False)
             self.mac_txt.Enable(False)
@@ -477,11 +527,11 @@ class ArduinoUploadDialog(wx.Dialog):
 
         #Update IOs
         board_type = self.board_type_combo.GetValue().split(" [")[0] #remove the trailing [version] on board name
-        board_din = self.hals[board_type]['user_din']
-        board_ain = self.hals[board_type]['user_ain']
-        board_dout = self.hals[board_type]['user_dout']
-        board_aout = self.hals[board_type]['user_aout']
-        
+        board_din = self.settings.get('user_din', self.hals[board_type]["default_din"])
+        board_ain = self.settings.get('user_ain', self.hals[board_type]["default_ain"])
+        board_dout = self.settings.get('user_dout', self.hals[board_type]["default_dout"])
+        board_aout = self.settings.get('user_aout', self.hals[board_type]["default_aout"])
+
         self.din_txt.SetValue(str(board_din))
         self.ain_txt.SetValue(str(board_ain))
         self.dout_txt.SetValue(str(board_dout))
@@ -489,20 +539,13 @@ class ArduinoUploadDialog(wx.Dialog):
 
     def restoreIODefaults(self, event):
         board_type = self.board_type_combo.GetValue().split(" [")[0] #remove the trailing [version] on board name
-        self.hals[board_type]['user_din'] = self.hals[board_type]['default_din']
-        self.hals[board_type]['user_ain'] = self.hals[board_type]['default_ain']
-        self.hals[board_type]['user_dout'] = self.hals[board_type]['default_dout']
-        self.hals[board_type]['user_aout'] = self.hals[board_type]['default_aout']
-        self.saveHals()
+        #print(f'Restoring IO defaults for "{board_type}"')
+        self.settings['user_din'] = self.hals[board_type]['default_din']
+        self.settings['user_ain'] = self.hals[board_type]['default_ain']
+        self.settings['user_dout'] = self.hals[board_type]['default_dout']
+        self.settings['user_aout'] = self.hals[board_type]['default_aout']
         self.onUIChange(None)
-
-    def saveIO(self, event):
-        board_type = self.board_type_combo.GetValue().split(" [")[0] #remove the trailing [version] on board name
-        self.hals[board_type]['user_din'] = str(self.din_txt.GetValue())
-        self.hals[board_type]['user_ain'] = str(self.ain_txt.GetValue())
-        self.hals[board_type]['user_dout'] = str(self.dout_txt.GetValue())
-        self.hals[board_type]['user_aout'] = str(self.aout_txt.GetValue())
-        self.saveHals()
+        self.saveSettings()
 
     def startBuilder(self):
 
@@ -510,19 +553,28 @@ class ArduinoUploadDialog(wx.Dialog):
         board_type = self.board_type_combo.GetValue().split(" [")[0] #remove the trailing [version] on board name
         platform = self.hals[board_type]['platform']
         source = self.hals[board_type]['source']
-        
+
         self.generateDefinitionsFile()
 
         port = "None" #invalid port
         if (self.check_compile.GetValue() == True):
             port = None
-        elif self.com_port_combo.GetValue() in self.com_port_combo_choices:
-            port = self.com_port_combo_choices[self.com_port_combo.GetValue()]
-        
+        else:
+            selected_port = self.com_port_combo.GetValue()
+            # Check and select the port
+            port_found = False
+            for display_text, port_value in self.com_port_combo_choices.items():
+                if selected_port == display_text:
+                    port = port_value
+                    port_found = True
+                    break
+            if not port_found:
+                port = selected_port  # Use the user entered value directly
+
         compiler_thread = threading.Thread(target=builder.build, args=(self.plc_program, platform, source, port, self.output_text, self.hals, self.update_subsystem))
         compiler_thread.start()
         compiler_thread.join()
-        wx.CallAfter(self.upload_button.Enable, True)
+        wx.CallAfter(self.setUIState, True)
         if (self.update_subsystem):
             self.update_subsystem = False
             self.last_update = time.time()
@@ -530,19 +582,25 @@ class ArduinoUploadDialog(wx.Dialog):
         self.updateInstalledBoards()
         self.loadSettings() # Get the correct board name if an update or install occurred
 
+    def setUIState(self, enabled):
+        self.board_type_combo.Enable(enabled)
+        self.com_port_combo.Enable(enabled)
+        self.reload_button.Enable(enabled)
+        self.upload_button.Enable(enabled)
+        self.check_compile.Enable(enabled)
 
     def OnUpload(self, event):
-        self.upload_button.Enable(False)
+        self.setUIState(False)
         builder_thread = threading.Thread(target=self.startBuilder)
         builder_thread.start()
-    
+
     def generateDefinitionsFile(self):
 
         if platform.system() == 'Windows':
             base_path = 'editor\\arduino\\examples\\Baremetal\\'
         else:
             base_path = 'editor/arduino/examples/Baremetal/'
-        
+
         #Store program MD5 on target
         define_file = '//Program MD5\n'
         define_file += '#define PROGRAM_MD5 "' + str(self.md5) + '"\n'
@@ -564,10 +622,10 @@ class ArduinoUploadDialog(wx.Dialog):
         if (self.check_modbus_serial.GetValue() == True):
             define_file += '#define MBSERIAL\n'
             define_file += '#define MODBUS_ENABLED\n'
-        
+
         if (self.txpin_txt.GetValue() != '-1'):
             define_file += '#define MBSERIAL_TXPIN ' + str(self.txpin_txt.GetValue()) + '\n'
-            
+
         if (self.check_modbus_tcp.GetValue() == True):
             define_file += '#define MBTCP\n'
             define_file += '#define MODBUS_ENABLED\n'
@@ -586,12 +644,12 @@ class ArduinoUploadDialog(wx.Dialog):
         define_file += '#define NUM_ANALOG_INPUT ' + str(len(str(self.ain_txt.GetValue()).split(','))) + '\n'
         define_file += '#define NUM_DISCRETE_OUTPUT ' + str(len(str(self.dout_txt.GetValue()).split(','))) + '\n'
         define_file += '#define NUM_ANALOG_OUTPUT ' + str(len(str(self.aout_txt.GetValue()).split(','))) + '\n'
-        
+
         # Get define from hals
         board_type = self.board_type_combo.GetValue().split(" [")[0]
         if 'define' in self.hals[board_type]:
             define_file += '#define '+ self.hals[board_type]['define'] +'\n'
-        
+
         define_file += '\n\n//Arduino Libraries\n'
 
         #Generate Arduino Libraries defines
@@ -617,7 +675,7 @@ class ArduinoUploadDialog(wx.Dialog):
             define_file += '#define USE_STM32CAN_BLOCK\n'
         if (self.plc_program.find('STM32CAN_READ;') > 0):
             define_file += '#define USE_STM32CAN_BLOCK\n'
-        
+
         #Generate Arduino Extension (sketch) define
         if self.arduino_sketch != None:
             define_file += '#define USE_ARDUINO_SKETCH\n'
@@ -632,34 +690,41 @@ class ArduinoUploadDialog(wx.Dialog):
         f.flush()
         f.close()
 
-    def saveSettings(self):
-        settings = {}
-        settings['board_type'] = self.board_type_combo.GetValue()
-        settings['com_port'] = self.com_port_combo.GetValue()
-        settings['mb_serial'] = self.check_modbus_serial.GetValue()
-        settings['serial_iface'] = self.serial_iface_combo.GetValue()
-        settings['baud'] = self.baud_rate_combo.GetValue()
-        settings['slaveid'] = self.slaveid_txt.GetValue()
-        settings['txpin'] = self.txpin_txt.GetValue()
-        settings['mb_tcp'] = self.check_modbus_tcp.GetValue()
-        settings['tcp_iface'] = self.tcp_iface_combo.GetValue()
-        settings['mac'] = self.mac_txt.GetValue()
-        settings['ip'] = self.ip_txt.GetValue()
-        settings['dns'] = self.dns_txt.GetValue()
-        settings['gateway'] = self.gateway_txt.GetValue()
-        settings['subnet'] = self.subnet_txt.GetValue()
-        settings['ssid'] = self.wifi_ssid_txt.GetValue()
-        settings['pwd'] = self.wifi_pwd_txt.GetValue()
-        settings['last_update'] = self.last_update
+    def saveSettings(self, event=None):
+        self.settings = {}
+        self.settings['board_type'] = self.board_type_combo.GetValue()
+        self.settings['user_din'] = str(self.din_txt.GetValue())
+        self.settings['user_ain'] = str(self.ain_txt.GetValue())
+        self.settings['user_dout'] = str(self.dout_txt.GetValue())
+        self.settings['user_aout'] = str(self.aout_txt.GetValue())
+
+        com_port_value = self.com_port_combo.GetValue()
+        self.settings['com_port'] = next((port for display_text, port in self.com_port_combo_choices.items()
+                                     if display_text == com_port_value), com_port_value)
+
+        self.settings['mb_serial'] = self.check_modbus_serial.GetValue()
+        self.settings['serial_iface'] = self.serial_iface_combo.GetValue()
+        self.settings['baud'] = self.baud_rate_combo.GetValue()
+        self.settings['slaveid'] = self.slaveid_txt.GetValue()
+        self.settings['txpin'] = self.txpin_txt.GetValue()
+        self.settings['mb_tcp'] = self.check_modbus_tcp.GetValue()
+        self.settings['tcp_iface'] = self.tcp_iface_combo.GetValue()
+        self.settings['mac'] = self.mac_txt.GetValue()
+        self.settings['ip'] = self.ip_txt.GetValue()
+        self.settings['dns'] = self.dns_txt.GetValue()
+        self.settings['gateway'] = self.gateway_txt.GetValue()
+        self.settings['subnet'] = self.subnet_txt.GetValue()
+        self.settings['ssid'] = self.wifi_ssid_txt.GetValue()
+        self.settings['pwd'] = self.wifi_pwd_txt.GetValue()
+        self.settings['last_update'] = self.last_update
 
         #write settings to disk
-        jsonStr = json.dumps(settings)
         if platform.system() == 'Windows':
             base_path = 'editor\\arduino\\examples\\Baremetal\\'
         else:
             base_path = 'editor/arduino/examples/Baremetal/'
         f = open(base_path+'settings.json', 'w')
-        f.write(jsonStr)
+        json.dump(self.settings, f, indent=2, sort_keys=True)
         f.flush()
         f.close()
 
@@ -675,11 +740,19 @@ class ArduinoUploadDialog(wx.Dialog):
             jsonStr = f.read()
             f.close()
 
-            settings = json.loads(jsonStr)
+            try:
+                self.settings = json.loads(jsonStr)
+            except json.JSONDecodeError:
+                self.restoreIODefaults(None)
+                self.restoreCommDefaults(None)
+            except Exception as e:
+                print(f"Unexpected error while parsing settings.json: {e}")
+                self.restoreIODefaults(None)
+                self.restoreCommDefaults(None)
 
             #Check if should update subsystem
-            if ('last_update' in settings.keys()):
-                self.last_update = settings['last_update']
+            if ('last_update' in self.settings.keys()):
+                self.last_update = self.settings['last_update']
                 if (time.time() - float(self.last_update) > 604800.0): #604800 is the number of seconds in a week (7 days)
                     self.update_subsystem = True
                     self.last_update = time.time()
@@ -690,53 +763,111 @@ class ArduinoUploadDialog(wx.Dialog):
                 self.last_update = time.time()
 
             #Get the correct name for the board_type
-            board = settings['board_type'].split(' [')[0]
+            board = self.settings['board_type'].split(' [')[0]
             board_name = ""
             if board in self.hals:
                 if self.hals[board]['version'] == "0":
-                    board_name = board + ' [NOT INSTALLED]'
+                    board_name = board + ' [' + _('NOT INSTALLED') + ']'
                 else:
                     board_name = board + ' [' + self.hals[board]['version'] + ']'
 
             wx.CallAfter(self.board_type_combo.SetValue, board_name)
-            wx.CallAfter(self.com_port_combo.SetValue, settings['com_port'])
-            wx.CallAfter(self.check_modbus_serial.SetValue, settings['mb_serial'])
-            wx.CallAfter(self.serial_iface_combo.SetValue, settings['serial_iface'])
-            wx.CallAfter(self.baud_rate_combo.SetValue, settings['baud'])
-            wx.CallAfter(self.slaveid_txt.SetValue, settings['slaveid'])
-            wx.CallAfter(self.txpin_txt.SetValue, settings['txpin'])
-            wx.CallAfter(self.check_modbus_tcp.SetValue, settings['mb_tcp'])
-            wx.CallAfter(self.tcp_iface_combo.SetValue, settings['tcp_iface'])
-            wx.CallAfter(self.mac_txt.SetValue, settings['mac'])
-            wx.CallAfter(self.ip_txt.SetValue, settings['ip'])
-            wx.CallAfter(self.dns_txt.SetValue, settings['dns'])
-            wx.CallAfter(self.gateway_txt.SetValue, settings['gateway'])
-            wx.CallAfter(self.subnet_txt.SetValue, settings['subnet'])
-            wx.CallAfter(self.wifi_ssid_txt.SetValue, settings['ssid'])
-            wx.CallAfter(self.wifi_pwd_txt.SetValue, settings['pwd'])
+
+            com_port_value = self.settings['com_port']
+            for display_text, port in self.com_port_combo_choices.items():
+                if port == com_port_value:
+                    com_port_value = display_text
+                    break
+            wx.CallAfter(self.com_port_combo.SetValue, com_port_value)
+
+            wx.CallAfter(self.check_modbus_serial.SetValue, self.settings['mb_serial'])
+            wx.CallAfter(self.serial_iface_combo.SetValue, self.settings['serial_iface'])
+            wx.CallAfter(self.baud_rate_combo.SetValue, self.settings['baud'])
+            wx.CallAfter(self.slaveid_txt.SetValue, self.settings['slaveid'])
+            wx.CallAfter(self.txpin_txt.SetValue, self.settings['txpin'])
+            wx.CallAfter(self.check_modbus_tcp.SetValue, self.settings['mb_tcp'])
+            wx.CallAfter(self.tcp_iface_combo.SetValue, self.settings['tcp_iface'])
+            wx.CallAfter(self.mac_txt.SetValue, self.settings['mac'])
+            wx.CallAfter(self.ip_txt.SetValue, self.settings['ip'])
+            wx.CallAfter(self.dns_txt.SetValue, self.settings['dns'])
+            wx.CallAfter(self.gateway_txt.SetValue, self.settings['gateway'])
+            wx.CallAfter(self.subnet_txt.SetValue, self.settings['subnet'])
+            wx.CallAfter(self.wifi_ssid_txt.SetValue, self.settings['ssid'])
+            wx.CallAfter(self.wifi_pwd_txt.SetValue, self.settings['pwd'])
 
             wx.CallAfter(self.onUIChange, None)
-    
+
+    def restoreCommDefaults(self, event):
+        # Read default settings from settingsDefaults.json
+        if platform.system() == 'Windows':
+            base_path = 'editor\\arduino\\examples\\Baremetal\\'
+        else:
+            base_path = 'editor/arduino/examples/Baremetal/'
+
+        default_settings_file = os.path.join(base_path, 'settingsDefaults.json')
+        settings_file = os.path.join(base_path, 'settings.json')
+
+        if os.path.exists(default_settings_file):
+            with open(default_settings_file, 'r') as f:
+                default_settings = json.load(f)
+
+            # Update only the communication-related settings
+            current_settings = {}
+            if os.path.exists(settings_file):
+                with open(settings_file, 'r') as f:
+                    current_settings = json.load(f)
+
+            # Preserve non-communication settings
+            for key in current_settings:
+                if key not in ['mb_serial', 'serial_iface', 'baud', 'slaveid', 'txpin',
+                               'mb_tcp', 'tcp_iface', 'mac', 'ip', 'dns', 'gateway',
+                               'subnet', 'ssid', 'pwd']:
+                    default_settings[key] = current_settings[key]
+
+            # Write the updated settings back to the settings.json file
+            with open(settings_file, 'w') as f:
+                json.dump(default_settings, f, indent=2, sort_keys=True)
+
+            # Use loadSettings to update the GUI
+            self.loadSettings()
+
+            # Enable all communication-related fields
+            self.serial_iface_combo.Enable(True)
+            self.baud_rate_combo.Enable(True)
+            self.slaveid_txt.Enable(True)
+            self.txpin_txt.Enable(True)
+            self.tcp_iface_combo.Enable(True)
+            self.mac_txt.Enable(True)
+            self.ip_txt.Enable(True)
+            self.dns_txt.Enable(True)
+            self.gateway_txt.Enable(True)
+            self.subnet_txt.Enable(True)
+            self.wifi_ssid_txt.Enable(True)
+            self.wifi_pwd_txt.Enable(True)
+
+            # Call onUIChange to update the state of the fields based on checkbox values
+            self.onUIChange(None)
+        else:
+            print("Default settings file not found:", default_settings_file)
+
     def loadHals(self):
         # load hals list from json file, or construct it
         if platform.system() == 'Windows':
             jfile = 'editor\\arduino\\examples\\Baremetal\\hals.json'
         else:
             jfile = 'editor/arduino/examples/Baremetal/hals.json'
-        
+
         f = open(jfile, 'r')
-        jsonStr = f.read()
+        self.hals = json.load(f)
         f.close()
-        self.hals = json.loads(jsonStr)
 
     def saveHals(self):
-        jsonStr = json.dumps(self.hals)
         if platform.system() == 'Windows':
             jfile = 'editor\\arduino\\examples\\Baremetal\\hals.json'
         else:
             jfile = 'editor/arduino/examples/Baremetal/hals.json'
         f = open(jfile, 'w')
-        f.write(jsonStr)
+        json.dump(self.hals, f, indent=2, sort_keys=True)
         f.flush()
         f.close()
 
@@ -747,8 +878,8 @@ class ArduinoUploadDialog(wx.Dialog):
             cli_command = 'editor/arduino/bin/arduino-cli-mac'
         else:
             cli_command = 'editor/arduino/bin/arduino-cli-l64'
-        
-        core_list = builder.runCommand(cli_command + ' core list')
+
+        core_list = builder.runCommand(cli_command + ' --no-color core list')
 
         if core_list == None or core_list == '':
             print("Error reading core list")
@@ -759,7 +890,7 @@ class ArduinoUploadDialog(wx.Dialog):
         if (len(lines) < 2):
             print("Error building list of installed platforms")
             return
-        
+
         core_list = []
         versions_list = []
         for line in lines:
@@ -774,7 +905,7 @@ class ArduinoUploadDialog(wx.Dialog):
             version = line[1]
             core_list.append(core)
             versions_list.append((core, version))
-        
+
         # Update installed boards in list
         for board in self.hals:
             if self.hals[board]['core'] not in core_list:
@@ -784,5 +915,5 @@ class ArduinoUploadDialog(wx.Dialog):
                     if self.hals[board]['core'] == version[0]:
                         self.hals[board]['version'] = version[1]
                         break
-        
+
         self.saveHals()
