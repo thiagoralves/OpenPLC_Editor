@@ -5,7 +5,7 @@ import shutil
 import subprocess
 import sys
 import time
-
+import select
 import wx
 
 global compiler_logs
@@ -38,17 +38,40 @@ def runCommand(command):
 
     return cmd_response.decode('utf-8', errors='backslashreplace')
 
-def read_output(process, txtCtrl):
-    for line in process.stdout:
-        append_compiler_log(txtCtrl, line.decode('UTF-8', errors='backslashreplace'))
+def read_output(process, txtCtrl, timeout=None):
+    start_time = time.time()
+    return_code = 0
 
-        # Geben Sie der GUI die Chance, die aufgestauten Aufrufe zu verarbeiten
-        wx.YieldIfNeeded()
+    while True:
+        output = process.stdout.readline()
+        if output:
+            append_compiler_log(txtCtrl, output.decode('UTF-8', errors='backslashreplace'))
+            wx.YieldIfNeeded()
 
-    return process.poll()
+        # check for process exit
+        poll_result = process.poll()
+        if poll_result is not None:
+            # process terminated, read remaining output data
+            for line in process.stdout:
+                append_compiler_log(txtCtrl, line.decode('UTF-8', errors='backslashreplace'))
+                wx.YieldIfNeeded()
+            return_code = poll_result
+            break
 
-def runCommandToWin(txtCtrl, command, cwd=None):
-    return_code = -1
+        # watch for the timeout
+        if (timeout is not None) and ((time.time() - start_time) > timeout):
+            process.kill()
+            return_code = -1  # timeout error code
+            break
+
+        # brief sleep to reduce CPU load
+        time.sleep(0.1)
+
+    return return_code
+
+
+def runCommandToWin(txtCtrl, command, cwd=None, timeout=None):
+    return_code = -2  # default value for unexpected errors
     append_compiler_log(txtCtrl, '$ ' + ' '.join(map(str, command)) + '\n')
     try:
         if os_platform.system() == 'Windows':
@@ -58,11 +81,12 @@ def runCommandToWin(txtCtrl, command, cwd=None):
         else:
             compilation = subprocess.Popen(command, cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
-        return_code = read_output(compilation, txtCtrl)
+        return_code = read_output(compilation, txtCtrl, timeout)
         append_compiler_log(txtCtrl, '$? = ' + str(return_code) + '\n')
 
     except subprocess.CalledProcessError as exc:
         append_compiler_log(txtCtrl, exc.output)
+        return_code = exc.returncode if exc.returncode is not None else -3
 
     return return_code
 
