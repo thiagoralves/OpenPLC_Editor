@@ -43,14 +43,10 @@ def read_output(process, txtCtrl, timeout=None):
     return_code = 0
 
     while True:
-        # non-blocking check for readable output data
-        ready, _, _ = select.select([process.stdout], [], [], 0.1)
-
-        if ready:
-            output = process.stdout.readline()
-            if output:
-                append_compiler_log(txtCtrl, output.decode('UTF-8', errors='backslashreplace'))
-                wx.YieldIfNeeded()
+        output = process.stdout.readline()
+        if output:
+            append_compiler_log(txtCtrl, output.decode('UTF-8', errors='backslashreplace'))
+            wx.YieldIfNeeded()
 
         # check for process exit
         poll_result = process.poll()
@@ -69,7 +65,7 @@ def read_output(process, txtCtrl, timeout=None):
             break
 
         # brief sleep to reduce CPU load
-        time.sleep(0.01)
+        time.sleep(0.1)
 
     return return_code
 
