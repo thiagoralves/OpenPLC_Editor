@@ -23,7 +23,7 @@ import glob
 class ArduinoUploadDialog(wx.Dialog):
     """Dialog to configure upload parameters"""
 
-    def __init__(self, parent, st_code, arduino_ext, md5):
+    def __init__(self, parent, st_code, arduino_ext, md5, project_controller):
         """
         Constructor
         @param parent: Parent wx.Window of dialog for modal
@@ -37,6 +37,8 @@ class ArduinoUploadDialog(wx.Dialog):
         self.update_subsystem = True
         current_dir = paths.AbsDir(__file__)
         self.com_port_combo_choices = {}
+        self.project_controller = project_controller
+        self.settings = self.project_controller.GetArduinoSettings()
 
         wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _('Transfer Program to PLC'), pos = wx.DefaultPosition, style = wx.DEFAULT_DIALOG_STYLE )
 
@@ -545,7 +547,7 @@ class ArduinoUploadDialog(wx.Dialog):
         self.settings['user_dout'] = self.hals[board_type]['default_dout']
         self.settings['user_aout'] = self.hals[board_type]['default_aout']
         self.onUIChange(None)
-        self.saveSettings()
+        self.project_controller.SetArduinoSettingsChanged()
 
     def startBuilder(self):
 
@@ -691,7 +693,6 @@ class ArduinoUploadDialog(wx.Dialog):
         f.close()
 
     def saveSettings(self, event=None):
-        self.settings = {}
         self.settings['board_type'] = self.board_type_combo.GetValue()
         self.settings['user_din'] = str(self.din_txt.GetValue())
         self.settings['user_ain'] = str(self.ain_txt.GetValue())
@@ -718,84 +719,61 @@ class ArduinoUploadDialog(wx.Dialog):
         self.settings['pwd'] = self.wifi_pwd_txt.GetValue()
         self.settings['last_update'] = self.last_update
 
-        #write settings to disk
-        if platform.system() == 'Windows':
-            base_path = 'editor\\arduino\\examples\\Baremetal\\'
-        else:
-            base_path = 'editor/arduino/examples/Baremetal/'
-        f = open(base_path+'settings.json', 'w')
-        json.dump(self.settings, f, indent=2, sort_keys=True)
-        f.flush()
-        f.close()
-
+        self.project_controller.SetArduinoSettingsChanged()
 
     def loadSettings(self):
-        #read settings from disk
-        if platform.system() == 'Windows':
-            base_path = 'editor\\arduino\\examples\\Baremetal\\'
-        else:
-            base_path = 'editor/arduino/examples/Baremetal/'
-        if (os.path.exists(base_path+'settings.json')):
-            f = open(base_path+'settings.json', 'r')
-            jsonStr = f.read()
-            f.close()
+        self.settings = self.project_controller.GetArduinoSettings()
 
-            try:
-                self.settings = json.loads(jsonStr)
-            except json.JSONDecodeError:
-                self.restoreIODefaults(None)
-                self.restoreCommDefaults(None)
-            except Exception as e:
-                print(f"Unexpected error while parsing settings.json: {e}")
-                self.restoreIODefaults(None)
-                self.restoreCommDefaults(None)
+        if not self.settings:
+            self.restoreIODefaults(None)
+            self.restoreCommDefaults(None)
 
-            #Check if should update subsystem
-            if ('last_update' in self.settings.keys()):
-                self.last_update = self.settings['last_update']
-                if (time.time() - float(self.last_update) > 604800.0): #604800 is the number of seconds in a week (7 days)
-                    self.update_subsystem = True
-                    self.last_update = time.time()
-                else:
-                    self.update_subsystem = False
-            else:
+        # Check if should update subsystem
+        if ('last_update' in self.settings.keys()):
+            self.last_update = self.settings['last_update']
+            if (time.time() - float(self.last_update) > 604800.0): #604800 is the number of seconds in a week (7 days)
                 self.update_subsystem = True
                 self.last_update = time.time()
+            else:
+                self.update_subsystem = False
+        else:
+            self.update_subsystem = True
+            self.last_update = time.time()
 
-            #Get the correct name for the board_type
-            board = self.settings['board_type'].split(' [')[0]
-            board_name = ""
-            if board in self.hals:
-                if self.hals[board]['version'] == "0":
-                    board_name = board + ' [' + _('NOT INSTALLED') + ']'
-                else:
-                    board_name = board + ' [' + self.hals[board]['version'] + ']'
+        # Get the correct name for the board_type
+        board = self.settings['board_type'].split(' [')[0]
+        board_name = ""
+        if board in self.hals:
+            if self.hals[board]['version'] == "0":
+                board_name = board + ' [' + _('NOT INSTALLED') + ']'
+            else:
+                board_name = board + ' [' + self.hals[board]['version'] + ']'
 
-            wx.CallAfter(self.board_type_combo.SetValue, board_name)
+        wx.CallAfter(self.board_type_combo.SetValue, board_name)
 
-            com_port_value = self.settings['com_port']
-            for display_text, port in self.com_port_combo_choices.items():
-                if port == com_port_value:
-                    com_port_value = display_text
-                    break
-            wx.CallAfter(self.com_port_combo.SetValue, com_port_value)
+        com_port_value = self.settings['com_port']
+        for display_text, port in self.com_port_combo_choices.items():
+            if port == com_port_value:
+                com_port_value = display_text
+                break
+        wx.CallAfter(self.com_port_combo.SetValue, com_port_value)
 
-            wx.CallAfter(self.check_modbus_serial.SetValue, self.settings['mb_serial'])
-            wx.CallAfter(self.serial_iface_combo.SetValue, self.settings['serial_iface'])
-            wx.CallAfter(self.baud_rate_combo.SetValue, self.settings['baud'])
-            wx.CallAfter(self.slaveid_txt.SetValue, self.settings['slaveid'])
-            wx.CallAfter(self.txpin_txt.SetValue, self.settings['txpin'])
-            wx.CallAfter(self.check_modbus_tcp.SetValue, self.settings['mb_tcp'])
-            wx.CallAfter(self.tcp_iface_combo.SetValue, self.settings['tcp_iface'])
-            wx.CallAfter(self.mac_txt.SetValue, self.settings['mac'])
-            wx.CallAfter(self.ip_txt.SetValue, self.settings['ip'])
-            wx.CallAfter(self.dns_txt.SetValue, self.settings['dns'])
-            wx.CallAfter(self.gateway_txt.SetValue, self.settings['gateway'])
-            wx.CallAfter(self.subnet_txt.SetValue, self.settings['subnet'])
-            wx.CallAfter(self.wifi_ssid_txt.SetValue, self.settings['ssid'])
-            wx.CallAfter(self.wifi_pwd_txt.SetValue, self.settings['pwd'])
+        wx.CallAfter(self.check_modbus_serial.SetValue, self.settings['mb_serial'])
+        wx.CallAfter(self.serial_iface_combo.SetValue, self.settings['serial_iface'])
+        wx.CallAfter(self.baud_rate_combo.SetValue, self.settings['baud'])
+        wx.CallAfter(self.slaveid_txt.SetValue, self.settings['slaveid'])
+        wx.CallAfter(self.txpin_txt.SetValue, self.settings['txpin'])
+        wx.CallAfter(self.check_modbus_tcp.SetValue, self.settings['mb_tcp'])
+        wx.CallAfter(self.tcp_iface_combo.SetValue, self.settings['tcp_iface'])
+        wx.CallAfter(self.mac_txt.SetValue, self.settings['mac'])
+        wx.CallAfter(self.ip_txt.SetValue, self.settings['ip'])
+        wx.CallAfter(self.dns_txt.SetValue, self.settings['dns'])
+        wx.CallAfter(self.gateway_txt.SetValue, self.settings['gateway'])
+        wx.CallAfter(self.subnet_txt.SetValue, self.settings['subnet'])
+        wx.CallAfter(self.wifi_ssid_txt.SetValue, self.settings['ssid'])
+        wx.CallAfter(self.wifi_pwd_txt.SetValue, self.settings['pwd'])
 
-            wx.CallAfter(self.onUIChange, None)
+        wx.CallAfter(self.onUIChange, None)
 
     def restoreCommDefaults(self, event):
         # Read default settings from settingsDefaults.json
@@ -812,21 +790,19 @@ class ArduinoUploadDialog(wx.Dialog):
                 default_settings = json.load(f)
 
             # Update only the communication-related settings
-            current_settings = {}
-            if os.path.exists(settings_file):
-                with open(settings_file, 'r') as f:
-                    current_settings = json.load(f)
-
             # Preserve non-communication settings
-            for key in current_settings:
+            for key in self.settings:
                 if key not in ['mb_serial', 'serial_iface', 'baud', 'slaveid', 'txpin',
                                'mb_tcp', 'tcp_iface', 'mac', 'ip', 'dns', 'gateway',
                                'subnet', 'ssid', 'pwd']:
-                    default_settings[key] = current_settings[key]
+                    default_settings[key] = self.settings[key]
 
-            # Write the updated settings back to the settings.json file
-            with open(settings_file, 'w') as f:
-                json.dump(default_settings, f, indent=2, sort_keys=True)
+            # Write the updated settings back to the settings
+            for key in default_settings:
+                self.settings[key] = default_settings[key]
+
+            # inform project controller about the changes
+            self.project_controller.SetArduinoSettingsChanged()
 
             # Use loadSettings to update the GUI
             self.loadSettings()
