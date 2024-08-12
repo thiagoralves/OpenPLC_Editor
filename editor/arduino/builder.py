@@ -65,7 +65,7 @@ def read_output(process, txtCtrl, timeout=None):
             break
 
         # brief sleep to reduce CPU load
-        time.sleep(1)
+        time.sleep(0.1)
 
     return return_code
 
