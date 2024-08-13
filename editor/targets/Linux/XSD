@@ -1,7 +1,0 @@
-
-                  <xsd:element name="Linux">
-                    <xsd:complexType>
-                      <xsd:attribute name="RealTime" type="xsd:boolean" use="optional" default="false"/>
-                      %(toolchain_gcc)s
-                    </xsd:complexType>
-                  </xsd:element>

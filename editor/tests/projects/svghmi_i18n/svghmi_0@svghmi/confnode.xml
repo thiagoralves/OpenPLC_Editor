@@ -1,2 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<SVGHMI xmlns:xsd="http://www.w3.org/2001/XMLSchema" OnWatchdog="echo Watchdog for {name} !" OnStart="chromium http://127.0.0.1:{port}/{name}" OnStop="echo Closing {name}" WatchdogInitial="10" WatchdogInterval="5"/>

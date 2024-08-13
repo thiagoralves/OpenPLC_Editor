@@ -1,2 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<SVGHMI xmlns:xsd="http://www.w3.org/2001/XMLSchema" OnWatchdog="echo Watchdog for {name} !" WatchdogInitial="10" WatchdogInterval="5" EnableWatchdog="true" Path="{name}"/>

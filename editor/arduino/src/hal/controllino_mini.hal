@@ -1,5 +1,0 @@
-# HAL configuration
-# Format :
-# Board type, FQBN
-
-CONTROLLINO MINI, CONTROLLINO_Boards:avr:controllino_mini

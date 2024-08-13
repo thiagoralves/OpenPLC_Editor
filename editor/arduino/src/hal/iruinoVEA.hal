@@ -1,5 +1,0 @@
-# HAL configuration
-# Format :
-# Board type, FQBN, BOARD definition (optional)
-
-Iruino VEA,                    vea:esp32:iruino, BOARD_ESP32

@@ -1,2 +1,0 @@
-Build PLC executable binary
-===========================

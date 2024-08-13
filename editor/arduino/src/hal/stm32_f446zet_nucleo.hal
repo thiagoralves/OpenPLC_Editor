@@ -1,5 +1,0 @@
-# HAL configuration
-# Format :
-# Board type, FQBN, BOARD definition (optional)
-
-STM32-F446ZET (NUCLEO), STM32:stm32:Nucleo_144:pnum=NUCLEO_F446ZE, BOARD_STM32_F446ZET_NUCLEO

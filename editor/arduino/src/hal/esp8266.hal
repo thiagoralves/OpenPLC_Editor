@@ -1,6 +1,0 @@
-# HAL configuration
-# Format :
-# Board type, FQBN
-
-ESP8266 NodeMCU, esp8266:esp8266:nodemcuv2, BOARD_ESP8266
-ESP8266 D1-mini, esp8266:esp8266:d1_mini, BOARD_ESP8266

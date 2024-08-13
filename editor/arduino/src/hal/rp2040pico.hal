@@ -1,6 +1,0 @@
-# HAL configuration
-# Format :
-# Board type, FQBN
-
-Raspberry Pico,		arduino:mbed_rp2040:pico
-Raspberry Pico W,	arduino:mbed_rp2040:pico

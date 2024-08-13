@@ -1,5 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<BeremizRoot xmlns:xsd="http://www.w3.org/2001/XMLSchema" URI_location="PYRO://127.0.0.1:61284">
-  <TargetType/>
-  <Libraries Enable_SVGHMI_Library="true"/>
-</BeremizRoot>

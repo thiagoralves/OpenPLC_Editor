@@ -1,8 +1,0 @@
-# HAL configuration
-# Format :
-# Board type, FQBN
-
-Arduino Mega,                     arduino:avr:mega
-Arduino Due (native USB port),    arduino:sam:arduino_due_x
-Arduino Due (programming port),   arduino:sam:arduino_due_x_dbg
-

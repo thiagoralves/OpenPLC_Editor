@@ -1,6 +1,0 @@
-# HAL configuration
-# Format :
-# Board type, FQBN
-
-P1AM-100, arduino:samd:mkrzero
-
