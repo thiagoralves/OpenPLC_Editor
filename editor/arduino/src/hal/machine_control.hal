@@ -1,9 +1,0 @@
-# HAL configuration
-# Format :
-# Board type, FQBN
-
-Portenta Machine Control H7, arduino:mbed_portenta:envie_m7
-
-
-
-

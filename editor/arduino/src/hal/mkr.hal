@@ -1,8 +1,0 @@
-# HAL configuration
-# Format :
-# Board type, FQBN
-
-Mkr Zero, arduino:samd:mkrzero
-Mkr WiFi, arduino:samd:mkrwifi1010, BOARD_WIFININA
-
-

@@ -1,5 +1,0 @@
-# HAL configuration
-# Format :
-# Board type, FQBN, BOARD definition (optional)
-
-STM32-F411CE (Blackpill), STM32:stm32:GenF4:pnum=BLACKPILL_F411CE, BOARD_STM32_F411CE
