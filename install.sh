@@ -4,6 +4,8 @@ OPENPLC_DIR="$(dirname "$(readlink -f "$0")")"
 VENV_DIR="$OPENPLC_DIR/.venv"
 
 cd "$OPENPLC_DIR"
+git submodule update --init --recursive "$OPENPLC_DIR"
+
 echo "Installing OpenPLC Editor"
 echo "Please be patient. This may take a couple minutes..."
 echo ""
@@ -43,7 +45,7 @@ fi
 if [ $(uname) == "FreeBSD" ]; then
     # use system packages on FreeBSD
     python3.9 -m venv --system-site-packages "$VENV_DIR"
-    "$VENV_DIR/bin/python" -m pip install --upgrade pip 
+    "$VENV_DIR/bin/python" -m pip install --upgrade pip
     "$VENV_DIR/bin/python" -m pip install zeroconf pypubsub pyro5 attrdict3
 else
     python3.9 -m venv "$VENV_DIR"

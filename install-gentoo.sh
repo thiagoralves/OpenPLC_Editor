@@ -5,6 +5,8 @@ VENV_DIR="$OPENPLC_DIR/.venv"
 
 echo ""
 
+git submodule update --init --recursive "$OPENPLC_DIR"
+
 # Check for Gentoo
 if ! command -v equery &> /dev/null; then
     echo "This script is intended for Gentoo Linux and relies there on 'app-portage/gentoolkit'."
