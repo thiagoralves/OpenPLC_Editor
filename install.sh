@@ -1,8 +1,9 @@
 #!/bin/bash
 
-OPENPLC_DIR="$PWD"
+OPENPLC_DIR="$(dirname "$(readlink -f "$0")")"
 VENV_DIR="$OPENPLC_DIR/.venv"
 
+cd "$OPENPLC_DIR"
 echo "Installing OpenPLC Editor"
 echo "Please be patient. This may take a couple minutes..."
 echo ""
@@ -54,7 +55,7 @@ fi
 
 echo ""
 echo "[COMPILING MATIEC]"
-cd matiec
+cd "$OPENPLC_DIR/matiec"
 autoreconf -i
 
 # clang treats this as an error while gcc treats it as a warning
@@ -68,11 +69,10 @@ make -s
 cp ./iec2c ../editor/arduino/bin/
 echo ""
 echo "[FINALIZING]"
-cd ..
+cd "$OPENPLC_DIR"
 
-WORKING_DIR=$(pwd)
 echo -e "#!/bin/bash\n\
-cd \"$WORKING_DIR\"\n\
+cd \"$OPENPLC_DIR\"\n\
 if [ -d \"./new_editor\" ]\n\
 then\n\
     rm -Rf editor\n\
@@ -80,6 +80,7 @@ then\n\
     mv ./new_editor ./editor\n\
     mv ./new_lib ./matiec/lib\n\
 fi\n\
+source \"$VENV_DIR/bin/activate\"\n\
 ./.venv/bin/python3 ./editor/Beremiz.py" > openplc_editor.sh
 chmod +x ./openplc_editor.sh
 
@@ -88,7 +89,7 @@ cd ~/.local/share/applications || exit
 echo -e "[Desktop Entry]\n\
 Name=OpenPLC Editor\n\
 Categories=Development;\n\
-Exec=\"$WORKING_DIR/openplc_editor.sh\"\n\
-Icon=$WORKING_DIR/editor/images/brz.png\n\
+Exec=\"$OPENPLC_DIR/openplc_editor.sh\"\n\
+Icon=$OPENPLC_DIR/editor/images/brz.png\n\
 Type=Application\n\
 Terminal=false" > OpenPLC_Editor.desktop
