@@ -123,6 +123,13 @@ echo "[FINALIZING]"
 # Create launcher script
 if ! echo -e "#!/bin/bash\n\
 cd \"$OPENPLC_DIR\"\n\
+if [ -d \"./new_editor\" ]\n\
+then\n\
+    rm -Rf editor\n\
+    rm -Rf ./matiec/lib\n\
+    mv ./new_editor ./editor\n\
+    mv ./new_lib ./matiec/lib\n\
+fi\n\
 source \"$VENV_DIR/bin/activate\"\n\
 python ./editor/Beremiz.py" > openplc_editor.sh; then
     echo "Failed to create launcher script."
