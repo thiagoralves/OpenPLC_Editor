@@ -68,7 +68,7 @@ else
 fi
 
 make -s
-cp ./iec2c ../editor/arduino/bin/
+cp ./iec2c "$OPENPLC_DIR/editor/arduino/bin/"
 echo ""
 echo "[FINALIZING]"
 cd "$OPENPLC_DIR"
