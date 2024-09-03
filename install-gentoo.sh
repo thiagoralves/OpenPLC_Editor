@@ -5,6 +5,8 @@ VENV_DIR="$OPENPLC_DIR/.venv"
 
 echo ""
 
+git submodule update --init --recursive "$OPENPLC_DIR"
+
 # Check for Gentoo
 if ! command -v equery &> /dev/null; then
     echo "This script is intended for Gentoo Linux and relies there on 'app-portage/gentoolkit'."
@@ -123,6 +125,13 @@ echo "[FINALIZING]"
 # Create launcher script
 if ! echo -e "#!/bin/bash\n\
 cd \"$OPENPLC_DIR\"\n\
+if [ -d \"./new_editor\" ]\n\
+then\n\
+    rm -Rf editor\n\
+    rm -Rf ./matiec/lib\n\
+    mv ./new_editor ./editor\n\
+    mv ./new_lib ./matiec/lib\n\
+fi\n\
 source \"$VENV_DIR/bin/activate\"\n\
 python ./editor/Beremiz.py" > openplc_editor.sh; then
     echo "Failed to create launcher script."
