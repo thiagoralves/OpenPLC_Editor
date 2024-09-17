@@ -36,6 +36,12 @@ elif [ -x /usr/sbin/pkg ] && [ $(uname) == "FreeBSD" ]; then
     sudo pkg install -y python autoconf-2.72 automake bison \
         py39-Jinja2 py39-lxml py39-matplotlib py39-future \
         py39-pyserial py39-wxPython42 py39-wheel
+#Installing dependencies for Arch Linux
+elif [ -x /usr/bin/pacman ]; then
+    sudo pacman -Syu --noconfirm
+    sudo pacman -S --noconfirm base-devel yay gtk3 python-pip
+# Installing python3.9 from AUR
+    yay -S --noconfirm python39
 else
     echo "Unsupported linux distro."
     exit 1
@@ -83,6 +89,7 @@ then\n\
     mv ./new_lib ./matiec/lib\n\
 fi\n\
 source \"$VENV_DIR/bin/activate\"\n\
+export GDK_BACKEND=x11\n\
 ./.venv/bin/python3 ./editor/Beremiz.py" > openplc_editor.sh
 chmod +x ./openplc_editor.sh
 
