@@ -39,7 +39,7 @@ elif [ -x /usr/sbin/pkg ] && [ $(uname) == "FreeBSD" ]; then
 #Installing dependencies for Arch Linux
 elif [ -x /usr/bin/pacman ]; then
     sudo pacman -Syu --noconfirm
-    sudo pacman -S --noconfirm base-devel yay gtk3
+    sudo pacman -S --noconfirm base-devel yay gtk3 python-pip
 # Installing python3.9 from AUR
     yay -S --noconfirm python39
 else
