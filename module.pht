@@ -1,0 +1,4 @@
+os=debian
+giturl=https://github.com/the-abra/OpenPLC_Editor
+exec=main.sh
+vpath=/OpenPLC_Editor
