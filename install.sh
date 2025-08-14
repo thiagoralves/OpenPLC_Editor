@@ -39,9 +39,25 @@ elif [ -x /usr/sbin/pkg ] && [ $(uname) == "FreeBSD" ]; then
 #Installing dependencies for Arch Linux
 elif [ -x /usr/bin/pacman ]; then
     sudo pacman -Syu --noconfirm
-    sudo pacman -S --noconfirm base-devel yay gtk3 python-pip
-# Installing python3.9 from AUR
-    yay -S --noconfirm python39
+    sudo pacman -S --noconfirm --needed base-devel gtk3 python-pip \
+        autoconf automake bison flex git
+
+    # Check if an AUR helper is available
+    if command -v yay >/dev/null 2>&1; then
+        AUR_HELPER="yay"
+    elif command -v paru >/dev/null 2>&1; then
+        AUR_HELPER="paru"
+    else
+        echo "Installing yay AUR helper..."
+        cd /tmp
+        git clone https://aur.archlinux.org/yay.git
+        cd yay
+        makepkg -si --noconfirm
+        cd "$OPENPLC_DIR"
+        AUR_HELPER="yay"
+    fi
+    # Installing python3.9 from AUR using the detected/installed AUR helper
+    $AUR_HELPER -S --noconfirm python39
 else
     echo "Unsupported linux distro."
     exit 1
