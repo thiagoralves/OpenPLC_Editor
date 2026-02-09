@@ -65,7 +65,7 @@ export function parsePLCopenXML(xml: string): PLCProject {
     author: contentHeader['@_author'],
     description: extractText(contentHeader.Comment),
     pous: parsePOUs(types.pous),
-    globalVars: parseGlobalVars(instances),
+    globalVars: parseGlobalVarsFromInstances(instances),
     dataTypes: parseDataTypes(types.dataTypes),
     configurations: parseConfigurations(instances),
   };
@@ -225,6 +225,30 @@ function extractInitialValue(initNode: any): string | undefined {
     return initNode;
   }
   return undefined;
+}
+
+// ─── Global Variable Parsing ────────────────────────────────────────────────
+
+function parseGlobalVarsFromInstances(instances: any): Variable[] {
+  // Global vars can appear in configurations > resource > globalVars
+  // or at the top-level globalVars element
+  const configs = instances?.configurations?.configuration;
+  if (!configs) return [];
+
+  const variables: Variable[] = [];
+  for (const config of ensureArray(configs)) {
+    for (const resource of ensureArray(config?.resource ?? [])) {
+      const gvSections = ensureArray(resource?.globalVars ?? []);
+      for (const section of gvSections) {
+        const vars = ensureArray(section?.variable ?? []);
+        for (const v of vars) {
+          variables.push(parseVariable(v, 'global'));
+        }
+      }
+    }
+  }
+
+  return variables;
 }
 
 // ─── Data Type Parsing ──────────────────────────────────────────────────────

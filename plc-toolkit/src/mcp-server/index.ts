@@ -27,7 +27,7 @@
  *   }
  */
 
-import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 
 import {
@@ -55,7 +55,7 @@ import {
 } from './tools/st-helpers.js';
 
 export async function startMCPServer(): Promise<void> {
-  const server = new Server({
+  const server = new McpServer({
     name: 'openplc-toolkit',
     version: '0.1.0',
   });
