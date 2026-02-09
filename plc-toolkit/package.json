@@ -1,0 +1,41 @@
+{
+  "name": "@openplc/toolkit",
+  "version": "0.1.0",
+  "description": "Headless PLC toolkit: compiler wrapper, MCP server, and CLI for LLM-native IEC 61131-3 development",
+  "license": "GPL-3.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "plc": "./dist/cli/index.js"
+  },
+  "exports": {
+    ".": "./dist/index.js",
+    "./compiler": "./dist/compiler/index.js",
+    "./mcp": "./dist/mcp-server/index.js",
+    "./parsers": "./dist/parsers/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "lint": "eslint src/",
+    "test": "node --experimental-vm-modules node_modules/.bin/jest",
+    "mcp": "node dist/mcp-server/index.js",
+    "cli": "node dist/cli/index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.26.0",
+    "fast-xml-parser": "^4.5.0",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.4.5",
+    "@types/jest": "^30.0.0",
+    "jest": "^30.0.0",
+    "ts-jest": "^29.4.0"
+  },
+  "engines": {
+    "node": ">=20.x"
+  }
+}
